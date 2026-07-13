@@ -1,0 +1,66 @@
+{
+  "canonical_layer": 227,
+  "repository": "https://github.com/telegramdesktop/tdesktop.git",
+  "source_path": "Telegram/SourceFiles/mtproto/scheme/api.tl",
+  "overlays": [
+    "../legacy.tl"
+  ],
+  "layers": [
+    {
+      "layer": 220,
+      "file": "layer-220.tl",
+      "commit": "f01c93ed58bf9a97239222817bfef6700a1077d9",
+      "blob": "8803fc0ef8cf0e2a46640bf1ae31ba48c2c840d6",
+      "sha256": "f0a3c65319a6539019e997225ec959a75c74b91148ebee9a4cd016a960296ee9"
+    },
+    {
+      "layer": 221,
+      "file": "layer-221.tl",
+      "commit": "a36a30ce01513ec44c27c1781939fd45f6de1c86",
+      "blob": "a24950762381fc8a42d72eb2082b4a88243f00de",
+      "sha256": "b28137dde9c77984fc420b4064552cdbdb027ebd24ca160c6af0f6e3f9dac304"
+    },
+    {
+      "layer": 222,
+      "file": "layer-222.tl",
+      "commit": "134b4b427386878c9f4b0bb23e7b6b67172c3605",
+      "blob": "77968bd224470f5fbef4e3fc8d761d0dd7f3315b",
+      "sha256": "dff1942eaf874fbe379794a1d8e39d56fa35e6ea6eba5b71a0749c58e4ccb08e"
+    },
+    {
+      "layer": 223,
+      "file": "layer-223.tl",
+      "commit": "6327bac6c22343cdfc4cd1f1d51eb9dad5ef4cba",
+      "blob": "bca9aecc029e3e3263fb0e6c6f748d95ce8537e6",
+      "sha256": "efb4626bec87841fc0736a74e02bfd4e8bfbff001cab309246195af4897e6602"
+    },
+    {
+      "layer": 224,
+      "file": "layer-224.tl",
+      "commit": "c7ec23b87298db65e98a6bc86e5df35cb50dfa73",
+      "blob": "ca55a99a10454528f691d64abdef2aca11420d83",
+      "sha256": "44b4a8cced28a25e13fcb2bfd34983e6b906414f42dc04bbd0e3dded9253331d"
+    },
+    {
+      "layer": 225,
+      "file": "layer-225.tl",
+      "commit": "bff17504bc96df235559211d97ea616506f22889",
+      "blob": "24720c3660b5e611d3a736f4020ec9eaa4303be9",
+      "sha256": "aa21644954119b6b8be10c839c24cbbeff389d7158f65a5a0419887014f89a93"
+    },
+    {
+      "layer": 226,
+      "file": "layer-226.tl",
+      "commit": "5c5bacaf419ecf16c57d20517bd2231d17f8f8af",
+      "blob": "f2f907c7f07ffaa7f512654d44dc74c560eef826",
+      "sha256": "fe4fa42d4011e8a82404e37da40a3ce55dda3eec260b651ed0420378286785ec"
+    },
+    {
+      "layer": 227,
+      "file": "layer-227.tl",
+      "commit": "8165c7c6c065c8abc94ec5076f75bee0a29b82e1",
+      "blob": "2784293c112f7e854b883290c123675cfae1d3d1",
+      "sha256": "f8fe06d2279657cc36f7d5280a28fa00a176ca6c99b5208038850b40e9aa5518"
+    }
+  ]
+}

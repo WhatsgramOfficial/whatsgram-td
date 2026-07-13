@@ -1,0 +1,115 @@
+package semantic
+
+import (
+	"sort"
+	"testing"
+)
+
+func TestTelegramLayers220Through227(t *testing.T) {
+	universe, err := LoadUniverse("../../_schema/layers/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := universe.Layers(), []int{220, 221, 222, 223, 224, 225, 226, 227}; !equalInts(got, want) {
+		t.Fatalf("layers = %v, want %v", got, want)
+	}
+
+	signature := map[DefinitionKey]struct{}{}
+	sameWire := map[DefinitionKey]struct{}{}
+	resultOnly := map[DefinitionKey]struct{}{}
+	oldOnly := map[DefinitionKey]struct{}{}
+	for _, layer := range universe.Layers() {
+		if layer == universe.CanonicalLayer {
+			continue
+		}
+		diff, err := universe.Diff(layer)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, change := range diff.SignatureChanges() {
+			signature[change.Key] = struct{}{}
+		}
+		for _, change := range diff.SameWireSignatureChanges() {
+			sameWire[change.Key] = struct{}{}
+		}
+		for _, change := range diff.ResultOnlyChanges() {
+			resultOnly[change.Key] = struct{}{}
+		}
+		for _, definition := range diff.OldOnly {
+			oldOnly[definition.Key] = struct{}{}
+		}
+	}
+
+	assertKeyCount(t, "signature changes", signature, 95)
+	assertKeyCount(t, "same-ID signature changes", sameWire, 12)
+	assertKeyCount(t, "result-only changes", resultOnly, 4)
+	assertKeyCount(t, "old-only definitions", oldOnly, 2)
+
+	for _, key := range []DefinitionKey{
+		{Category: CategoryType, QName: "chatAdminRights"},
+		{Category: CategoryType, QName: "pollResults"},
+		{Category: CategoryFunction, QName: "contacts.getTopPeers"},
+		{Category: CategoryFunction, QName: "payments.getResaleStarGifts"},
+	} {
+		if _, ok := sameWire[key]; !ok {
+			t.Errorf("same-ID changes missing %s", key)
+		}
+	}
+	for _, key := range []DefinitionKey{
+		{Category: CategoryFunction, QName: "channels.joinChannel"},
+		{Category: CategoryFunction, QName: "messages.importChatInvite"},
+		{Category: CategoryFunction, QName: "account.toggleWebBrowserSettingsException"},
+		{Category: CategoryFunction, QName: "messages.setBotGuestChatResult"},
+	} {
+		if _, ok := resultOnly[key]; !ok {
+			t.Errorf("result-only changes missing %s", key)
+		}
+	}
+	for _, key := range []DefinitionKey{
+		{Category: CategoryFunction, QName: "channels.editCreator"},
+		{Category: CategoryFunction, QName: "channels.getFutureCreatorAfterLeave"},
+	} {
+		if _, ok := oldOnly[key]; !ok {
+			t.Errorf("old-only definitions missing %s", key)
+		}
+	}
+
+	diff220, err := universe.Diff(220)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := len(diff220.SignatureChanges()), 90; got != want {
+		t.Fatalf("layer 220 signature changes = %d, want %d", got, want)
+	}
+	if got, want := len(diff220.SameWireSignatureChanges()), 10; got != want {
+		t.Fatalf("layer 220 same-ID changes = %d, want %d", got, want)
+	}
+	if got, want := len(diff220.ResultOnlyChanges()), 2; got != want {
+		t.Fatalf("layer 220 result-only changes = %d, want %d", got, want)
+	}
+}
+
+func assertKeyCount(t *testing.T, name string, values map[DefinitionKey]struct{}, want int) {
+	t.Helper()
+	if len(values) == want {
+		return
+	}
+	keys := make([]string, 0, len(values))
+	for key := range values {
+		keys = append(keys, key.String())
+	}
+	sort.Strings(keys)
+	t.Fatalf("%s = %d, want %d:\n%s", name, len(values), want, keys)
+}
+
+func equalInts(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
