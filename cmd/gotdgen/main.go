@@ -13,6 +13,7 @@ import (
 	"github.com/gotd/tl"
 
 	"github.com/gotd/td/gen"
+	"github.com/gotd/td/gen/semantic"
 )
 
 type formattedSource struct {
@@ -34,6 +35,7 @@ func (t formattedSource) WriteFile(name string, content []byte) error {
 
 func main() {
 	schemaPath := flag.String("schema", "", "Path to .tl file")
+	schemaManifest := flag.String("schema-manifest", "", "Path to locked multi-layer schema manifest")
 	targetDir := flag.String("target", "td", "Path to target dir")
 	packageName := flag.String("package", "td", "Target package name")
 	performFormat := flag.Bool("format", true, "Perform code formatting")
@@ -43,19 +45,39 @@ func main() {
 	genOpts.RegisterFlags(flag.CommandLine)
 
 	flag.Parse()
-	if *schemaPath == "" {
-		panic("no schema provided")
+	if (*schemaPath == "") == (*schemaManifest == "") {
+		panic("provide exactly one of -schema or -schema-manifest")
 	}
-	f, err := os.Open(*schemaPath)
-	if err != nil {
-		panic(err)
-	}
-	defer func() { _ = f.Close() }()
 
-	schema, err := tl.Parse(f)
-	if err != nil {
-		panic(err)
+	start := time.Now()
+	var g *gen.Generator
+	if *schemaManifest != "" {
+		schemaSet, err := semantic.LoadUniverse(*schemaManifest)
+		if err != nil {
+			panic(fmt.Sprintf("load schema manifest: %+v", err))
+		}
+		g, err = gen.NewSchemaSetGenerator(schemaSet, genOpts)
+		if err != nil {
+			panic(fmt.Sprintf("build schema set generator: %+v", err))
+		}
+	} else {
+		f, err := os.Open(*schemaPath)
+		if err != nil {
+			panic(err)
+		}
+		defer func() { _ = f.Close() }()
+
+		schema, err := tl.Parse(f)
+		if err != nil {
+			panic(err)
+		}
+		g, err = gen.NewGenerator(schema, genOpts)
+		if err != nil {
+			panic(fmt.Sprintf("%+v", err))
+		}
 	}
+	collectInfoTime := time.Since(start)
+
 	files, err := os.ReadDir(*targetDir)
 	if err != nil && !os.IsNotExist(err) {
 		panic(err)
@@ -83,17 +105,10 @@ func main() {
 		}
 	}
 
-	start := time.Now()
 	fs := formattedSource{
 		Root:   *targetDir,
 		Format: *performFormat,
 	}
-	g, err := gen.NewGenerator(schema, genOpts)
-	if err != nil {
-		panic(fmt.Sprintf("%+v", err))
-	}
-	collectInfoTime := time.Since(start)
-
 	start = time.Now()
 	if err := g.WriteSource(fs, *packageName, gen.Template()); err != nil {
 		panic(fmt.Sprintf("%+v", err))

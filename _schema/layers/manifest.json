@@ -3,7 +3,14 @@
   "repository": "https://github.com/telegramdesktop/tdesktop.git",
   "source_path": "Telegram/SourceFiles/mtproto/scheme/api.tl",
   "overlays": [
-    "../legacy.tl"
+    {
+      "file": "../legacy.tl",
+      "repository": "https://github.com/gotd/td.git",
+      "commit": "9c00b8f0d0f240f1c2d12b4e6f792317d26cae95",
+      "blob": "9a0f554e828a43dfe425ed9db4998fcaca289785",
+      "path": "_schema/legacy.tl",
+      "sha256": "1c0324774dc34ca887011c0113e5500e55388b5f39357229379964b6b4e1d142"
+    }
   ],
   "layers": [
     {

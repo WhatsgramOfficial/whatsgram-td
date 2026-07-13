@@ -1,6 +1,7 @@
 package semantic
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
@@ -17,11 +18,23 @@ import (
 
 // Manifest locks all schema inputs and their upstream provenance.
 type Manifest struct {
-	CanonicalLayer int             `json:"canonical_layer"`
-	Repository     string          `json:"repository"`
-	SourcePath     string          `json:"source_path"`
-	Overlays       []string        `json:"overlays"`
-	Layers         []ManifestLayer `json:"layers"`
+	CanonicalLayer int               `json:"canonical_layer"`
+	Repository     string            `json:"repository"`
+	SourcePath     string            `json:"source_path"`
+	Overlays       []ManifestOverlay `json:"overlays"`
+	Layers         []ManifestLayer   `json:"layers"`
+}
+
+// ManifestOverlay is one immutable schema overlay and its exact artifact
+// provenance. Git tree provenance is verified by the import/sync workflow;
+// offline generation verifies the locked local SHA256 only.
+type ManifestOverlay struct {
+	File       string `json:"file"`
+	Repository string `json:"repository"`
+	Commit     string `json:"commit"`
+	Blob       string `json:"blob"`
+	Path       string `json:"path"`
+	SHA256     string `json:"sha256"`
 }
 
 // ManifestLayer is one immutable TDesktop schema source.
@@ -109,21 +122,45 @@ func validateManifest(manifest Manifest) error {
 	if !canonicalFound {
 		return fmt.Errorf("semantic: canonical layer %d is absent from manifest", manifest.CanonicalLayer)
 	}
+	seenOverlays := make(map[string]struct{}, len(manifest.Overlays))
 	for i, overlay := range manifest.Overlays {
-		if strings.TrimSpace(overlay) == "" {
-			return fmt.Errorf("semantic: overlay[%d] is empty", i)
+		if strings.TrimSpace(overlay.File) == "" {
+			return fmt.Errorf("semantic: overlay[%d] file is empty", i)
+		}
+		if _, duplicate := seenOverlays[overlay.File]; duplicate {
+			return fmt.Errorf("semantic: overlay[%d] repeats file %q", i, overlay.File)
+		}
+		seenOverlays[overlay.File] = struct{}{}
+		if strings.TrimSpace(overlay.Repository) == "" {
+			return fmt.Errorf("semantic: overlay[%d] repository is empty", i)
+		}
+		if strings.TrimSpace(overlay.Path) == "" {
+			return fmt.Errorf("semantic: overlay[%d] path is empty", i)
+		}
+		if err := validateHexValue(fmt.Sprintf("overlay[%d] commit", i), overlay.Commit, 20); err != nil {
+			return err
+		}
+		if err := validateHexValue(fmt.Sprintf("overlay[%d] blob", i), overlay.Blob, 20); err != nil {
+			return err
+		}
+		if err := validateHexValue(fmt.Sprintf("overlay[%d] sha256", i), overlay.SHA256, sha256.Size); err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
 func validateHex(field string, layer int, value string, size int) error {
+	return validateHexValue(fmt.Sprintf("layer %d %s", layer, field), value, size)
+}
+
+func validateHexValue(field, value string, size int) error {
 	if value != strings.ToLower(value) {
-		return fmt.Errorf("semantic: layer %d %s must be lowercase hex", layer, field)
+		return fmt.Errorf("semantic: %s must be lowercase hex", field)
 	}
 	decoded, err := hex.DecodeString(value)
 	if err != nil || len(decoded) != size {
-		return fmt.Errorf("semantic: layer %d %s must be %d-byte hex", layer, field, size)
+		return fmt.Errorf("semantic: %s must be %d-byte hex", field, size)
 	}
 	return nil
 }
@@ -137,10 +174,22 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 	}
 	root := filepath.Dir(manifestPath)
 	overlays := make([]*tl.Schema, 0, len(manifest.Overlays))
-	for _, name := range manifest.Overlays {
-		overlay, err := parseSchemaFile(filepath.Join(root, filepath.FromSlash(name)))
+	for _, entry := range manifest.Overlays {
+		name := filepath.Join(root, filepath.FromSlash(entry.File))
+		data, err := os.ReadFile(name)
 		if err != nil {
-			return nil, fmt.Errorf("semantic: overlay %q: %w", name, err)
+			return nil, fmt.Errorf("semantic: overlay %q read schema: %w", entry.File, err)
+		}
+		digest := sha256.Sum256(data)
+		if got := hex.EncodeToString(digest[:]); got != entry.SHA256 {
+			return nil, fmt.Errorf("semantic: overlay %q SHA256 mismatch: got %s, want %s", entry.File, got, entry.SHA256)
+		}
+		if err := validateExplicitIDs(data, fmt.Sprintf("overlay %q", entry.File)); err != nil {
+			return nil, err
+		}
+		overlay, err := tl.Parse(bytes.NewReader(data))
+		if err != nil {
+			return nil, fmt.Errorf("semantic: overlay %q parse schema: %w", entry.File, err)
 		}
 		overlays = append(overlays, overlay)
 	}
@@ -156,6 +205,9 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 		if got := hex.EncodeToString(digest[:]); got != entry.SHA256 {
 			return nil, fmt.Errorf("semantic: layer %d SHA256 mismatch: got %s, want %s", entry.Layer, got, entry.SHA256)
 		}
+		if err := validateExplicitIDs(data, fmt.Sprintf("layer %d file %q", entry.Layer, entry.File)); err != nil {
+			return nil, err
+		}
 		parsed, err := tl.Parse(bytes.NewReader(data))
 		if err != nil {
 			return nil, fmt.Errorf("semantic: layer %d parse schema: %w", entry.Layer, err)
@@ -163,8 +215,10 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 		if parsed.Layer != entry.Layer {
 			return nil, fmt.Errorf("semantic: layer %d file declares layer %d", entry.Layer, parsed.Layer)
 		}
-		for _, overlay := range overlays {
-			mergeSchema(parsed, overlay)
+		for i, overlay := range overlays {
+			if err := mergeSchema(parsed, overlay); err != nil {
+				return nil, fmt.Errorf("semantic: layer %d apply overlay %q: %w", entry.Layer, manifest.Overlays[i].File, err)
+			}
 		}
 		model, err := BuildSchema(parsed, SourceRef{
 			Layer:      entry.Layer,
@@ -183,16 +237,39 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 	return NewUniverse(manifest.CanonicalLayer, schemas...)
 }
 
-func parseSchemaFile(path string) (*tl.Schema, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
+// validateExplicitIDs prevents official inputs from silently changing a wire
+// ID when a declaration changes. github.com/gotd/tl intentionally exposes
+// only the resulting uint32 ID, so this source property must be checked before
+// parsing.
+func validateExplicitIDs(data []byte, source string) error {
+	scanner := bufio.NewScanner(bytes.NewReader(data))
+	line := 0
+	for scanner.Scan() {
+		line++
+		declaration := strings.TrimSpace(scanner.Text())
+		if declaration == "" || strings.HasPrefix(declaration, "//") || strings.HasPrefix(declaration, "---") {
+			continue
+		}
+		equals := strings.IndexByte(declaration, '=')
+		if equals < 0 {
+			// Leave malformed non-declaration input to the TL parser, which can
+			// produce the more specific grammar error.
+			continue
+		}
+		left := strings.TrimSpace(declaration[:equals])
+		parts := strings.Fields(left)
+		if len(parts) == 0 {
+			continue
+		}
+		name, id, explicit := strings.Cut(parts[0], "#")
+		if !explicit || name == "" || id == "" {
+			return fmt.Errorf("semantic: E_EXPLICIT_ID_REQUIRED: %s line %d definition %q has no explicit wire ID", source, line, name)
+		}
 	}
-	parsed, err := tl.Parse(bytes.NewReader(data))
-	if err != nil {
-		return nil, err
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("semantic: scan %s for explicit wire IDs: %w", source, err)
 	}
-	return parsed, nil
+	return nil
 }
 
 // SortedKeys returns family keys in deterministic category/name order.

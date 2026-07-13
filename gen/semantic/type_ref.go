@@ -112,6 +112,28 @@ func isPrimitive(name string) bool {
 	return ok
 }
 
+// wireName normalizes TL spellings that use the same payload codec. Semantic
+// shape continues to retain the original QName.
+func (t TypeRef) wireName() string {
+	if t.Kind != TypePrimitive {
+		return t.QName
+	}
+	switch t.QName {
+	case "int", "int32", "Int":
+		return "int32"
+	case "int53", "long", "int64", "Long":
+		return "int64"
+	case "double", "Double":
+		return "float64"
+	case "string", "String", "bytes", "Bytes":
+		return "tl-bytes"
+	case "Bool", "bool", "true", "false", "True":
+		return "tl-bool"
+	default:
+		return t.QName
+	}
+}
+
 // Equal reports whether two references have identical TL wire semantics.
 func (t TypeRef) Equal(other TypeRef) bool {
 	if t.Kind != other.Kind || t.QName != other.QName || t.Bare != other.Bare || t.Percent != other.Percent {

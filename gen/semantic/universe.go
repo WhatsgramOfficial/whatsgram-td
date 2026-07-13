@@ -7,29 +7,55 @@ import (
 	"github.com/gotd/tl"
 )
 
-// Variant is one distinct wire/signature form of a semantic definition.
+// WireCodec is one reusable payload codec. It contains no profile-specific
+// field semantics, so flags.N?true changes do not duplicate codecs.
+type WireCodec struct {
+	WireID          uint32
+	Key             SemanticKey
+	Shape           WireShape
+	ProfileVariants []*ProfileVariant
+}
+
+// ProfileVariant binds one layer's semantic definition to its shared payload
+// codec. Result types and presence-only flags remain profile semantics.
+type ProfileVariant struct {
+	Layer         int
+	Definition    *Definition
+	WireCodec     *WireCodec
+	SemanticShape ShapeDigest
+}
+
+// SignatureVariant is the compatibility view that groups identical semantic
+// signatures across profiles.
 // Layers can be non-contiguous; callers must not infer ranges from endpoints.
-type Variant struct {
+type SignatureVariant struct {
 	WireID         uint32
 	BodyShape      ShapeDigest
 	SignatureShape ShapeDigest
 	Definition     *Definition
+	WireCodec      *WireCodec
 	Layers         []int
 }
 
+// Variant is kept as a source-compatible name for SignatureVariant.
+type Variant = SignatureVariant
+
 // Family groups the same category-qualified definition across layers.
 type Family struct {
-	Key      DefinitionKey
-	ByLayer  map[int]*Definition
-	Variants []*Variant
+	Key             SemanticKey
+	ByLayer         map[int]*Definition
+	ProfilesByLayer map[int]*ProfileVariant
+	ProfileVariants []*ProfileVariant
+	Variants        []*SignatureVariant
 }
 
 // Universe is the validated collection of all supported layer schemas.
 type Universe struct {
 	CanonicalLayer int
 	Schemas        map[int]*SchemaModel
-	Families       map[DefinitionKey]*Family
+	Families       map[SemanticKey]*Family
 	ByWire         map[int]map[uint32]*Definition
+	WireCodecs     map[uint32]*WireCodec
 	SemanticDigest ShapeDigest
 }
 
@@ -41,8 +67,9 @@ func NewUniverse(canonicalLayer int, schemas ...*SchemaModel) (*Universe, error)
 	u := &Universe{
 		CanonicalLayer: canonicalLayer,
 		Schemas:        make(map[int]*SchemaModel, len(schemas)),
-		Families:       make(map[DefinitionKey]*Family),
+		Families:       make(map[SemanticKey]*Family),
 		ByWire:         make(map[int]map[uint32]*Definition, len(schemas)),
+		WireCodecs:     make(map[uint32]*WireCodec),
 	}
 	for _, schema := range schemas {
 		if schema == nil {
@@ -64,17 +91,52 @@ func NewUniverse(canonicalLayer int, schemas ...*SchemaModel) (*Universe, error)
 	layers := u.Layers()
 	for _, layer := range layers {
 		for _, definition := range u.Schemas[layer].Definitions {
+			codec := u.WireCodecs[definition.WireID]
+			if codec == nil {
+				codec = &WireCodec{
+					WireID: definition.WireID,
+					Key:    definition.Key,
+					Shape:  definition.WireShape,
+				}
+				u.WireCodecs[definition.WireID] = codec
+			} else {
+				first := codec.ProfileVariants[0]
+				if codec.Key != definition.Key {
+					return nil, fmt.Errorf(
+						"semantic: wire id %#08x maps to %s in layer %d and %s in layer %d",
+						definition.WireID, codec.Key, first.Layer, definition.Key, layer,
+					)
+				}
+				if codec.Shape != definition.WireShape {
+					return nil, fmt.Errorf(
+						"semantic: wire id %#08x for %s has conflicting payload shapes in layers %d (%s) and %d (%s)",
+						definition.WireID, definition.Key, first.Layer, codec.Shape, layer, definition.WireShape,
+					)
+				}
+			}
+
+			profile := &ProfileVariant{
+				Layer:         layer,
+				Definition:    definition,
+				WireCodec:     codec,
+				SemanticShape: definition.SemanticShape,
+			}
+			codec.ProfileVariants = append(codec.ProfileVariants, profile)
+
 			family := u.Families[definition.Key]
 			if family == nil {
 				family = &Family{
-					Key:     definition.Key,
-					ByLayer: make(map[int]*Definition),
+					Key:             definition.Key,
+					ByLayer:         make(map[int]*Definition),
+					ProfilesByLayer: make(map[int]*ProfileVariant),
 				}
 				u.Families[definition.Key] = family
 			}
 			family.ByLayer[layer] = definition
+			family.ProfilesByLayer[layer] = profile
+			family.ProfileVariants = append(family.ProfileVariants, profile)
 
-			var variant *Variant
+			var variant *SignatureVariant
 			for _, candidate := range family.Variants {
 				if candidate.WireID == definition.WireID && candidate.SignatureShape == definition.SignatureShape {
 					variant = candidate
@@ -82,11 +144,12 @@ func NewUniverse(canonicalLayer int, schemas ...*SchemaModel) (*Universe, error)
 				}
 			}
 			if variant == nil {
-				variant = &Variant{
+				variant = &SignatureVariant{
 					WireID:         definition.WireID,
 					BodyShape:      definition.BodyShape,
 					SignatureShape: definition.SignatureShape,
 					Definition:     definition,
+					WireCodec:      codec,
 				}
 				family.Variants = append(family.Variants, variant)
 			}
@@ -134,12 +197,13 @@ func universeDigest(u *Universe, layers []int) ShapeDigest {
 
 // DefinitionChange compares one shared semantic definition with canonical.
 type DefinitionChange struct {
-	Key           DefinitionKey
-	Target        *Definition
-	Canonical     *Definition
-	WireIDChanged bool
-	BodyChanged   bool
-	ResultChanged bool
+	Key              SemanticKey
+	Target           *Definition
+	Canonical        *Definition
+	WireIDChanged    bool
+	WireShapeChanged bool
+	BodyChanged      bool
+	ResultChanged    bool
 }
 
 // SignatureChanged reports whether fields or result TypeRef changed. Wire ID
@@ -154,10 +218,16 @@ func (c DefinitionChange) ResultOnly() bool {
 	return !c.BodyChanged && c.ResultChanged
 }
 
-// SameWireSignatureChanged identifies the same-ID/different-shape class of
-// compatibility bug.
-func (c DefinitionChange) SameWireSignatureChanged() bool {
+// SameIDSemanticChanged reports profile semantics that changed while the
+// constructor/method ID remained stable. This is not a payload conflict.
+func (c DefinitionChange) SameIDSemanticChanged() bool {
 	return !c.WireIDChanged && c.SignatureChanged()
+}
+
+// SameWireSignatureChanged is the compatibility name for
+// SameIDSemanticChanged.
+func (c DefinitionChange) SameWireSignatureChanged() bool {
+	return c.SameIDSemanticChanged()
 }
 
 // Difference is a target-layer comparison against canonical.
@@ -183,12 +253,13 @@ func (u *Universe) Diff(layer int) (Difference, error) {
 			continue
 		}
 		change := DefinitionChange{
-			Key:           current.Key,
-			Target:        old,
-			Canonical:     current,
-			WireIDChanged: old.WireID != current.WireID,
-			BodyChanged:   old.BodyShape != current.BodyShape,
-			ResultChanged: !old.Result.Equal(current.Result),
+			Key:              current.Key,
+			Target:           old,
+			Canonical:        current,
+			WireIDChanged:    old.WireID != current.WireID,
+			WireShapeChanged: old.WireShape != current.WireShape,
+			BodyChanged:      old.BodyShape != current.BodyShape,
+			ResultChanged:    !old.Result.Equal(current.Result),
 		}
 		if change.WireIDChanged || change.SignatureChanged() {
 			result.Changes = append(result.Changes, change)
@@ -215,9 +286,14 @@ func (d Difference) SignatureChanges() []DefinitionChange {
 
 // SameWireSignatureChanges returns all same-ID/different-shape changes.
 func (d Difference) SameWireSignatureChanges() []DefinitionChange {
+	return d.SameIDSemanticChanges()
+}
+
+// SameIDSemanticChanges returns all same-ID semantic changes.
+func (d Difference) SameIDSemanticChanges() []DefinitionChange {
 	result := make([]DefinitionChange, 0, len(d.Changes))
 	for _, change := range d.Changes {
-		if change.SameWireSignatureChanged() {
+		if change.SameIDSemanticChanged() {
 			result = append(result, change)
 		}
 	}

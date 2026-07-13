@@ -1,6 +1,11 @@
 package semantic
 
-import "github.com/gotd/tl"
+import (
+	"fmt"
+	"reflect"
+
+	"github.com/gotd/tl"
+)
 
 func cloneSchema(source *tl.Schema) *tl.Schema {
 	if source == nil {
@@ -45,17 +50,27 @@ func cloneTLType(source tl.Type) tl.Type {
 	return result
 }
 
-func mergeSchema(target, overlay *tl.Schema) {
-	ids := make(map[uint32]struct{}, len(target.Definitions))
+func mergeSchema(target, overlay *tl.Schema) error {
+	ids := make(map[uint32]tl.SchemaDefinition, len(target.Definitions))
 	for _, definition := range target.Definitions {
-		ids[definition.Definition.ID] = struct{}{}
+		ids[definition.Definition.ID] = definition
 	}
 	for _, definition := range overlay.Definitions {
-		if _, exists := ids[definition.Definition.ID]; exists {
-			continue
+		if existing, exists := ids[definition.Definition.ID]; exists {
+			if compatibleOverlayDefinition(existing, definition) {
+				continue
+			}
+			return fmt.Errorf(
+				"E_OVERLAY_COLLISION: wire ID %#08x target %s:%s conflicts with overlay %s:%s",
+				definition.Definition.ID,
+				existing.Category,
+				qualifyDefinition(existing.Definition),
+				definition.Category,
+				qualifyDefinition(definition.Definition),
+			)
 		}
 		target.Definitions = append(target.Definitions, cloneSchemaDefinition(definition))
-		ids[definition.Definition.ID] = struct{}{}
+		ids[definition.Definition.ID] = definition
 	}
 
 	classes := make(map[string]struct{}, len(target.Classes))
@@ -72,4 +87,18 @@ func mergeSchema(target, overlay *tl.Schema) {
 	if target.Layer == 0 {
 		target.Layer = overlay.Layer
 	}
+	return nil
+}
+
+func compatibleOverlayDefinition(target, overlay tl.SchemaDefinition) bool {
+	if target.Category != overlay.Category {
+		return false
+	}
+	if qualifyDefinition(target.Definition) != qualifyDefinition(overlay.Definition) {
+		return false
+	}
+	// Annotations are documentation rather than declaration payload. The full
+	// parsed Definition includes the explicit ID, generic parameters, ordered
+	// fields, flags, bare/boxed TypeRefs, result type, and base marker.
+	return reflect.DeepEqual(target.Definition, overlay.Definition)
 }

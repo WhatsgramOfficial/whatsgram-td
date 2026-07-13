@@ -88,6 +88,9 @@ func TestShapeDigestSeparatesBodyAndResult(t *testing.T) {
 	if getOne.SignatureShape == getTwo.SignatureShape {
 		t.Fatal("result-only change did not alter signature digest")
 	}
+	if getOne.WireShape != getTwo.WireShape {
+		t.Fatal("result-only change altered request payload wire shape")
+	}
 
 	sampleKey := DefinitionKey{Category: CategoryType, QName: "sample"}
 	if got, want := one.ByKey[sampleKey].BodyShape.String(), "2d8f9745dbbe1136793864cd0e82902f5f9132027ecb120d967215f7d10511b8"; got != want {
@@ -98,6 +101,9 @@ func TestShapeDigestSeparatesBodyAndResult(t *testing.T) {
 	}
 	if one.ByKey[sampleKey].BodyShape == two.ByKey[sampleKey].BodyShape {
 		t.Fatal("same-ID field change did not alter body digest")
+	}
+	if one.ByKey[sampleKey].WireShape != two.ByKey[sampleKey].WireShape {
+		t.Fatal("presence-only field duplicated payload wire shape")
 	}
 	clone := buildSynthetic(t, syntheticLayerOne)
 	if got, want := clone.ByKey[sampleKey].BodyShape, one.ByKey[sampleKey].BodyShape; got != want {
@@ -128,6 +134,75 @@ func TestUniverseSyntheticDiff(t *testing.T) {
 	}
 	if got := universe.ByWire[1][0x10000002]; got == nil || got.Key.QName != "sample" {
 		t.Fatalf("layer-aware registry lookup = %+v", got)
+	}
+	sampleKey := SemanticKey{Category: CategoryType, QName: "sample"}
+	family := universe.Families[sampleKey]
+	oneProfile, twoProfile := family.ProfilesByLayer[1], family.ProfilesByLayer[2]
+	if oneProfile == nil || twoProfile == nil {
+		t.Fatalf("profile variants are missing: %+v", family.ProfilesByLayer)
+	}
+	if oneProfile.SemanticShape == twoProfile.SemanticShape {
+		t.Fatal("presence-only field was lost from profile semantics")
+	}
+	if oneProfile.WireCodec != twoProfile.WireCodec {
+		t.Fatal("presence-only semantic change duplicated WireCodec")
+	}
+}
+
+func TestUniverseRejectsWireIDConflicts(t *testing.T) {
+	for _, test := range []struct {
+		name string
+		one  string
+		two  string
+	}{
+		{
+			name: "QName",
+			one:  "alpha#10000009 value:int = Alpha;\n// LAYER 1",
+			two:  "beta#10000009 value:int = Beta;\n// LAYER 2",
+		},
+		{
+			name: "Category",
+			one:  "alpha#10000009 value:int = Alpha;\n// LAYER 1",
+			two:  "---functions---\nalpha#10000009 value:int = Bool;\n// LAYER 2",
+		},
+		{
+			name: "RequiredPayload",
+			one:  "sample#10000009 value:int = Sample;\n// LAYER 1",
+			two:  "sample#10000009 value:long = Sample;\n// LAYER 2",
+		},
+		{
+			name: "ConditionalPayloadBit",
+			one:  "sample#10000009 flags:# value:flags.0?int = Sample;\n// LAYER 1",
+			two:  "sample#10000009 flags:# value:flags.1?int = Sample;\n// LAYER 2",
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			one := buildSynthetic(t, test.one)
+			two := buildSynthetic(t, test.two)
+			if _, err := NewUniverse(2, one, two); err == nil {
+				t.Fatal("expected cross-profile wire ID conflict")
+			}
+		})
+	}
+}
+
+func TestWireShapeIgnoresSemanticNames(t *testing.T) {
+	one := buildSynthetic(t, "sample#10000009 flags:# value:flags.1?int = Sample;\n// LAYER 1")
+	two := buildSynthetic(t, "sample#10000009 options:# renamed:options.1?int = Sample;\n// LAYER 2")
+
+	key := SemanticKey{Category: CategoryType, QName: "sample"}
+	if one.ByKey[key].BodyShape == two.ByKey[key].BodyShape {
+		t.Fatal("semantic names were lost from semantic body shape")
+	}
+	if one.ByKey[key].WireShape != two.ByKey[key].WireShape {
+		t.Fatal("semantic names altered exact payload wire shape")
+	}
+	universe, err := NewUniverse(2, one, two)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if universe.Families[key].ProfilesByLayer[1].WireCodec != universe.Families[key].ProfilesByLayer[2].WireCodec {
+		t.Fatal("semantic rename duplicated WireCodec")
 	}
 }
 

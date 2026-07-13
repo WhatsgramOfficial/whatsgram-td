@@ -1,6 +1,7 @@
 package semantic
 
 import (
+	"fmt"
 	"sort"
 	"testing"
 )
@@ -44,6 +45,28 @@ func TestTelegramLayers220Through227(t *testing.T) {
 	assertKeyCount(t, "same-ID signature changes", sameWire, 12)
 	assertKeyCount(t, "result-only changes", resultOnly, 4)
 	assertKeyCount(t, "old-only definitions", oldOnly, 2)
+
+	semanticVariants := make([]string, 0)
+	wireConflicts := 0
+	for wireID, codec := range universe.WireCodecs {
+		shapes := make(map[ShapeDigest]struct{})
+		for _, profile := range codec.ProfileVariants {
+			if profile.WireCodec != codec || profile.Definition.Key != codec.Key || profile.Definition.WireShape != codec.Shape {
+				wireConflicts++
+			}
+			shapes[profile.SemanticShape] = struct{}{}
+		}
+		if len(shapes) > 1 {
+			semanticVariants = append(semanticVariants, fmt.Sprintf("%08x %s", wireID, codec.Key))
+		}
+	}
+	if wireConflicts != 0 {
+		t.Fatalf("cross-profile wire conflicts = %d, want 0", wireConflicts)
+	}
+	if got, want := len(semanticVariants), 14; got != want {
+		sort.Strings(semanticVariants)
+		t.Fatalf("same-ID semantic variants = %d, want %d:\n%s", got, want, semanticVariants)
+	}
 
 	for _, key := range []DefinitionKey{
 		{Category: CategoryType, QName: "chatAdminRights"},

@@ -30,15 +30,19 @@ func (c Category) String() string {
 	return "type"
 }
 
-// DefinitionKey is the stable semantic identity of a constructor or method.
-type DefinitionKey struct {
+// SemanticKey is the stable semantic identity of a constructor or method.
+// Wire IDs are deliberately not part of semantic identity.
+type SemanticKey struct {
 	Category Category
 	QName    string
 }
 
-func (k DefinitionKey) String() string {
+func (k SemanticKey) String() string {
 	return k.Category.String() + ":" + k.QName
 }
+
+// DefinitionKey is kept as a source-compatible name for SemanticKey.
+type DefinitionKey = SemanticKey
 
 // SourceRef records the immutable provenance of one layer schema.
 type SourceRef struct {
@@ -78,13 +82,15 @@ type FieldShape struct {
 
 // Definition is one constructor or method in one concrete layer.
 type Definition struct {
-	Key            DefinitionKey
+	Key            SemanticKey
 	WireID         uint32
 	GenericParams  []string
 	Fields         []FieldShape
 	Result         TypeRef
 	Base           bool
+	WireShape      WireShape
 	BodyShape      ShapeDigest
+	SemanticShape  ShapeDigest
 	SignatureShape ShapeDigest
 }
 
@@ -93,9 +99,9 @@ type SchemaModel struct {
 	Layer               int
 	Source              SourceRef
 	Definitions         []*Definition
-	ByKey               map[DefinitionKey]*Definition
+	ByKey               map[SemanticKey]*Definition
 	ByWire              map[uint32]*Definition
-	ConstructorsByClass map[string][]DefinitionKey
+	ConstructorsByClass map[string][]SemanticKey
 
 	raw *tl.Schema
 }
@@ -124,15 +130,15 @@ func BuildSchema(schema *tl.Schema, source SourceRef) (*SchemaModel, error) {
 	model := &SchemaModel{
 		Layer:               layer,
 		Source:              source,
-		ByKey:               make(map[DefinitionKey]*Definition, len(schema.Definitions)),
+		ByKey:               make(map[SemanticKey]*Definition, len(schema.Definitions)),
 		ByWire:              make(map[uint32]*Definition, len(schema.Definitions)),
-		ConstructorsByClass: make(map[string][]DefinitionKey),
+		ConstructorsByClass: make(map[string][]SemanticKey),
 		raw:                 cloneSchema(schema),
 	}
 
 	for _, schemaDef := range schema.Definitions {
 		d := schemaDef.Definition
-		key := DefinitionKey{
+		key := SemanticKey{
 			Category: categoryFromTL(schemaDef.Category),
 			QName:    qualifyDefinition(d),
 		}
@@ -192,6 +198,8 @@ func BuildSchema(schema *tl.Schema, source SourceRef) (*SchemaModel, error) {
 		}
 		def.BodyShape = bodyShape(def)
 		def.SignatureShape = signatureShape(def)
+		def.SemanticShape = def.SignatureShape
+		def.WireShape = payloadWireShape(def)
 		model.Definitions = append(model.Definitions, def)
 		model.ByKey[key] = def
 		model.ByWire[d.ID] = def
@@ -290,7 +298,7 @@ func validateReferences(schema *SchemaModel) error {
 	return nil
 }
 
-func validateTypeReference(ref TypeRef, classes map[string][]DefinitionKey, constructors map[string]struct{}) error {
+func validateTypeReference(ref TypeRef, classes map[string][]SemanticKey, constructors map[string]struct{}) error {
 	if ref.Arg != nil {
 		if err := validateTypeReference(*ref.Arg, classes, constructors); err != nil {
 			return err

@@ -37,7 +37,7 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 	}
 
 	original := generateSnapshot(t, originalSchema)
-	adapted := generateSnapshot(t, universe.CanonicalSchema())
+	adapted := generateSchemaSetSnapshot(t, universe)
 	if len(original) != len(adapted) {
 		t.Fatalf("generated files = %d, adapter files = %d", len(original), len(adapted))
 	}
@@ -60,7 +60,27 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 
 func generateSnapshot(t *testing.T, schema *tl.Schema) sourceSnapshot {
 	t.Helper()
-	options := GeneratorOptions{
+	generator, err := NewGenerator(schema, canonicalTestGeneratorOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+	return generateGeneratorSnapshot(t, generator)
+}
+
+func generateSchemaSetSnapshot(t *testing.T, schemaSet *SchemaSet) sourceSnapshot {
+	t.Helper()
+	generator, err := NewSchemaSetGenerator(schemaSet, canonicalTestGeneratorOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if generator.SchemaSet() != schemaSet {
+		t.Fatal("generator did not retain the normalized schema set")
+	}
+	return generateGeneratorSnapshot(t, generator)
+}
+
+func canonicalTestGeneratorOptions() GeneratorOptions {
+	return GeneratorOptions{
 		DocBaseURL: "https://core.telegram.org/",
 		GenerateFlags: GenerateFlags{
 			Client:            true,
@@ -73,10 +93,10 @@ func generateSnapshot(t *testing.T, schema *tl.Schema) sourceSnapshot {
 			Slices:            true,
 		},
 	}
-	generator, err := NewGenerator(schema, options)
-	if err != nil {
-		t.Fatal(err)
-	}
+}
+
+func generateGeneratorSnapshot(t *testing.T, generator *Generator) sourceSnapshot {
+	t.Helper()
 	result := sourceSnapshot{}
 	if err := generator.WriteSource(result, "tg", Template()); err != nil {
 		t.Fatal(err)
