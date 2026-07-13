@@ -179,6 +179,25 @@ func {{ .Admit }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState, p
 // IDs are resolved by the generated request decoder before this map is read.
 type layerRPCHandler func(context.Context, bin.Object) (any, error)
 
+// layerRPCCanonicalResultEncoder restores the historical ServerDispatcher
+// Handle result shape on demand. Exact multi-layer dispatch keeps the raw
+// handler value so it can encode through the admitted result TypeRef without
+// allocating a canonical-only box on the hot path.
+type layerRPCCanonicalResultEncoder func(any) (bin.Encoder, error)
+
+type layerRPCRegisteredHandler struct {
+    invoke layerRPCHandler
+    canonicalResult layerRPCCanonicalResultEncoder
+}
+
+func layerRPCDirectCanonicalResult(value any) (bin.Encoder, error) {
+    encoded, ok := value.(bin.Encoder)
+    if !ok {
+        return nil, fmt.Errorf("tg: canonical RPC result has type %T, want bin.Encoder", value)
+    }
+    return encoded, nil
+}
+
 // LayerRPCResult is the immutable public carrier returned by generated RPC
 // dispatch. It preserves the exact admitted call for direct delivery and can
 // defensively freeze the canonical handler value for retry, cache, or rewrap.
@@ -290,6 +309,7 @@ func (p *layerRPCAdmissionPreflightRunner) run(profile LayerProfile, semantic La
 type layerRPCServerResult struct {
     prepared LayerPreparedCall
     value any
+    canonicalResult layerRPCCanonicalResultEncoder
 }
 
 func (r *layerRPCServerResult) Prepared() LayerPreparedCall {
@@ -311,6 +331,16 @@ func (r *layerRPCServerResult) Prepare() (LayerPreparedResult, error) {
     return r.prepared.Call().prepareResult(r.value)
 }
 
+func (r *layerRPCServerResult) encodeCanonicalResult() (bin.Encoder, error) {
+    if r == nil {
+        return nil, errors.New("can't encode nil canonical layer RPC result")
+    }
+    if r.canonicalResult == nil {
+        return nil, &LayerCodecError{Operation: "encode canonical RPC result", Profile: r.prepared.Call().Profile(), Semantic: r.prepared.Call().Method(), WireID: r.prepared.Call().WireID(), Reason: "canonical result adapter is not registered"}
+    }
+    return r.canonicalResult(r.value)
+}
+
 // Encode uses the immutable call descriptor captured at admission. RPC
 // results therefore use the same generated bound codec core as EncodeLayer
 // and can never observe a later session-layer change.
@@ -325,7 +355,7 @@ var _ LayerRPCResult = (*layerRPCServerResult)(nil)
 
 type ServerDispatcher struct {
     fallback func(ctx context.Context, b *bin.Buffer) (bin.Encoder, error)
-    handlers map[LayerSemanticID]layerRPCHandler
+    handlers map[LayerSemanticID]layerRPCRegisteredHandler
     wrapperConsumer LayerRPCWrapperConsumer
     admissionPreflight LayerRPCAdmissionPreflight
 }
@@ -333,7 +363,7 @@ type ServerDispatcher struct {
 func NewServerDispatcher(fallback func(ctx context.Context, b *bin.Buffer) (bin.Encoder, error)) *ServerDispatcher {
     return &ServerDispatcher{
         fallback: fallback,
-        handlers: make(map[LayerSemanticID]layerRPCHandler),
+        handlers: make(map[LayerSemanticID]layerRPCRegisteredHandler),
     }
 }
 
@@ -360,23 +390,32 @@ func (s *ServerDispatcher) OnLayerRPCAdmissionPreflight(callback LayerRPCAdmissi
 // register preserves the existing OnX facade while rejecting accidental
 // duplicate ownership of one semantic method. Multiple layer wire IDs do not
 // create multiple registrations.
-func (s *ServerDispatcher) register(method LayerSemanticID, handler layerRPCHandler) {
+func (s *ServerDispatcher) register(method LayerSemanticID, handler layerRPCHandler, canonicalResult layerRPCCanonicalResultEncoder) {
     if s == nil {
         panic("tg: register layer RPC handler on nil ServerDispatcher")
     }
     if handler == nil {
         panic("tg: register nil layer RPC handler")
     }
+    if canonicalResult == nil {
+        panic("tg: register nil canonical layer RPC result encoder")
+    }
     if _, duplicate := s.handlers[method]; duplicate {
         category, qname, _ := LayerSemanticName(method)
         panic(fmt.Sprintf("tg: duplicate layer RPC handler for %s:%s", category, qname))
     }
-    s.handlers[method] = handler
+    s.handlers[method] = layerRPCRegisteredHandler{invoke: handler, canonicalResult: canonicalResult}
 }
 
-// Handle retains the canonical ServerDispatcher API.
+// Handle retains the historical canonical ServerDispatcher API, including
+// its concrete result boxes. New exact-profile callers should use
+// AdmitLayer/DispatchAdmitted (or HandleLayer) and keep the frozen TypeRef.
 func (s *ServerDispatcher) Handle(ctx context.Context, b *bin.Buffer) (bin.Encoder, error) {
-    return s.HandleLayer(LayerProfileCanonical, ctx, b)
+    encoded, err := s.HandleLayer(LayerProfileCanonical, ctx, b)
+    if err != nil { return nil, err }
+    result, ok := encoded.(*layerRPCServerResult)
+    if !ok { return encoded, nil }
+    return result.encodeCanonicalResult()
 }
 
 func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight) (LayerRequest, error) {
@@ -471,8 +510,8 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
         call.canonicalResult == nil || call.wireResult == nil || call.canonical.ref == nil || call.result.ref == nil {
         return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "invalid or zero prepared admission"}
     }
-    handler := s.handlers[call.Method()]
-    if handler == nil {
+    handler, ok := s.handlers[call.Method()]
+    if !ok || handler.invoke == nil || handler.canonicalResult == nil {
         return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "RPC handler is not registered"}
     }
     needsConsumer := layerRPCNeedsWrapperConsumer(admitted)
@@ -488,9 +527,9 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
         if handlerCtx == nil {
             return &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "nil handler context"}
         }
-        value, err := handler(handlerCtx, lease.request)
+        value, err := handler.invoke(handlerCtx, lease.request)
         if err != nil { return err }
-        result = &layerRPCServerResult{prepared: prepared, value: value}
+        result = &layerRPCServerResult{prepared: prepared, value: value, canonicalResult: handler.canonicalResult}
         return nil
     }
     if !needsConsumer {
@@ -593,7 +632,13 @@ func (s *ServerDispatcher) On{{ $s.Method }}(f func({{ template "request_params"
             return nil, err
         }
         return response, nil
-    })
+    }, {{- if not $s.ResultVector }} layerRPCDirectCanonicalResult{{ else }} func(value any) (bin.Encoder, error) {
+        response, ok := value.({{ template "slice_result_name" $s }})
+        if !ok {
+            return nil, fmt.Errorf("tg: canonical {{ $s.RawName }} result has type %T, want {{ template "slice_result_name" $s }}", value)
+        }
+        return &{{ $s.Result }}{Elems: response}, nil
+    }{{ end }})
 }
 {{- else }}
 func (s *ServerDispatcher) On{{ $s.Method }}(f func({{ template "request_params" $s }}) ({{if ne $s.Result "BoolClass"}}{{ $s.Result }}{{ else }}bool{{ end }}, error)) {
@@ -609,7 +654,25 @@ func (s *ServerDispatcher) On{{ $s.Method }}(f func({{ template "request_params"
             return nil, err
         }
         return response, nil
-    })
+    }, {{- if eq $s.Result "BoolClass" }} func(value any) (bin.Encoder, error) {
+        response, ok := value.(bool)
+        if !ok {
+            return nil, fmt.Errorf("tg: canonical {{ $s.RawName }} result has type %T, want bool", value)
+        }
+        if response {
+            return &BoolBox{Bool: &BoolTrue{}}, nil
+        }
+        return &BoolBox{Bool: &BoolFalse{}}, nil
+    }{{ else }} func(value any) (bin.Encoder, error) {
+        if value == nil {
+            return &{{ $s.ResultFunc }}Box{}, nil
+        }
+        response, ok := value.({{ $s.Result }})
+        if !ok {
+            return nil, fmt.Errorf("tg: canonical {{ $s.RawName }} result has type %T, want {{ $s.Result }}", value)
+        }
+        return &{{ $s.ResultFunc }}Box{ {{ $s.ResultBaseName }}: response }, nil
+    }{{ end }})
 }
 {{- end }}
 {{- else }}
@@ -625,7 +688,7 @@ func (s *ServerDispatcher) On{{ $s.Method }}(f func({{ template "request_params"
             return nil, err
         }
         return &Ok{}, nil
-    })
+    }, layerRPCDirectCanonicalResult)
 }
 {{- end }}
 {{ end }}{{- end }}

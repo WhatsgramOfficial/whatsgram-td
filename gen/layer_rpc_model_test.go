@@ -15,12 +15,19 @@ const layerRPCSyntheticOne = `
 ---types---
 pong#21000001 value:int = Pong;
 oldJoin#21000002 value:int = OldJoin;
+thingOne#21000004 value:int = Thing;
+thingTwo#21000005 value:int = Thing;
+boolFalse#bc799737 = Bool;
+boolTrue#997275b5 = Bool;
 messageRange#31000001 min_id:int max_id:int = MessageRange;
 messageRangeEmpty#31000003 = MessageRange;
 ---functions---
 echo#21000010 legacy_tag:string value:int = Pong;
 join#21000011 value:int = OldJoin;
 legacy#21000012 value:int = Pong;
+confirm#21000030 = Bool;
+getThing#21000031 = Thing;
+listIDs#21000032 = Vector<int>;
 invokeAfterMsg#cb9f372d {X:Type} msg_id:long query:!X = X;
 invokeAfterMsgs#365275f2 {X:Type} msg_ids:Vector<long> query:!X = X;
 invokeWithMessagesRange#31000002 {X:Type} range:MessageRange query:!X = X;
@@ -32,12 +39,19 @@ const layerRPCSyntheticTwo = `
 ---types---
 pong#21000001 value:int = Pong;
 newJoin#21000003 value:int = NewJoin;
+thingOne#21000004 value:int = Thing;
+thingTwo#21000005 value:int = Thing;
+boolFalse#bc799737 = Bool;
+boolTrue#997275b5 = Bool;
 messageRange#31000001 min_id:int max_id:int = MessageRange;
 messageRangeEmpty#31000003 = MessageRange;
 ---functions---
 echo#21000020 value:int = Pong;
 join#21000021 value:int = NewJoin;
 modern#21000022 value:int = Pong;
+confirm#21000030 = Bool;
+getThing#21000031 = Thing;
+listIDs#21000032 = Vector<int>;
 invokeAfterMsg#cb9f372d {X:Type} msg_id:long query:!X = X;
 invokeAfterMsgs#365275f2 {X:Type} msg_ids:Vector<long> query:!X = X;
 invokeWithMessagesRange#31000002 {X:Type} range:MessageRange query:!X = X;

@@ -228884,6 +228884,25 @@ func layerAdmitRPC227_ffb6d4ca(profile LayerProfile, b *bin.Buffer, state *layer
 // IDs are resolved by the generated request decoder before this map is read.
 type layerRPCHandler func(context.Context, bin.Object) (any, error)
 
+// layerRPCCanonicalResultEncoder restores the historical ServerDispatcher
+// Handle result shape on demand. Exact multi-layer dispatch keeps the raw
+// handler value so it can encode through the admitted result TypeRef without
+// allocating a canonical-only box on the hot path.
+type layerRPCCanonicalResultEncoder func(any) (bin.Encoder, error)
+
+type layerRPCRegisteredHandler struct {
+	invoke          layerRPCHandler
+	canonicalResult layerRPCCanonicalResultEncoder
+}
+
+func layerRPCDirectCanonicalResult(value any) (bin.Encoder, error) {
+	encoded, ok := value.(bin.Encoder)
+	if !ok {
+		return nil, fmt.Errorf("tg: canonical RPC result has type %T, want bin.Encoder", value)
+	}
+	return encoded, nil
+}
+
 // LayerRPCResult is the immutable public carrier returned by generated RPC
 // dispatch. It preserves the exact admitted call for direct delivery and can
 // defensively freeze the canonical handler value for retry, cache, or rewrap.
@@ -229001,8 +229020,9 @@ func (p *layerRPCAdmissionPreflightRunner) run(profile LayerProfile, semantic La
 }
 
 type layerRPCServerResult struct {
-	prepared LayerPreparedCall
-	value    any
+	prepared        LayerPreparedCall
+	value           any
+	canonicalResult layerRPCCanonicalResultEncoder
 }
 
 func (r *layerRPCServerResult) Prepared() LayerPreparedCall {
@@ -229026,6 +229046,16 @@ func (r *layerRPCServerResult) Prepare() (LayerPreparedResult, error) {
 	return r.prepared.Call().prepareResult(r.value)
 }
 
+func (r *layerRPCServerResult) encodeCanonicalResult() (bin.Encoder, error) {
+	if r == nil {
+		return nil, errors.New("can't encode nil canonical layer RPC result")
+	}
+	if r.canonicalResult == nil {
+		return nil, &LayerCodecError{Operation: "encode canonical RPC result", Profile: r.prepared.Call().Profile(), Semantic: r.prepared.Call().Method(), WireID: r.prepared.Call().WireID(), Reason: "canonical result adapter is not registered"}
+	}
+	return r.canonicalResult(r.value)
+}
+
 // Encode uses the immutable call descriptor captured at admission. RPC
 // results therefore use the same generated bound codec core as EncodeLayer
 // and can never observe a later session-layer change.
@@ -229040,7 +229070,7 @@ var _ LayerRPCResult = (*layerRPCServerResult)(nil)
 
 type ServerDispatcher struct {
 	fallback           func(ctx context.Context, b *bin.Buffer) (bin.Encoder, error)
-	handlers           map[LayerSemanticID]layerRPCHandler
+	handlers           map[LayerSemanticID]layerRPCRegisteredHandler
 	wrapperConsumer    LayerRPCWrapperConsumer
 	admissionPreflight LayerRPCAdmissionPreflight
 }
@@ -229048,7 +229078,7 @@ type ServerDispatcher struct {
 func NewServerDispatcher(fallback func(ctx context.Context, b *bin.Buffer) (bin.Encoder, error)) *ServerDispatcher {
 	return &ServerDispatcher{
 		fallback: fallback,
-		handlers: make(map[LayerSemanticID]layerRPCHandler),
+		handlers: make(map[LayerSemanticID]layerRPCRegisteredHandler),
 	}
 }
 
@@ -229087,23 +229117,36 @@ func (s *ServerDispatcher) OnLayerRPCAdmissionPreflight(callback LayerRPCAdmissi
 // register preserves the existing OnX facade while rejecting accidental
 // duplicate ownership of one semantic method. Multiple layer wire IDs do not
 // create multiple registrations.
-func (s *ServerDispatcher) register(method LayerSemanticID, handler layerRPCHandler) {
+func (s *ServerDispatcher) register(method LayerSemanticID, handler layerRPCHandler, canonicalResult layerRPCCanonicalResultEncoder) {
 	if s == nil {
 		panic("tg: register layer RPC handler on nil ServerDispatcher")
 	}
 	if handler == nil {
 		panic("tg: register nil layer RPC handler")
 	}
+	if canonicalResult == nil {
+		panic("tg: register nil canonical layer RPC result encoder")
+	}
 	if _, duplicate := s.handlers[method]; duplicate {
 		category, qname, _ := LayerSemanticName(method)
 		panic(fmt.Sprintf("tg: duplicate layer RPC handler for %s:%s", category, qname))
 	}
-	s.handlers[method] = handler
+	s.handlers[method] = layerRPCRegisteredHandler{invoke: handler, canonicalResult: canonicalResult}
 }
 
-// Handle retains the canonical ServerDispatcher API.
+// Handle retains the historical canonical ServerDispatcher API, including
+// its concrete result boxes. New exact-profile callers should use
+// AdmitLayer/DispatchAdmitted (or HandleLayer) and keep the frozen TypeRef.
 func (s *ServerDispatcher) Handle(ctx context.Context, b *bin.Buffer) (bin.Encoder, error) {
-	return s.HandleLayer(LayerProfileCanonical, ctx, b)
+	encoded, err := s.HandleLayer(LayerProfileCanonical, ctx, b)
+	if err != nil {
+		return nil, err
+	}
+	result, ok := encoded.(*layerRPCServerResult)
+	if !ok {
+		return encoded, nil
+	}
+	return result.encodeCanonicalResult()
 }
 
 func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight) (LayerRequest, error) {
@@ -229204,8 +229247,8 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
 		call.canonicalResult == nil || call.wireResult == nil || call.canonical.ref == nil || call.result.ref == nil {
 		return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "invalid or zero prepared admission"}
 	}
-	handler := s.handlers[call.Method()]
-	if handler == nil {
+	handler, ok := s.handlers[call.Method()]
+	if !ok || handler.invoke == nil || handler.canonicalResult == nil {
 		return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "RPC handler is not registered"}
 	}
 	needsConsumer := layerRPCNeedsWrapperConsumer(admitted)
@@ -229221,11 +229264,11 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
 		if handlerCtx == nil {
 			return &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "nil handler context"}
 		}
-		value, err := handler(handlerCtx, lease.request)
+		value, err := handler.invoke(handlerCtx, lease.request)
 		if err != nil {
 			return err
 		}
-		result = &layerRPCServerResult{prepared: prepared, value: value}
+		result = &layerRPCServerResult{prepared: prepared, value: value, canonicalResult: handler.canonicalResult}
 		return nil
 	}
 	if !needsConsumer {
@@ -229347,6 +229390,15 @@ func (s *ServerDispatcher) OnAccountAcceptAuthorization(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.acceptAuthorization result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229363,6 +229415,15 @@ func (s *ServerDispatcher) OnAccountCancelPasswordEmail(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.cancelPasswordEmail result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229379,6 +229440,15 @@ func (s *ServerDispatcher) OnAccountChangeAuthorizationSettings(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.changeAuthorizationSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229395,6 +229465,15 @@ func (s *ServerDispatcher) OnAccountChangePhone(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.changePhone result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -229411,6 +229490,15 @@ func (s *ServerDispatcher) OnAccountCheckUsername(f func(ctx context.Context, us
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.checkUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229427,6 +229515,15 @@ func (s *ServerDispatcher) OnAccountClearRecentEmojiStatuses(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.clearRecentEmojiStatuses result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229443,6 +229540,15 @@ func (s *ServerDispatcher) OnAccountConfirmBotConnection(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.confirmBotConnection result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229459,6 +229565,15 @@ func (s *ServerDispatcher) OnAccountConfirmPasswordEmail(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.confirmPasswordEmail result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229475,6 +229590,15 @@ func (s *ServerDispatcher) OnAccountConfirmPhone(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.confirmPhone result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229491,7 +229615,7 @@ func (s *ServerDispatcher) OnAccountCreateBusinessChatLink(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountCreateTheme(f func(ctx context.Context, request *AccountCreateThemeRequest) (*Theme, error)) {
@@ -229507,7 +229631,7 @@ func (s *ServerDispatcher) OnAccountCreateTheme(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountDeclinePasswordReset(f func(ctx context.Context) (bool, error)) {
@@ -229523,6 +229647,15 @@ func (s *ServerDispatcher) OnAccountDeclinePasswordReset(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.declinePasswordReset result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229539,6 +229672,15 @@ func (s *ServerDispatcher) OnAccountDeleteAccount(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.deleteAccount result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229555,6 +229697,15 @@ func (s *ServerDispatcher) OnAccountDeleteAutoSaveExceptions(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.deleteAutoSaveExceptions result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229571,6 +229722,15 @@ func (s *ServerDispatcher) OnAccountDeleteBusinessChatLink(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.deleteBusinessChatLink result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229587,6 +229747,15 @@ func (s *ServerDispatcher) OnAccountDeletePasskey(f func(ctx context.Context, id
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.deletePasskey result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229603,6 +229772,15 @@ func (s *ServerDispatcher) OnAccountDeleteSecureValue(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.deleteSecureValue result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229619,6 +229797,15 @@ func (s *ServerDispatcher) OnAccountDeleteWebBrowserSettingsExceptions(f func(ct
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountWebBrowserSettingsBox{}, nil
+		}
+		response, ok := value.(AccountWebBrowserSettingsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.deleteWebBrowserSettingsExceptions result has type %T, want AccountWebBrowserSettingsClass", value)
+		}
+		return &AccountWebBrowserSettingsBox{WebBrowserSettings: response}, nil
 	})
 }
 
@@ -229635,6 +229822,15 @@ func (s *ServerDispatcher) OnAccountDisablePeerConnectedBot(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.disablePeerConnectedBot result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229651,7 +229847,7 @@ func (s *ServerDispatcher) OnAccountEditBusinessChatLink(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountFinishTakeoutSession(f func(ctx context.Context, request *AccountFinishTakeoutSessionRequest) (bool, error)) {
@@ -229667,6 +229863,15 @@ func (s *ServerDispatcher) OnAccountFinishTakeoutSession(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.finishTakeoutSession result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229683,7 +229888,7 @@ func (s *ServerDispatcher) OnAccountGetAccountTTL(f func(ctx context.Context) (*
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetAllSecureValues(f func(ctx context.Context) ([]SecureValue, error)) {
@@ -229699,6 +229904,12 @@ func (s *ServerDispatcher) OnAccountGetAllSecureValues(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]SecureValue)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getAllSecureValues result has type %T, want []SecureValue", value)
+		}
+		return &SecureValueVector{Elems: response}, nil
 	})
 }
 
@@ -229715,7 +229926,7 @@ func (s *ServerDispatcher) OnAccountGetAuthorizationForm(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetAuthorizations(f func(ctx context.Context) (*AccountAuthorizations, error)) {
@@ -229731,7 +229942,7 @@ func (s *ServerDispatcher) OnAccountGetAuthorizations(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetAutoDownloadSettings(f func(ctx context.Context) (*AccountAutoDownloadSettings, error)) {
@@ -229747,7 +229958,7 @@ func (s *ServerDispatcher) OnAccountGetAutoDownloadSettings(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetAutoSaveSettings(f func(ctx context.Context) (*AccountAutoSaveSettings, error)) {
@@ -229763,7 +229974,7 @@ func (s *ServerDispatcher) OnAccountGetAutoSaveSettings(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetBotBusinessConnection(f func(ctx context.Context, connectionid string) (UpdatesClass, error)) {
@@ -229779,6 +229990,15 @@ func (s *ServerDispatcher) OnAccountGetBotBusinessConnection(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getBotBusinessConnection result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -229795,7 +230015,7 @@ func (s *ServerDispatcher) OnAccountGetBusinessChatLinks(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetChannelDefaultEmojiStatuses(f func(ctx context.Context, hash int64) (AccountEmojiStatusesClass, error)) {
@@ -229811,6 +230031,15 @@ func (s *ServerDispatcher) OnAccountGetChannelDefaultEmojiStatuses(f func(ctx co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountEmojiStatusesBox{}, nil
+		}
+		response, ok := value.(AccountEmojiStatusesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getChannelDefaultEmojiStatuses result has type %T, want AccountEmojiStatusesClass", value)
+		}
+		return &AccountEmojiStatusesBox{EmojiStatuses: response}, nil
 	})
 }
 
@@ -229827,6 +230056,15 @@ func (s *ServerDispatcher) OnAccountGetChannelRestrictedStatusEmojis(f func(ctx 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EmojiListBox{}, nil
+		}
+		response, ok := value.(EmojiListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getChannelRestrictedStatusEmojis result has type %T, want EmojiListClass", value)
+		}
+		return &EmojiListBox{EmojiList: response}, nil
 	})
 }
 
@@ -229843,6 +230081,15 @@ func (s *ServerDispatcher) OnAccountGetChatThemes(f func(ctx context.Context, ha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountThemesBox{}, nil
+		}
+		response, ok := value.(AccountThemesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getChatThemes result has type %T, want AccountThemesClass", value)
+		}
+		return &AccountThemesBox{Themes: response}, nil
 	})
 }
 
@@ -229859,6 +230106,15 @@ func (s *ServerDispatcher) OnAccountGetCollectibleEmojiStatuses(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountEmojiStatusesBox{}, nil
+		}
+		response, ok := value.(AccountEmojiStatusesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getCollectibleEmojiStatuses result has type %T, want AccountEmojiStatusesClass", value)
+		}
+		return &AccountEmojiStatusesBox{EmojiStatuses: response}, nil
 	})
 }
 
@@ -229875,7 +230131,7 @@ func (s *ServerDispatcher) OnAccountGetConnectedBots(f func(ctx context.Context)
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetContactSignUpNotification(f func(ctx context.Context) (bool, error)) {
@@ -229891,6 +230147,15 @@ func (s *ServerDispatcher) OnAccountGetContactSignUpNotification(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getContactSignUpNotification result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -229907,7 +230172,7 @@ func (s *ServerDispatcher) OnAccountGetContentSettings(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetDefaultBackgroundEmojis(f func(ctx context.Context, hash int64) (EmojiListClass, error)) {
@@ -229923,6 +230188,15 @@ func (s *ServerDispatcher) OnAccountGetDefaultBackgroundEmojis(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EmojiListBox{}, nil
+		}
+		response, ok := value.(EmojiListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getDefaultBackgroundEmojis result has type %T, want EmojiListClass", value)
+		}
+		return &EmojiListBox{EmojiList: response}, nil
 	})
 }
 
@@ -229939,6 +230213,15 @@ func (s *ServerDispatcher) OnAccountGetDefaultEmojiStatuses(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountEmojiStatusesBox{}, nil
+		}
+		response, ok := value.(AccountEmojiStatusesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getDefaultEmojiStatuses result has type %T, want AccountEmojiStatusesClass", value)
+		}
+		return &AccountEmojiStatusesBox{EmojiStatuses: response}, nil
 	})
 }
 
@@ -229955,6 +230238,15 @@ func (s *ServerDispatcher) OnAccountGetDefaultGroupPhotoEmojis(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EmojiListBox{}, nil
+		}
+		response, ok := value.(EmojiListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getDefaultGroupPhotoEmojis result has type %T, want EmojiListClass", value)
+		}
+		return &EmojiListBox{EmojiList: response}, nil
 	})
 }
 
@@ -229971,6 +230263,15 @@ func (s *ServerDispatcher) OnAccountGetDefaultProfilePhotoEmojis(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EmojiListBox{}, nil
+		}
+		response, ok := value.(EmojiListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getDefaultProfilePhotoEmojis result has type %T, want EmojiListClass", value)
+		}
+		return &EmojiListBox{EmojiList: response}, nil
 	})
 }
 
@@ -229987,7 +230288,7 @@ func (s *ServerDispatcher) OnAccountGetGlobalPrivacySettings(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetMultiWallPapers(f func(ctx context.Context, wallpapers []InputWallPaperClass) ([]WallPaperClass, error)) {
@@ -230003,6 +230304,12 @@ func (s *ServerDispatcher) OnAccountGetMultiWallPapers(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]WallPaperClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getMultiWallPapers result has type %T, want []WallPaperClass", value)
+		}
+		return &WallPaperClassVector{Elems: response}, nil
 	})
 }
 
@@ -230019,6 +230326,15 @@ func (s *ServerDispatcher) OnAccountGetNotifyExceptions(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getNotifyExceptions result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -230035,7 +230351,7 @@ func (s *ServerDispatcher) OnAccountGetNotifySettings(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetPaidMessagesRevenue(f func(ctx context.Context, request *AccountGetPaidMessagesRevenueRequest) (*AccountPaidMessagesRevenue, error)) {
@@ -230051,7 +230367,7 @@ func (s *ServerDispatcher) OnAccountGetPaidMessagesRevenue(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetPasskeys(f func(ctx context.Context) (*AccountPasskeys, error)) {
@@ -230067,7 +230383,7 @@ func (s *ServerDispatcher) OnAccountGetPasskeys(f func(ctx context.Context) (*Ac
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetPassword(f func(ctx context.Context) (*AccountPassword, error)) {
@@ -230083,7 +230399,7 @@ func (s *ServerDispatcher) OnAccountGetPassword(f func(ctx context.Context) (*Ac
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetPasswordSettings(f func(ctx context.Context, password InputCheckPasswordSRPClass) (*AccountPasswordSettings, error)) {
@@ -230099,7 +230415,7 @@ func (s *ServerDispatcher) OnAccountGetPasswordSettings(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetPrivacy(f func(ctx context.Context, key InputPrivacyKeyClass) (*AccountPrivacyRules, error)) {
@@ -230115,7 +230431,7 @@ func (s *ServerDispatcher) OnAccountGetPrivacy(f func(ctx context.Context, key I
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetReactionsNotifySettings(f func(ctx context.Context) (*ReactionsNotifySettings, error)) {
@@ -230131,7 +230447,7 @@ func (s *ServerDispatcher) OnAccountGetReactionsNotifySettings(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetRecentEmojiStatuses(f func(ctx context.Context, hash int64) (AccountEmojiStatusesClass, error)) {
@@ -230147,6 +230463,15 @@ func (s *ServerDispatcher) OnAccountGetRecentEmojiStatuses(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountEmojiStatusesBox{}, nil
+		}
+		response, ok := value.(AccountEmojiStatusesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getRecentEmojiStatuses result has type %T, want AccountEmojiStatusesClass", value)
+		}
+		return &AccountEmojiStatusesBox{EmojiStatuses: response}, nil
 	})
 }
 
@@ -230163,6 +230488,15 @@ func (s *ServerDispatcher) OnAccountGetSavedMusicIDs(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountSavedMusicIDsBox{}, nil
+		}
+		response, ok := value.(AccountSavedMusicIDsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getSavedMusicIds result has type %T, want AccountSavedMusicIDsClass", value)
+		}
+		return &AccountSavedMusicIDsBox{SavedMusicIds: response}, nil
 	})
 }
 
@@ -230179,6 +230513,15 @@ func (s *ServerDispatcher) OnAccountGetSavedRingtones(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountSavedRingtonesBox{}, nil
+		}
+		response, ok := value.(AccountSavedRingtonesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getSavedRingtones result has type %T, want AccountSavedRingtonesClass", value)
+		}
+		return &AccountSavedRingtonesBox{SavedRingtones: response}, nil
 	})
 }
 
@@ -230195,6 +230538,12 @@ func (s *ServerDispatcher) OnAccountGetSecureValue(f func(ctx context.Context, t
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]SecureValue)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getSecureValue result has type %T, want []SecureValue", value)
+		}
+		return &SecureValueVector{Elems: response}, nil
 	})
 }
 
@@ -230211,7 +230560,7 @@ func (s *ServerDispatcher) OnAccountGetTheme(f func(ctx context.Context, request
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetThemes(f func(ctx context.Context, request *AccountGetThemesRequest) (AccountThemesClass, error)) {
@@ -230227,6 +230576,15 @@ func (s *ServerDispatcher) OnAccountGetThemes(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountThemesBox{}, nil
+		}
+		response, ok := value.(AccountThemesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getThemes result has type %T, want AccountThemesClass", value)
+		}
+		return &AccountThemesBox{Themes: response}, nil
 	})
 }
 
@@ -230243,7 +230601,7 @@ func (s *ServerDispatcher) OnAccountGetTmpPassword(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetUniqueGiftChatThemes(f func(ctx context.Context, request *AccountGetUniqueGiftChatThemesRequest) (AccountChatThemesClass, error)) {
@@ -230259,6 +230617,15 @@ func (s *ServerDispatcher) OnAccountGetUniqueGiftChatThemes(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountChatThemesBox{}, nil
+		}
+		response, ok := value.(AccountChatThemesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getUniqueGiftChatThemes result has type %T, want AccountChatThemesClass", value)
+		}
+		return &AccountChatThemesBox{ChatThemes: response}, nil
 	})
 }
 
@@ -230275,6 +230642,15 @@ func (s *ServerDispatcher) OnAccountGetWallPaper(f func(ctx context.Context, wal
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &WallPaperBox{}, nil
+		}
+		response, ok := value.(WallPaperClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getWallPaper result has type %T, want WallPaperClass", value)
+		}
+		return &WallPaperBox{WallPaper: response}, nil
 	})
 }
 
@@ -230291,6 +230667,15 @@ func (s *ServerDispatcher) OnAccountGetWallPapers(f func(ctx context.Context, ha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountWallPapersBox{}, nil
+		}
+		response, ok := value.(AccountWallPapersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getWallPapers result has type %T, want AccountWallPapersClass", value)
+		}
+		return &AccountWallPapersBox{WallPapers: response}, nil
 	})
 }
 
@@ -230307,7 +230692,7 @@ func (s *ServerDispatcher) OnAccountGetWebAuthorizations(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountGetWebBrowserSettings(f func(ctx context.Context, hash int64) (AccountWebBrowserSettingsClass, error)) {
@@ -230323,6 +230708,15 @@ func (s *ServerDispatcher) OnAccountGetWebBrowserSettings(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountWebBrowserSettingsBox{}, nil
+		}
+		response, ok := value.(AccountWebBrowserSettingsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.getWebBrowserSettings result has type %T, want AccountWebBrowserSettingsClass", value)
+		}
+		return &AccountWebBrowserSettingsBox{WebBrowserSettings: response}, nil
 	})
 }
 
@@ -230339,7 +230733,7 @@ func (s *ServerDispatcher) OnAccountInitPasskeyRegistration(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountInitTakeoutSession(f func(ctx context.Context, request *AccountInitTakeoutSessionRequest) (*AccountTakeout, error)) {
@@ -230355,7 +230749,7 @@ func (s *ServerDispatcher) OnAccountInitTakeoutSession(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountInstallTheme(f func(ctx context.Context, request *AccountInstallThemeRequest) (bool, error)) {
@@ -230371,6 +230765,15 @@ func (s *ServerDispatcher) OnAccountInstallTheme(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.installTheme result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230387,6 +230790,15 @@ func (s *ServerDispatcher) OnAccountInstallWallPaper(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.installWallPaper result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230403,6 +230815,15 @@ func (s *ServerDispatcher) OnAccountInvalidateSignInCodes(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.invalidateSignInCodes result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230419,6 +230840,15 @@ func (s *ServerDispatcher) OnAccountRegisterDevice(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.registerDevice result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230435,7 +230865,7 @@ func (s *ServerDispatcher) OnAccountRegisterPasskey(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountReorderUsernames(f func(ctx context.Context, order []string) (bool, error)) {
@@ -230451,6 +230881,15 @@ func (s *ServerDispatcher) OnAccountReorderUsernames(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.reorderUsernames result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230467,6 +230906,15 @@ func (s *ServerDispatcher) OnAccountReportPeer(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.reportPeer result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230483,6 +230931,15 @@ func (s *ServerDispatcher) OnAccountReportProfilePhoto(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.reportProfilePhoto result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230499,6 +230956,15 @@ func (s *ServerDispatcher) OnAccountResendPasswordEmail(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resendPasswordEmail result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230515,6 +230981,15 @@ func (s *ServerDispatcher) OnAccountResetAuthorization(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resetAuthorization result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230531,6 +231006,15 @@ func (s *ServerDispatcher) OnAccountResetNotifySettings(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resetNotifySettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230547,6 +231031,15 @@ func (s *ServerDispatcher) OnAccountResetPassword(f func(ctx context.Context) (A
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountResetPasswordResultBox{}, nil
+		}
+		response, ok := value.(AccountResetPasswordResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resetPassword result has type %T, want AccountResetPasswordResultClass", value)
+		}
+		return &AccountResetPasswordResultBox{ResetPasswordResult: response}, nil
 	})
 }
 
@@ -230563,6 +231056,15 @@ func (s *ServerDispatcher) OnAccountResetWallPapers(f func(ctx context.Context) 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resetWallPapers result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230579,6 +231081,15 @@ func (s *ServerDispatcher) OnAccountResetWebAuthorization(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resetWebAuthorization result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230595,6 +231106,15 @@ func (s *ServerDispatcher) OnAccountResetWebAuthorizations(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.resetWebAuthorizations result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230611,7 +231131,7 @@ func (s *ServerDispatcher) OnAccountResolveBusinessChatLink(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountSaveAutoDownloadSettings(f func(ctx context.Context, request *AccountSaveAutoDownloadSettingsRequest) (bool, error)) {
@@ -230627,6 +231147,15 @@ func (s *ServerDispatcher) OnAccountSaveAutoDownloadSettings(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.saveAutoDownloadSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230643,6 +231172,15 @@ func (s *ServerDispatcher) OnAccountSaveAutoSaveSettings(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.saveAutoSaveSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230659,6 +231197,15 @@ func (s *ServerDispatcher) OnAccountSaveMusic(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.saveMusic result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230675,6 +231222,15 @@ func (s *ServerDispatcher) OnAccountSaveRingtone(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountSavedRingtoneBox{}, nil
+		}
+		response, ok := value.(AccountSavedRingtoneClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.saveRingtone result has type %T, want AccountSavedRingtoneClass", value)
+		}
+		return &AccountSavedRingtoneBox{SavedRingtone: response}, nil
 	})
 }
 
@@ -230691,7 +231247,7 @@ func (s *ServerDispatcher) OnAccountSaveSecureValue(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountSaveTheme(f func(ctx context.Context, request *AccountSaveThemeRequest) (bool, error)) {
@@ -230707,6 +231263,15 @@ func (s *ServerDispatcher) OnAccountSaveTheme(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.saveTheme result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230723,6 +231288,15 @@ func (s *ServerDispatcher) OnAccountSaveWallPaper(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.saveWallPaper result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230739,6 +231313,15 @@ func (s *ServerDispatcher) OnAccountSendChangePhoneCode(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.sendChangePhoneCode result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -230755,6 +231338,15 @@ func (s *ServerDispatcher) OnAccountSendConfirmPhoneCode(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.sendConfirmPhoneCode result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -230771,7 +231363,7 @@ func (s *ServerDispatcher) OnAccountSendVerifyEmailCode(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountSendVerifyPhoneCode(f func(ctx context.Context, request *AccountSendVerifyPhoneCodeRequest) (AuthSentCodeClass, error)) {
@@ -230787,6 +231379,15 @@ func (s *ServerDispatcher) OnAccountSendVerifyPhoneCode(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.sendVerifyPhoneCode result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -230803,6 +231404,15 @@ func (s *ServerDispatcher) OnAccountSetAccountTTL(f func(ctx context.Context, tt
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.setAccountTTL result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230819,6 +231429,15 @@ func (s *ServerDispatcher) OnAccountSetAuthorizationTTL(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.setAuthorizationTTL result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230835,6 +231454,15 @@ func (s *ServerDispatcher) OnAccountSetContactSignUpNotification(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.setContactSignUpNotification result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230851,6 +231479,15 @@ func (s *ServerDispatcher) OnAccountSetContentSettings(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.setContentSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230867,7 +231504,7 @@ func (s *ServerDispatcher) OnAccountSetGlobalPrivacySettings(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountSetMainProfileTab(f func(ctx context.Context, tab ProfileTabClass) (bool, error)) {
@@ -230883,6 +231520,15 @@ func (s *ServerDispatcher) OnAccountSetMainProfileTab(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.setMainProfileTab result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230899,7 +231545,7 @@ func (s *ServerDispatcher) OnAccountSetPrivacy(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountSetReactionsNotifySettings(f func(ctx context.Context, settings ReactionsNotifySettings) (*ReactionsNotifySettings, error)) {
@@ -230915,7 +231561,7 @@ func (s *ServerDispatcher) OnAccountSetReactionsNotifySettings(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountToggleConnectedBotPaused(f func(ctx context.Context, request *AccountToggleConnectedBotPausedRequest) (bool, error)) {
@@ -230931,6 +231577,15 @@ func (s *ServerDispatcher) OnAccountToggleConnectedBotPaused(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.toggleConnectedBotPaused result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230947,6 +231602,15 @@ func (s *ServerDispatcher) OnAccountToggleNoPaidMessagesException(f func(ctx con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.toggleNoPaidMessagesException result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230963,6 +231627,15 @@ func (s *ServerDispatcher) OnAccountToggleSponsoredMessages(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.toggleSponsoredMessages result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230979,6 +231652,15 @@ func (s *ServerDispatcher) OnAccountToggleUsername(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.toggleUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -230995,6 +231677,15 @@ func (s *ServerDispatcher) OnAccountToggleWebBrowserSettingsException(f func(ctx
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.toggleWebBrowserSettingsException result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -231011,6 +231702,15 @@ func (s *ServerDispatcher) OnAccountUnregisterDevice(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.unregisterDevice result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231027,6 +231727,15 @@ func (s *ServerDispatcher) OnAccountUpdateBirthday(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateBirthday result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231043,6 +231752,15 @@ func (s *ServerDispatcher) OnAccountUpdateBusinessAwayMessage(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateBusinessAwayMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231059,6 +231777,15 @@ func (s *ServerDispatcher) OnAccountUpdateBusinessGreetingMessage(f func(ctx con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateBusinessGreetingMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231075,6 +231802,15 @@ func (s *ServerDispatcher) OnAccountUpdateBusinessIntro(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateBusinessIntro result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231091,6 +231827,15 @@ func (s *ServerDispatcher) OnAccountUpdateBusinessLocation(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateBusinessLocation result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231107,6 +231852,15 @@ func (s *ServerDispatcher) OnAccountUpdateBusinessWorkHours(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateBusinessWorkHours result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231123,6 +231877,15 @@ func (s *ServerDispatcher) OnAccountUpdateColor(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateColor result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231139,6 +231902,15 @@ func (s *ServerDispatcher) OnAccountUpdateConnectedBot(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateConnectedBot result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -231155,6 +231927,15 @@ func (s *ServerDispatcher) OnAccountUpdateDeviceLocked(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateDeviceLocked result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231171,6 +231952,15 @@ func (s *ServerDispatcher) OnAccountUpdateEmojiStatus(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateEmojiStatus result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231187,6 +231977,15 @@ func (s *ServerDispatcher) OnAccountUpdateNotifySettings(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateNotifySettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231203,6 +232002,15 @@ func (s *ServerDispatcher) OnAccountUpdatePasswordSettings(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updatePasswordSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231219,6 +232027,15 @@ func (s *ServerDispatcher) OnAccountUpdatePersonalChannel(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updatePersonalChannel result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231235,6 +232052,15 @@ func (s *ServerDispatcher) OnAccountUpdateProfile(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateProfile result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -231251,6 +232077,15 @@ func (s *ServerDispatcher) OnAccountUpdateStatus(f func(ctx context.Context, off
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateStatus result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231267,7 +232102,7 @@ func (s *ServerDispatcher) OnAccountUpdateTheme(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAccountUpdateUsername(f func(ctx context.Context, username string) (UserClass, error)) {
@@ -231283,6 +232118,15 @@ func (s *ServerDispatcher) OnAccountUpdateUsername(f func(ctx context.Context, u
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateUsername result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -231299,6 +232143,15 @@ func (s *ServerDispatcher) OnAccountUpdateWebBrowserSettings(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountWebBrowserSettingsBox{}, nil
+		}
+		response, ok := value.(AccountWebBrowserSettingsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.updateWebBrowserSettings result has type %T, want AccountWebBrowserSettingsClass", value)
+		}
+		return &AccountWebBrowserSettingsBox{WebBrowserSettings: response}, nil
 	})
 }
 
@@ -231315,6 +232168,15 @@ func (s *ServerDispatcher) OnAccountUploadRingtone(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &DocumentBox{}, nil
+		}
+		response, ok := value.(DocumentClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.uploadRingtone result has type %T, want DocumentClass", value)
+		}
+		return &DocumentBox{Document: response}, nil
 	})
 }
 
@@ -231331,6 +232193,15 @@ func (s *ServerDispatcher) OnAccountUploadTheme(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &DocumentBox{}, nil
+		}
+		response, ok := value.(DocumentClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.uploadTheme result has type %T, want DocumentClass", value)
+		}
+		return &DocumentBox{Document: response}, nil
 	})
 }
 
@@ -231347,6 +232218,15 @@ func (s *ServerDispatcher) OnAccountUploadWallPaper(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &WallPaperBox{}, nil
+		}
+		response, ok := value.(WallPaperClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.uploadWallPaper result has type %T, want WallPaperClass", value)
+		}
+		return &WallPaperBox{WallPaper: response}, nil
 	})
 }
 
@@ -231363,6 +232243,15 @@ func (s *ServerDispatcher) OnAccountVerifyEmail(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AccountEmailVerifiedBox{}, nil
+		}
+		response, ok := value.(AccountEmailVerifiedClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.verifyEmail result has type %T, want AccountEmailVerifiedClass", value)
+		}
+		return &AccountEmailVerifiedBox{EmailVerified: response}, nil
 	})
 }
 
@@ -231379,6 +232268,15 @@ func (s *ServerDispatcher) OnAccountVerifyPhone(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical account.verifyPhone result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231395,6 +232293,15 @@ func (s *ServerDispatcher) OnAicomposeCreateTone(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AiComposeToneBox{}, nil
+		}
+		response, ok := value.(AiComposeToneClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical aicompose.createTone result has type %T, want AiComposeToneClass", value)
+		}
+		return &AiComposeToneBox{AiComposeTone: response}, nil
 	})
 }
 
@@ -231411,6 +232318,15 @@ func (s *ServerDispatcher) OnAicomposeDeleteTone(f func(ctx context.Context, ton
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical aicompose.deleteTone result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231427,6 +232343,15 @@ func (s *ServerDispatcher) OnAicomposeGetTone(f func(ctx context.Context, tone I
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AicomposeTonesBox{}, nil
+		}
+		response, ok := value.(AicomposeTonesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical aicompose.getTone result has type %T, want AicomposeTonesClass", value)
+		}
+		return &AicomposeTonesBox{Tones: response}, nil
 	})
 }
 
@@ -231443,7 +232368,7 @@ func (s *ServerDispatcher) OnAicomposeGetToneExample(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAicomposeGetTones(f func(ctx context.Context, hash int64) (AicomposeTonesClass, error)) {
@@ -231459,6 +232384,15 @@ func (s *ServerDispatcher) OnAicomposeGetTones(f func(ctx context.Context, hash 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AicomposeTonesBox{}, nil
+		}
+		response, ok := value.(AicomposeTonesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical aicompose.getTones result has type %T, want AicomposeTonesClass", value)
+		}
+		return &AicomposeTonesBox{Tones: response}, nil
 	})
 }
 
@@ -231475,6 +232409,15 @@ func (s *ServerDispatcher) OnAicomposeSaveTone(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical aicompose.saveTone result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231491,6 +232434,15 @@ func (s *ServerDispatcher) OnAicomposeUpdateTone(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AiComposeToneBox{}, nil
+		}
+		response, ok := value.(AiComposeToneClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical aicompose.updateTone result has type %T, want AiComposeToneClass", value)
+		}
+		return &AiComposeToneBox{AiComposeTone: response}, nil
 	})
 }
 
@@ -231507,7 +232459,7 @@ func (s *ServerDispatcher) OnAuthAcceptLoginToken(f func(ctx context.Context, to
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAuthBindTempAuthKey(f func(ctx context.Context, request *AuthBindTempAuthKeyRequest) (bool, error)) {
@@ -231523,6 +232475,15 @@ func (s *ServerDispatcher) OnAuthBindTempAuthKey(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.bindTempAuthKey result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231539,6 +232500,15 @@ func (s *ServerDispatcher) OnAuthCancelCode(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.cancelCode result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231555,6 +232525,15 @@ func (s *ServerDispatcher) OnAuthCheckPaidAuth(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.checkPaidAuth result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -231571,6 +232550,15 @@ func (s *ServerDispatcher) OnAuthCheckPassword(f func(ctx context.Context, passw
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.checkPassword result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231587,6 +232575,15 @@ func (s *ServerDispatcher) OnAuthCheckRecoveryPassword(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.checkRecoveryPassword result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231603,6 +232600,15 @@ func (s *ServerDispatcher) OnAuthDropTempAuthKeys(f func(ctx context.Context, ex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.dropTempAuthKeys result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231619,7 +232625,7 @@ func (s *ServerDispatcher) OnAuthExportAuthorization(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAuthExportLoginToken(f func(ctx context.Context, request *AuthExportLoginTokenRequest) (AuthLoginTokenClass, error)) {
@@ -231635,6 +232641,15 @@ func (s *ServerDispatcher) OnAuthExportLoginToken(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthLoginTokenBox{}, nil
+		}
+		response, ok := value.(AuthLoginTokenClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.exportLoginToken result has type %T, want AuthLoginTokenClass", value)
+		}
+		return &AuthLoginTokenBox{LoginToken: response}, nil
 	})
 }
 
@@ -231651,6 +232666,15 @@ func (s *ServerDispatcher) OnAuthFinishPasskeyLogin(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.finishPasskeyLogin result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231667,6 +232691,15 @@ func (s *ServerDispatcher) OnAuthImportAuthorization(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.importAuthorization result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231683,6 +232716,15 @@ func (s *ServerDispatcher) OnAuthImportBotAuthorization(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.importBotAuthorization result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231699,6 +232741,15 @@ func (s *ServerDispatcher) OnAuthImportLoginToken(f func(ctx context.Context, to
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthLoginTokenBox{}, nil
+		}
+		response, ok := value.(AuthLoginTokenClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.importLoginToken result has type %T, want AuthLoginTokenClass", value)
+		}
+		return &AuthLoginTokenBox{LoginToken: response}, nil
 	})
 }
 
@@ -231715,6 +232766,15 @@ func (s *ServerDispatcher) OnAuthImportWebTokenAuthorization(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.importWebTokenAuthorization result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231731,7 +232791,7 @@ func (s *ServerDispatcher) OnAuthInitPasskeyLogin(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAuthLogOut(f func(ctx context.Context) (*AuthLoggedOut, error)) {
@@ -231747,7 +232807,7 @@ func (s *ServerDispatcher) OnAuthLogOut(f func(ctx context.Context) (*AuthLogged
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAuthRecoverPassword(f func(ctx context.Context, request *AuthRecoverPasswordRequest) (AuthAuthorizationClass, error)) {
@@ -231763,6 +232823,15 @@ func (s *ServerDispatcher) OnAuthRecoverPassword(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.recoverPassword result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231779,6 +232848,15 @@ func (s *ServerDispatcher) OnAuthReportMissingCode(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.reportMissingCode result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231795,6 +232873,15 @@ func (s *ServerDispatcher) OnAuthRequestFirebaseSMS(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.requestFirebaseSms result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231811,7 +232898,7 @@ func (s *ServerDispatcher) OnAuthRequestPasswordRecovery(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnAuthResendCode(f func(ctx context.Context, request *AuthResendCodeRequest) (AuthSentCodeClass, error)) {
@@ -231827,6 +232914,15 @@ func (s *ServerDispatcher) OnAuthResendCode(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.resendCode result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -231843,6 +232939,15 @@ func (s *ServerDispatcher) OnAuthResetAuthorizations(f func(ctx context.Context)
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.resetAuthorizations result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231859,6 +232964,15 @@ func (s *ServerDispatcher) OnAuthResetLoginEmail(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.resetLoginEmail result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -231875,6 +232989,15 @@ func (s *ServerDispatcher) OnAuthSendCode(f func(ctx context.Context, request *A
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthSentCodeBox{}, nil
+		}
+		response, ok := value.(AuthSentCodeClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.sendCode result has type %T, want AuthSentCodeClass", value)
+		}
+		return &AuthSentCodeBox{SentCode: response}, nil
 	})
 }
 
@@ -231891,6 +233014,15 @@ func (s *ServerDispatcher) OnAuthSignIn(f func(ctx context.Context, request *Aut
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.signIn result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231907,6 +233039,15 @@ func (s *ServerDispatcher) OnAuthSignUp(f func(ctx context.Context, request *Aut
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AuthAuthorizationBox{}, nil
+		}
+		response, ok := value.(AuthAuthorizationClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical auth.signUp result has type %T, want AuthAuthorizationClass", value)
+		}
+		return &AuthAuthorizationBox{Authorization: response}, nil
 	})
 }
 
@@ -231923,7 +233064,7 @@ func (s *ServerDispatcher) OnBotsAddPreviewMedia(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsAllowSendMessage(f func(ctx context.Context, bot InputUserClass) (UpdatesClass, error)) {
@@ -231939,6 +233080,15 @@ func (s *ServerDispatcher) OnBotsAllowSendMessage(f func(ctx context.Context, bo
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.allowSendMessage result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -231955,6 +233105,15 @@ func (s *ServerDispatcher) OnBotsAnswerWebhookJSONQuery(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.answerWebhookJSONQuery result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231971,6 +233130,15 @@ func (s *ServerDispatcher) OnBotsCanSendMessage(f func(ctx context.Context, bot 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.canSendMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -231987,6 +233155,15 @@ func (s *ServerDispatcher) OnBotsCheckDownloadFileParams(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.checkDownloadFileParams result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232003,6 +233180,15 @@ func (s *ServerDispatcher) OnBotsCheckUsername(f func(ctx context.Context, usern
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.checkUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232019,6 +233205,15 @@ func (s *ServerDispatcher) OnBotsCreateBot(f func(ctx context.Context, request *
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.createBot result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -232035,6 +233230,15 @@ func (s *ServerDispatcher) OnBotsDeletePreviewMedia(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.deletePreviewMedia result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232051,6 +233255,15 @@ func (s *ServerDispatcher) OnBotsEditAccessSettings(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.editAccessSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232067,7 +233280,7 @@ func (s *ServerDispatcher) OnBotsEditPreviewMedia(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsExportBotToken(f func(ctx context.Context, request *BotsExportBotTokenRequest) (*BotsExportedBotToken, error)) {
@@ -232083,7 +233296,7 @@ func (s *ServerDispatcher) OnBotsExportBotToken(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsGetAccessSettings(f func(ctx context.Context, bot InputUserClass) (*BotsAccessSettings, error)) {
@@ -232099,7 +233312,7 @@ func (s *ServerDispatcher) OnBotsGetAccessSettings(f func(ctx context.Context, b
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsGetAdminedBots(f func(ctx context.Context) ([]UserClass, error)) {
@@ -232115,6 +233328,12 @@ func (s *ServerDispatcher) OnBotsGetAdminedBots(f func(ctx context.Context) ([]U
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.getAdminedBots result has type %T, want []UserClass", value)
+		}
+		return &UserClassVector{Elems: response}, nil
 	})
 }
 
@@ -232131,6 +233350,12 @@ func (s *ServerDispatcher) OnBotsGetBotCommands(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]BotCommand)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.getBotCommands result has type %T, want []BotCommand", value)
+		}
+		return &BotCommandVector{Elems: response}, nil
 	})
 }
 
@@ -232147,7 +233372,7 @@ func (s *ServerDispatcher) OnBotsGetBotInfo(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsGetBotMenuButton(f func(ctx context.Context, userid InputUserClass) (BotMenuButtonClass, error)) {
@@ -232163,6 +233388,15 @@ func (s *ServerDispatcher) OnBotsGetBotMenuButton(f func(ctx context.Context, us
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &BotMenuButtonBox{}, nil
+		}
+		response, ok := value.(BotMenuButtonClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.getBotMenuButton result has type %T, want BotMenuButtonClass", value)
+		}
+		return &BotMenuButtonBox{BotMenuButton: response}, nil
 	})
 }
 
@@ -232179,6 +233413,15 @@ func (s *ServerDispatcher) OnBotsGetBotRecommendations(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UsersUsersBox{}, nil
+		}
+		response, ok := value.(UsersUsersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.getBotRecommendations result has type %T, want UsersUsersClass", value)
+		}
+		return &UsersUsersBox{Users: response}, nil
 	})
 }
 
@@ -232195,7 +233438,7 @@ func (s *ServerDispatcher) OnBotsGetPopularAppBots(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsGetPreviewInfo(f func(ctx context.Context, request *BotsGetPreviewInfoRequest) (*BotsPreviewInfo, error)) {
@@ -232211,7 +233454,7 @@ func (s *ServerDispatcher) OnBotsGetPreviewInfo(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsGetPreviewMedias(f func(ctx context.Context, bot InputUserClass) ([]BotPreviewMedia, error)) {
@@ -232227,6 +233470,12 @@ func (s *ServerDispatcher) OnBotsGetPreviewMedias(f func(ctx context.Context, bo
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]BotPreviewMedia)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.getPreviewMedias result has type %T, want []BotPreviewMedia", value)
+		}
+		return &BotPreviewMediaVector{Elems: response}, nil
 	})
 }
 
@@ -232243,6 +233492,15 @@ func (s *ServerDispatcher) OnBotsGetRequestedWebViewButton(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &KeyboardButtonBox{}, nil
+		}
+		response, ok := value.(KeyboardButtonClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.getRequestedWebViewButton result has type %T, want KeyboardButtonClass", value)
+		}
+		return &KeyboardButtonBox{KeyboardButton: response}, nil
 	})
 }
 
@@ -232259,7 +233517,7 @@ func (s *ServerDispatcher) OnBotsInvokeWebViewCustomMethod(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsReorderPreviewMedias(f func(ctx context.Context, request *BotsReorderPreviewMediasRequest) (bool, error)) {
@@ -232275,6 +233533,15 @@ func (s *ServerDispatcher) OnBotsReorderPreviewMedias(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.reorderPreviewMedias result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232291,6 +233558,15 @@ func (s *ServerDispatcher) OnBotsReorderUsernames(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.reorderUsernames result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232307,7 +233583,7 @@ func (s *ServerDispatcher) OnBotsRequestWebViewButton(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsResetBotCommands(f func(ctx context.Context, request *BotsResetBotCommandsRequest) (bool, error)) {
@@ -232323,6 +233599,15 @@ func (s *ServerDispatcher) OnBotsResetBotCommands(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.resetBotCommands result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232339,7 +233624,7 @@ func (s *ServerDispatcher) OnBotsSendCustomRequest(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsSetBotBroadcastDefaultAdminRights(f func(ctx context.Context, adminrights ChatAdminRights) (bool, error)) {
@@ -232355,6 +233640,15 @@ func (s *ServerDispatcher) OnBotsSetBotBroadcastDefaultAdminRights(f func(ctx co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setBotBroadcastDefaultAdminRights result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232371,6 +233665,15 @@ func (s *ServerDispatcher) OnBotsSetBotCommands(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setBotCommands result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232387,6 +233690,15 @@ func (s *ServerDispatcher) OnBotsSetBotGroupDefaultAdminRights(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setBotGroupDefaultAdminRights result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232403,6 +233715,15 @@ func (s *ServerDispatcher) OnBotsSetBotInfo(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setBotInfo result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232419,6 +233740,15 @@ func (s *ServerDispatcher) OnBotsSetBotMenuButton(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setBotMenuButton result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232435,6 +233765,15 @@ func (s *ServerDispatcher) OnBotsSetCustomVerification(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setCustomVerification result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232451,6 +233790,15 @@ func (s *ServerDispatcher) OnBotsSetJoinChatResults(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.setJoinChatResults result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232467,6 +233815,15 @@ func (s *ServerDispatcher) OnBotsToggleUserEmojiStatusPermission(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.toggleUserEmojiStatusPermission result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232483,6 +233840,15 @@ func (s *ServerDispatcher) OnBotsToggleUsername(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.toggleUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232499,7 +233865,7 @@ func (s *ServerDispatcher) OnBotsUpdateStarRefProgram(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnBotsUpdateUserEmojiStatus(f func(ctx context.Context, request *BotsUpdateUserEmojiStatusRequest) (bool, error)) {
@@ -232515,6 +233881,15 @@ func (s *ServerDispatcher) OnBotsUpdateUserEmojiStatus(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical bots.updateUserEmojiStatus result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232531,7 +233906,7 @@ func (s *ServerDispatcher) OnChannelsCheckSearchPostsFlood(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsCheckUsername(f func(ctx context.Context, request *ChannelsCheckUsernameRequest) (bool, error)) {
@@ -232547,6 +233922,15 @@ func (s *ServerDispatcher) OnChannelsCheckUsername(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.checkUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232563,6 +233947,15 @@ func (s *ServerDispatcher) OnChannelsConvertToGigagroup(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.convertToGigagroup result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232579,6 +233972,15 @@ func (s *ServerDispatcher) OnChannelsCreateChannel(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.createChannel result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232595,6 +233997,15 @@ func (s *ServerDispatcher) OnChannelsDeactivateAllUsernames(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.deactivateAllUsernames result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232611,6 +234022,15 @@ func (s *ServerDispatcher) OnChannelsDeleteChannel(f func(ctx context.Context, c
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.deleteChannel result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232627,6 +234047,15 @@ func (s *ServerDispatcher) OnChannelsDeleteHistory(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.deleteHistory result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232643,7 +234072,7 @@ func (s *ServerDispatcher) OnChannelsDeleteMessages(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsDeleteParticipantHistory(f func(ctx context.Context, request *ChannelsDeleteParticipantHistoryRequest) (*MessagesAffectedHistory, error)) {
@@ -232659,7 +234088,7 @@ func (s *ServerDispatcher) OnChannelsDeleteParticipantHistory(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsEditAdmin(f func(ctx context.Context, request *ChannelsEditAdminRequest) (UpdatesClass, error)) {
@@ -232675,6 +234104,15 @@ func (s *ServerDispatcher) OnChannelsEditAdmin(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.editAdmin result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232691,6 +234129,15 @@ func (s *ServerDispatcher) OnChannelsEditBanned(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.editBanned result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232707,6 +234154,15 @@ func (s *ServerDispatcher) OnChannelsEditLocation(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.editLocation result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -232723,6 +234179,15 @@ func (s *ServerDispatcher) OnChannelsEditPhoto(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.editPhoto result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232739,6 +234204,15 @@ func (s *ServerDispatcher) OnChannelsEditTitle(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.editTitle result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -232755,7 +234229,7 @@ func (s *ServerDispatcher) OnChannelsExportMessageLink(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsGetAdminLog(f func(ctx context.Context, request *ChannelsGetAdminLogRequest) (*ChannelsAdminLogResults, error)) {
@@ -232771,7 +234245,7 @@ func (s *ServerDispatcher) OnChannelsGetAdminLog(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsGetAdminedPublicChannels(f func(ctx context.Context, request *ChannelsGetAdminedPublicChannelsRequest) (MessagesChatsClass, error)) {
@@ -232787,6 +234261,15 @@ func (s *ServerDispatcher) OnChannelsGetAdminedPublicChannels(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getAdminedPublicChannels result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -232803,6 +234286,15 @@ func (s *ServerDispatcher) OnChannelsGetChannelRecommendations(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getChannelRecommendations result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -232819,6 +234311,15 @@ func (s *ServerDispatcher) OnChannelsGetChannels(f func(ctx context.Context, id 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getChannels result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -232835,7 +234336,7 @@ func (s *ServerDispatcher) OnChannelsGetFullChannel(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsGetGroupsForDiscussion(f func(ctx context.Context) (MessagesChatsClass, error)) {
@@ -232851,6 +234352,15 @@ func (s *ServerDispatcher) OnChannelsGetGroupsForDiscussion(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getGroupsForDiscussion result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -232867,7 +234377,7 @@ func (s *ServerDispatcher) OnChannelsGetInactiveChannels(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsGetLeftChannels(f func(ctx context.Context, offset int) (MessagesChatsClass, error)) {
@@ -232883,6 +234393,15 @@ func (s *ServerDispatcher) OnChannelsGetLeftChannels(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getLeftChannels result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -232899,6 +234418,15 @@ func (s *ServerDispatcher) OnChannelsGetMessageAuthor(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getMessageAuthor result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -232915,6 +234443,15 @@ func (s *ServerDispatcher) OnChannelsGetMessages(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getMessages result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -232931,7 +234468,7 @@ func (s *ServerDispatcher) OnChannelsGetParticipant(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsGetParticipants(f func(ctx context.Context, request *ChannelsGetParticipantsRequest) (ChannelsChannelParticipantsClass, error)) {
@@ -232947,6 +234484,15 @@ func (s *ServerDispatcher) OnChannelsGetParticipants(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ChannelsChannelParticipantsBox{}, nil
+		}
+		response, ok := value.(ChannelsChannelParticipantsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.getParticipants result has type %T, want ChannelsChannelParticipantsClass", value)
+		}
+		return &ChannelsChannelParticipantsBox{ChannelParticipants: response}, nil
 	})
 }
 
@@ -232963,7 +234509,7 @@ func (s *ServerDispatcher) OnChannelsGetSendAs(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsInviteToChannel(f func(ctx context.Context, request *ChannelsInviteToChannelRequest) (*MessagesInvitedUsers, error)) {
@@ -232979,7 +234525,7 @@ func (s *ServerDispatcher) OnChannelsInviteToChannel(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChannelsJoinChannel(f func(ctx context.Context, channel InputChannelClass) (MessagesChatInviteJoinResultClass, error)) {
@@ -232995,6 +234541,15 @@ func (s *ServerDispatcher) OnChannelsJoinChannel(f func(ctx context.Context, cha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatInviteJoinResultBox{}, nil
+		}
+		response, ok := value.(MessagesChatInviteJoinResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.joinChannel result has type %T, want MessagesChatInviteJoinResultClass", value)
+		}
+		return &MessagesChatInviteJoinResultBox{ChatInviteJoinResult: response}, nil
 	})
 }
 
@@ -233011,6 +234566,15 @@ func (s *ServerDispatcher) OnChannelsLeaveChannel(f func(ctx context.Context, ch
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.leaveChannel result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233027,6 +234591,15 @@ func (s *ServerDispatcher) OnChannelsReadHistory(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.readHistory result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233043,6 +234616,15 @@ func (s *ServerDispatcher) OnChannelsReadMessageContents(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.readMessageContents result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233059,6 +234641,15 @@ func (s *ServerDispatcher) OnChannelsReorderUsernames(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.reorderUsernames result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233075,6 +234666,15 @@ func (s *ServerDispatcher) OnChannelsReportAntiSpamFalsePositive(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.reportAntiSpamFalsePositive result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233091,6 +234691,15 @@ func (s *ServerDispatcher) OnChannelsReportSpam(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.reportSpam result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233107,6 +234716,15 @@ func (s *ServerDispatcher) OnChannelsRestrictSponsoredMessages(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.restrictSponsoredMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233123,6 +234741,15 @@ func (s *ServerDispatcher) OnChannelsSearchPosts(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.searchPosts result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -233139,6 +234766,15 @@ func (s *ServerDispatcher) OnChannelsSetBoostsToUnblockRestrictions(f func(ctx c
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.setBoostsToUnblockRestrictions result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233155,6 +234791,15 @@ func (s *ServerDispatcher) OnChannelsSetDiscussionGroup(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.setDiscussionGroup result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233171,6 +234816,15 @@ func (s *ServerDispatcher) OnChannelsSetEmojiStickers(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.setEmojiStickers result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233187,6 +234841,15 @@ func (s *ServerDispatcher) OnChannelsSetMainProfileTab(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.setMainProfileTab result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233203,6 +234866,15 @@ func (s *ServerDispatcher) OnChannelsSetStickers(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.setStickers result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233219,6 +234891,15 @@ func (s *ServerDispatcher) OnChannelsToggleAntiSpam(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleAntiSpam result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233235,6 +234916,15 @@ func (s *ServerDispatcher) OnChannelsToggleAutotranslation(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleAutotranslation result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233251,6 +234941,15 @@ func (s *ServerDispatcher) OnChannelsToggleForum(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleForum result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233267,6 +234966,15 @@ func (s *ServerDispatcher) OnChannelsToggleJoinRequest(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleJoinRequest result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233283,6 +234991,15 @@ func (s *ServerDispatcher) OnChannelsToggleJoinToSend(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleJoinToSend result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233299,6 +235016,15 @@ func (s *ServerDispatcher) OnChannelsToggleParticipantsHidden(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleParticipantsHidden result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233315,6 +235041,15 @@ func (s *ServerDispatcher) OnChannelsTogglePreHistoryHidden(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.togglePreHistoryHidden result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233331,6 +235066,15 @@ func (s *ServerDispatcher) OnChannelsToggleSignatures(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleSignatures result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233347,6 +235091,15 @@ func (s *ServerDispatcher) OnChannelsToggleSlowMode(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleSlowMode result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233363,6 +235116,15 @@ func (s *ServerDispatcher) OnChannelsToggleUsername(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233379,6 +235141,15 @@ func (s *ServerDispatcher) OnChannelsToggleViewForumAsMessages(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.toggleViewForumAsMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233395,6 +235166,15 @@ func (s *ServerDispatcher) OnChannelsUpdateColor(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.updateColor result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233411,6 +235191,15 @@ func (s *ServerDispatcher) OnChannelsUpdateEmojiStatus(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.updateEmojiStatus result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233427,6 +235216,15 @@ func (s *ServerDispatcher) OnChannelsUpdatePaidMessagesPrice(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.updatePaidMessagesPrice result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233443,6 +235241,15 @@ func (s *ServerDispatcher) OnChannelsUpdateUsername(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical channels.updateUsername result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233459,6 +235266,15 @@ func (s *ServerDispatcher) OnChatlistsCheckChatlistInvite(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ChatlistsChatlistInviteBox{}, nil
+		}
+		response, ok := value.(ChatlistsChatlistInviteClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.checkChatlistInvite result has type %T, want ChatlistsChatlistInviteClass", value)
+		}
+		return &ChatlistsChatlistInviteBox{ChatlistInvite: response}, nil
 	})
 }
 
@@ -233475,6 +235291,15 @@ func (s *ServerDispatcher) OnChatlistsDeleteExportedInvite(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.deleteExportedInvite result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233491,7 +235316,7 @@ func (s *ServerDispatcher) OnChatlistsEditExportedInvite(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChatlistsExportChatlistInvite(f func(ctx context.Context, request *ChatlistsExportChatlistInviteRequest) (*ChatlistsExportedChatlistInvite, error)) {
@@ -233507,7 +235332,7 @@ func (s *ServerDispatcher) OnChatlistsExportChatlistInvite(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChatlistsGetChatlistUpdates(f func(ctx context.Context, chatlist InputChatlistDialogFilter) (*ChatlistsChatlistUpdates, error)) {
@@ -233523,7 +235348,7 @@ func (s *ServerDispatcher) OnChatlistsGetChatlistUpdates(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChatlistsGetExportedInvites(f func(ctx context.Context, chatlist InputChatlistDialogFilter) (*ChatlistsExportedInvites, error)) {
@@ -233539,7 +235364,7 @@ func (s *ServerDispatcher) OnChatlistsGetExportedInvites(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnChatlistsGetLeaveChatlistSuggestions(f func(ctx context.Context, chatlist InputChatlistDialogFilter) ([]PeerClass, error)) {
@@ -233555,6 +235380,12 @@ func (s *ServerDispatcher) OnChatlistsGetLeaveChatlistSuggestions(f func(ctx con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]PeerClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.getLeaveChatlistSuggestions result has type %T, want []PeerClass", value)
+		}
+		return &PeerClassVector{Elems: response}, nil
 	})
 }
 
@@ -233571,6 +235402,15 @@ func (s *ServerDispatcher) OnChatlistsHideChatlistUpdates(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.hideChatlistUpdates result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233587,6 +235427,15 @@ func (s *ServerDispatcher) OnChatlistsJoinChatlistInvite(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.joinChatlistInvite result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233603,6 +235452,15 @@ func (s *ServerDispatcher) OnChatlistsJoinChatlistUpdates(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.joinChatlistUpdates result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233619,6 +235477,15 @@ func (s *ServerDispatcher) OnChatlistsLeaveChatlist(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical chatlists.leaveChatlist result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233635,6 +235502,15 @@ func (s *ServerDispatcher) OnContactsAcceptContact(f func(ctx context.Context, i
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.acceptContact result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233651,6 +235527,15 @@ func (s *ServerDispatcher) OnContactsAddContact(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.addContact result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233667,6 +235552,15 @@ func (s *ServerDispatcher) OnContactsBlock(f func(ctx context.Context, request *
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.block result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233683,6 +235577,15 @@ func (s *ServerDispatcher) OnContactsBlockFromReplies(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.blockFromReplies result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233699,6 +235602,15 @@ func (s *ServerDispatcher) OnContactsDeleteByPhones(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.deleteByPhones result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233715,6 +235627,15 @@ func (s *ServerDispatcher) OnContactsDeleteContacts(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.deleteContacts result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233731,6 +235652,15 @@ func (s *ServerDispatcher) OnContactsEditCloseFriends(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.editCloseFriends result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233747,7 +235677,7 @@ func (s *ServerDispatcher) OnContactsExportContactToken(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnContactsGetBirthdays(f func(ctx context.Context) (*ContactsContactBirthdays, error)) {
@@ -233763,7 +235693,7 @@ func (s *ServerDispatcher) OnContactsGetBirthdays(f func(ctx context.Context) (*
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnContactsGetBlocked(f func(ctx context.Context, request *ContactsGetBlockedRequest) (ContactsBlockedClass, error)) {
@@ -233779,6 +235709,15 @@ func (s *ServerDispatcher) OnContactsGetBlocked(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ContactsBlockedBox{}, nil
+		}
+		response, ok := value.(ContactsBlockedClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getBlocked result has type %T, want ContactsBlockedClass", value)
+		}
+		return &ContactsBlockedBox{Blocked: response}, nil
 	})
 }
 
@@ -233795,6 +235734,12 @@ func (s *ServerDispatcher) OnContactsGetContactIDs(f func(ctx context.Context, h
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getContactIDs result has type %T, want []int", value)
+		}
+		return &IntVector{Elems: response}, nil
 	})
 }
 
@@ -233811,6 +235756,15 @@ func (s *ServerDispatcher) OnContactsGetContacts(f func(ctx context.Context, has
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ContactsContactsBox{}, nil
+		}
+		response, ok := value.(ContactsContactsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getContacts result has type %T, want ContactsContactsClass", value)
+		}
+		return &ContactsContactsBox{Contacts: response}, nil
 	})
 }
 
@@ -233827,6 +235781,15 @@ func (s *ServerDispatcher) OnContactsGetLocated(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getLocated result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -233843,6 +235806,12 @@ func (s *ServerDispatcher) OnContactsGetSaved(f func(ctx context.Context) ([]Sav
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]SavedPhoneContact)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getSaved result has type %T, want []SavedPhoneContact", value)
+		}
+		return &SavedPhoneContactVector{Elems: response}, nil
 	})
 }
 
@@ -233859,6 +235828,15 @@ func (s *ServerDispatcher) OnContactsGetSponsoredPeers(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ContactsSponsoredPeersBox{}, nil
+		}
+		response, ok := value.(ContactsSponsoredPeersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getSponsoredPeers result has type %T, want ContactsSponsoredPeersClass", value)
+		}
+		return &ContactsSponsoredPeersBox{SponsoredPeers: response}, nil
 	})
 }
 
@@ -233875,6 +235853,12 @@ func (s *ServerDispatcher) OnContactsGetStatuses(f func(ctx context.Context) ([]
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]ContactStatus)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getStatuses result has type %T, want []ContactStatus", value)
+		}
+		return &ContactStatusVector{Elems: response}, nil
 	})
 }
 
@@ -233891,6 +235875,15 @@ func (s *ServerDispatcher) OnContactsGetTopPeers(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ContactsTopPeersBox{}, nil
+		}
+		response, ok := value.(ContactsTopPeersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.getTopPeers result has type %T, want ContactsTopPeersClass", value)
+		}
+		return &ContactsTopPeersBox{TopPeers: response}, nil
 	})
 }
 
@@ -233907,6 +235900,15 @@ func (s *ServerDispatcher) OnContactsImportContactToken(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.importContactToken result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -233923,7 +235925,7 @@ func (s *ServerDispatcher) OnContactsImportContacts(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnContactsResetSaved(f func(ctx context.Context) (bool, error)) {
@@ -233939,6 +235941,15 @@ func (s *ServerDispatcher) OnContactsResetSaved(f func(ctx context.Context) (boo
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.resetSaved result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233955,6 +235966,15 @@ func (s *ServerDispatcher) OnContactsResetTopPeerRating(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.resetTopPeerRating result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -233971,7 +235991,7 @@ func (s *ServerDispatcher) OnContactsResolvePhone(f func(ctx context.Context, ph
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnContactsResolveUsername(f func(ctx context.Context, request *ContactsResolveUsernameRequest) (*ContactsResolvedPeer, error)) {
@@ -233987,7 +236007,7 @@ func (s *ServerDispatcher) OnContactsResolveUsername(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnContactsSearch(f func(ctx context.Context, request *ContactsSearchRequest) (*ContactsFound, error)) {
@@ -234003,7 +236023,7 @@ func (s *ServerDispatcher) OnContactsSearch(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnContactsSetBlocked(f func(ctx context.Context, request *ContactsSetBlockedRequest) (bool, error)) {
@@ -234019,6 +236039,15 @@ func (s *ServerDispatcher) OnContactsSetBlocked(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.setBlocked result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234035,6 +236064,15 @@ func (s *ServerDispatcher) OnContactsToggleTopPeers(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.toggleTopPeers result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234051,6 +236089,15 @@ func (s *ServerDispatcher) OnContactsUnblock(f func(ctx context.Context, request
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.unblock result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234067,6 +236114,15 @@ func (s *ServerDispatcher) OnContactsUpdateContactNote(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical contacts.updateContactNote result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234083,6 +236139,15 @@ func (s *ServerDispatcher) OnFoldersEditPeerFolders(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical folders.editPeerFolders result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234099,7 +236164,7 @@ func (s *ServerDispatcher) OnFragmentGetCollectibleInfo(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpAcceptTermsOfService(f func(ctx context.Context, id DataJSON) (bool, error)) {
@@ -234115,6 +236180,15 @@ func (s *ServerDispatcher) OnHelpAcceptTermsOfService(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.acceptTermsOfService result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234131,6 +236205,15 @@ func (s *ServerDispatcher) OnHelpDismissSuggestion(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.dismissSuggestion result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234147,6 +236230,15 @@ func (s *ServerDispatcher) OnHelpEditUserInfo(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpUserInfoBox{}, nil
+		}
+		response, ok := value.(HelpUserInfoClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.editUserInfo result has type %T, want HelpUserInfoClass", value)
+		}
+		return &HelpUserInfoBox{UserInfo: response}, nil
 	})
 }
 
@@ -234163,6 +236255,15 @@ func (s *ServerDispatcher) OnHelpGetAppConfig(f func(ctx context.Context, hash i
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpAppConfigBox{}, nil
+		}
+		response, ok := value.(HelpAppConfigClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getAppConfig result has type %T, want HelpAppConfigClass", value)
+		}
+		return &HelpAppConfigBox{AppConfig: response}, nil
 	})
 }
 
@@ -234179,6 +236280,15 @@ func (s *ServerDispatcher) OnHelpGetAppUpdate(f func(ctx context.Context, source
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpAppUpdateBox{}, nil
+		}
+		response, ok := value.(HelpAppUpdateClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getAppUpdate result has type %T, want HelpAppUpdateClass", value)
+		}
+		return &HelpAppUpdateBox{AppUpdate: response}, nil
 	})
 }
 
@@ -234195,7 +236305,7 @@ func (s *ServerDispatcher) OnHelpGetCDNConfig(f func(ctx context.Context) (*CDNC
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetConfig(f func(ctx context.Context) (*Config, error)) {
@@ -234211,7 +236321,7 @@ func (s *ServerDispatcher) OnHelpGetConfig(f func(ctx context.Context) (*Config,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetCountriesList(f func(ctx context.Context, request *HelpGetCountriesListRequest) (HelpCountriesListClass, error)) {
@@ -234227,6 +236337,15 @@ func (s *ServerDispatcher) OnHelpGetCountriesList(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpCountriesListBox{}, nil
+		}
+		response, ok := value.(HelpCountriesListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getCountriesList result has type %T, want HelpCountriesListClass", value)
+		}
+		return &HelpCountriesListBox{CountriesList: response}, nil
 	})
 }
 
@@ -234243,6 +236362,15 @@ func (s *ServerDispatcher) OnHelpGetDeepLinkInfo(f func(ctx context.Context, pat
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpDeepLinkInfoBox{}, nil
+		}
+		response, ok := value.(HelpDeepLinkInfoClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getDeepLinkInfo result has type %T, want HelpDeepLinkInfoClass", value)
+		}
+		return &HelpDeepLinkInfoBox{DeepLinkInfo: response}, nil
 	})
 }
 
@@ -234259,7 +236387,7 @@ func (s *ServerDispatcher) OnHelpGetInviteText(f func(ctx context.Context) (*Hel
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetNearestDC(f func(ctx context.Context) (*NearestDC, error)) {
@@ -234275,7 +236403,7 @@ func (s *ServerDispatcher) OnHelpGetNearestDC(f func(ctx context.Context) (*Near
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetPassportConfig(f func(ctx context.Context, hash int) (HelpPassportConfigClass, error)) {
@@ -234291,6 +236419,15 @@ func (s *ServerDispatcher) OnHelpGetPassportConfig(f func(ctx context.Context, h
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpPassportConfigBox{}, nil
+		}
+		response, ok := value.(HelpPassportConfigClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getPassportConfig result has type %T, want HelpPassportConfigClass", value)
+		}
+		return &HelpPassportConfigBox{PassportConfig: response}, nil
 	})
 }
 
@@ -234307,6 +236444,15 @@ func (s *ServerDispatcher) OnHelpGetPeerColors(f func(ctx context.Context, hash 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpPeerColorsBox{}, nil
+		}
+		response, ok := value.(HelpPeerColorsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getPeerColors result has type %T, want HelpPeerColorsClass", value)
+		}
+		return &HelpPeerColorsBox{PeerColors: response}, nil
 	})
 }
 
@@ -234323,6 +236469,15 @@ func (s *ServerDispatcher) OnHelpGetPeerProfileColors(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpPeerColorsBox{}, nil
+		}
+		response, ok := value.(HelpPeerColorsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getPeerProfileColors result has type %T, want HelpPeerColorsClass", value)
+		}
+		return &HelpPeerColorsBox{PeerColors: response}, nil
 	})
 }
 
@@ -234339,7 +236494,7 @@ func (s *ServerDispatcher) OnHelpGetPremiumPromo(f func(ctx context.Context) (*H
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetPromoData(f func(ctx context.Context) (HelpPromoDataClass, error)) {
@@ -234355,6 +236510,15 @@ func (s *ServerDispatcher) OnHelpGetPromoData(f func(ctx context.Context) (HelpP
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpPromoDataBox{}, nil
+		}
+		response, ok := value.(HelpPromoDataClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getPromoData result has type %T, want HelpPromoDataClass", value)
+		}
+		return &HelpPromoDataBox{PromoData: response}, nil
 	})
 }
 
@@ -234371,7 +236535,7 @@ func (s *ServerDispatcher) OnHelpGetRecentMeURLs(f func(ctx context.Context, ref
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetSupport(f func(ctx context.Context) (*HelpSupport, error)) {
@@ -234387,7 +236551,7 @@ func (s *ServerDispatcher) OnHelpGetSupport(f func(ctx context.Context) (*HelpSu
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetSupportName(f func(ctx context.Context) (*HelpSupportName, error)) {
@@ -234403,7 +236567,7 @@ func (s *ServerDispatcher) OnHelpGetSupportName(f func(ctx context.Context) (*He
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnHelpGetTermsOfServiceUpdate(f func(ctx context.Context) (HelpTermsOfServiceUpdateClass, error)) {
@@ -234419,6 +236583,15 @@ func (s *ServerDispatcher) OnHelpGetTermsOfServiceUpdate(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpTermsOfServiceUpdateBox{}, nil
+		}
+		response, ok := value.(HelpTermsOfServiceUpdateClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getTermsOfServiceUpdate result has type %T, want HelpTermsOfServiceUpdateClass", value)
+		}
+		return &HelpTermsOfServiceUpdateBox{TermsOfServiceUpdate: response}, nil
 	})
 }
 
@@ -234435,6 +236608,15 @@ func (s *ServerDispatcher) OnHelpGetTimezonesList(f func(ctx context.Context, ha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpTimezonesListBox{}, nil
+		}
+		response, ok := value.(HelpTimezonesListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getTimezonesList result has type %T, want HelpTimezonesListClass", value)
+		}
+		return &HelpTimezonesListBox{TimezonesList: response}, nil
 	})
 }
 
@@ -234451,6 +236633,15 @@ func (s *ServerDispatcher) OnHelpGetUserInfo(f func(ctx context.Context, userid 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &HelpUserInfoBox{}, nil
+		}
+		response, ok := value.(HelpUserInfoClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.getUserInfo result has type %T, want HelpUserInfoClass", value)
+		}
+		return &HelpUserInfoBox{UserInfo: response}, nil
 	})
 }
 
@@ -234467,6 +236658,15 @@ func (s *ServerDispatcher) OnHelpHidePromoData(f func(ctx context.Context, peer 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.hidePromoData result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234483,6 +236683,15 @@ func (s *ServerDispatcher) OnHelpSaveAppLog(f func(ctx context.Context, events [
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.saveAppLog result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234499,6 +236708,15 @@ func (s *ServerDispatcher) OnHelpSetBotUpdatesStatus(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical help.setBotUpdatesStatus result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234515,7 +236733,7 @@ func (s *ServerDispatcher) OnLangpackGetDifference(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnLangpackGetLangPack(f func(ctx context.Context, request *LangpackGetLangPackRequest) (*LangPackDifference, error)) {
@@ -234531,7 +236749,7 @@ func (s *ServerDispatcher) OnLangpackGetLangPack(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnLangpackGetLanguage(f func(ctx context.Context, request *LangpackGetLanguageRequest) (*LangPackLanguage, error)) {
@@ -234547,7 +236765,7 @@ func (s *ServerDispatcher) OnLangpackGetLanguage(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnLangpackGetLanguages(f func(ctx context.Context, langpack string) ([]LangPackLanguage, error)) {
@@ -234563,6 +236781,12 @@ func (s *ServerDispatcher) OnLangpackGetLanguages(f func(ctx context.Context, la
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]LangPackLanguage)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical langpack.getLanguages result has type %T, want []LangPackLanguage", value)
+		}
+		return &LangPackLanguageVector{Elems: response}, nil
 	})
 }
 
@@ -234579,6 +236803,12 @@ func (s *ServerDispatcher) OnLangpackGetStrings(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]LangPackStringClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical langpack.getStrings result has type %T, want []LangPackStringClass", value)
+		}
+		return &LangPackStringClassVector{Elems: response}, nil
 	})
 }
 
@@ -234595,6 +236825,15 @@ func (s *ServerDispatcher) OnMessagesAcceptEncryption(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EncryptedChatBox{}, nil
+		}
+		response, ok := value.(EncryptedChatClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.acceptEncryption result has type %T, want EncryptedChatClass", value)
+		}
+		return &EncryptedChatBox{EncryptedChat: response}, nil
 	})
 }
 
@@ -234611,6 +236850,15 @@ func (s *ServerDispatcher) OnMessagesAcceptURLAuth(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &URLAuthResultBox{}, nil
+		}
+		response, ok := value.(URLAuthResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.acceptUrlAuth result has type %T, want URLAuthResultClass", value)
+		}
+		return &URLAuthResultBox{UrlAuthResult: response}, nil
 	})
 }
 
@@ -234627,7 +236875,7 @@ func (s *ServerDispatcher) OnMessagesAddChatUser(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesAddPollAnswer(f func(ctx context.Context, request *MessagesAddPollAnswerRequest) (UpdatesClass, error)) {
@@ -234643,6 +236891,15 @@ func (s *ServerDispatcher) OnMessagesAddPollAnswer(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.addPollAnswer result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234659,6 +236916,15 @@ func (s *ServerDispatcher) OnMessagesAppendTodoList(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.appendTodoList result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234675,6 +236941,15 @@ func (s *ServerDispatcher) OnMessagesCheckChatInvite(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ChatInviteBox{}, nil
+		}
+		response, ok := value.(ChatInviteClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.checkChatInvite result has type %T, want ChatInviteClass", value)
+		}
+		return &ChatInviteBox{ChatInvite: response}, nil
 	})
 }
 
@@ -234691,7 +236966,7 @@ func (s *ServerDispatcher) OnMessagesCheckHistoryImport(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesCheckHistoryImportPeer(f func(ctx context.Context, peer InputPeerClass) (*MessagesCheckedHistoryImportPeer, error)) {
@@ -234707,7 +236982,7 @@ func (s *ServerDispatcher) OnMessagesCheckHistoryImportPeer(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesCheckQuickReplyShortcut(f func(ctx context.Context, shortcut string) (bool, error)) {
@@ -234723,6 +236998,15 @@ func (s *ServerDispatcher) OnMessagesCheckQuickReplyShortcut(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.checkQuickReplyShortcut result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234739,6 +237023,15 @@ func (s *ServerDispatcher) OnMessagesCheckURLAuthMatchCode(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.checkUrlAuthMatchCode result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234755,6 +237048,15 @@ func (s *ServerDispatcher) OnMessagesClearAllDrafts(f func(ctx context.Context) 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.clearAllDrafts result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234771,6 +237073,15 @@ func (s *ServerDispatcher) OnMessagesClearRecentReactions(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.clearRecentReactions result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234787,6 +237098,15 @@ func (s *ServerDispatcher) OnMessagesClearRecentStickers(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.clearRecentStickers result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234803,6 +237123,15 @@ func (s *ServerDispatcher) OnMessagesClickSponsoredMessage(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.clickSponsoredMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234819,7 +237148,7 @@ func (s *ServerDispatcher) OnMessagesComposeMessageWithAI(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesCreateChat(f func(ctx context.Context, request *MessagesCreateChatRequest) (*MessagesInvitedUsers, error)) {
@@ -234835,7 +237164,7 @@ func (s *ServerDispatcher) OnMessagesCreateChat(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesCreateForumTopic(f func(ctx context.Context, request *MessagesCreateForumTopicRequest) (UpdatesClass, error)) {
@@ -234851,6 +237180,15 @@ func (s *ServerDispatcher) OnMessagesCreateForumTopic(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.createForumTopic result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234867,6 +237205,15 @@ func (s *ServerDispatcher) OnMessagesDeclineURLAuth(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.declineUrlAuth result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234883,6 +237230,15 @@ func (s *ServerDispatcher) OnMessagesDeleteChat(f func(ctx context.Context, chat
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteChat result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234899,6 +237255,15 @@ func (s *ServerDispatcher) OnMessagesDeleteChatUser(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteChatUser result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234915,6 +237280,15 @@ func (s *ServerDispatcher) OnMessagesDeleteExportedChatInvite(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteExportedChatInvite result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -234931,6 +237305,15 @@ func (s *ServerDispatcher) OnMessagesDeleteFactCheck(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteFactCheck result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234947,7 +237330,7 @@ func (s *ServerDispatcher) OnMessagesDeleteHistory(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesDeleteMessages(f func(ctx context.Context, request *MessagesDeleteMessagesRequest) (*MessagesAffectedMessages, error)) {
@@ -234963,7 +237346,7 @@ func (s *ServerDispatcher) OnMessagesDeleteMessages(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesDeleteParticipantReaction(f func(ctx context.Context, request *MessagesDeleteParticipantReactionRequest) (UpdatesClass, error)) {
@@ -234979,6 +237362,15 @@ func (s *ServerDispatcher) OnMessagesDeleteParticipantReaction(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteParticipantReaction result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -234995,6 +237387,15 @@ func (s *ServerDispatcher) OnMessagesDeleteParticipantReactions(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteParticipantReactions result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235011,7 +237412,7 @@ func (s *ServerDispatcher) OnMessagesDeletePhoneCallHistory(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesDeletePollAnswer(f func(ctx context.Context, request *MessagesDeletePollAnswerRequest) (UpdatesClass, error)) {
@@ -235027,6 +237428,15 @@ func (s *ServerDispatcher) OnMessagesDeletePollAnswer(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deletePollAnswer result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235043,6 +237453,15 @@ func (s *ServerDispatcher) OnMessagesDeleteQuickReplyMessages(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteQuickReplyMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235059,6 +237478,15 @@ func (s *ServerDispatcher) OnMessagesDeleteQuickReplyShortcut(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteQuickReplyShortcut result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235075,6 +237503,15 @@ func (s *ServerDispatcher) OnMessagesDeleteRevokedExportedChatInvites(f func(ctx
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteRevokedExportedChatInvites result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235091,7 +237528,7 @@ func (s *ServerDispatcher) OnMessagesDeleteSavedHistory(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesDeleteScheduledMessages(f func(ctx context.Context, request *MessagesDeleteScheduledMessagesRequest) (UpdatesClass, error)) {
@@ -235107,6 +237544,15 @@ func (s *ServerDispatcher) OnMessagesDeleteScheduledMessages(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.deleteScheduledMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235123,7 +237569,7 @@ func (s *ServerDispatcher) OnMessagesDeleteTopicHistory(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesDiscardEncryption(f func(ctx context.Context, request *MessagesDiscardEncryptionRequest) (bool, error)) {
@@ -235139,6 +237585,15 @@ func (s *ServerDispatcher) OnMessagesDiscardEncryption(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.discardEncryption result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235155,6 +237610,15 @@ func (s *ServerDispatcher) OnMessagesEditChatAbout(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatAbout result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235171,6 +237635,15 @@ func (s *ServerDispatcher) OnMessagesEditChatAdmin(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatAdmin result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235187,6 +237660,15 @@ func (s *ServerDispatcher) OnMessagesEditChatCreator(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatCreator result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235203,6 +237685,15 @@ func (s *ServerDispatcher) OnMessagesEditChatDefaultBannedRights(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatDefaultBannedRights result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235219,6 +237710,15 @@ func (s *ServerDispatcher) OnMessagesEditChatParticipantRank(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatParticipantRank result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235235,6 +237735,15 @@ func (s *ServerDispatcher) OnMessagesEditChatPhoto(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatPhoto result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235251,6 +237760,15 @@ func (s *ServerDispatcher) OnMessagesEditChatTitle(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editChatTitle result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235267,6 +237785,15 @@ func (s *ServerDispatcher) OnMessagesEditExportedChatInvite(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesExportedChatInviteBox{}, nil
+		}
+		response, ok := value.(MessagesExportedChatInviteClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editExportedChatInvite result has type %T, want MessagesExportedChatInviteClass", value)
+		}
+		return &MessagesExportedChatInviteBox{ExportedChatInvite: response}, nil
 	})
 }
 
@@ -235283,6 +237810,15 @@ func (s *ServerDispatcher) OnMessagesEditFactCheck(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editFactCheck result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235299,6 +237835,15 @@ func (s *ServerDispatcher) OnMessagesEditForumTopic(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editForumTopic result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235315,6 +237860,15 @@ func (s *ServerDispatcher) OnMessagesEditInlineBotMessage(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editInlineBotMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235331,6 +237885,15 @@ func (s *ServerDispatcher) OnMessagesEditMessage(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editMessage result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235347,6 +237910,15 @@ func (s *ServerDispatcher) OnMessagesEditQuickReplyShortcut(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.editQuickReplyShortcut result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235363,6 +237935,15 @@ func (s *ServerDispatcher) OnMessagesExportChatInvite(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ExportedChatInviteBox{}, nil
+		}
+		response, ok := value.(ExportedChatInviteClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.exportChatInvite result has type %T, want ExportedChatInviteClass", value)
+		}
+		return &ExportedChatInviteBox{ExportedChatInvite: response}, nil
 	})
 }
 
@@ -235379,6 +237960,15 @@ func (s *ServerDispatcher) OnMessagesFaveSticker(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.faveSticker result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -235395,6 +237985,15 @@ func (s *ServerDispatcher) OnMessagesForwardMessages(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.forwardMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235411,7 +238010,7 @@ func (s *ServerDispatcher) OnMessagesGetAdminsWithInvites(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetAllDrafts(f func(ctx context.Context) (UpdatesClass, error)) {
@@ -235427,6 +238026,15 @@ func (s *ServerDispatcher) OnMessagesGetAllDrafts(f func(ctx context.Context) (U
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getAllDrafts result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235443,6 +238051,15 @@ func (s *ServerDispatcher) OnMessagesGetAllStickers(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesAllStickersBox{}, nil
+		}
+		response, ok := value.(MessagesAllStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getAllStickers result has type %T, want MessagesAllStickersClass", value)
+		}
+		return &MessagesAllStickersBox{AllStickers: response}, nil
 	})
 }
 
@@ -235459,7 +238076,7 @@ func (s *ServerDispatcher) OnMessagesGetArchivedStickers(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetAttachMenuBot(f func(ctx context.Context, bot InputUserClass) (*AttachMenuBotsBot, error)) {
@@ -235475,7 +238092,7 @@ func (s *ServerDispatcher) OnMessagesGetAttachMenuBot(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetAttachMenuBots(f func(ctx context.Context, hash int64) (AttachMenuBotsClass, error)) {
@@ -235491,6 +238108,15 @@ func (s *ServerDispatcher) OnMessagesGetAttachMenuBots(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &AttachMenuBotsBox{}, nil
+		}
+		response, ok := value.(AttachMenuBotsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getAttachMenuBots result has type %T, want AttachMenuBotsClass", value)
+		}
+		return &AttachMenuBotsBox{AttachMenuBots: response}, nil
 	})
 }
 
@@ -235507,6 +238133,12 @@ func (s *ServerDispatcher) OnMessagesGetAttachedStickers(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]StickerSetCoveredClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getAttachedStickers result has type %T, want []StickerSetCoveredClass", value)
+		}
+		return &StickerSetCoveredClassVector{Elems: response}, nil
 	})
 }
 
@@ -235523,6 +238155,15 @@ func (s *ServerDispatcher) OnMessagesGetAvailableEffects(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesAvailableEffectsBox{}, nil
+		}
+		response, ok := value.(MessagesAvailableEffectsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getAvailableEffects result has type %T, want MessagesAvailableEffectsClass", value)
+		}
+		return &MessagesAvailableEffectsBox{AvailableEffects: response}, nil
 	})
 }
 
@@ -235539,6 +238180,15 @@ func (s *ServerDispatcher) OnMessagesGetAvailableReactions(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesAvailableReactionsBox{}, nil
+		}
+		response, ok := value.(MessagesAvailableReactionsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getAvailableReactions result has type %T, want MessagesAvailableReactionsClass", value)
+		}
+		return &MessagesAvailableReactionsBox{AvailableReactions: response}, nil
 	})
 }
 
@@ -235555,7 +238205,7 @@ func (s *ServerDispatcher) OnMessagesGetBotApp(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetBotCallbackAnswer(f func(ctx context.Context, request *MessagesGetBotCallbackAnswerRequest) (*MessagesBotCallbackAnswer, error)) {
@@ -235571,7 +238221,7 @@ func (s *ServerDispatcher) OnMessagesGetBotCallbackAnswer(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetChatInviteImporters(f func(ctx context.Context, request *MessagesGetChatInviteImportersRequest) (*MessagesChatInviteImporters, error)) {
@@ -235587,7 +238237,7 @@ func (s *ServerDispatcher) OnMessagesGetChatInviteImporters(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetChats(f func(ctx context.Context, id []int64) (MessagesChatsClass, error)) {
@@ -235603,6 +238253,15 @@ func (s *ServerDispatcher) OnMessagesGetChats(f func(ctx context.Context, id []i
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getChats result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -235619,6 +238278,15 @@ func (s *ServerDispatcher) OnMessagesGetCommonChats(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getCommonChats result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -235635,6 +238303,12 @@ func (s *ServerDispatcher) OnMessagesGetCustomEmojiDocuments(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]DocumentClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getCustomEmojiDocuments result has type %T, want []DocumentClass", value)
+		}
+		return &DocumentClassVector{Elems: response}, nil
 	})
 }
 
@@ -235651,7 +238325,7 @@ func (s *ServerDispatcher) OnMessagesGetDefaultHistoryTTL(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetDefaultTagReactions(f func(ctx context.Context, hash int64) (MessagesReactionsClass, error)) {
@@ -235667,6 +238341,15 @@ func (s *ServerDispatcher) OnMessagesGetDefaultTagReactions(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesReactionsBox{}, nil
+		}
+		response, ok := value.(MessagesReactionsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getDefaultTagReactions result has type %T, want MessagesReactionsClass", value)
+		}
+		return &MessagesReactionsBox{Reactions: response}, nil
 	})
 }
 
@@ -235683,6 +238366,15 @@ func (s *ServerDispatcher) OnMessagesGetDhConfig(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesDhConfigBox{}, nil
+		}
+		response, ok := value.(MessagesDhConfigClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getDhConfig result has type %T, want MessagesDhConfigClass", value)
+		}
+		return &MessagesDhConfigBox{DhConfig: response}, nil
 	})
 }
 
@@ -235699,7 +238391,7 @@ func (s *ServerDispatcher) OnMessagesGetDialogFilters(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetDialogUnreadMarks(f func(ctx context.Context, request *MessagesGetDialogUnreadMarksRequest) ([]DialogPeerClass, error)) {
@@ -235715,6 +238407,12 @@ func (s *ServerDispatcher) OnMessagesGetDialogUnreadMarks(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]DialogPeerClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getDialogUnreadMarks result has type %T, want []DialogPeerClass", value)
+		}
+		return &DialogPeerClassVector{Elems: response}, nil
 	})
 }
 
@@ -235731,6 +238429,15 @@ func (s *ServerDispatcher) OnMessagesGetDialogs(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesDialogsBox{}, nil
+		}
+		response, ok := value.(MessagesDialogsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getDialogs result has type %T, want MessagesDialogsClass", value)
+		}
+		return &MessagesDialogsBox{Dialogs: response}, nil
 	})
 }
 
@@ -235747,7 +238454,7 @@ func (s *ServerDispatcher) OnMessagesGetDiscussionMessage(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetDocumentByHash(f func(ctx context.Context, request *MessagesGetDocumentByHashRequest) (DocumentClass, error)) {
@@ -235763,6 +238470,15 @@ func (s *ServerDispatcher) OnMessagesGetDocumentByHash(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &DocumentBox{}, nil
+		}
+		response, ok := value.(DocumentClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getDocumentByHash result has type %T, want DocumentClass", value)
+		}
+		return &DocumentBox{Document: response}, nil
 	})
 }
 
@@ -235779,6 +238495,15 @@ func (s *ServerDispatcher) OnMessagesGetEmojiGameInfo(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesEmojiGameInfoBox{}, nil
+		}
+		response, ok := value.(MessagesEmojiGameInfoClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiGameInfo result has type %T, want MessagesEmojiGameInfoClass", value)
+		}
+		return &MessagesEmojiGameInfoBox{EmojiGameInfo: response}, nil
 	})
 }
 
@@ -235795,6 +238520,15 @@ func (s *ServerDispatcher) OnMessagesGetEmojiGroups(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesEmojiGroupsBox{}, nil
+		}
+		response, ok := value.(MessagesEmojiGroupsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiGroups result has type %T, want MessagesEmojiGroupsClass", value)
+		}
+		return &MessagesEmojiGroupsBox{EmojiGroups: response}, nil
 	})
 }
 
@@ -235811,7 +238545,7 @@ func (s *ServerDispatcher) OnMessagesGetEmojiKeywords(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetEmojiKeywordsDifference(f func(ctx context.Context, request *MessagesGetEmojiKeywordsDifferenceRequest) (*EmojiKeywordsDifference, error)) {
@@ -235827,7 +238561,7 @@ func (s *ServerDispatcher) OnMessagesGetEmojiKeywordsDifference(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetEmojiKeywordsLanguages(f func(ctx context.Context, langcodes []string) ([]EmojiLanguage, error)) {
@@ -235843,6 +238577,12 @@ func (s *ServerDispatcher) OnMessagesGetEmojiKeywordsLanguages(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]EmojiLanguage)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiKeywordsLanguages result has type %T, want []EmojiLanguage", value)
+		}
+		return &EmojiLanguageVector{Elems: response}, nil
 	})
 }
 
@@ -235859,6 +238599,15 @@ func (s *ServerDispatcher) OnMessagesGetEmojiProfilePhotoGroups(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesEmojiGroupsBox{}, nil
+		}
+		response, ok := value.(MessagesEmojiGroupsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiProfilePhotoGroups result has type %T, want MessagesEmojiGroupsClass", value)
+		}
+		return &MessagesEmojiGroupsBox{EmojiGroups: response}, nil
 	})
 }
 
@@ -235875,6 +238624,15 @@ func (s *ServerDispatcher) OnMessagesGetEmojiStatusGroups(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesEmojiGroupsBox{}, nil
+		}
+		response, ok := value.(MessagesEmojiGroupsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiStatusGroups result has type %T, want MessagesEmojiGroupsClass", value)
+		}
+		return &MessagesEmojiGroupsBox{EmojiGroups: response}, nil
 	})
 }
 
@@ -235891,6 +238649,15 @@ func (s *ServerDispatcher) OnMessagesGetEmojiStickerGroups(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesEmojiGroupsBox{}, nil
+		}
+		response, ok := value.(MessagesEmojiGroupsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiStickerGroups result has type %T, want MessagesEmojiGroupsClass", value)
+		}
+		return &MessagesEmojiGroupsBox{EmojiGroups: response}, nil
 	})
 }
 
@@ -235907,6 +238674,15 @@ func (s *ServerDispatcher) OnMessagesGetEmojiStickers(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesAllStickersBox{}, nil
+		}
+		response, ok := value.(MessagesAllStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getEmojiStickers result has type %T, want MessagesAllStickersClass", value)
+		}
+		return &MessagesAllStickersBox{AllStickers: response}, nil
 	})
 }
 
@@ -235923,7 +238699,7 @@ func (s *ServerDispatcher) OnMessagesGetEmojiURL(f func(ctx context.Context, lan
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetExportedChatInvite(f func(ctx context.Context, request *MessagesGetExportedChatInviteRequest) (MessagesExportedChatInviteClass, error)) {
@@ -235939,6 +238715,15 @@ func (s *ServerDispatcher) OnMessagesGetExportedChatInvite(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesExportedChatInviteBox{}, nil
+		}
+		response, ok := value.(MessagesExportedChatInviteClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getExportedChatInvite result has type %T, want MessagesExportedChatInviteClass", value)
+		}
+		return &MessagesExportedChatInviteBox{ExportedChatInvite: response}, nil
 	})
 }
 
@@ -235955,7 +238740,7 @@ func (s *ServerDispatcher) OnMessagesGetExportedChatInvites(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetExtendedMedia(f func(ctx context.Context, request *MessagesGetExtendedMediaRequest) (UpdatesClass, error)) {
@@ -235971,6 +238756,15 @@ func (s *ServerDispatcher) OnMessagesGetExtendedMedia(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getExtendedMedia result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -235987,6 +238781,12 @@ func (s *ServerDispatcher) OnMessagesGetFactCheck(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]FactCheck)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getFactCheck result has type %T, want []FactCheck", value)
+		}
+		return &FactCheckVector{Elems: response}, nil
 	})
 }
 
@@ -236003,6 +238803,15 @@ func (s *ServerDispatcher) OnMessagesGetFavedStickers(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFavedStickersBox{}, nil
+		}
+		response, ok := value.(MessagesFavedStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getFavedStickers result has type %T, want MessagesFavedStickersClass", value)
+		}
+		return &MessagesFavedStickersBox{FavedStickers: response}, nil
 	})
 }
 
@@ -236019,6 +238828,15 @@ func (s *ServerDispatcher) OnMessagesGetFeaturedEmojiStickers(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFeaturedStickersBox{}, nil
+		}
+		response, ok := value.(MessagesFeaturedStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getFeaturedEmojiStickers result has type %T, want MessagesFeaturedStickersClass", value)
+		}
+		return &MessagesFeaturedStickersBox{FeaturedStickers: response}, nil
 	})
 }
 
@@ -236035,6 +238853,15 @@ func (s *ServerDispatcher) OnMessagesGetFeaturedStickers(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFeaturedStickersBox{}, nil
+		}
+		response, ok := value.(MessagesFeaturedStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getFeaturedStickers result has type %T, want MessagesFeaturedStickersClass", value)
+		}
+		return &MessagesFeaturedStickersBox{FeaturedStickers: response}, nil
 	})
 }
 
@@ -236051,7 +238878,7 @@ func (s *ServerDispatcher) OnMessagesGetForumTopics(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetForumTopicsByID(f func(ctx context.Context, request *MessagesGetForumTopicsByIDRequest) (*MessagesForumTopics, error)) {
@@ -236067,7 +238894,7 @@ func (s *ServerDispatcher) OnMessagesGetForumTopicsByID(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetFullChat(f func(ctx context.Context, chatid int64) (*MessagesChatFull, error)) {
@@ -236083,7 +238910,7 @@ func (s *ServerDispatcher) OnMessagesGetFullChat(f func(ctx context.Context, cha
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetFutureChatCreatorAfterLeave(f func(ctx context.Context, peer InputPeerClass) (UserClass, error)) {
@@ -236099,6 +238926,15 @@ func (s *ServerDispatcher) OnMessagesGetFutureChatCreatorAfterLeave(f func(ctx c
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UserBox{}, nil
+		}
+		response, ok := value.(UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getFutureChatCreatorAfterLeave result has type %T, want UserClass", value)
+		}
+		return &UserBox{User: response}, nil
 	})
 }
 
@@ -236115,7 +238951,7 @@ func (s *ServerDispatcher) OnMessagesGetGameHighScores(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetHistory(f func(ctx context.Context, request *MessagesGetHistoryRequest) (MessagesMessagesClass, error)) {
@@ -236131,6 +238967,15 @@ func (s *ServerDispatcher) OnMessagesGetHistory(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getHistory result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236147,7 +238992,7 @@ func (s *ServerDispatcher) OnMessagesGetInlineBotResults(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetInlineGameHighScores(f func(ctx context.Context, request *MessagesGetInlineGameHighScoresRequest) (*MessagesHighScores, error)) {
@@ -236163,7 +239008,7 @@ func (s *ServerDispatcher) OnMessagesGetInlineGameHighScores(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetMaskStickers(f func(ctx context.Context, hash int64) (MessagesAllStickersClass, error)) {
@@ -236179,6 +239024,15 @@ func (s *ServerDispatcher) OnMessagesGetMaskStickers(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesAllStickersBox{}, nil
+		}
+		response, ok := value.(MessagesAllStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getMaskStickers result has type %T, want MessagesAllStickersClass", value)
+		}
+		return &MessagesAllStickersBox{AllStickers: response}, nil
 	})
 }
 
@@ -236195,7 +239049,7 @@ func (s *ServerDispatcher) OnMessagesGetMessageEditData(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetMessageReactionsList(f func(ctx context.Context, request *MessagesGetMessageReactionsListRequest) (*MessagesMessageReactionsList, error)) {
@@ -236211,7 +239065,7 @@ func (s *ServerDispatcher) OnMessagesGetMessageReactionsList(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetMessageReadParticipants(f func(ctx context.Context, request *MessagesGetMessageReadParticipantsRequest) ([]ReadParticipantDate, error)) {
@@ -236227,6 +239081,12 @@ func (s *ServerDispatcher) OnMessagesGetMessageReadParticipants(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]ReadParticipantDate)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getMessageReadParticipants result has type %T, want []ReadParticipantDate", value)
+		}
+		return &ReadParticipantDateVector{Elems: response}, nil
 	})
 }
 
@@ -236243,6 +239103,15 @@ func (s *ServerDispatcher) OnMessagesGetMessages(f func(ctx context.Context, id 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getMessages result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236259,6 +239128,15 @@ func (s *ServerDispatcher) OnMessagesGetMessagesReactions(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getMessagesReactions result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -236275,7 +239153,7 @@ func (s *ServerDispatcher) OnMessagesGetMessagesViews(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetMyStickers(f func(ctx context.Context, request *MessagesGetMyStickersRequest) (*MessagesMyStickers, error)) {
@@ -236291,7 +239169,7 @@ func (s *ServerDispatcher) OnMessagesGetMyStickers(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetOldFeaturedStickers(f func(ctx context.Context, request *MessagesGetOldFeaturedStickersRequest) (MessagesFeaturedStickersClass, error)) {
@@ -236307,6 +239185,15 @@ func (s *ServerDispatcher) OnMessagesGetOldFeaturedStickers(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFeaturedStickersBox{}, nil
+		}
+		response, ok := value.(MessagesFeaturedStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getOldFeaturedStickers result has type %T, want MessagesFeaturedStickersClass", value)
+		}
+		return &MessagesFeaturedStickersBox{FeaturedStickers: response}, nil
 	})
 }
 
@@ -236323,7 +239210,7 @@ func (s *ServerDispatcher) OnMessagesGetOnlines(f func(ctx context.Context, peer
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetOutboxReadDate(f func(ctx context.Context, request *MessagesGetOutboxReadDateRequest) (*OutboxReadDate, error)) {
@@ -236339,7 +239226,7 @@ func (s *ServerDispatcher) OnMessagesGetOutboxReadDate(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetPaidReactionPrivacy(f func(ctx context.Context) (UpdatesClass, error)) {
@@ -236355,6 +239242,15 @@ func (s *ServerDispatcher) OnMessagesGetPaidReactionPrivacy(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getPaidReactionPrivacy result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -236371,7 +239267,7 @@ func (s *ServerDispatcher) OnMessagesGetPeerDialogs(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetPeerSettings(f func(ctx context.Context, peer InputPeerClass) (*MessagesPeerSettings, error)) {
@@ -236387,7 +239283,7 @@ func (s *ServerDispatcher) OnMessagesGetPeerSettings(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetPersonalChannelHistory(f func(ctx context.Context, request *MessagesGetPersonalChannelHistoryRequest) (MessagesMessagesClass, error)) {
@@ -236403,6 +239299,15 @@ func (s *ServerDispatcher) OnMessagesGetPersonalChannelHistory(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getPersonalChannelHistory result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236419,7 +239324,7 @@ func (s *ServerDispatcher) OnMessagesGetPinnedDialogs(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetPinnedSavedDialogs(f func(ctx context.Context) (MessagesSavedDialogsClass, error)) {
@@ -236435,6 +239340,15 @@ func (s *ServerDispatcher) OnMessagesGetPinnedSavedDialogs(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSavedDialogsBox{}, nil
+		}
+		response, ok := value.(MessagesSavedDialogsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getPinnedSavedDialogs result has type %T, want MessagesSavedDialogsClass", value)
+		}
+		return &MessagesSavedDialogsBox{SavedDialogs: response}, nil
 	})
 }
 
@@ -236451,6 +239365,15 @@ func (s *ServerDispatcher) OnMessagesGetPollResults(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getPollResults result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -236467,7 +239390,7 @@ func (s *ServerDispatcher) OnMessagesGetPollVotes(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetPreparedInlineMessage(f func(ctx context.Context, request *MessagesGetPreparedInlineMessageRequest) (*MessagesPreparedInlineMessage, error)) {
@@ -236483,7 +239406,7 @@ func (s *ServerDispatcher) OnMessagesGetPreparedInlineMessage(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetQuickReplies(f func(ctx context.Context, hash int64) (MessagesQuickRepliesClass, error)) {
@@ -236499,6 +239422,15 @@ func (s *ServerDispatcher) OnMessagesGetQuickReplies(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesQuickRepliesBox{}, nil
+		}
+		response, ok := value.(MessagesQuickRepliesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getQuickReplies result has type %T, want MessagesQuickRepliesClass", value)
+		}
+		return &MessagesQuickRepliesBox{QuickReplies: response}, nil
 	})
 }
 
@@ -236515,6 +239447,15 @@ func (s *ServerDispatcher) OnMessagesGetQuickReplyMessages(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getQuickReplyMessages result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236531,6 +239472,15 @@ func (s *ServerDispatcher) OnMessagesGetRecentLocations(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getRecentLocations result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236547,6 +239497,15 @@ func (s *ServerDispatcher) OnMessagesGetRecentReactions(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesReactionsBox{}, nil
+		}
+		response, ok := value.(MessagesReactionsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getRecentReactions result has type %T, want MessagesReactionsClass", value)
+		}
+		return &MessagesReactionsBox{Reactions: response}, nil
 	})
 }
 
@@ -236563,6 +239522,15 @@ func (s *ServerDispatcher) OnMessagesGetRecentStickers(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesRecentStickersBox{}, nil
+		}
+		response, ok := value.(MessagesRecentStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getRecentStickers result has type %T, want MessagesRecentStickersClass", value)
+		}
+		return &MessagesRecentStickersBox{RecentStickers: response}, nil
 	})
 }
 
@@ -236579,6 +239547,15 @@ func (s *ServerDispatcher) OnMessagesGetReplies(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getReplies result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236595,6 +239572,15 @@ func (s *ServerDispatcher) OnMessagesGetRichMessage(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getRichMessage result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236611,6 +239597,15 @@ func (s *ServerDispatcher) OnMessagesGetSavedDialogs(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSavedDialogsBox{}, nil
+		}
+		response, ok := value.(MessagesSavedDialogsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSavedDialogs result has type %T, want MessagesSavedDialogsClass", value)
+		}
+		return &MessagesSavedDialogsBox{SavedDialogs: response}, nil
 	})
 }
 
@@ -236627,6 +239622,15 @@ func (s *ServerDispatcher) OnMessagesGetSavedDialogsByID(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSavedDialogsBox{}, nil
+		}
+		response, ok := value.(MessagesSavedDialogsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSavedDialogsByID result has type %T, want MessagesSavedDialogsClass", value)
+		}
+		return &MessagesSavedDialogsBox{SavedDialogs: response}, nil
 	})
 }
 
@@ -236643,6 +239647,15 @@ func (s *ServerDispatcher) OnMessagesGetSavedGifs(f func(ctx context.Context, ha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSavedGifsBox{}, nil
+		}
+		response, ok := value.(MessagesSavedGifsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSavedGifs result has type %T, want MessagesSavedGifsClass", value)
+		}
+		return &MessagesSavedGifsBox{SavedGifs: response}, nil
 	})
 }
 
@@ -236659,6 +239672,15 @@ func (s *ServerDispatcher) OnMessagesGetSavedHistory(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSavedHistory result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236675,6 +239697,15 @@ func (s *ServerDispatcher) OnMessagesGetSavedReactionTags(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSavedReactionTagsBox{}, nil
+		}
+		response, ok := value.(MessagesSavedReactionTagsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSavedReactionTags result has type %T, want MessagesSavedReactionTagsClass", value)
+		}
+		return &MessagesSavedReactionTagsBox{SavedReactionTags: response}, nil
 	})
 }
 
@@ -236691,6 +239722,15 @@ func (s *ServerDispatcher) OnMessagesGetScheduledHistory(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getScheduledHistory result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236707,6 +239747,15 @@ func (s *ServerDispatcher) OnMessagesGetScheduledMessages(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getScheduledMessages result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236723,6 +239772,12 @@ func (s *ServerDispatcher) OnMessagesGetSearchCounters(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]MessagesSearchCounter)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSearchCounters result has type %T, want []MessagesSearchCounter", value)
+		}
+		return &MessagesSearchCounterVector{Elems: response}, nil
 	})
 }
 
@@ -236739,7 +239794,7 @@ func (s *ServerDispatcher) OnMessagesGetSearchResultsCalendar(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetSearchResultsPositions(f func(ctx context.Context, request *MessagesGetSearchResultsPositionsRequest) (*MessagesSearchResultsPositions, error)) {
@@ -236755,7 +239810,7 @@ func (s *ServerDispatcher) OnMessagesGetSearchResultsPositions(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetSplitRanges(f func(ctx context.Context) ([]MessageRange, error)) {
@@ -236771,6 +239826,12 @@ func (s *ServerDispatcher) OnMessagesGetSplitRanges(f func(ctx context.Context) 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]MessageRange)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSplitRanges result has type %T, want []MessageRange", value)
+		}
+		return &MessageRangeVector{Elems: response}, nil
 	})
 }
 
@@ -236787,6 +239848,15 @@ func (s *ServerDispatcher) OnMessagesGetSponsoredMessages(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSponsoredMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesSponsoredMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSponsoredMessages result has type %T, want MessagesSponsoredMessagesClass", value)
+		}
+		return &MessagesSponsoredMessagesBox{SponsoredMessages: response}, nil
 	})
 }
 
@@ -236803,6 +239873,15 @@ func (s *ServerDispatcher) OnMessagesGetStickerSet(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getStickerSet result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -236819,6 +239898,15 @@ func (s *ServerDispatcher) OnMessagesGetStickers(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickersBox{}, nil
+		}
+		response, ok := value.(MessagesStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getStickers result has type %T, want MessagesStickersClass", value)
+		}
+		return &MessagesStickersBox{Stickers: response}, nil
 	})
 }
 
@@ -236835,6 +239923,12 @@ func (s *ServerDispatcher) OnMessagesGetSuggestedDialogFilters(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]DialogFilterSuggested)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getSuggestedDialogFilters result has type %T, want []DialogFilterSuggested", value)
+		}
+		return &DialogFilterSuggestedVector{Elems: response}, nil
 	})
 }
 
@@ -236851,6 +239945,15 @@ func (s *ServerDispatcher) OnMessagesGetTopReactions(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesReactionsBox{}, nil
+		}
+		response, ok := value.(MessagesReactionsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getTopReactions result has type %T, want MessagesReactionsClass", value)
+		}
+		return &MessagesReactionsBox{Reactions: response}, nil
 	})
 }
 
@@ -236867,6 +239970,15 @@ func (s *ServerDispatcher) OnMessagesGetUnreadMentions(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getUnreadMentions result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236883,6 +239995,15 @@ func (s *ServerDispatcher) OnMessagesGetUnreadPollVotes(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getUnreadPollVotes result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236899,6 +240020,15 @@ func (s *ServerDispatcher) OnMessagesGetUnreadReactions(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.getUnreadReactions result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -236915,7 +240045,7 @@ func (s *ServerDispatcher) OnMessagesGetWebPage(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesGetWebPagePreview(f func(ctx context.Context, request *MessagesGetWebPagePreviewRequest) (*MessagesWebPagePreview, error)) {
@@ -236931,7 +240061,7 @@ func (s *ServerDispatcher) OnMessagesGetWebPagePreview(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesHideAllChatJoinRequests(f func(ctx context.Context, request *MessagesHideAllChatJoinRequestsRequest) (UpdatesClass, error)) {
@@ -236947,6 +240077,15 @@ func (s *ServerDispatcher) OnMessagesHideAllChatJoinRequests(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.hideAllChatJoinRequests result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -236963,6 +240102,15 @@ func (s *ServerDispatcher) OnMessagesHideChatJoinRequest(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.hideChatJoinRequest result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -236979,6 +240127,15 @@ func (s *ServerDispatcher) OnMessagesHidePeerSettingsBar(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.hidePeerSettingsBar result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -236995,6 +240152,15 @@ func (s *ServerDispatcher) OnMessagesImportChatInvite(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatInviteJoinResultBox{}, nil
+		}
+		response, ok := value.(MessagesChatInviteJoinResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.importChatInvite result has type %T, want MessagesChatInviteJoinResultClass", value)
+		}
+		return &MessagesChatInviteJoinResultBox{ChatInviteJoinResult: response}, nil
 	})
 }
 
@@ -237011,7 +240177,7 @@ func (s *ServerDispatcher) OnMessagesInitHistoryImport(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesInstallStickerSet(f func(ctx context.Context, request *MessagesInstallStickerSetRequest) (MessagesStickerSetInstallResultClass, error)) {
@@ -237027,6 +240193,15 @@ func (s *ServerDispatcher) OnMessagesInstallStickerSet(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetInstallResultBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetInstallResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.installStickerSet result has type %T, want MessagesStickerSetInstallResultClass", value)
+		}
+		return &MessagesStickerSetInstallResultBox{StickerSetInstallResult: response}, nil
 	})
 }
 
@@ -237043,6 +240218,15 @@ func (s *ServerDispatcher) OnMessagesMarkDialogUnread(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.markDialogUnread result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237059,6 +240243,15 @@ func (s *ServerDispatcher) OnMessagesMigrateChat(f func(ctx context.Context, cha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.migrateChat result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237075,6 +240268,15 @@ func (s *ServerDispatcher) OnMessagesProlongWebView(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.prolongWebView result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237091,6 +240293,15 @@ func (s *ServerDispatcher) OnMessagesRateTranscribedAudio(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.rateTranscribedAudio result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237107,6 +240318,15 @@ func (s *ServerDispatcher) OnMessagesReadDiscussion(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.readDiscussion result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237123,6 +240343,15 @@ func (s *ServerDispatcher) OnMessagesReadEncryptedHistory(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.readEncryptedHistory result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237139,6 +240368,15 @@ func (s *ServerDispatcher) OnMessagesReadFeaturedStickers(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.readFeaturedStickers result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237155,7 +240393,7 @@ func (s *ServerDispatcher) OnMessagesReadHistory(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesReadMentions(f func(ctx context.Context, request *MessagesReadMentionsRequest) (*MessagesAffectedHistory, error)) {
@@ -237171,7 +240409,7 @@ func (s *ServerDispatcher) OnMessagesReadMentions(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesReadMessageContents(f func(ctx context.Context, id []int) (*MessagesAffectedMessages, error)) {
@@ -237187,7 +240425,7 @@ func (s *ServerDispatcher) OnMessagesReadMessageContents(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesReadPollVotes(f func(ctx context.Context, request *MessagesReadPollVotesRequest) (*MessagesAffectedHistory, error)) {
@@ -237203,7 +240441,7 @@ func (s *ServerDispatcher) OnMessagesReadPollVotes(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesReadReactions(f func(ctx context.Context, request *MessagesReadReactionsRequest) (*MessagesAffectedHistory, error)) {
@@ -237219,7 +240457,7 @@ func (s *ServerDispatcher) OnMessagesReadReactions(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesReadSavedHistory(f func(ctx context.Context, request *MessagesReadSavedHistoryRequest) (bool, error)) {
@@ -237235,6 +240473,15 @@ func (s *ServerDispatcher) OnMessagesReadSavedHistory(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.readSavedHistory result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237251,6 +240498,12 @@ func (s *ServerDispatcher) OnMessagesReceivedMessages(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]ReceivedNotifyMessage)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.receivedMessages result has type %T, want []ReceivedNotifyMessage", value)
+		}
+		return &ReceivedNotifyMessageVector{Elems: response}, nil
 	})
 }
 
@@ -237267,6 +240520,12 @@ func (s *ServerDispatcher) OnMessagesReceivedQueue(f func(ctx context.Context, m
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int64)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.receivedQueue result has type %T, want []int64", value)
+		}
+		return &LongVector{Elems: response}, nil
 	})
 }
 
@@ -237283,6 +240542,15 @@ func (s *ServerDispatcher) OnMessagesReorderPinnedDialogs(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reorderPinnedDialogs result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237299,6 +240567,15 @@ func (s *ServerDispatcher) OnMessagesReorderPinnedForumTopics(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reorderPinnedForumTopics result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237315,6 +240592,15 @@ func (s *ServerDispatcher) OnMessagesReorderPinnedSavedDialogs(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reorderPinnedSavedDialogs result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237331,6 +240617,15 @@ func (s *ServerDispatcher) OnMessagesReorderQuickReplies(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reorderQuickReplies result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237347,6 +240642,15 @@ func (s *ServerDispatcher) OnMessagesReorderStickerSets(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reorderStickerSets result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237363,6 +240667,15 @@ func (s *ServerDispatcher) OnMessagesReport(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ReportResultBox{}, nil
+		}
+		response, ok := value.(ReportResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.report result has type %T, want ReportResultClass", value)
+		}
+		return &ReportResultBox{ReportResult: response}, nil
 	})
 }
 
@@ -237379,6 +240692,15 @@ func (s *ServerDispatcher) OnMessagesReportEncryptedSpam(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportEncryptedSpam result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237395,6 +240717,15 @@ func (s *ServerDispatcher) OnMessagesReportMessagesDelivery(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportMessagesDelivery result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237411,6 +240742,15 @@ func (s *ServerDispatcher) OnMessagesReportMusicListen(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportMusicListen result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237427,6 +240767,15 @@ func (s *ServerDispatcher) OnMessagesReportReaction(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportReaction result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237443,6 +240792,15 @@ func (s *ServerDispatcher) OnMessagesReportReadMetrics(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportReadMetrics result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237459,6 +240817,15 @@ func (s *ServerDispatcher) OnMessagesReportSpam(f func(ctx context.Context, peer
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportSpam result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237475,6 +240842,15 @@ func (s *ServerDispatcher) OnMessagesReportSponsoredMessage(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ChannelsSponsoredMessageReportResultBox{}, nil
+		}
+		response, ok := value.(ChannelsSponsoredMessageReportResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.reportSponsoredMessage result has type %T, want ChannelsSponsoredMessageReportResultClass", value)
+		}
+		return &ChannelsSponsoredMessageReportResultBox{SponsoredMessageReportResult: response}, nil
 	})
 }
 
@@ -237491,7 +240867,7 @@ func (s *ServerDispatcher) OnMessagesRequestAppWebView(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesRequestEncryption(f func(ctx context.Context, request *MessagesRequestEncryptionRequest) (EncryptedChatClass, error)) {
@@ -237507,6 +240883,15 @@ func (s *ServerDispatcher) OnMessagesRequestEncryption(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EncryptedChatBox{}, nil
+		}
+		response, ok := value.(EncryptedChatClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.requestEncryption result has type %T, want EncryptedChatClass", value)
+		}
+		return &EncryptedChatBox{EncryptedChat: response}, nil
 	})
 }
 
@@ -237523,7 +240908,7 @@ func (s *ServerDispatcher) OnMessagesRequestMainWebView(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesRequestSimpleWebView(f func(ctx context.Context, request *MessagesRequestSimpleWebViewRequest) (*WebViewResultURL, error)) {
@@ -237539,7 +240924,7 @@ func (s *ServerDispatcher) OnMessagesRequestSimpleWebView(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesRequestURLAuth(f func(ctx context.Context, request *MessagesRequestURLAuthRequest) (URLAuthResultClass, error)) {
@@ -237555,6 +240940,15 @@ func (s *ServerDispatcher) OnMessagesRequestURLAuth(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &URLAuthResultBox{}, nil
+		}
+		response, ok := value.(URLAuthResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.requestUrlAuth result has type %T, want URLAuthResultClass", value)
+		}
+		return &URLAuthResultBox{UrlAuthResult: response}, nil
 	})
 }
 
@@ -237571,7 +240965,7 @@ func (s *ServerDispatcher) OnMessagesRequestWebView(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesSaveDefaultSendAs(f func(ctx context.Context, request *MessagesSaveDefaultSendAsRequest) (bool, error)) {
@@ -237587,6 +240981,15 @@ func (s *ServerDispatcher) OnMessagesSaveDefaultSendAs(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.saveDefaultSendAs result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237603,6 +241006,15 @@ func (s *ServerDispatcher) OnMessagesSaveDraft(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.saveDraft result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237619,6 +241031,15 @@ func (s *ServerDispatcher) OnMessagesSaveGif(f func(ctx context.Context, request
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.saveGif result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237635,7 +241056,7 @@ func (s *ServerDispatcher) OnMessagesSavePreparedInlineMessage(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesSaveRecentSticker(f func(ctx context.Context, request *MessagesSaveRecentStickerRequest) (bool, error)) {
@@ -237651,6 +241072,15 @@ func (s *ServerDispatcher) OnMessagesSaveRecentSticker(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.saveRecentSticker result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -237667,6 +241097,15 @@ func (s *ServerDispatcher) OnMessagesSearch(f func(ctx context.Context, request 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.search result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -237683,6 +241122,15 @@ func (s *ServerDispatcher) OnMessagesSearchCustomEmoji(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EmojiListBox{}, nil
+		}
+		response, ok := value.(EmojiListClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.searchCustomEmoji result has type %T, want EmojiListClass", value)
+		}
+		return &EmojiListBox{EmojiList: response}, nil
 	})
 }
 
@@ -237699,6 +241147,15 @@ func (s *ServerDispatcher) OnMessagesSearchEmojiStickerSets(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFoundStickerSetsBox{}, nil
+		}
+		response, ok := value.(MessagesFoundStickerSetsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.searchEmojiStickerSets result has type %T, want MessagesFoundStickerSetsClass", value)
+		}
+		return &MessagesFoundStickerSetsBox{FoundStickerSets: response}, nil
 	})
 }
 
@@ -237715,6 +241172,15 @@ func (s *ServerDispatcher) OnMessagesSearchGlobal(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.searchGlobal result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -237731,6 +241197,15 @@ func (s *ServerDispatcher) OnMessagesSearchSentMedia(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesMessagesBox{}, nil
+		}
+		response, ok := value.(MessagesMessagesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.searchSentMedia result has type %T, want MessagesMessagesClass", value)
+		}
+		return &MessagesMessagesBox{Messages: response}, nil
 	})
 }
 
@@ -237747,6 +241222,15 @@ func (s *ServerDispatcher) OnMessagesSearchStickerSets(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFoundStickerSetsBox{}, nil
+		}
+		response, ok := value.(MessagesFoundStickerSetsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.searchStickerSets result has type %T, want MessagesFoundStickerSetsClass", value)
+		}
+		return &MessagesFoundStickerSetsBox{FoundStickerSets: response}, nil
 	})
 }
 
@@ -237763,6 +241247,15 @@ func (s *ServerDispatcher) OnMessagesSearchStickers(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesFoundStickersBox{}, nil
+		}
+		response, ok := value.(MessagesFoundStickersClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.searchStickers result has type %T, want MessagesFoundStickersClass", value)
+		}
+		return &MessagesFoundStickersBox{FoundStickers: response}, nil
 	})
 }
 
@@ -237779,6 +241272,15 @@ func (s *ServerDispatcher) OnMessagesSendBotRequestedPeer(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendBotRequestedPeer result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237795,6 +241297,15 @@ func (s *ServerDispatcher) OnMessagesSendEncrypted(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSentEncryptedMessageBox{}, nil
+		}
+		response, ok := value.(MessagesSentEncryptedMessageClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendEncrypted result has type %T, want MessagesSentEncryptedMessageClass", value)
+		}
+		return &MessagesSentEncryptedMessageBox{SentEncryptedMessage: response}, nil
 	})
 }
 
@@ -237811,6 +241322,15 @@ func (s *ServerDispatcher) OnMessagesSendEncryptedFile(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSentEncryptedMessageBox{}, nil
+		}
+		response, ok := value.(MessagesSentEncryptedMessageClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendEncryptedFile result has type %T, want MessagesSentEncryptedMessageClass", value)
+		}
+		return &MessagesSentEncryptedMessageBox{SentEncryptedMessage: response}, nil
 	})
 }
 
@@ -237827,6 +241347,15 @@ func (s *ServerDispatcher) OnMessagesSendEncryptedService(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesSentEncryptedMessageBox{}, nil
+		}
+		response, ok := value.(MessagesSentEncryptedMessageClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendEncryptedService result has type %T, want MessagesSentEncryptedMessageClass", value)
+		}
+		return &MessagesSentEncryptedMessageBox{SentEncryptedMessage: response}, nil
 	})
 }
 
@@ -237843,6 +241372,15 @@ func (s *ServerDispatcher) OnMessagesSendInlineBotResult(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendInlineBotResult result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237859,6 +241397,15 @@ func (s *ServerDispatcher) OnMessagesSendMedia(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendMedia result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237875,6 +241422,15 @@ func (s *ServerDispatcher) OnMessagesSendMessage(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendMessage result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237891,6 +241447,15 @@ func (s *ServerDispatcher) OnMessagesSendMultiMedia(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendMultiMedia result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237907,6 +241472,15 @@ func (s *ServerDispatcher) OnMessagesSendPaidReaction(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendPaidReaction result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237923,6 +241497,15 @@ func (s *ServerDispatcher) OnMessagesSendQuickReplyMessages(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendQuickReplyMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237939,6 +241522,15 @@ func (s *ServerDispatcher) OnMessagesSendReaction(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendReaction result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237955,6 +241547,15 @@ func (s *ServerDispatcher) OnMessagesSendScheduledMessages(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendScheduledMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237971,6 +241572,15 @@ func (s *ServerDispatcher) OnMessagesSendScreenshotNotification(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendScreenshotNotification result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -237987,6 +241597,15 @@ func (s *ServerDispatcher) OnMessagesSendVote(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendVote result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238003,6 +241622,15 @@ func (s *ServerDispatcher) OnMessagesSendWebViewData(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.sendWebViewData result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238019,7 +241647,7 @@ func (s *ServerDispatcher) OnMessagesSendWebViewResultMessage(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesSetBotCallbackAnswer(f func(ctx context.Context, request *MessagesSetBotCallbackAnswerRequest) (bool, error)) {
@@ -238035,6 +241663,15 @@ func (s *ServerDispatcher) OnMessagesSetBotCallbackAnswer(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setBotCallbackAnswer result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238051,6 +241688,15 @@ func (s *ServerDispatcher) OnMessagesSetBotGuestChatResult(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &InputBotInlineMessageIDBox{}, nil
+		}
+		response, ok := value.(InputBotInlineMessageIDClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setBotGuestChatResult result has type %T, want InputBotInlineMessageIDClass", value)
+		}
+		return &InputBotInlineMessageIDBox{InputBotInlineMessageID: response}, nil
 	})
 }
 
@@ -238067,6 +241713,15 @@ func (s *ServerDispatcher) OnMessagesSetBotPrecheckoutResults(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setBotPrecheckoutResults result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238083,6 +241738,15 @@ func (s *ServerDispatcher) OnMessagesSetBotShippingResults(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setBotShippingResults result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238099,6 +241763,15 @@ func (s *ServerDispatcher) OnMessagesSetChatAvailableReactions(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setChatAvailableReactions result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238115,6 +241788,15 @@ func (s *ServerDispatcher) OnMessagesSetChatTheme(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setChatTheme result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238131,6 +241813,15 @@ func (s *ServerDispatcher) OnMessagesSetChatWallPaper(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setChatWallPaper result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238147,6 +241838,15 @@ func (s *ServerDispatcher) OnMessagesSetDefaultHistoryTTL(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setDefaultHistoryTTL result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238163,6 +241863,15 @@ func (s *ServerDispatcher) OnMessagesSetDefaultReaction(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setDefaultReaction result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238179,6 +241888,15 @@ func (s *ServerDispatcher) OnMessagesSetEncryptedTyping(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setEncryptedTyping result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238195,6 +241913,15 @@ func (s *ServerDispatcher) OnMessagesSetGameScore(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setGameScore result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238211,6 +241938,15 @@ func (s *ServerDispatcher) OnMessagesSetHistoryTTL(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setHistoryTTL result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238227,6 +241963,15 @@ func (s *ServerDispatcher) OnMessagesSetInlineBotResults(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setInlineBotResults result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238243,6 +241988,15 @@ func (s *ServerDispatcher) OnMessagesSetInlineGameScore(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setInlineGameScore result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238259,6 +242013,15 @@ func (s *ServerDispatcher) OnMessagesSetTyping(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.setTyping result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238275,6 +242038,15 @@ func (s *ServerDispatcher) OnMessagesStartBot(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.startBot result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238291,6 +242063,15 @@ func (s *ServerDispatcher) OnMessagesStartHistoryImport(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.startHistoryImport result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238307,7 +242088,7 @@ func (s *ServerDispatcher) OnMessagesSummarizeText(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesToggleBotInAttachMenu(f func(ctx context.Context, request *MessagesToggleBotInAttachMenuRequest) (bool, error)) {
@@ -238323,6 +242104,15 @@ func (s *ServerDispatcher) OnMessagesToggleBotInAttachMenu(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleBotInAttachMenu result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238339,6 +242129,15 @@ func (s *ServerDispatcher) OnMessagesToggleDialogFilterTags(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleDialogFilterTags result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238355,6 +242154,15 @@ func (s *ServerDispatcher) OnMessagesToggleDialogPin(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleDialogPin result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238371,6 +242179,15 @@ func (s *ServerDispatcher) OnMessagesToggleNoForwards(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleNoForwards result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238387,6 +242204,15 @@ func (s *ServerDispatcher) OnMessagesTogglePaidReactionPrivacy(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.togglePaidReactionPrivacy result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238403,6 +242229,15 @@ func (s *ServerDispatcher) OnMessagesTogglePeerTranslations(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.togglePeerTranslations result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238419,6 +242254,15 @@ func (s *ServerDispatcher) OnMessagesToggleSavedDialogPin(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleSavedDialogPin result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238435,6 +242279,15 @@ func (s *ServerDispatcher) OnMessagesToggleStickerSets(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleStickerSets result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238451,6 +242304,15 @@ func (s *ServerDispatcher) OnMessagesToggleSuggestedPostApproval(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleSuggestedPostApproval result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238467,6 +242329,15 @@ func (s *ServerDispatcher) OnMessagesToggleTodoCompleted(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.toggleTodoCompleted result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238483,7 +242354,7 @@ func (s *ServerDispatcher) OnMessagesTranscribeAudio(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesTranslateText(f func(ctx context.Context, request *MessagesTranslateTextRequest) (*MessagesTranslateResult, error)) {
@@ -238499,7 +242370,7 @@ func (s *ServerDispatcher) OnMessagesTranslateText(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesUninstallStickerSet(f func(ctx context.Context, stickerset InputStickerSetClass) (bool, error)) {
@@ -238515,6 +242386,15 @@ func (s *ServerDispatcher) OnMessagesUninstallStickerSet(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.uninstallStickerSet result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238531,7 +242411,7 @@ func (s *ServerDispatcher) OnMessagesUnpinAllMessages(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnMessagesUpdateDialogFilter(f func(ctx context.Context, request *MessagesUpdateDialogFilterRequest) (bool, error)) {
@@ -238547,6 +242427,15 @@ func (s *ServerDispatcher) OnMessagesUpdateDialogFilter(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.updateDialogFilter result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238563,6 +242452,15 @@ func (s *ServerDispatcher) OnMessagesUpdateDialogFiltersOrder(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.updateDialogFiltersOrder result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238579,6 +242477,15 @@ func (s *ServerDispatcher) OnMessagesUpdatePinnedForumTopic(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.updatePinnedForumTopic result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238595,6 +242502,15 @@ func (s *ServerDispatcher) OnMessagesUpdatePinnedMessage(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.updatePinnedMessage result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238611,6 +242527,15 @@ func (s *ServerDispatcher) OnMessagesUpdateSavedReactionTag(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.updateSavedReactionTag result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238627,6 +242552,15 @@ func (s *ServerDispatcher) OnMessagesUploadEncryptedFile(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &EncryptedFileBox{}, nil
+		}
+		response, ok := value.(EncryptedFileClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.uploadEncryptedFile result has type %T, want EncryptedFileClass", value)
+		}
+		return &EncryptedFileBox{EncryptedFile: response}, nil
 	})
 }
 
@@ -238643,6 +242577,15 @@ func (s *ServerDispatcher) OnMessagesUploadImportedMedia(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessageMediaBox{}, nil
+		}
+		response, ok := value.(MessageMediaClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.uploadImportedMedia result has type %T, want MessageMediaClass", value)
+		}
+		return &MessageMediaBox{MessageMedia: response}, nil
 	})
 }
 
@@ -238659,6 +242602,15 @@ func (s *ServerDispatcher) OnMessagesUploadMedia(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessageMediaBox{}, nil
+		}
+		response, ok := value.(MessageMediaClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.uploadMedia result has type %T, want MessageMediaClass", value)
+		}
+		return &MessageMediaBox{MessageMedia: response}, nil
 	})
 }
 
@@ -238675,6 +242627,15 @@ func (s *ServerDispatcher) OnMessagesViewSponsoredMessage(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical messages.viewSponsoredMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238691,6 +242652,15 @@ func (s *ServerDispatcher) OnPaymentsApplyGiftCode(f func(ctx context.Context, s
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.applyGiftCode result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238707,6 +242677,15 @@ func (s *ServerDispatcher) OnPaymentsAssignAppStoreTransaction(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.assignAppStoreTransaction result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238723,6 +242702,15 @@ func (s *ServerDispatcher) OnPaymentsAssignPlayMarketTransaction(f func(ctx cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.assignPlayMarketTransaction result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238739,6 +242727,15 @@ func (s *ServerDispatcher) OnPaymentsBotCancelStarsSubscription(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.botCancelStarsSubscription result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238755,6 +242752,15 @@ func (s *ServerDispatcher) OnPaymentsCanPurchaseStore(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.canPurchaseStore result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238771,6 +242777,15 @@ func (s *ServerDispatcher) OnPaymentsChangeStarsSubscription(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.changeStarsSubscription result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238787,6 +242802,15 @@ func (s *ServerDispatcher) OnPaymentsCheckCanSendGift(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsCheckCanSendGiftResultBox{}, nil
+		}
+		response, ok := value.(PaymentsCheckCanSendGiftResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.checkCanSendGift result has type %T, want PaymentsCheckCanSendGiftResultClass", value)
+		}
+		return &PaymentsCheckCanSendGiftResultBox{CheckCanSendGiftResult: response}, nil
 	})
 }
 
@@ -238803,7 +242827,7 @@ func (s *ServerDispatcher) OnPaymentsCheckGiftCode(f func(ctx context.Context, s
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsClearSavedInfo(f func(ctx context.Context, request *PaymentsClearSavedInfoRequest) (bool, error)) {
@@ -238819,6 +242843,15 @@ func (s *ServerDispatcher) OnPaymentsClearSavedInfo(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.clearSavedInfo result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238835,7 +242868,7 @@ func (s *ServerDispatcher) OnPaymentsConnectStarRefBot(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsConvertStarGift(f func(ctx context.Context, stargift InputSavedStarGiftClass) (bool, error)) {
@@ -238851,6 +242884,15 @@ func (s *ServerDispatcher) OnPaymentsConvertStarGift(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.convertStarGift result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238867,6 +242909,15 @@ func (s *ServerDispatcher) OnPaymentsCraftStarGift(f func(ctx context.Context, s
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.craftStarGift result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -238883,7 +242934,7 @@ func (s *ServerDispatcher) OnPaymentsCreateStarGiftCollection(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsDeleteStarGiftCollection(f func(ctx context.Context, request *PaymentsDeleteStarGiftCollectionRequest) (bool, error)) {
@@ -238899,6 +242950,15 @@ func (s *ServerDispatcher) OnPaymentsDeleteStarGiftCollection(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.deleteStarGiftCollection result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238915,7 +242975,7 @@ func (s *ServerDispatcher) OnPaymentsEditConnectedStarRefBot(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsExportInvoice(f func(ctx context.Context, invoicemedia InputMediaClass) (*PaymentsExportedInvoice, error)) {
@@ -238931,7 +242991,7 @@ func (s *ServerDispatcher) OnPaymentsExportInvoice(f func(ctx context.Context, i
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsFulfillStarsSubscription(f func(ctx context.Context, request *PaymentsFulfillStarsSubscriptionRequest) (bool, error)) {
@@ -238947,6 +243007,15 @@ func (s *ServerDispatcher) OnPaymentsFulfillStarsSubscription(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.fulfillStarsSubscription result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -238963,7 +243032,7 @@ func (s *ServerDispatcher) OnPaymentsGetBankCardData(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetConnectedStarRefBot(f func(ctx context.Context, request *PaymentsGetConnectedStarRefBotRequest) (*PaymentsConnectedStarRefBots, error)) {
@@ -238979,7 +243048,7 @@ func (s *ServerDispatcher) OnPaymentsGetConnectedStarRefBot(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetConnectedStarRefBots(f func(ctx context.Context, request *PaymentsGetConnectedStarRefBotsRequest) (*PaymentsConnectedStarRefBots, error)) {
@@ -238995,7 +243064,7 @@ func (s *ServerDispatcher) OnPaymentsGetConnectedStarRefBots(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetCraftStarGifts(f func(ctx context.Context, request *PaymentsGetCraftStarGiftsRequest) (*PaymentsSavedStarGifts, error)) {
@@ -239011,7 +243080,7 @@ func (s *ServerDispatcher) OnPaymentsGetCraftStarGifts(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetGiveawayInfo(f func(ctx context.Context, request *PaymentsGetGiveawayInfoRequest) (PaymentsGiveawayInfoClass, error)) {
@@ -239027,6 +243096,15 @@ func (s *ServerDispatcher) OnPaymentsGetGiveawayInfo(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsGiveawayInfoBox{}, nil
+		}
+		response, ok := value.(PaymentsGiveawayInfoClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getGiveawayInfo result has type %T, want PaymentsGiveawayInfoClass", value)
+		}
+		return &PaymentsGiveawayInfoBox{GiveawayInfo: response}, nil
 	})
 }
 
@@ -239043,6 +243121,15 @@ func (s *ServerDispatcher) OnPaymentsGetPaymentForm(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsPaymentFormBox{}, nil
+		}
+		response, ok := value.(PaymentsPaymentFormClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getPaymentForm result has type %T, want PaymentsPaymentFormClass", value)
+		}
+		return &PaymentsPaymentFormBox{PaymentForm: response}, nil
 	})
 }
 
@@ -239059,6 +243146,15 @@ func (s *ServerDispatcher) OnPaymentsGetPaymentReceipt(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsPaymentReceiptBox{}, nil
+		}
+		response, ok := value.(PaymentsPaymentReceiptClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getPaymentReceipt result has type %T, want PaymentsPaymentReceiptClass", value)
+		}
+		return &PaymentsPaymentReceiptBox{PaymentReceipt: response}, nil
 	})
 }
 
@@ -239075,6 +243171,12 @@ func (s *ServerDispatcher) OnPaymentsGetPremiumGiftCodeOptions(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]PremiumGiftCodeOption)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getPremiumGiftCodeOptions result has type %T, want []PremiumGiftCodeOption", value)
+		}
+		return &PremiumGiftCodeOptionVector{Elems: response}, nil
 	})
 }
 
@@ -239091,7 +243193,7 @@ func (s *ServerDispatcher) OnPaymentsGetResaleStarGifts(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetSavedInfo(f func(ctx context.Context) (*PaymentsSavedInfo, error)) {
@@ -239107,7 +243209,7 @@ func (s *ServerDispatcher) OnPaymentsGetSavedInfo(f func(ctx context.Context) (*
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetSavedStarGift(f func(ctx context.Context, stargift []InputSavedStarGiftClass) (*PaymentsSavedStarGifts, error)) {
@@ -239123,7 +243225,7 @@ func (s *ServerDispatcher) OnPaymentsGetSavedStarGift(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetSavedStarGifts(f func(ctx context.Context, request *PaymentsGetSavedStarGiftsRequest) (*PaymentsSavedStarGifts, error)) {
@@ -239139,7 +243241,7 @@ func (s *ServerDispatcher) OnPaymentsGetSavedStarGifts(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarGiftActiveAuctions(f func(ctx context.Context, hash int64) (PaymentsStarGiftActiveAuctionsClass, error)) {
@@ -239155,6 +243257,15 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftActiveAuctions(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsStarGiftActiveAuctionsBox{}, nil
+		}
+		response, ok := value.(PaymentsStarGiftActiveAuctionsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getStarGiftActiveAuctions result has type %T, want PaymentsStarGiftActiveAuctionsClass", value)
+		}
+		return &PaymentsStarGiftActiveAuctionsBox{StarGiftActiveAuctions: response}, nil
 	})
 }
 
@@ -239171,7 +243282,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftAuctionAcquiredGifts(f func(ctx 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarGiftAuctionState(f func(ctx context.Context, request *PaymentsGetStarGiftAuctionStateRequest) (*PaymentsStarGiftAuctionState, error)) {
@@ -239187,7 +243298,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftAuctionState(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarGiftCollections(f func(ctx context.Context, request *PaymentsGetStarGiftCollectionsRequest) (PaymentsStarGiftCollectionsClass, error)) {
@@ -239203,6 +243314,15 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftCollections(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsStarGiftCollectionsBox{}, nil
+		}
+		response, ok := value.(PaymentsStarGiftCollectionsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getStarGiftCollections result has type %T, want PaymentsStarGiftCollectionsClass", value)
+		}
+		return &PaymentsStarGiftCollectionsBox{StarGiftCollections: response}, nil
 	})
 }
 
@@ -239219,7 +243339,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftUpgradeAttributes(f func(ctx con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarGiftUpgradePreview(f func(ctx context.Context, giftid int64) (*PaymentsStarGiftUpgradePreview, error)) {
@@ -239235,7 +243355,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftUpgradePreview(f func(ctx contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarGiftWithdrawalURL(f func(ctx context.Context, request *PaymentsGetStarGiftWithdrawalURLRequest) (*PaymentsStarGiftWithdrawalURL, error)) {
@@ -239251,7 +243371,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarGiftWithdrawalURL(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarGifts(f func(ctx context.Context, hash int) (PaymentsStarGiftsClass, error)) {
@@ -239267,6 +243387,15 @@ func (s *ServerDispatcher) OnPaymentsGetStarGifts(f func(ctx context.Context, ha
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsStarGiftsBox{}, nil
+		}
+		response, ok := value.(PaymentsStarGiftsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getStarGifts result has type %T, want PaymentsStarGiftsClass", value)
+		}
+		return &PaymentsStarGiftsBox{StarGifts: response}, nil
 	})
 }
 
@@ -239283,6 +243412,12 @@ func (s *ServerDispatcher) OnPaymentsGetStarsGiftOptions(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]StarsGiftOption)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getStarsGiftOptions result has type %T, want []StarsGiftOption", value)
+		}
+		return &StarsGiftOptionVector{Elems: response}, nil
 	})
 }
 
@@ -239299,6 +243434,12 @@ func (s *ServerDispatcher) OnPaymentsGetStarsGiveawayOptions(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]StarsGiveawayOption)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getStarsGiveawayOptions result has type %T, want []StarsGiveawayOption", value)
+		}
+		return &StarsGiveawayOptionVector{Elems: response}, nil
 	})
 }
 
@@ -239315,7 +243456,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsRevenueAdsAccountURL(f func(ctx con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarsRevenueStats(f func(ctx context.Context, request *PaymentsGetStarsRevenueStatsRequest) (*PaymentsStarsRevenueStats, error)) {
@@ -239331,7 +243472,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsRevenueStats(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarsRevenueWithdrawalURL(f func(ctx context.Context, request *PaymentsGetStarsRevenueWithdrawalURLRequest) (*PaymentsStarsRevenueWithdrawalURL, error)) {
@@ -239347,7 +243488,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsRevenueWithdrawalURL(f func(ctx con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarsStatus(f func(ctx context.Context, request *PaymentsGetStarsStatusRequest) (*PaymentsStarsStatus, error)) {
@@ -239363,7 +243504,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsStatus(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarsSubscriptions(f func(ctx context.Context, request *PaymentsGetStarsSubscriptionsRequest) (*PaymentsStarsStatus, error)) {
@@ -239379,7 +243520,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsSubscriptions(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarsTopupOptions(f func(ctx context.Context) ([]StarsTopupOption, error)) {
@@ -239395,6 +243536,12 @@ func (s *ServerDispatcher) OnPaymentsGetStarsTopupOptions(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]StarsTopupOption)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.getStarsTopupOptions result has type %T, want []StarsTopupOption", value)
+		}
+		return &StarsTopupOptionVector{Elems: response}, nil
 	})
 }
 
@@ -239411,7 +243558,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsTransactions(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetStarsTransactionsByID(f func(ctx context.Context, request *PaymentsGetStarsTransactionsByIDRequest) (*PaymentsStarsStatus, error)) {
@@ -239427,7 +243574,7 @@ func (s *ServerDispatcher) OnPaymentsGetStarsTransactionsByID(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetSuggestedStarRefBots(f func(ctx context.Context, request *PaymentsGetSuggestedStarRefBotsRequest) (*PaymentsSuggestedStarRefBots, error)) {
@@ -239443,7 +243590,7 @@ func (s *ServerDispatcher) OnPaymentsGetSuggestedStarRefBots(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetUniqueStarGift(f func(ctx context.Context, slug string) (*PaymentsUniqueStarGift, error)) {
@@ -239459,7 +243606,7 @@ func (s *ServerDispatcher) OnPaymentsGetUniqueStarGift(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsGetUniqueStarGiftValueInfo(f func(ctx context.Context, slug string) (*PaymentsUniqueStarGiftValueInfo, error)) {
@@ -239475,7 +243622,7 @@ func (s *ServerDispatcher) OnPaymentsGetUniqueStarGiftValueInfo(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsLaunchPrepaidGiveaway(f func(ctx context.Context, request *PaymentsLaunchPrepaidGiveawayRequest) (UpdatesClass, error)) {
@@ -239491,6 +243638,15 @@ func (s *ServerDispatcher) OnPaymentsLaunchPrepaidGiveaway(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.launchPrepaidGiveaway result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239507,6 +243663,15 @@ func (s *ServerDispatcher) OnPaymentsRefundStarsCharge(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.refundStarsCharge result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239523,6 +243688,15 @@ func (s *ServerDispatcher) OnPaymentsReorderStarGiftCollections(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.reorderStarGiftCollections result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -239539,6 +243713,15 @@ func (s *ServerDispatcher) OnPaymentsResolveStarGiftOffer(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.resolveStarGiftOffer result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239555,6 +243738,15 @@ func (s *ServerDispatcher) OnPaymentsSaveStarGift(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.saveStarGift result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -239571,6 +243763,15 @@ func (s *ServerDispatcher) OnPaymentsSendPaymentForm(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsPaymentResultBox{}, nil
+		}
+		response, ok := value.(PaymentsPaymentResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.sendPaymentForm result has type %T, want PaymentsPaymentResultClass", value)
+		}
+		return &PaymentsPaymentResultBox{PaymentResult: response}, nil
 	})
 }
 
@@ -239587,6 +243788,15 @@ func (s *ServerDispatcher) OnPaymentsSendStarGiftOffer(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.sendStarGiftOffer result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239603,6 +243813,15 @@ func (s *ServerDispatcher) OnPaymentsSendStarsForm(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PaymentsPaymentResultBox{}, nil
+		}
+		response, ok := value.(PaymentsPaymentResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.sendStarsForm result has type %T, want PaymentsPaymentResultClass", value)
+		}
+		return &PaymentsPaymentResultBox{PaymentResult: response}, nil
 	})
 }
 
@@ -239619,6 +243838,15 @@ func (s *ServerDispatcher) OnPaymentsToggleChatStarGiftNotifications(f func(ctx 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.toggleChatStarGiftNotifications result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -239635,6 +243863,15 @@ func (s *ServerDispatcher) OnPaymentsToggleStarGiftsPinnedToTop(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.toggleStarGiftsPinnedToTop result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -239651,6 +243888,15 @@ func (s *ServerDispatcher) OnPaymentsTransferStarGift(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.transferStarGift result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239667,7 +243913,7 @@ func (s *ServerDispatcher) OnPaymentsUpdateStarGiftCollection(f func(ctx context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPaymentsUpdateStarGiftPrice(f func(ctx context.Context, request *PaymentsUpdateStarGiftPriceRequest) (UpdatesClass, error)) {
@@ -239683,6 +243929,15 @@ func (s *ServerDispatcher) OnPaymentsUpdateStarGiftPrice(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.updateStarGiftPrice result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239699,6 +243954,15 @@ func (s *ServerDispatcher) OnPaymentsUpgradeStarGift(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical payments.upgradeStarGift result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239715,7 +243979,7 @@ func (s *ServerDispatcher) OnPaymentsValidateRequestedInfo(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneAcceptCall(f func(ctx context.Context, request *PhoneAcceptCallRequest) (*PhonePhoneCall, error)) {
@@ -239731,7 +243995,7 @@ func (s *ServerDispatcher) OnPhoneAcceptCall(f func(ctx context.Context, request
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneCheckGroupCall(f func(ctx context.Context, request *PhoneCheckGroupCallRequest) ([]int, error)) {
@@ -239747,6 +244011,12 @@ func (s *ServerDispatcher) OnPhoneCheckGroupCall(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.checkGroupCall result has type %T, want []int", value)
+		}
+		return &IntVector{Elems: response}, nil
 	})
 }
 
@@ -239763,7 +244033,7 @@ func (s *ServerDispatcher) OnPhoneConfirmCall(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneCreateConferenceCall(f func(ctx context.Context, request *PhoneCreateConferenceCallRequest) (UpdatesClass, error)) {
@@ -239779,6 +244049,15 @@ func (s *ServerDispatcher) OnPhoneCreateConferenceCall(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.createConferenceCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239795,6 +244074,15 @@ func (s *ServerDispatcher) OnPhoneCreateGroupCall(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.createGroupCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239811,6 +244099,15 @@ func (s *ServerDispatcher) OnPhoneDeclineConferenceCallInvite(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.declineConferenceCallInvite result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239827,6 +244124,15 @@ func (s *ServerDispatcher) OnPhoneDeleteConferenceCallParticipants(f func(ctx co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.deleteConferenceCallParticipants result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239843,6 +244149,15 @@ func (s *ServerDispatcher) OnPhoneDeleteGroupCallMessages(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.deleteGroupCallMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239859,6 +244174,15 @@ func (s *ServerDispatcher) OnPhoneDeleteGroupCallParticipantMessages(f func(ctx 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.deleteGroupCallParticipantMessages result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239875,6 +244199,15 @@ func (s *ServerDispatcher) OnPhoneDiscardCall(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.discardCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239891,6 +244224,15 @@ func (s *ServerDispatcher) OnPhoneDiscardGroupCall(f func(ctx context.Context, c
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.discardGroupCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239907,6 +244249,15 @@ func (s *ServerDispatcher) OnPhoneEditGroupCallParticipant(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.editGroupCallParticipant result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239923,6 +244274,15 @@ func (s *ServerDispatcher) OnPhoneEditGroupCallTitle(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.editGroupCallTitle result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -239939,7 +244299,7 @@ func (s *ServerDispatcher) OnPhoneExportGroupCallInvite(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetCallConfig(f func(ctx context.Context) (*DataJSON, error)) {
@@ -239955,7 +244315,7 @@ func (s *ServerDispatcher) OnPhoneGetCallConfig(f func(ctx context.Context) (*Da
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetGroupCall(f func(ctx context.Context, request *PhoneGetGroupCallRequest) (*PhoneGroupCall, error)) {
@@ -239971,7 +244331,7 @@ func (s *ServerDispatcher) OnPhoneGetGroupCall(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetGroupCallChainBlocks(f func(ctx context.Context, request *PhoneGetGroupCallChainBlocksRequest) (UpdatesClass, error)) {
@@ -239987,6 +244347,15 @@ func (s *ServerDispatcher) OnPhoneGetGroupCallChainBlocks(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.getGroupCallChainBlocks result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240003,7 +244372,7 @@ func (s *ServerDispatcher) OnPhoneGetGroupCallJoinAs(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetGroupCallStars(f func(ctx context.Context, call InputGroupCallClass) (*PhoneGroupCallStars, error)) {
@@ -240019,7 +244388,7 @@ func (s *ServerDispatcher) OnPhoneGetGroupCallStars(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetGroupCallStreamChannels(f func(ctx context.Context, call InputGroupCallClass) (*PhoneGroupCallStreamChannels, error)) {
@@ -240035,7 +244404,7 @@ func (s *ServerDispatcher) OnPhoneGetGroupCallStreamChannels(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetGroupCallStreamRtmpURL(f func(ctx context.Context, request *PhoneGetGroupCallStreamRtmpURLRequest) (*PhoneGroupCallStreamRtmpURL, error)) {
@@ -240051,7 +244420,7 @@ func (s *ServerDispatcher) OnPhoneGetGroupCallStreamRtmpURL(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneGetGroupParticipants(f func(ctx context.Context, request *PhoneGetGroupParticipantsRequest) (*PhoneGroupParticipants, error)) {
@@ -240067,7 +244436,7 @@ func (s *ServerDispatcher) OnPhoneGetGroupParticipants(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneInviteConferenceCallParticipant(f func(ctx context.Context, request *PhoneInviteConferenceCallParticipantRequest) (UpdatesClass, error)) {
@@ -240083,6 +244452,15 @@ func (s *ServerDispatcher) OnPhoneInviteConferenceCallParticipant(f func(ctx con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.inviteConferenceCallParticipant result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240099,6 +244477,15 @@ func (s *ServerDispatcher) OnPhoneInviteToGroupCall(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.inviteToGroupCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240115,6 +244502,15 @@ func (s *ServerDispatcher) OnPhoneJoinGroupCall(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.joinGroupCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240131,6 +244527,15 @@ func (s *ServerDispatcher) OnPhoneJoinGroupCallPresentation(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.joinGroupCallPresentation result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240147,6 +244552,15 @@ func (s *ServerDispatcher) OnPhoneLeaveGroupCall(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.leaveGroupCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240163,6 +244577,15 @@ func (s *ServerDispatcher) OnPhoneLeaveGroupCallPresentation(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.leaveGroupCallPresentation result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240179,6 +244602,15 @@ func (s *ServerDispatcher) OnPhoneReceivedCall(f func(ctx context.Context, peer 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.receivedCall result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240195,7 +244627,7 @@ func (s *ServerDispatcher) OnPhoneRequestCall(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhoneSaveCallDebug(f func(ctx context.Context, request *PhoneSaveCallDebugRequest) (bool, error)) {
@@ -240211,6 +244643,15 @@ func (s *ServerDispatcher) OnPhoneSaveCallDebug(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.saveCallDebug result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240227,6 +244668,15 @@ func (s *ServerDispatcher) OnPhoneSaveCallLog(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.saveCallLog result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240243,6 +244693,15 @@ func (s *ServerDispatcher) OnPhoneSaveDefaultGroupCallJoinAs(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.saveDefaultGroupCallJoinAs result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240259,6 +244718,15 @@ func (s *ServerDispatcher) OnPhoneSaveDefaultSendAs(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.saveDefaultSendAs result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240275,6 +244743,15 @@ func (s *ServerDispatcher) OnPhoneSendConferenceCallBroadcast(f func(ctx context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.sendConferenceCallBroadcast result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240291,6 +244768,15 @@ func (s *ServerDispatcher) OnPhoneSendGroupCallEncryptedMessage(f func(ctx conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.sendGroupCallEncryptedMessage result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240307,6 +244793,15 @@ func (s *ServerDispatcher) OnPhoneSendGroupCallMessage(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.sendGroupCallMessage result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240323,6 +244818,15 @@ func (s *ServerDispatcher) OnPhoneSendSignalingData(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.sendSignalingData result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240339,6 +244843,15 @@ func (s *ServerDispatcher) OnPhoneSetCallRating(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.setCallRating result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240355,6 +244868,15 @@ func (s *ServerDispatcher) OnPhoneStartScheduledGroupCall(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.startScheduledGroupCall result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240371,6 +244893,15 @@ func (s *ServerDispatcher) OnPhoneToggleGroupCallRecord(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.toggleGroupCallRecord result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240387,6 +244918,15 @@ func (s *ServerDispatcher) OnPhoneToggleGroupCallSettings(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.toggleGroupCallSettings result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240403,6 +244943,15 @@ func (s *ServerDispatcher) OnPhoneToggleGroupCallStartSubscription(f func(ctx co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical phone.toggleGroupCallStartSubscription result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -240419,6 +244968,12 @@ func (s *ServerDispatcher) OnPhotosDeletePhotos(f func(ctx context.Context, id [
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int64)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical photos.deletePhotos result has type %T, want []int64", value)
+		}
+		return &LongVector{Elems: response}, nil
 	})
 }
 
@@ -240435,6 +244990,15 @@ func (s *ServerDispatcher) OnPhotosGetUserPhotos(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &PhotosPhotosBox{}, nil
+		}
+		response, ok := value.(PhotosPhotosClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical photos.getUserPhotos result has type %T, want PhotosPhotosClass", value)
+		}
+		return &PhotosPhotosBox{Photos: response}, nil
 	})
 }
 
@@ -240451,7 +245015,7 @@ func (s *ServerDispatcher) OnPhotosUpdateProfilePhoto(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhotosUploadContactProfilePhoto(f func(ctx context.Context, request *PhotosUploadContactProfilePhotoRequest) (*PhotosPhoto, error)) {
@@ -240467,7 +245031,7 @@ func (s *ServerDispatcher) OnPhotosUploadContactProfilePhoto(f func(ctx context.
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPhotosUploadProfilePhoto(f func(ctx context.Context, request *PhotosUploadProfilePhotoRequest) (*PhotosPhoto, error)) {
@@ -240483,7 +245047,7 @@ func (s *ServerDispatcher) OnPhotosUploadProfilePhoto(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPremiumApplyBoost(f func(ctx context.Context, request *PremiumApplyBoostRequest) (*PremiumMyBoosts, error)) {
@@ -240499,7 +245063,7 @@ func (s *ServerDispatcher) OnPremiumApplyBoost(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPremiumGetBoostsList(f func(ctx context.Context, request *PremiumGetBoostsListRequest) (*PremiumBoostsList, error)) {
@@ -240515,7 +245079,7 @@ func (s *ServerDispatcher) OnPremiumGetBoostsList(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPremiumGetBoostsStatus(f func(ctx context.Context, peer InputPeerClass) (*PremiumBoostsStatus, error)) {
@@ -240531,7 +245095,7 @@ func (s *ServerDispatcher) OnPremiumGetBoostsStatus(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPremiumGetMyBoosts(f func(ctx context.Context) (*PremiumMyBoosts, error)) {
@@ -240547,7 +245111,7 @@ func (s *ServerDispatcher) OnPremiumGetMyBoosts(f func(ctx context.Context) (*Pr
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnPremiumGetUserBoosts(f func(ctx context.Context, request *PremiumGetUserBoostsRequest) (*PremiumBoostsList, error)) {
@@ -240563,7 +245127,7 @@ func (s *ServerDispatcher) OnPremiumGetUserBoosts(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnSMSJobsFinishJob(f func(ctx context.Context, request *SMSJobsFinishJobRequest) (bool, error)) {
@@ -240579,6 +245143,15 @@ func (s *ServerDispatcher) OnSMSJobsFinishJob(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical smsjobs.finishJob result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240595,7 +245168,7 @@ func (s *ServerDispatcher) OnSMSJobsGetSMSJob(f func(ctx context.Context, jobid 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnSMSJobsGetStatus(f func(ctx context.Context) (*SMSJobsStatus, error)) {
@@ -240611,7 +245184,7 @@ func (s *ServerDispatcher) OnSMSJobsGetStatus(f func(ctx context.Context) (*SMSJ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnSMSJobsIsEligibleToJoin(f func(ctx context.Context) (*SMSJobsEligibleToJoin, error)) {
@@ -240627,7 +245200,7 @@ func (s *ServerDispatcher) OnSMSJobsIsEligibleToJoin(f func(ctx context.Context)
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnSMSJobsJoin(f func(ctx context.Context) (bool, error)) {
@@ -240643,6 +245216,15 @@ func (s *ServerDispatcher) OnSMSJobsJoin(f func(ctx context.Context) (bool, erro
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical smsjobs.join result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240659,6 +245241,15 @@ func (s *ServerDispatcher) OnSMSJobsLeave(f func(ctx context.Context) (bool, err
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical smsjobs.leave result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240675,6 +245266,15 @@ func (s *ServerDispatcher) OnSMSJobsUpdateSettings(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical smsjobs.updateSettings result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240691,7 +245291,7 @@ func (s *ServerDispatcher) OnStatsGetBroadcastStats(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsGetMegagroupStats(f func(ctx context.Context, request *StatsGetMegagroupStatsRequest) (*StatsMegagroupStats, error)) {
@@ -240707,7 +245307,7 @@ func (s *ServerDispatcher) OnStatsGetMegagroupStats(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsGetMessagePublicForwards(f func(ctx context.Context, request *StatsGetMessagePublicForwardsRequest) (*StatsPublicForwards, error)) {
@@ -240723,7 +245323,7 @@ func (s *ServerDispatcher) OnStatsGetMessagePublicForwards(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsGetMessageStats(f func(ctx context.Context, request *StatsGetMessageStatsRequest) (*StatsMessageStats, error)) {
@@ -240739,7 +245339,7 @@ func (s *ServerDispatcher) OnStatsGetMessageStats(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsGetPollStats(f func(ctx context.Context, request *StatsGetPollStatsRequest) (*StatsPollStats, error)) {
@@ -240755,7 +245355,7 @@ func (s *ServerDispatcher) OnStatsGetPollStats(f func(ctx context.Context, reque
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsGetStoryPublicForwards(f func(ctx context.Context, request *StatsGetStoryPublicForwardsRequest) (*StatsPublicForwards, error)) {
@@ -240771,7 +245371,7 @@ func (s *ServerDispatcher) OnStatsGetStoryPublicForwards(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsGetStoryStats(f func(ctx context.Context, request *StatsGetStoryStatsRequest) (*StatsStoryStats, error)) {
@@ -240787,7 +245387,7 @@ func (s *ServerDispatcher) OnStatsGetStoryStats(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStatsLoadAsyncGraph(f func(ctx context.Context, request *StatsLoadAsyncGraphRequest) (StatsGraphClass, error)) {
@@ -240803,6 +245403,15 @@ func (s *ServerDispatcher) OnStatsLoadAsyncGraph(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &StatsGraphBox{}, nil
+		}
+		response, ok := value.(StatsGraphClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stats.loadAsyncGraph result has type %T, want StatsGraphClass", value)
+		}
+		return &StatsGraphBox{StatsGraph: response}, nil
 	})
 }
 
@@ -240819,6 +245428,15 @@ func (s *ServerDispatcher) OnStickersAddStickerToSet(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.addStickerToSet result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240835,6 +245453,15 @@ func (s *ServerDispatcher) OnStickersChangeSticker(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.changeSticker result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240851,6 +245478,15 @@ func (s *ServerDispatcher) OnStickersChangeStickerPosition(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.changeStickerPosition result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240867,6 +245503,15 @@ func (s *ServerDispatcher) OnStickersCheckShortName(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.checkShortName result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240883,6 +245528,15 @@ func (s *ServerDispatcher) OnStickersCreateStickerSet(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.createStickerSet result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240899,6 +245553,15 @@ func (s *ServerDispatcher) OnStickersDeleteStickerSet(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.deleteStickerSet result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -240915,6 +245578,15 @@ func (s *ServerDispatcher) OnStickersRemoveStickerFromSet(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.removeStickerFromSet result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240931,6 +245603,15 @@ func (s *ServerDispatcher) OnStickersRenameStickerSet(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.renameStickerSet result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240947,6 +245628,15 @@ func (s *ServerDispatcher) OnStickersReplaceSticker(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.replaceSticker result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240963,6 +245653,15 @@ func (s *ServerDispatcher) OnStickersSetStickerSetThumb(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesStickerSetBox{}, nil
+		}
+		response, ok := value.(MessagesStickerSetClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stickers.setStickerSetThumb result has type %T, want MessagesStickerSetClass", value)
+		}
+		return &MessagesStickerSetBox{StickerSet: response}, nil
 	})
 }
 
@@ -240979,7 +245678,7 @@ func (s *ServerDispatcher) OnStickersSuggestShortName(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesActivateStealthMode(f func(ctx context.Context, request *StoriesActivateStealthModeRequest) (UpdatesClass, error)) {
@@ -240995,6 +245694,15 @@ func (s *ServerDispatcher) OnStoriesActivateStealthMode(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.activateStealthMode result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -241011,7 +245719,7 @@ func (s *ServerDispatcher) OnStoriesCanSendStory(f func(ctx context.Context, pee
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesCreateAlbum(f func(ctx context.Context, request *StoriesCreateAlbumRequest) (*StoryAlbum, error)) {
@@ -241027,7 +245735,7 @@ func (s *ServerDispatcher) OnStoriesCreateAlbum(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesDeleteAlbum(f func(ctx context.Context, request *StoriesDeleteAlbumRequest) (bool, error)) {
@@ -241043,6 +245751,15 @@ func (s *ServerDispatcher) OnStoriesDeleteAlbum(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.deleteAlbum result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241059,6 +245776,12 @@ func (s *ServerDispatcher) OnStoriesDeleteStories(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.deleteStories result has type %T, want []int", value)
+		}
+		return &IntVector{Elems: response}, nil
 	})
 }
 
@@ -241075,6 +245798,15 @@ func (s *ServerDispatcher) OnStoriesEditStory(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.editStory result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -241091,7 +245823,7 @@ func (s *ServerDispatcher) OnStoriesExportStoryLink(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetAlbumStories(f func(ctx context.Context, request *StoriesGetAlbumStoriesRequest) (*StoriesStories, error)) {
@@ -241107,7 +245839,7 @@ func (s *ServerDispatcher) OnStoriesGetAlbumStories(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetAlbums(f func(ctx context.Context, request *StoriesGetAlbumsRequest) (StoriesAlbumsClass, error)) {
@@ -241123,6 +245855,15 @@ func (s *ServerDispatcher) OnStoriesGetAlbums(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &StoriesAlbumsBox{}, nil
+		}
+		response, ok := value.(StoriesAlbumsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.getAlbums result has type %T, want StoriesAlbumsClass", value)
+		}
+		return &StoriesAlbumsBox{Albums: response}, nil
 	})
 }
 
@@ -241139,6 +245880,15 @@ func (s *ServerDispatcher) OnStoriesGetAllReadPeerStories(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.getAllReadPeerStories result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -241155,6 +245905,15 @@ func (s *ServerDispatcher) OnStoriesGetAllStories(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &StoriesAllStoriesBox{}, nil
+		}
+		response, ok := value.(StoriesAllStoriesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.getAllStories result has type %T, want StoriesAllStoriesClass", value)
+		}
+		return &StoriesAllStoriesBox{AllStories: response}, nil
 	})
 }
 
@@ -241171,6 +245930,15 @@ func (s *ServerDispatcher) OnStoriesGetChatsToSend(f func(ctx context.Context) (
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &MessagesChatsBox{}, nil
+		}
+		response, ok := value.(MessagesChatsClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.getChatsToSend result has type %T, want MessagesChatsClass", value)
+		}
+		return &MessagesChatsBox{Chats: response}, nil
 	})
 }
 
@@ -241187,6 +245955,12 @@ func (s *ServerDispatcher) OnStoriesGetPeerMaxIDs(f func(ctx context.Context, id
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]RecentStory)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.getPeerMaxIDs result has type %T, want []RecentStory", value)
+		}
+		return &RecentStoryVector{Elems: response}, nil
 	})
 }
 
@@ -241203,7 +245977,7 @@ func (s *ServerDispatcher) OnStoriesGetPeerStories(f func(ctx context.Context, p
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetPinnedStories(f func(ctx context.Context, request *StoriesGetPinnedStoriesRequest) (*StoriesStories, error)) {
@@ -241219,7 +245993,7 @@ func (s *ServerDispatcher) OnStoriesGetPinnedStories(f func(ctx context.Context,
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetStoriesArchive(f func(ctx context.Context, request *StoriesGetStoriesArchiveRequest) (*StoriesStories, error)) {
@@ -241235,7 +246009,7 @@ func (s *ServerDispatcher) OnStoriesGetStoriesArchive(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetStoriesByID(f func(ctx context.Context, request *StoriesGetStoriesByIDRequest) (*StoriesStories, error)) {
@@ -241251,7 +246025,7 @@ func (s *ServerDispatcher) OnStoriesGetStoriesByID(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetStoriesViews(f func(ctx context.Context, request *StoriesGetStoriesViewsRequest) (*StoriesStoryViews, error)) {
@@ -241267,7 +246041,7 @@ func (s *ServerDispatcher) OnStoriesGetStoriesViews(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetStoryReactionsList(f func(ctx context.Context, request *StoriesGetStoryReactionsListRequest) (*StoriesStoryReactionsList, error)) {
@@ -241283,7 +246057,7 @@ func (s *ServerDispatcher) OnStoriesGetStoryReactionsList(f func(ctx context.Con
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesGetStoryViewsList(f func(ctx context.Context, request *StoriesGetStoryViewsListRequest) (*StoriesStoryViewsList, error)) {
@@ -241299,7 +246073,7 @@ func (s *ServerDispatcher) OnStoriesGetStoryViewsList(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesIncrementStoryViews(f func(ctx context.Context, request *StoriesIncrementStoryViewsRequest) (bool, error)) {
@@ -241315,6 +246089,15 @@ func (s *ServerDispatcher) OnStoriesIncrementStoryViews(f func(ctx context.Conte
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.incrementStoryViews result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241331,6 +246114,12 @@ func (s *ServerDispatcher) OnStoriesReadStories(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.readStories result has type %T, want []int", value)
+		}
+		return &IntVector{Elems: response}, nil
 	})
 }
 
@@ -241347,6 +246136,15 @@ func (s *ServerDispatcher) OnStoriesReorderAlbums(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.reorderAlbums result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241363,6 +246161,15 @@ func (s *ServerDispatcher) OnStoriesReport(f func(ctx context.Context, request *
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &ReportResultBox{}, nil
+		}
+		response, ok := value.(ReportResultClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.report result has type %T, want ReportResultClass", value)
+		}
+		return &ReportResultBox{ReportResult: response}, nil
 	})
 }
 
@@ -241379,7 +246186,7 @@ func (s *ServerDispatcher) OnStoriesSearchPosts(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnStoriesSendReaction(f func(ctx context.Context, request *StoriesSendReactionRequest) (UpdatesClass, error)) {
@@ -241395,6 +246202,15 @@ func (s *ServerDispatcher) OnStoriesSendReaction(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.sendReaction result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -241411,6 +246227,15 @@ func (s *ServerDispatcher) OnStoriesSendStory(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.sendStory result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -241427,6 +246252,15 @@ func (s *ServerDispatcher) OnStoriesStartLive(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.startLive result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }
 
@@ -241443,6 +246277,15 @@ func (s *ServerDispatcher) OnStoriesToggleAllStoriesHidden(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.toggleAllStoriesHidden result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241459,6 +246302,15 @@ func (s *ServerDispatcher) OnStoriesTogglePeerStoriesHidden(f func(ctx context.C
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.togglePeerStoriesHidden result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241475,6 +246327,12 @@ func (s *ServerDispatcher) OnStoriesTogglePinned(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]int)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.togglePinned result has type %T, want []int", value)
+		}
+		return &IntVector{Elems: response}, nil
 	})
 }
 
@@ -241491,6 +246349,15 @@ func (s *ServerDispatcher) OnStoriesTogglePinnedToTop(f func(ctx context.Context
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical stories.togglePinnedToTop result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241507,7 +246374,7 @@ func (s *ServerDispatcher) OnStoriesUpdateAlbum(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnTestUseConfigSimple(f func(ctx context.Context) (*HelpConfigSimple, error)) {
@@ -241523,7 +246390,7 @@ func (s *ServerDispatcher) OnTestUseConfigSimple(f func(ctx context.Context) (*H
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnTestUseError(f func(ctx context.Context) (*Error, error)) {
@@ -241539,7 +246406,7 @@ func (s *ServerDispatcher) OnTestUseError(f func(ctx context.Context) (*Error, e
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnUpdatesGetChannelDifference(f func(ctx context.Context, request *UpdatesGetChannelDifferenceRequest) (UpdatesChannelDifferenceClass, error)) {
@@ -241555,6 +246422,15 @@ func (s *ServerDispatcher) OnUpdatesGetChannelDifference(f func(ctx context.Cont
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesChannelDifferenceBox{}, nil
+		}
+		response, ok := value.(UpdatesChannelDifferenceClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical updates.getChannelDifference result has type %T, want UpdatesChannelDifferenceClass", value)
+		}
+		return &UpdatesChannelDifferenceBox{ChannelDifference: response}, nil
 	})
 }
 
@@ -241571,6 +246447,15 @@ func (s *ServerDispatcher) OnUpdatesGetDifference(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesDifferenceBox{}, nil
+		}
+		response, ok := value.(UpdatesDifferenceClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical updates.getDifference result has type %T, want UpdatesDifferenceClass", value)
+		}
+		return &UpdatesDifferenceBox{Difference: response}, nil
 	})
 }
 
@@ -241587,7 +246472,7 @@ func (s *ServerDispatcher) OnUpdatesGetState(f func(ctx context.Context) (*Updat
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnUploadGetCDNFile(f func(ctx context.Context, request *UploadGetCDNFileRequest) (UploadCDNFileClass, error)) {
@@ -241603,6 +246488,15 @@ func (s *ServerDispatcher) OnUploadGetCDNFile(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UploadCDNFileBox{}, nil
+		}
+		response, ok := value.(UploadCDNFileClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.getCdnFile result has type %T, want UploadCDNFileClass", value)
+		}
+		return &UploadCDNFileBox{CdnFile: response}, nil
 	})
 }
 
@@ -241619,6 +246513,12 @@ func (s *ServerDispatcher) OnUploadGetCDNFileHashes(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]FileHash)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.getCdnFileHashes result has type %T, want []FileHash", value)
+		}
+		return &FileHashVector{Elems: response}, nil
 	})
 }
 
@@ -241635,6 +246535,15 @@ func (s *ServerDispatcher) OnUploadGetFile(f func(ctx context.Context, request *
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UploadFileBox{}, nil
+		}
+		response, ok := value.(UploadFileClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.getFile result has type %T, want UploadFileClass", value)
+		}
+		return &UploadFileBox{File: response}, nil
 	})
 }
 
@@ -241651,6 +246560,12 @@ func (s *ServerDispatcher) OnUploadGetFileHashes(f func(ctx context.Context, req
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]FileHash)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.getFileHashes result has type %T, want []FileHash", value)
+		}
+		return &FileHashVector{Elems: response}, nil
 	})
 }
 
@@ -241667,7 +246582,7 @@ func (s *ServerDispatcher) OnUploadGetWebFile(f func(ctx context.Context, reques
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnUploadReuploadCDNFile(f func(ctx context.Context, request *UploadReuploadCDNFileRequest) ([]FileHash, error)) {
@@ -241683,6 +246598,12 @@ func (s *ServerDispatcher) OnUploadReuploadCDNFile(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]FileHash)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.reuploadCdnFile result has type %T, want []FileHash", value)
+		}
+		return &FileHashVector{Elems: response}, nil
 	})
 }
 
@@ -241699,6 +246620,15 @@ func (s *ServerDispatcher) OnUploadSaveBigFilePart(f func(ctx context.Context, r
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.saveBigFilePart result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241715,6 +246645,15 @@ func (s *ServerDispatcher) OnUploadSaveFilePart(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical upload.saveFilePart result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241731,7 +246670,7 @@ func (s *ServerDispatcher) OnUsersGetFullUser(f func(ctx context.Context, id Inp
 			return nil, err
 		}
 		return response, nil
-	})
+	}, layerRPCDirectCanonicalResult)
 }
 
 func (s *ServerDispatcher) OnUsersGetRequirementsToContact(f func(ctx context.Context, id []InputUserClass) ([]RequirementToContactClass, error)) {
@@ -241747,6 +246686,12 @@ func (s *ServerDispatcher) OnUsersGetRequirementsToContact(f func(ctx context.Co
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]RequirementToContactClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical users.getRequirementsToContact result has type %T, want []RequirementToContactClass", value)
+		}
+		return &RequirementToContactClassVector{Elems: response}, nil
 	})
 }
 
@@ -241763,6 +246708,15 @@ func (s *ServerDispatcher) OnUsersGetSavedMusic(f func(ctx context.Context, requ
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UsersSavedMusicBox{}, nil
+		}
+		response, ok := value.(UsersSavedMusicClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical users.getSavedMusic result has type %T, want UsersSavedMusicClass", value)
+		}
+		return &UsersSavedMusicBox{SavedMusic: response}, nil
 	})
 }
 
@@ -241779,6 +246733,15 @@ func (s *ServerDispatcher) OnUsersGetSavedMusicByID(f func(ctx context.Context, 
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UsersSavedMusicBox{}, nil
+		}
+		response, ok := value.(UsersSavedMusicClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical users.getSavedMusicByID result has type %T, want UsersSavedMusicClass", value)
+		}
+		return &UsersSavedMusicBox{SavedMusic: response}, nil
 	})
 }
 
@@ -241795,6 +246758,12 @@ func (s *ServerDispatcher) OnUsersGetUsers(f func(ctx context.Context, id []Inpu
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.([]UserClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical users.getUsers result has type %T, want []UserClass", value)
+		}
+		return &UserClassVector{Elems: response}, nil
 	})
 }
 
@@ -241811,6 +246780,15 @@ func (s *ServerDispatcher) OnUsersSetSecureValueErrors(f func(ctx context.Contex
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		response, ok := value.(bool)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical users.setSecureValueErrors result has type %T, want bool", value)
+		}
+		if response {
+			return &BoolBox{Bool: &BoolTrue{}}, nil
+		}
+		return &BoolBox{Bool: &BoolFalse{}}, nil
 	})
 }
 
@@ -241827,5 +246805,14 @@ func (s *ServerDispatcher) OnUsersSuggestBirthday(f func(ctx context.Context, re
 			return nil, err
 		}
 		return response, nil
+	}, func(value any) (bin.Encoder, error) {
+		if value == nil {
+			return &UpdatesBox{}, nil
+		}
+		response, ok := value.(UpdatesClass)
+		if !ok {
+			return nil, fmt.Errorf("tg: canonical users.suggestBirthday result has type %T, want UpdatesClass", value)
+		}
+		return &UpdatesBox{Updates: response}, nil
 	})
 }

@@ -363,7 +363,7 @@ func TestSchemaSetWriteSourceSelectsStaticLayerServer(t *testing.T) {
 	for _, want := range []string{
 		"func decodeLayerRPCRequestState(",
 		"func layerAdmitRPC1_21000011(",
-		"handlers map[LayerSemanticID]layerRPCHandler",
+		"handlers map[LayerSemanticID]layerRPCRegisteredHandler",
 	} {
 		if !strings.Contains(text, want) {
 			t.Errorf("integrated schema-set server is missing %q", want)
@@ -471,6 +471,63 @@ func bulkWire(wireID uint32, first, second []int) []byte {
 	encoded.PutVectorHeader(len(second))
 	for _, value := range second { encoded.PutInt(value) }
 	return encoded.Copy()
+}
+
+func canonicalRequest(wireID uint32, values ...int) *bin.Buffer {
+	var encoded bin.Buffer
+	encoded.PutID(wireID)
+	for _, value := range values { encoded.PutInt(value) }
+	return &encoded
+}
+
+func TestGeneratedCanonicalHandleCompatibility(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+	thingCalls := 0
+	dispatcher.OnEcho(func(context.Context, int) (*Pong, error) {
+		return &Pong{Value: 7}, nil
+	})
+	dispatcher.OnConfirm(func(context.Context) (bool, error) { return true, nil })
+	dispatcher.OnGetThing(func(context.Context) (ThingClass, error) {
+		thingCalls++
+		if thingCalls == 2 { return nil, nil }
+		return &ThingOne{Value: 8}, nil
+	})
+	dispatcher.OnListIDs(func(context.Context) ([]int, error) {
+		return []int{9, 10}, nil
+	})
+
+	direct, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000020, 1))
+	if err != nil { t.Fatal(err) }
+	if value, ok := direct.(*Pong); !ok || value.Value != 7 {
+		t.Fatalf("canonical direct result = %#v", direct)
+	}
+
+	boolean, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000030))
+	if err != nil { t.Fatal(err) }
+	if boxed, ok := boolean.(*BoolBox); !ok {
+		t.Fatalf("canonical Bool result = %T", boolean)
+	} else if _, ok := boxed.Bool.(*BoolTrue); !ok {
+		t.Fatalf("canonical Bool payload = %T", boxed.Bool)
+	}
+
+	class, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000031))
+	if err != nil { t.Fatal(err) }
+	if boxed, ok := class.(*ThingBox); !ok {
+		t.Fatalf("canonical class result = %T", class)
+	} else if value, ok := boxed.Thing.(*ThingOne); !ok || value.Value != 8 {
+		t.Fatalf("canonical class payload = %#v", boxed.Thing)
+	}
+	nilClass, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000031))
+	if err != nil { t.Fatal(err) }
+	if boxed, ok := nilClass.(*ThingBox); !ok || boxed.Thing != nil {
+		t.Fatalf("canonical nil class result = %#v", nilClass)
+	}
+
+	vector, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000032))
+	if err != nil { t.Fatal(err) }
+	if boxed, ok := vector.(*IntVector); !ok || len(boxed.Elems) != 2 || boxed.Elems[0] != 9 || boxed.Elems[1] != 10 {
+		t.Fatalf("canonical vector result = %#v", vector)
+	}
 }
 
 func admitWrappedEcho(t *testing.T, dispatcher *ServerDispatcher, wire []byte) LayerRequest {
