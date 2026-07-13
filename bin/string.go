@@ -12,6 +12,9 @@ const (
 	// the string length L, followed by L bytes of the string, further followed
 	// by 0 to 3 null padding bytes.
 	firstLongStringByte = 254
+	// maxLongStringLength is the largest length representable by the three-byte
+	// TL long string/bytes header.
+	maxLongStringLength = 1<<24 - 1
 )
 
 func encodeString(b []byte, v string) []byte {

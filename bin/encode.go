@@ -22,9 +22,29 @@ func (b *Buffer) PutString(s string) {
 	b.Buf = encodeString(b.Buf, s)
 }
 
+// PutStringChecked serializes a bare string only when its byte length fits
+// the 24-bit TL header. On error the buffer is unchanged.
+func (b *Buffer) PutStringChecked(s string) error {
+	if len(s) > maxLongStringLength {
+		return &InvalidLengthError{Length: len(s), Where: "string"}
+	}
+	b.PutString(s)
+	return nil
+}
+
 // PutBytes serializes bare byte string.
 func (b *Buffer) PutBytes(v []byte) {
 	b.Buf = encodeBytes(b.Buf, v)
+}
+
+// PutBytesChecked serializes bare bytes only when their length fits the
+// 24-bit TL header. On error the buffer is unchanged.
+func (b *Buffer) PutBytesChecked(v []byte) error {
+	if len(v) > maxLongStringLength {
+		return &InvalidLengthError{Length: len(v), Where: "bytes"}
+	}
+	b.PutBytes(v)
+	return nil
 }
 
 // PutVectorHeader serializes vector header with provided length.
