@@ -12,14 +12,15 @@ import (
 
 // config is input data for templates.
 type config struct {
-	Layer      int
-	Flags      GenerateFlags
-	Package    string
-	Structs    []structDef
-	Interfaces []interfaceDef
-	Mappings   map[string][]constructorMapping
-	Registry   []bindingDef
-	Errors     []errCheckDef
+	Layer         int
+	Flags         GenerateFlags
+	Package       string
+	Structs       []structDef
+	Interfaces    []interfaceDef
+	Mappings      map[string][]constructorMapping
+	Registry      []bindingDef
+	Errors        []errCheckDef
+	LayerMetadata *layerMetadata
 }
 
 // FileSystem represents a directory of generated package.
@@ -219,6 +220,18 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 	if len(cfg.Errors) > 0 {
 		if err := w.Generate("errors", "tl_errors_gen.go", cfg); err != nil {
 			return err
+		}
+	}
+	if g.schemaSet != nil {
+		metadata, err := g.buildLayerMetadata()
+		if err != nil {
+			return errors.Wrap(err, "layer metadata")
+		}
+		if err := w.Generate("layer_metadata", "tl_layer_metadata_gen.go", config{
+			Package:       pkgName,
+			LayerMetadata: metadata,
+		}); err != nil {
+			return errors.Wrap(err, "layer metadata")
 		}
 	}
 

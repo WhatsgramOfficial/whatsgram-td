@@ -3,6 +3,7 @@ package gen
 import (
 	"bytes"
 	"fmt"
+	"go/format"
 	"os"
 	"sort"
 	"testing"
@@ -38,8 +39,15 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 
 	original := generateSnapshot(t, originalSchema)
 	adapted := generateSchemaSetSnapshot(t, universe)
-	if len(original) != len(adapted) {
-		t.Fatalf("generated files = %d, adapter files = %d", len(original), len(adapted))
+	if got, want := len(adapted), len(original)+1; got != want {
+		t.Fatalf("schema-set generated files = %d, want %d", got, want)
+	}
+	layerSource, ok := adapted["tl_layer_metadata_gen.go"]
+	if !ok {
+		t.Fatal("schema-set generator did not emit layer metadata")
+	}
+	if _, err := format.Source(layerSource); err != nil {
+		t.Fatalf("format layer metadata: %v", err)
 	}
 	names := make([]string, 0, len(original))
 	for name := range original {

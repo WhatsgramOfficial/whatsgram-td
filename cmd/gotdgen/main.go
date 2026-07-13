@@ -7,6 +7,7 @@ import (
 	"go/format"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 
@@ -19,9 +20,13 @@ import (
 type formattedSource struct {
 	Format bool
 	Root   string
+	files  map[string][]byte
 }
 
-func (t formattedSource) WriteFile(name string, content []byte) error {
+func (t *formattedSource) WriteFile(name string, content []byte) error {
+	if _, duplicate := t.files[name]; duplicate {
+		return fmt.Errorf("duplicate generated file %q", name)
+	}
 	out := content
 	if t.Format {
 		buf, err := format.Source(content)
@@ -30,7 +35,30 @@ func (t formattedSource) WriteFile(name string, content []byte) error {
 		}
 		out = buf
 	}
-	return os.WriteFile(filepath.Join(t.Root, name), out, 0600)
+	t.files[name] = append([]byte(nil), out...)
+	return nil
+}
+
+// Commit writes only after every template has rendered and formatted
+// successfully. Individual targets are atomically replaced in deterministic
+// order, so a generation/format error can never leave a mixed package.
+func (t *formattedSource) Commit() error {
+	names := make([]string, 0, len(t.files))
+	for name := range t.files {
+		names = append(names, name)
+	}
+	sort.Strings(names)
+	for _, name := range names {
+		if err := writeFileAtomic(filepath.Join(t.Root, name), t.files[name], 0o600); err != nil {
+			return fmt.Errorf("commit %s: %w", name, err)
+		}
+	}
+	return nil
+}
+
+func (t *formattedSource) Has(name string) bool {
+	_, ok := t.files[name]
+	return ok
 }
 
 func main() {
@@ -87,31 +115,31 @@ func main() {
 			panic(err)
 		}
 	}
+	fs := &formattedSource{
+		Root:   *targetDir,
+		Format: *performFormat,
+		files:  make(map[string][]byte),
+	}
+	start = time.Now()
+	if err := g.WriteSource(fs, *packageName, gen.Template()); err != nil {
+		panic(fmt.Sprintf("%+v", err))
+	}
+	if err := fs.Commit(); err != nil {
+		panic(fmt.Sprintf("%+v", err))
+	}
 	if *clean {
 		for _, f := range files {
 			if f.IsDir() {
 				continue
 			}
 			name := f.Name()
-			if !strings.HasSuffix(name, "_gen.go") {
-				continue
-			}
-			if !strings.HasPrefix(name, "tl_") {
+			if !strings.HasSuffix(name, "_gen.go") || !strings.HasPrefix(name, "tl_") || fs.Has(name) {
 				continue
 			}
 			if err := os.Remove(filepath.Join(*targetDir, name)); err != nil {
 				panic(err)
 			}
 		}
-	}
-
-	fs := formattedSource{
-		Root:   *targetDir,
-		Format: *performFormat,
-	}
-	start = time.Now()
-	if err := g.WriteSource(fs, *packageName, gen.Template()); err != nil {
-		panic(fmt.Sprintf("%+v", err))
 	}
 	writeTime := time.Since(start)
 
