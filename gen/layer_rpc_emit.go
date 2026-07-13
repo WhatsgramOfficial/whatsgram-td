@@ -15,12 +15,26 @@ type layerRPCSourceModel struct {
 	LayerRPC     *layerRPCModel
 	Profiles     []layerRPCSourceProfile
 	Routes       []layerRPCSourceRoute
+	Handlers     []layerRPCSourceHandler
 	Adapters     []string
 	HookChecks   []layerRPCSourceHookCheck
 	Unprofiled   *layerRPCUnprofiledSource
 	MaxDepth     int
 	RouteCount   int
 	WrapperCount int
+}
+
+// layerRPCSourceHandler is the complete canonical ServerDispatcher facade for
+// one ordinary semantic method. ResultType and CanonicalResultEncoder are
+// lowered from the canonical result TypeRef; legacy structDef result metadata
+// is used only to preserve established box/vector Go shapes where they exist.
+type layerRPCSourceHandler struct {
+	Method                 *layerRPCMethodPlan
+	Structure              *structDef
+	Name                   string
+	ResultType             string
+	ErrorOnly              bool
+	CanonicalResultEncoder string
 }
 
 type layerRPCSourceProfile struct {
@@ -139,6 +153,17 @@ func (e *layerRPCSourceEmitter) build() error {
 		}
 		profiles[layer] = &e.model.Profiles[index]
 	}
+	for methodIndex := range e.rpc.Methods {
+		method := &e.rpc.Methods[methodIndex]
+		if !method.Handler {
+			continue
+		}
+		handler, err := e.buildHandler(method)
+		if err != nil {
+			return fmt.Errorf("gen: layer RPC handler facade %s: %w", method.Key, err)
+		}
+		e.model.Handlers = append(e.model.Handlers, handler)
+	}
 
 	for routeIndex := range e.rpc.Routes {
 		route := &e.rpc.Routes[routeIndex]
@@ -170,6 +195,150 @@ func (e *layerRPCSourceEmitter) build() error {
 	}
 	e.model.Unprofiled = unprofiled
 	return nil
+}
+
+func (e *layerRPCSourceEmitter) buildHandler(method *layerRPCMethodPlan) (layerRPCSourceHandler, error) {
+	if method == nil || !method.Handler || method.Canonical == nil || method.Canonical.Structure == nil || method.Canonical.Definition == nil {
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_CANONICAL_REQUEST_ABSENT: ordinary handler has no canonical request binding")
+	}
+	refMethod := e.rpcRefByKey[method.Key]
+	if refMethod == nil {
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_TYPEREF_ABSENT: canonical RPC TypeRef plan is absent")
+	}
+	refProfile := refMethod.profile(e.rpc.CanonicalLayer)
+	if refProfile == nil || !refProfile.Available || refProfile.CanonicalResult < 0 || refProfile.CanonicalResult >= len(e.refs.Nodes) {
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_TYPEREF_ABSENT: canonical result TypeRef is absent")
+	}
+	result := &e.refs.Nodes[refProfile.CanonicalResult]
+	canonicalProfile := method.profile(e.rpc.CanonicalLayer)
+	if canonicalProfile == nil || canonicalProfile.Definition == nil || canonicalProfile.Wrapper != nil || canonicalProfile.Result.CanonicalRef == nil ||
+		!result.Ref.Equal(*canonicalProfile.Result.CanonicalRef) || !result.Ref.Equal(method.Canonical.Definition.Result) {
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_TYPEREF_STALE: canonical result TypeRef disagrees with the semantic method")
+	}
+	if result.RequiresBinding || !result.Runnable || result.GoType == "" {
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_UNSUPPORTED: canonical result %s is not a standalone runnable TypeRef", result.Ref.String())
+	}
+
+	structure := method.Canonical.Structure
+	name := structure.Method
+	if name == "" {
+		parts := strings.Split(method.Key.QName, ".")
+		name = namespacedName(parts[len(parts)-1], parts[:len(parts)-1])
+		if structure.Name != name+"Request" {
+			return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_NAME_MISMATCH: canonical request %q does not match derived facade %q", structure.Name, name)
+		}
+	}
+	handler := layerRPCSourceHandler{
+		Method:    method,
+		Structure: structure,
+		Name:      name,
+	}
+
+	// Ok is the established error-only facade even though the complete result
+	// TypeRef is the concrete Ok constructor.
+	if result.IsConcrete() && result.Ref.QName == "Ok" && structure.Result == "" {
+		handler.ErrorOnly = true
+		handler.CanonicalResultEncoder = "layerRPCDirectCanonicalResult"
+		return handler, nil
+	}
+	typeRefEncoder := func() (string, error) {
+		if result.BoundDescriptorName == "" {
+			return "", fmt.Errorf("E_RPC_HANDLER_RESULT_UNSUPPORTED: canonical result %s has no static bound descriptor", result.Ref.String())
+		}
+		return fmt.Sprintf(`func(value any) (bin.Encoder, error) {
+		return &layerRPCCanonicalTypeRefResult{typ: %s, value: value}, nil
+	}`, result.BoundDescriptorName), nil
+	}
+
+	switch {
+	case result.IsPrimitive():
+		handler.ResultType = result.GoType
+		// Bool already had a public ServerDispatcher facade before schema-set
+		// generation. Keep its historical *BoolBox Handle shape, while every
+		// previously unsupported primitive uses its exact TypeRef descriptor.
+		if result.PrimitivePut == "PutBool" && structure.Result == "BoolClass" && !structure.ResultSingular && !structure.ResultVector {
+			handler.CanonicalResultEncoder = fmt.Sprintf(`func(value any) (bin.Encoder, error) {
+			response, ok := value.(bool)
+			if !ok { return nil, fmt.Errorf("tg: canonical %s result has type %%T, want bool", value) }
+			if response { return &BoolBox{Bool: &BoolTrue{}}, nil }
+			return &BoolBox{Bool: &BoolFalse{}}, nil
+		}`, structure.RawName)
+		} else {
+			var err error
+			handler.CanonicalResultEncoder, err = typeRefEncoder()
+			if err != nil {
+				return layerRPCSourceHandler{}, err
+			}
+		}
+
+	case result.IsObject():
+		if result.GoType != "bin.Object" {
+			return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_UNSUPPORTED: Object result has Go type %q", result.GoType)
+		}
+		handler.ResultType = result.GoType
+		var err error
+		handler.CanonicalResultEncoder, err = typeRefEncoder()
+		if err != nil {
+			return layerRPCSourceHandler{}, err
+		}
+
+	case result.IsConcrete():
+		if !result.AcceptPointer || structure.Result != result.GoType || !structure.ResultSingular || structure.ResultVector {
+			return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_BACKEND_MISMATCH: concrete result %s has legacy backend result=%q singular=%v vector=%v", result.Ref.String(), structure.Result, structure.ResultSingular, structure.ResultVector)
+		}
+		handler.ResultType = "*" + result.GoType
+		handler.CanonicalResultEncoder = "layerRPCDirectCanonicalResult"
+
+	case result.IsClass() && result.Ref.QName == "Bool":
+		if structure.Result != "BoolClass" || structure.ResultSingular || structure.ResultVector {
+			return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_BACKEND_MISMATCH: Bool result has legacy backend result=%q singular=%v vector=%v", structure.Result, structure.ResultSingular, structure.ResultVector)
+		}
+		handler.ResultType = "bool"
+		handler.CanonicalResultEncoder = fmt.Sprintf(`func(value any) (bin.Encoder, error) {
+			response, ok := value.(bool)
+			if !ok { return nil, fmt.Errorf("tg: canonical %s result has type %%T, want bool", value) }
+			if response { return &BoolBox{Bool: &BoolTrue{}}, nil }
+			return &BoolBox{Bool: &BoolFalse{}}, nil
+		}`, structure.RawName)
+
+	case result.IsClass():
+		if structure.Result != result.GoType || structure.ResultSingular || structure.ResultVector || structure.ResultFunc == "" || structure.ResultBaseName == "" {
+			return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_BACKEND_MISMATCH: class result %s has incomplete legacy box metadata", result.Ref.String())
+		}
+		handler.ResultType = result.GoType
+		handler.CanonicalResultEncoder = fmt.Sprintf(`func(value any) (bin.Encoder, error) {
+		if value == nil { return &%sBox{}, nil }
+		response, ok := value.(%s)
+		if !ok { return nil, fmt.Errorf("tg: canonical %s result has type %%T, want %s", value) }
+		return &%sBox{%s: response}, nil
+	}`, structure.ResultFunc, result.GoType, structure.RawName, result.GoType, structure.ResultFunc, structure.ResultBaseName)
+
+	case result.IsVector() && result.BoxedVector:
+		if !structure.ResultSingular || !structure.ResultVector || structure.Result == "" {
+			return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_BACKEND_MISMATCH: boxed vector result %s has no established vector backend", result.Ref.String())
+		}
+		handler.ResultType = result.GoType
+		handler.CanonicalResultEncoder = fmt.Sprintf(`func(value any) (bin.Encoder, error) {
+		response, ok := value.(%s)
+		if !ok { return nil, fmt.Errorf("tg: canonical %s result has type %%T, want %s", value) }
+		return &%s{Elems: response}, nil
+	}`, result.GoType, structure.RawName, result.GoType, structure.Result)
+
+	case result.IsExactBare() || result.IsVector():
+		handler.ResultType = result.GoType
+		var err error
+		handler.CanonicalResultEncoder, err = typeRefEncoder()
+		if err != nil {
+			return layerRPCSourceHandler{}, err
+		}
+
+	default:
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_UNSUPPORTED: canonical result %s strategy %s has no static ServerDispatcher facade", result.Ref.String(), result.Strategy)
+	}
+	if handler.ResultType == "" || handler.CanonicalResultEncoder == "" {
+		return layerRPCSourceHandler{}, fmt.Errorf("E_RPC_HANDLER_RESULT_UNSUPPORTED: canonical result %s produced an incomplete facade", result.Ref.String())
+	}
+	return handler, nil
 }
 
 // buildUnprofiled emits the only legal pre-profile admission path. It accepts

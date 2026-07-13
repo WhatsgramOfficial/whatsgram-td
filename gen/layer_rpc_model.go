@@ -343,8 +343,8 @@ func buildLayerRPCMethod(
 		return layerRPCMethodPlan{}, fmt.Errorf("canonical profile is absent")
 	}
 	if canonicalProfile.Definition != nil && canonicalProfile.Wrapper == nil {
-		if method.Canonical == nil || method.Canonical.Structure == nil || method.Canonical.Structure.Method == "" {
-			return layerRPCMethodPlan{}, fmt.Errorf("ordinary canonical method has no OnX backend binding")
+		if method.Canonical == nil || method.Canonical.Structure == nil {
+			return layerRPCMethodPlan{}, fmt.Errorf("ordinary canonical method has no request backend binding")
 		}
 		method.Handler = true
 	}

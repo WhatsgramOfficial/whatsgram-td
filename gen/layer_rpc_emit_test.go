@@ -40,6 +40,20 @@ func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
 	if model.WrapperCount != 8 {
 		t.Fatalf("wrapper route count = %d, want four wrappers in two profiles", model.WrapperCount)
 	}
+	for name, resultType := range map[string]string{
+		"GetInt":    "int",
+		"GetLong":   "int64",
+		"GetDouble": "float64",
+		"GetString": "string",
+		"GetBytes":  "[]byte",
+		"GetObject": "bin.Object",
+	} {
+		handler := findLayerRPCSourceHandler(t, model, name)
+		if handler.ResultType != resultType || handler.ErrorOnly ||
+			!strings.Contains(handler.CanonicalResultEncoder, "layerRPCCanonicalTypeRefResult") {
+			t.Errorf("%s handler facade = type:%q errorOnly:%v encoder:%q", name, handler.ResultType, handler.ErrorOnly, handler.CanonicalResultEncoder)
+		}
+	}
 	if len(model.HookChecks) != 1 || model.HookChecks[0].Name != "adaptOldJoinResult" ||
 		model.HookChecks[0].Signature != "func(LayerProfile, *NewJoin) (*OldJoin, error)" {
 		t.Fatalf("typed result hook contracts = %+v", model.HookChecks)
@@ -82,6 +96,45 @@ func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
 	legacy := findLayerRPCSourceRoute(t, model, 1, 0x21000012)
 	if strings.Contains(legacy.Body, "ConsumeID") || !strings.Contains(legacy.Body, "historical-only RPC has no canonical semantic target") {
 		t.Fatalf("historical-only rejection consumed input or invented a canonical request:\n%s", legacy.Body)
+	}
+}
+
+func TestLayerRPCSourceUnsupportedHandlerResultFailsClosed(t *testing.T) {
+	set := layerRPCSourceSyntheticSchemaSet(t)
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerRPCSourceSyntheticPolicy(t, set)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rpc, err := generator.buildLayerRPCModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	refs, err := generator.buildLayerTypeRefModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var resultIndex = -1
+	for index := range refs.RPCs {
+		plan := &refs.RPCs[index]
+		if plan.Key.Category != semantic.CategoryFunction || plan.Key.QName != "getInt" {
+			continue
+		}
+		profile := plan.profile(set.CanonicalLayer)
+		if profile != nil {
+			resultIndex = profile.CanonicalResult
+		}
+		break
+	}
+	if resultIndex < 0 || resultIndex >= len(refs.Nodes) {
+		t.Fatalf("getInt canonical result node = %d", resultIndex)
+	}
+	// Model an ordinary result that needs a generic binding unavailable at an
+	// ordinary handler boundary. Source generation must stop instead of
+	// inventing Object or canonical-byte fallback semantics.
+	refs.Nodes[resultIndex].RequiresBinding = true
+	_, err = generator.buildLayerRPCSourceModel(rpc, refs)
+	if err == nil || !strings.Contains(err.Error(), "E_RPC_HANDLER_RESULT_UNSUPPORTED") {
+		t.Fatalf("unsupported ordinary result error = %v", err)
 	}
 }
 
@@ -258,6 +311,7 @@ func TestLayerRPCServerSourceIsSyntacticallyCompilable(t *testing.T) {
 		"func (s *ServerDispatcher) AdmitLayer(",
 		"func (s *ServerDispatcher) AdmitUnprofiled(",
 		"func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerRequest) (LayerRPCResult, error)",
+		"func (s *ServerDispatcher) HasLayerRPCHandler(semantic LayerSemanticID) bool",
 		"func (s *ServerDispatcher) HandleUnprofiled(",
 		"type LayerRPCWrapperConsumer func(context.Context, LayerRequest, LayerRPCNext) error",
 		"func (s *ServerDispatcher) OnLayerRPCWrappers(",
@@ -269,6 +323,12 @@ func TestLayerRPCServerSourceIsSyntacticallyCompilable(t *testing.T) {
 		"func layerSemanticIdentityEchoRequest(",
 		"semanticIdentity: semanticIdentity",
 		"func (s *ServerDispatcher) OnJoin(",
+		"func (s *ServerDispatcher) OnGetInt(f func(ctx context.Context) (int, error))",
+		"func (s *ServerDispatcher) OnGetLong(f func(ctx context.Context) (int64, error))",
+		"func (s *ServerDispatcher) OnGetDouble(f func(ctx context.Context) (float64, error))",
+		"func (s *ServerDispatcher) OnGetString(f func(ctx context.Context) (string, error))",
+		"func (s *ServerDispatcher) OnGetBytes(f func(ctx context.Context) ([]byte, error))",
+		"func (s *ServerDispatcher) OnGetObject(f func(ctx context.Context) (bin.Object, error))",
 	} {
 		if !strings.Contains(text, want) {
 			t.Errorf("generated layer RPC server is missing %q", want)
@@ -482,7 +542,15 @@ func canonicalRequest(wireID uint32, values ...int) *bin.Buffer {
 
 func TestGeneratedCanonicalHandleCompatibility(t *testing.T) {
 	dispatcher := NewServerDispatcher(nil)
+	var nilDispatcher *ServerDispatcher
+	if nilDispatcher.HasLayerRPCHandler(LayerSemanticMethodGetInt) {
+		t.Fatal("nil dispatcher reported a registered RPC handler")
+	}
+	if dispatcher.HasLayerRPCHandler(LayerSemanticMethodGetInt) {
+		t.Fatal("unregistered primitive RPC handler was reported as present")
+	}
 	thingCalls := 0
+	failBytes := false
 	dispatcher.OnEcho(func(context.Context, int) (*Pong, error) {
 		return &Pong{Value: 7}, nil
 	})
@@ -495,6 +563,20 @@ func TestGeneratedCanonicalHandleCompatibility(t *testing.T) {
 	dispatcher.OnListIDs(func(context.Context) ([]int, error) {
 		return []int{9, 10}, nil
 	})
+	dispatcher.OnGetInt(func(context.Context) (int, error) { return -7, nil })
+	dispatcher.OnGetLong(func(context.Context) (int64, error) { return (int64(1) << 40) + 3, nil })
+	dispatcher.OnGetDouble(func(context.Context) (float64, error) { return 1.5, nil })
+	dispatcher.OnGetString(func(context.Context) (string, error) { return "layered", nil })
+	dispatcher.OnGetBytes(func(context.Context) ([]byte, error) {
+		if failBytes { return nil, context.Canceled }
+		return []byte{1, 2, 3, 4, 5}, nil
+	})
+	dispatcher.OnGetObject(func(context.Context) (bin.Object, error) {
+		return &Pong{Value: 12}, nil
+	})
+	if !dispatcher.HasLayerRPCHandler(LayerSemanticMethodGetInt) {
+		t.Fatal("registered primitive RPC handler was not reported as present")
+	}
 
 	direct, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000020, 1))
 	if err != nil { t.Fatal(err) }
@@ -527,6 +609,53 @@ func TestGeneratedCanonicalHandleCompatibility(t *testing.T) {
 	if err != nil { t.Fatal(err) }
 	if boxed, ok := vector.(*IntVector); !ok || len(boxed.Elems) != 2 || boxed.Elems[0] != 9 || boxed.Elems[1] != 10 {
 		t.Fatalf("canonical vector result = %#v", vector)
+	}
+
+	primitiveCases := []struct {
+		name string
+		wireID uint32
+		want func(*bin.Buffer)
+	}{
+		{name: "int", wireID: 0x21000043, want: func(b *bin.Buffer) { b.PutInt(-7) }},
+		{name: "long", wireID: 0x21000044, want: func(b *bin.Buffer) { b.PutLong((int64(1) << 40) + 3) }},
+		{name: "double", wireID: 0x21000045, want: func(b *bin.Buffer) { b.PutDouble(1.5) }},
+		{name: "string", wireID: 0x21000046, want: func(b *bin.Buffer) { b.PutString("layered") }},
+		{name: "bytes", wireID: 0x21000047, want: func(b *bin.Buffer) { b.PutBytes([]byte{1, 2, 3, 4, 5}) }},
+		{name: "Object", wireID: 0x21000048, want: func(b *bin.Buffer) {
+			b.PutID(0x21000001)
+			b.PutInt(12)
+		}},
+	}
+	for _, test := range primitiveCases {
+		t.Run(test.name, func(t *testing.T) {
+			result, err := dispatcher.Handle(context.Background(), canonicalRequest(test.wireID))
+			if err != nil { t.Fatal(err) }
+			var got bin.Buffer
+			if err := result.Encode(&got); err != nil { t.Fatal(err) }
+			var want bin.Buffer
+			test.want(&want)
+			if !bytes.Equal(got.Raw(), want.Raw()) {
+				t.Fatalf("canonical %s bytes = %x, want %x", test.name, got.Raw(), want.Raw())
+			}
+		})
+	}
+
+	profileResult, err := dispatcher.HandleLayer(LayerProfile1, context.Background(), canonicalRequest(0x21000033))
+	if err != nil { t.Fatal(err) }
+	if _, ok := profileResult.(LayerRPCResult); !ok {
+		t.Fatalf("exact-profile primitive result = %T, want LayerRPCResult", profileResult)
+	}
+	var profileBytes bin.Buffer
+	if err := profileResult.Encode(&profileBytes); err != nil { t.Fatal(err) }
+	var wantProfileBytes bin.Buffer
+	wantProfileBytes.PutInt(-7)
+	if !bytes.Equal(profileBytes.Raw(), wantProfileBytes.Raw()) {
+		t.Fatalf("profile primitive bytes = %x, want %x", profileBytes.Raw(), wantProfileBytes.Raw())
+	}
+
+	failBytes = true
+	if _, err := dispatcher.Handle(context.Background(), canonicalRequest(0x21000047)); err != context.Canceled {
+		t.Fatalf("primitive handler error = %v, want context.Canceled", err)
 	}
 }
 
@@ -1360,7 +1489,14 @@ func layerRPCSourceSyntheticSchemaSet(t *testing.T) *SchemaSet {
 	profile := strings.Replace(
 		layerRPCSyntheticOne,
 		"legacy#21000012 value:int = Pong;",
-		"legacy#21000012 value:int = Pong;\nbulk#21000013 first:Vector<int> second:Vector<int> = Pong;",
+		"legacy#21000012 value:int = Pong;\n"+
+			"bulk#21000013 first:Vector<int> second:Vector<int> = Pong;\n"+
+			"getInt#21000033 = int;\n"+
+			"getLong#21000034 = long;\n"+
+			"getDouble#21000035 = double;\n"+
+			"getString#21000036 = string;\n"+
+			"getBytes#21000037 = bytes;\n"+
+			"getObject#21000038 = Object;",
 		1,
 	)
 	canonical := strings.Replace(
@@ -1372,7 +1508,14 @@ func layerRPCSourceSyntheticSchemaSet(t *testing.T) *SchemaSet {
 	canonical = strings.Replace(
 		canonical,
 		"modern#21000022 value:int = Pong;",
-		"modern#21000022 value:int = Pong;\nbulk#21000023 first:Vector<int> second:Vector<int> = Pong;",
+		"modern#21000022 value:int = Pong;\n"+
+			"bulk#21000023 first:Vector<int> second:Vector<int> = Pong;\n"+
+			"getInt#21000043 = int;\n"+
+			"getLong#21000044 = long;\n"+
+			"getDouble#21000045 = double;\n"+
+			"getString#21000046 = string;\n"+
+			"getBytes#21000047 = bytes;\n"+
+			"getObject#21000048 = Object;",
 		1,
 	)
 	profiles := make([]*semantic.SchemaModel, 0, 2)
@@ -1407,5 +1550,17 @@ func findLayerRPCSourceRoute(t *testing.T, model *layerRPCSourceModel, layer int
 		}
 	}
 	t.Fatalf("layer RPC source route %d/%#08x was not found", layer, wireID)
+	return nil
+}
+
+func findLayerRPCSourceHandler(t *testing.T, model *layerRPCSourceModel, name string) *layerRPCSourceHandler {
+	t.Helper()
+	for index := range model.Handlers {
+		handler := &model.Handlers[index]
+		if handler.Name == name {
+			return handler
+		}
+	}
+	t.Fatalf("layer RPC source handler %q was not found", name)
 	return nil
 }

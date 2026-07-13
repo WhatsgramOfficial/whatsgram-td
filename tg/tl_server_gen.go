@@ -228903,6 +228903,25 @@ func layerRPCDirectCanonicalResult(value any) (bin.Encoder, error) {
 	return encoded, nil
 }
 
+// layerRPCCanonicalTypeRefResult is the historical Handle carrier for result
+// TypeRefs which had no legacy box type (for example int, string, bytes, and
+// Object). Its descriptor is a generated static function table; Encode never
+// walks schema metadata or uses reflection.
+type layerRPCCanonicalTypeRefResult struct {
+	typ   layerBoundType
+	value any
+}
+
+func (r *layerRPCCanonicalTypeRefResult) Encode(b *bin.Buffer) error {
+	if r == nil || r.typ.ref == nil || r.typ.encode == nil {
+		return &LayerCodecError{Operation: "encode canonical RPC result", Profile: LayerProfileCanonical, Reason: "invalid canonical result TypeRef carrier"}
+	}
+	state := layerCodecState{}
+	return layerCodecEncodeAtomic(LayerProfileCanonical, b, func() error {
+		return r.typ.encode(LayerProfileCanonical, r.value, b, &state)
+	})
+}
+
 // LayerRPCResult is the immutable public carrier returned by generated RPC
 // dispatch. It preserves the exact admitted call for direct delivery and can
 // defensively freeze the canonical handler value for retry, cache, or rewrap.
@@ -229134,9 +229153,22 @@ func (s *ServerDispatcher) register(method LayerSemanticID, handler layerRPCHand
 	s.handlers[method] = layerRPCRegisteredHandler{invoke: handler, canonicalResult: canonicalResult}
 }
 
+// HasLayerRPCHandler reports whether an admitted semantic method has a
+// complete registered handler. It is nil-safe and does not mutate dispatcher
+// state, so callers can trace known-but-unimplemented RPCs before dispatch.
+func (s *ServerDispatcher) HasLayerRPCHandler(semantic LayerSemanticID) bool {
+	if s == nil {
+		return false
+	}
+	handler, ok := s.handlers[semantic]
+	return ok && handler.invoke != nil && handler.canonicalResult != nil
+}
+
 // Handle retains the historical canonical ServerDispatcher API, including
-// its concrete result boxes. New exact-profile callers should use
-// AdmitLayer/DispatchAdmitted (or HandleLayer) and keep the frozen TypeRef.
+// established concrete/class/Bool/vector result boxes. Result TypeRefs which
+// never had a legacy box return a private bin.Encoder backed by the generated
+// canonical descriptor. New exact-profile callers should use AdmitLayer and
+// DispatchAdmitted (or HandleLayer) and keep the frozen TypeRef.
 func (s *ServerDispatcher) Handle(ctx context.Context, b *bin.Buffer) (bin.Encoder, error) {
 	encoded, err := s.HandleLayer(LayerProfileCanonical, ctx, b)
 	if err != nil {
@@ -229233,7 +229265,9 @@ func layerRPCNeedsWrapperConsumer(admitted LayerRequest) bool {
 }
 
 // DispatchAdmitted atomically consumes one immutable admission lease. Value
-// copies share that lease, so the same request can never execute twice.
+// copies share that lease, so the same request can never execute twice. A
+// successful dispatch retains the handler's raw typed value; boxing and exact
+// profile conversion happen only when the returned LayerRPCResult is encoded.
 func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerRequest) (LayerRPCResult, error) {
 	if s == nil {
 		return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Reason: "nil ServerDispatcher"}
@@ -229321,8 +229355,10 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
 }
 
 // HandleLayer is the compatibility convenience path for a connection whose
-// exact profile is already frozen. Unknown top-level IDs may use fallback;
-// known IDs never bypass generated admission.
+// exact profile is already frozen. A known generated route returns a
+// LayerRPCResult carrying that admission's exact result TypeRef; it never
+// converts the value to Handle's legacy canonical box. Unknown top-level IDs
+// may use fallback, while known IDs never bypass generated admission.
 func (s *ServerDispatcher) HandleLayer(profile LayerProfile, ctx context.Context, b *bin.Buffer) (bin.Encoder, error) {
 	if _, ok := ResolveLayerProfile(int(profile)); !ok {
 		return nil, &LayerCodecError{Operation: "decode request", Profile: profile, Reason: "unsupported exact profile"}
@@ -229377,6 +229413,7 @@ func (s *ServerDispatcher) HandleUnprofiled(ctx context.Context, b *bin.Buffer) 
 	}
 	return result, nil
 }
+
 func (s *ServerDispatcher) OnAccountAcceptAuthorization(f func(ctx context.Context, request *AccountAcceptAuthorizationRequest) (bool, error)) {
 	s.register(LayerSemanticMethodAccountAcceptAuthorization, func(ctx context.Context, object bin.Object) (any, error) {
 		typed, ok := object.(*AccountAcceptAuthorizationRequest)
