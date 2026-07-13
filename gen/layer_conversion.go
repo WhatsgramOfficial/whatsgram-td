@@ -94,6 +94,19 @@ func (f LayerFamilyConversion) ProjectionObligations() []LayerObligation {
 	return result
 }
 
+// FieldProjectionObligations returns canonical fields which the exact target
+// profile cannot carry. Generated encoders evaluate these policies only when
+// the corresponding runtime field is present.
+func (f LayerFamilyConversion) FieldProjectionObligations() []LayerObligation {
+	result := make([]LayerObligation, 0, len(f.Obligations))
+	for _, obligation := range f.Obligations {
+		if obligation.Kind == LayerObligationFieldProjection {
+			result = append(result, obligation)
+		}
+	}
+	return result
+}
+
 // LayerProfileConversion contains deterministic family plans for one profile.
 type LayerProfileConversion struct {
 	Layer       int
@@ -239,6 +252,9 @@ func AnalyzeLayerConversions(schemaSet *SchemaSet, policy LayerObligationPolicy)
 func buildLayerFieldMappings(canonical, profile *semantic.Definition) []LayerFieldMapping {
 	aliases := findFieldAliases(canonical, profile)
 	profileToCanonical := aliasMap(aliases, false)
+	for profileName, canonicalName := range aliasMap(findFieldReplacements(canonical, profile, aliases), false) {
+		profileToCanonical[profileName] = canonicalName
+	}
 	canonicalByName := make(map[string]int, len(canonical.Fields))
 	for i, field := range canonical.Fields {
 		canonicalByName[field.Name] = i

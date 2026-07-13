@@ -1,0 +1,428 @@
+{{ define "layer_typeref" }}
+{{ template "header" . }}
+
+// layerBoundType is the internal state-preserving form of a descriptor.
+// Public LayerType functions intentionally start a fresh call; nested !X
+// dispatch must use these stateful pointers so bindings and depth are kept.
+type layerBoundType struct {
+    ref *LayerTypeRef
+    preflight func(LayerProfile, any, *layerCodecState) (int, error)
+    encode func(LayerProfile, any, *bin.Buffer, *layerCodecState) error
+    decode func(LayerProfile, *bin.Buffer, *layerCodecState) (any, error)
+}
+
+// layerCodecState is per-call scratch state. Generic bindings are fixed
+// ordinal slots generated from the enclosing method; there is no runtime
+// schema lookup, reflection, or name map.
+type layerCodecState struct {
+    depth uint16
+    // decodeBudget is shared by every copied child state. Generic bindings
+    // remain value-scoped, while sibling and nested vectors consume one
+    // request-wide aggregate budget.
+    decodeBudget *layerCodecDecodeBudget
+    generic [{{ .LayerTypeRefs.BindingCapacity }}]layerBoundType
+    genericBound [{{ .LayerTypeRefs.BindingCapacity }}]bool
+}
+
+type layerCodecBindingSnapshot struct {
+    slot int
+    value layerBoundType
+    bound bool
+}
+
+const (
+    layerCodecMaxDepth = {{ .LayerTypeRefs.MaxDepth }}
+    layerCodecMaxVectorElements = {{ .LayerTypeRefs.MaxVectorSize }}
+)
+
+func (s *layerCodecState) enter(profile LayerProfile, ref *LayerTypeRef, operation string) error {
+    if s.depth >= layerCodecMaxDepth {
+        return &LayerCodecError{Operation: operation, Profile: profile, Type: ref, Reason: "maximum nested TypeRef depth exceeded"}
+    }
+    s.depth++
+    return nil
+}
+
+func (s *layerCodecState) leave() {
+    if s != nil && s.depth != 0 { s.depth-- }
+}
+
+func (s *layerCodecState) bind(slot int, typ layerBoundType) (layerCodecBindingSnapshot, error) {
+    if s == nil || slot < 0 || slot >= len(s.generic) || typ.ref == nil || typ.preflight == nil || typ.encode == nil || typ.decode == nil {
+        return layerCodecBindingSnapshot{}, fmt.Errorf("invalid layer generic binding slot %d", slot)
+    }
+    snapshot := layerCodecBindingSnapshot{slot: slot, value: s.generic[slot], bound: s.genericBound[slot]}
+    s.generic[slot] = typ
+    s.genericBound[slot] = true
+    return snapshot, nil
+}
+
+func (s *layerCodecState) restore(snapshot layerCodecBindingSnapshot) {
+    if s == nil || snapshot.slot < 0 || snapshot.slot >= len(s.generic) { return }
+    s.generic[snapshot.slot] = snapshot.value
+    s.genericBound[snapshot.slot] = snapshot.bound
+}
+
+func layerUnavailableTypeRef(operation string, profile LayerProfile, ref *LayerTypeRef, reason string) error {
+    return &LayerCodecError{Operation: operation, Profile: profile, Type: ref, Reason: reason}
+}
+
+// Static codec contract used below:
+//   layerEncodeWireXXXXXXXXBare(profile, *Canonical, b, state) error
+//   layerDecodeWireXXXXXXXXBare(profile, b, state) (*Canonical, error)
+//   layerEncodeClass<Name>(profile, CanonicalClass, b, state) error
+//   layerDecodeClass<Name>(profile, b, state) (CanonicalClass, error)
+//   layerEncodeDynamicObject/profile-aware decode use bin.Object.
+// The wire and class emitters provide those functions. Profile-only wire IDs
+// have no canonical signature and therefore never become callable here.
+
+{{- range $node := .LayerTypeRefs.Nodes }}
+var {{ $node.RefName }} = LayerTypeRef{
+    kind: {{ $node.KindConstant }},
+    qname: {{ printf "%q" $node.QName }},
+    semantic: {{ if $node.SemanticConstant }}{{ $node.SemanticConstant }}{{ else }}LayerSemanticInvalid{{ end }},
+    bare: {{ $node.Bare }},
+    percent: {{ $node.Percent }},
+    {{- if $node.ElementRefName }}
+    element: &{{ $node.ElementRefName }},
+    {{- end }}
+}
+
+{{- if $node.EmitCodec }}
+func {{ $node.PreflightStateName }}(profile LayerProfile, value {{ $node.GoType }}, state *layerCodecState) (int, error) {
+    {{- if $node.IsPrimitive }}
+    {{- if or (eq $node.PrimitivePut "PutString") (eq $node.PrimitivePut "PutBytes") }}
+    if len(value) > 0xffffff { return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, "TL string/bytes length exceeds 24-bit header") }
+    {{- end }}
+    return 1, nil
+    {{- else if $node.IsVector }}
+    local := layerCodecState{}
+    if state == nil { state = &local }
+    if err := state.enter(profile, &{{ $node.RefName }}, "preflight"); err != nil { return 0, err }
+    defer state.leave()
+    if len(value) > layerCodecMaxVectorElements {
+        return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, fmt.Sprintf("vector length %d exceeds limit", len(value)))
+    }
+    encodedLength := 0
+    for index := range value {
+        count, err := {{ $node.ElementPreflightState }}(profile, value[index], state)
+        if err != nil { return 0, fmt.Errorf("preflight {{ $node.QName }} element %d: %w", index, err) }
+        if count < 0 || count > 1 {
+            return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, fmt.Sprintf("element %d has unsupported projection cardinality %d", index, count))
+        }
+        encodedLength += count
+    }
+    if encodedLength > layerCodecMaxVectorElements {
+        return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, "projected vector length exceeds limit")
+    }
+    return 1, nil
+    {{- else if or ($node.IsExactBare) ($node.IsConcrete) }}
+    local := layerCodecState{}
+    if state == nil { state = &local }
+    switch profile {
+    {{- range $profile := $node.ProfileGroups }}
+    case {{ range $index, $constant := $profile.ProfileConstants }}{{ if $index }}, {{ end }}{{ $constant }}{{ end }}:
+        {{- if $profile.Callable }}
+        valueCopy := value
+        return {{ $profile.WirePreflightName }}(profile, &valueCopy, state)
+        {{- else }}
+        return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, {{ printf "%q" $profile.Reason }})
+        {{- end }}
+    {{- end }}
+    default:
+        return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, "unsupported exact profile")
+    }
+    {{- else if $node.IsClass }}
+    return layerPreflightClass{{ $node.ClassCodecSuffix }}(profile, value, state)
+    {{- else if $node.IsGeneric }}
+    if state == nil || {{ $node.GenericSlot }} < 0 || {{ $node.GenericSlot }} >= len(state.generic) || !state.genericBound[{{ $node.GenericSlot }}] {
+        return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, "unbound generic slot {{ $node.GenericOwner }}::{{ $node.GenericName }}")
+    }
+    binding := state.generic[{{ $node.GenericSlot }}]
+    return binding.preflight(profile, value, state)
+    {{- else if $node.IsObject }}
+    return layerPreflightDynamicObject(profile, value, state)
+    {{- end }}
+}
+
+func {{ $node.EncodeStateName }}(profile LayerProfile, value {{ $node.GoType }}, b *bin.Buffer, state *layerCodecState) error {
+    {{- if $node.IsPrimitive }}
+    {{- if or (eq $node.PrimitivePut "PutString") (eq $node.PrimitivePut "PutBytes") }}
+    if err := b.{{ $node.PrimitivePut }}Checked(value); err != nil { return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, err.Error()) }
+    {{- else }}
+    b.{{ $node.PrimitivePut }}(value)
+    {{- end }}
+    return nil
+    {{- else if $node.IsExactBare }}
+    switch profile {
+    {{- range $profile := $node.ProfileGroups }}
+    case {{ range $index, $constant := $profile.ProfileConstants }}{{ if $index }}, {{ end }}{{ $constant }}{{ end }}:
+        {{- if $profile.Callable }}
+        valueCopy := value
+        return {{ $profile.WireEncodeBodyName }}(profile, &valueCopy, b, state)
+        {{- else }}
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, {{ printf "%q" $profile.Reason }})
+        {{- end }}
+    {{- end }}
+    default:
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, "unsupported exact profile")
+    }
+    {{- else if $node.IsConcrete }}
+    switch profile {
+    {{- range $profile := $node.ProfileGroups }}
+    case {{ range $index, $constant := $profile.ProfileConstants }}{{ if $index }}, {{ end }}{{ $constant }}{{ end }}:
+        {{- if $profile.Callable }}
+        valueCopy := value
+        b.PutID(0x{{ printf "%08x" $profile.WireID }})
+        return {{ $profile.WireEncodeBodyName }}(profile, &valueCopy, b, state)
+        {{- else }}
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, {{ printf "%q" $profile.Reason }})
+        {{- end }}
+    {{- end }}
+    default:
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, "unsupported exact profile")
+    }
+    {{- else if $node.IsClass }}
+    return layerEncodeClass{{ $node.ClassCodecSuffix }}Body(profile, value, b, state)
+    {{- else if $node.IsVector }}
+    local := layerCodecState{}
+    if state == nil { state = &local }
+    if err := state.enter(profile, &{{ $node.RefName }}, "encode"); err != nil { return err }
+    defer state.leave()
+    if len(value) > layerCodecMaxVectorElements {
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, fmt.Sprintf("vector length %d exceeds limit", len(value)))
+    }
+    vectorStart := len(b.Buf)
+    countOffset := vectorStart
+    {{- if $node.BoxedVector }}
+    b.PutVectorHeader(0)
+    countOffset += 4
+    {{- else }}
+    b.PutInt(0)
+    {{- end }}
+    encodedLength := 0
+    for index := range value {
+        elementStart := len(b.Buf)
+        if err := {{ $node.ElementEncodeState }}(profile, value[index], b, state); err != nil {
+            b.Buf = b.Buf[:elementStart]
+            if IsLayerProjectionDrop(err) { continue }
+            b.Buf = b.Buf[:vectorStart]
+            return fmt.Errorf("encode {{ $node.QName }} element %d: %w", index, err)
+        }
+        encodedLength++
+    }
+    b.Buf[countOffset] = byte(encodedLength)
+    b.Buf[countOffset+1] = byte(encodedLength >> 8)
+    b.Buf[countOffset+2] = byte(encodedLength >> 16)
+    b.Buf[countOffset+3] = byte(encodedLength >> 24)
+    return nil
+    {{- else if $node.IsGeneric }}
+    if state == nil || {{ $node.GenericSlot }} < 0 || {{ $node.GenericSlot }} >= len(state.generic) || !state.genericBound[{{ $node.GenericSlot }}] {
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, "unbound generic slot {{ $node.GenericOwner }}::{{ $node.GenericName }}")
+    }
+    binding := state.generic[{{ $node.GenericSlot }}]
+    return binding.encode(profile, value, b, state)
+    {{- else if $node.IsObject }}
+    return layerEncodeDynamicObjectBody(profile, value, b, state)
+    {{- end }}
+}
+
+func {{ $node.DecodeStateName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) ({{ $node.GoType }}, error) {
+    {{- if $node.IsPrimitive }}
+    return b.{{ $node.PrimitiveRead }}()
+    {{- else if $node.IsExactBare }}
+    switch profile {
+    {{- range $profile := $node.Profiles }}
+    case {{ $profile.ProfileConstant }}:
+        {{- if $profile.Callable }}
+        value, err := {{ $profile.WireDecodeName }}(profile, b, state)
+        if err != nil { return {{ $node.GoType }}{}, err }
+        if value == nil { return {{ $node.GoType }}{}, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, "wire decoder returned nil") }
+        return *value, nil
+        {{- else }}
+        return {{ $node.GoType }}{}, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, {{ printf "%q" $profile.Reason }})
+        {{- end }}
+    {{- end }}
+    default:
+        return {{ $node.GoType }}{}, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, "unsupported exact profile")
+    }
+    {{- else if $node.IsConcrete }}
+    switch profile {
+    {{- range $profile := $node.Profiles }}
+    case {{ $profile.ProfileConstant }}:
+        {{- if $profile.Callable }}
+        if err := b.ConsumeID(0x{{ printf "%08x" $profile.WireID }}); err != nil { return {{ $node.GoType }}{}, err }
+        value, err := {{ $profile.WireDecodeName }}(profile, b, state)
+        if err != nil { return {{ $node.GoType }}{}, err }
+        if value == nil { return {{ $node.GoType }}{}, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, "wire decoder returned nil") }
+        return *value, nil
+        {{- else }}
+        return {{ $node.GoType }}{}, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, {{ printf "%q" $profile.Reason }})
+        {{- end }}
+    {{- end }}
+    default:
+        return {{ $node.GoType }}{}, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, "unsupported exact profile")
+    }
+    {{- else if $node.IsClass }}
+    return layerDecodeClass{{ $node.ClassCodecSuffix }}(profile, b, state)
+    {{- else if $node.IsVector }}
+    local := layerCodecState{}
+    if state == nil { state = &local }
+    child, err := layerCodecDescend(profile, "decode", state)
+    if err != nil { return nil, err }
+    state = &child
+    length, err := layerDecodeVectorLength(profile, &{{ $node.RefName }}, b, {{ $node.BoxedVector }}, state)
+    if err != nil { return nil, err }
+    capacity := length
+    if capacity > bin.PreallocateLimit { capacity = bin.PreallocateLimit }
+    result := make({{ $node.GoType }}, 0, capacity)
+    for index := 0; index < length; index++ {
+        value, err := {{ $node.ElementDecodeState }}(profile, b, state)
+        if err != nil { return nil, fmt.Errorf("decode {{ $node.QName }} element %d: %w", index, err) }
+        result = append(result, value)
+    }
+    return result, nil
+    {{- else if $node.IsGeneric }}
+    if state == nil || {{ $node.GenericSlot }} < 0 || {{ $node.GenericSlot }} >= len(state.generic) || !state.genericBound[{{ $node.GenericSlot }}] {
+        return nil, layerUnavailableTypeRef("decode", profile, &{{ $node.RefName }}, "unbound generic slot {{ $node.GenericOwner }}::{{ $node.GenericName }}")
+    }
+    binding := state.generic[{{ $node.GenericSlot }}]
+    return binding.decode(profile, b, state)
+    {{- else if $node.IsObject }}
+    return layerDecodeDynamicObject(profile, b, state)
+    {{- end }}
+}
+
+{{- if $node.Runnable }}
+{{- if $node.Public }}
+func {{ $node.PreflightName }}(profile LayerProfile, value {{ $node.GoType }}) (int, error) {
+    state := layerCodecState{}
+    return {{ $node.PreflightStateName }}(profile, value, &state)
+}
+
+func {{ $node.EncodeName }}(profile LayerProfile, value {{ $node.GoType }}, b *bin.Buffer) error {
+    state := layerCodecState{}
+    return {{ $node.EncodeStateName }}(profile, value, b, &state)
+}
+
+func {{ $node.DecodeName }}(profile LayerProfile, b *bin.Buffer) ({{ $node.GoType }}, error) {
+    state := layerCodecState{}
+    return {{ $node.DecodeStateName }}(profile, b, &state)
+}
+{{- end }}
+
+func {{ $node.PreflightAnyStateName }}(profile LayerProfile, value any, state *layerCodecState) (int, error) {
+    {{- if $node.AcceptPointer }}
+    switch typed := value.(type) {
+    case {{ $node.GoType }}:
+        return {{ $node.PreflightStateName }}(profile, typed, state)
+    case *{{ $node.GoType }}:
+        if typed == nil { return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, "nil canonical value") }
+        return {{ $node.PreflightStateName }}(profile, *typed, state)
+    default:
+        return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, fmt.Sprintf("unexpected canonical value %T", value))
+    }
+    {{- else }}
+    typed, ok := value.({{ $node.GoType }})
+    if !ok { return 0, layerUnavailableTypeRef("preflight", profile, &{{ $node.RefName }}, fmt.Sprintf("unexpected canonical value %T", value)) }
+    return {{ $node.PreflightStateName }}(profile, typed, state)
+    {{- end }}
+}
+
+func {{ $node.EncodeAnyStateName }}(profile LayerProfile, value any, b *bin.Buffer, state *layerCodecState) error {
+    {{- if $node.AcceptPointer }}
+    switch typed := value.(type) {
+    case {{ $node.GoType }}:
+        return {{ $node.EncodeStateName }}(profile, typed, b, state)
+    case *{{ $node.GoType }}:
+        if typed == nil { return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, "nil canonical value") }
+        return {{ $node.EncodeStateName }}(profile, *typed, b, state)
+    default:
+        return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, fmt.Sprintf("unexpected canonical value %T", value))
+    }
+    {{- else }}
+    typed, ok := value.({{ $node.GoType }})
+    if !ok { return layerUnavailableTypeRef("encode", profile, &{{ $node.RefName }}, fmt.Sprintf("unexpected canonical value %T", value)) }
+    return {{ $node.EncodeStateName }}(profile, typed, b, state)
+    {{- end }}
+}
+
+func {{ $node.DecodeAnyStateName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (any, error) {
+    return {{ $node.DecodeStateName }}(profile, b, state)
+}
+
+{{- if $node.Public }}
+var {{ $node.DescriptorName }} = LayerType[{{ $node.GoType }}]{
+    ref: &{{ $node.RefName }},
+    preflight: {{ $node.PreflightName }},
+    encode: {{ $node.EncodeName }},
+    decode: {{ $node.DecodeName }},
+    decodeState: {{ $node.DecodeStateName }},
+}
+{{- end }}
+
+var {{ $node.BoundDescriptorName }} = layerBoundType{
+    ref: &{{ $node.RefName }},
+    preflight: {{ $node.PreflightAnyStateName }},
+    encode: {{ $node.EncodeAnyStateName }},
+    decode: {{ $node.DecodeAnyStateName }},
+}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- range $accessor := .LayerTypeRefs.Accessors }}
+{{- if $accessor.IsConstructor }}
+var {{ $accessor.RefName }} = LayerTypeRef{
+    kind: LayerTypeSemantic,
+    qname: {{ printf "%q" $accessor.QName }},
+    semantic: {{ $accessor.SemanticConstant }},
+}
+
+func {{ $accessor.PreflightName }}(profile LayerProfile, value {{ $accessor.GoType }}) (int, error) {
+    if value == nil { return 0, layerUnavailableTypeRef("preflight", profile, &{{ $accessor.RefName }}, "nil canonical constructor") }
+    state := layerCodecState{}
+    return {{ $accessor.NodePreflightStateName }}(profile, *value, &state)
+}
+
+func {{ $accessor.EncodeName }}(profile LayerProfile, value {{ $accessor.GoType }}, b *bin.Buffer) error {
+    if value == nil { return layerUnavailableTypeRef("encode", profile, &{{ $accessor.RefName }}, "nil canonical constructor") }
+    wireID, ok := LayerWireID(profile, {{ $accessor.SemanticConstant }})
+    if !ok { return layerUnavailableTypeRef("encode", profile, &{{ $accessor.RefName }}, "constructor is unavailable in exact profile") }
+    state := layerCodecState{}
+    b.PutID(wireID)
+    return {{ $accessor.NodeEncodeStateName }}(profile, *value, b, &state)
+}
+
+func {{ $accessor.DecodeStateName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) ({{ $accessor.GoType }}, error) {
+    wireID, ok := LayerWireID(profile, {{ $accessor.SemanticConstant }})
+    if !ok { return nil, layerUnavailableTypeRef("decode", profile, &{{ $accessor.RefName }}, "constructor is unavailable in exact profile") }
+    if err := b.ConsumeID(wireID); err != nil { return nil, err }
+    if state == nil { return nil, layerUnavailableTypeRef("decode", profile, &{{ $accessor.RefName }}, "nil codec state") }
+    value, err := {{ $accessor.NodeDecodeStateName }}(profile, b, state)
+    if err != nil { return nil, err }
+    return &value, nil
+}
+
+func {{ $accessor.DecodeName }}(profile LayerProfile, b *bin.Buffer) ({{ $accessor.GoType }}, error) {
+    state := layerCodecState{}
+    return {{ $accessor.DecodeStateName }}(profile, b, &state)
+}
+
+var {{ $accessor.DescriptorName }} = LayerType[{{ $accessor.GoType }}]{
+    ref: &{{ $accessor.RefName }},
+    preflight: {{ $accessor.PreflightName }},
+    encode: {{ $accessor.EncodeName }},
+    decode: {{ $accessor.DecodeName }},
+    decodeState: {{ $accessor.DecodeStateName }},
+}
+{{- end }}
+
+// {{ $accessor.Name }} returns an immutable copy of the generated static
+// descriptor. RPC results, active pushes and difference may all pass it to
+// EncodeLayer; there is no separate push encoder.
+func {{ $accessor.Name }}() LayerType[{{ $accessor.GoType }}] {
+    return {{ $accessor.DescriptorName }}
+}
+{{- end }}
+{{- end }}

@@ -64,6 +64,8 @@ func (t *formattedSource) Has(name string) bool {
 func main() {
 	schemaPath := flag.String("schema", "", "Path to .tl file")
 	schemaManifest := flag.String("schema-manifest", "", "Path to locked multi-layer schema manifest")
+	layerPolicy := flag.String("layer-policy", "", "Path to versioned multi-layer conversion policy")
+	layerPolicyTemplate := flag.String("layer-policy-template", "", "Write unresolved multi-layer policy skeleton to path (or - for stdout) and exit")
 	targetDir := flag.String("target", "td", "Path to target dir")
 	packageName := flag.String("package", "td", "Target package name")
 	performFormat := flag.Bool("format", true, "Perform code formatting")
@@ -76,6 +78,12 @@ func main() {
 	if (*schemaPath == "") == (*schemaManifest == "") {
 		panic("provide exactly one of -schema or -schema-manifest")
 	}
+	if *layerPolicy != "" && *schemaManifest == "" {
+		panic("-layer-policy requires -schema-manifest")
+	}
+	if *layerPolicyTemplate != "" && *schemaManifest == "" {
+		panic("-layer-policy-template requires -schema-manifest")
+	}
 
 	start := time.Now()
 	var g *gen.Generator
@@ -83,6 +91,13 @@ func main() {
 		schemaSet, err := semantic.LoadUniverse(*schemaManifest)
 		if err != nil {
 			panic(fmt.Sprintf("load schema manifest: %+v", err))
+		}
+		if *layerPolicy != "" {
+			policy, err := gen.LoadLayerPolicy(*layerPolicy)
+			if err != nil {
+				panic(fmt.Sprintf("load layer policy: %+v", err))
+			}
+			genOpts.LayerPolicy = policy
 		}
 		g, err = gen.NewSchemaSetGenerator(schemaSet, genOpts)
 		if err != nil {
@@ -105,6 +120,27 @@ func main() {
 		}
 	}
 	collectInfoTime := time.Since(start)
+	if *layerPolicyTemplate != "" {
+		plan := g.LayerConversionPlan()
+		if plan == nil {
+			panic("layer policy template requires a schema-set conversion plan")
+		}
+		data, err := gen.MarshalLayerPolicyTemplate(plan.Report)
+		if err != nil {
+			panic(fmt.Sprintf("render layer policy template: %+v", err))
+		}
+		if *layerPolicyTemplate == "-" {
+			if _, err := os.Stdout.Write(data); err != nil {
+				panic(fmt.Sprintf("write layer policy template: %+v", err))
+			}
+			return
+		}
+		if err := writeFileAtomic(*layerPolicyTemplate, data, 0o600); err != nil {
+			panic(fmt.Sprintf("write layer policy template: %+v", err))
+		}
+		fmt.Printf("Layer policy template written to %s (%d unresolved decisions)\n", *layerPolicyTemplate, len(plan.Report.Unresolved()))
+		return
+	}
 
 	files, err := os.ReadDir(*targetDir)
 	if err != nil && !os.IsNotExist(err) {

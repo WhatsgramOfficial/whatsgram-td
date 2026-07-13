@@ -75,9 +75,9 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 {{- end }}
 {{- end }}
         }
+{{- end }}
     case LayerProfileCanonical:
         // Canonical mappings are handled below.
-{{- end }}
     default:
         return 0, false
     }

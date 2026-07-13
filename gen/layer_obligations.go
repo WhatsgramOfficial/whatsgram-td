@@ -26,6 +26,9 @@ const (
 	LayerObligationNewOnly          LayerObligationKind = "new-only"
 	LayerObligationAtomicFlagGroup  LayerObligationKind = "atomic-flag-group"
 	LayerObligationUpdateProjection LayerObligationKind = "update-projection"
+	LayerObligationFieldProjection  LayerObligationKind = "field-projection"
+	LayerObligationFieldReplacement LayerObligationKind = "field-replacement"
+	LayerObligationDiscard          LayerObligationKind = "discard"
 	LayerObligationPrivate          LayerObligationKind = "private"
 )
 
@@ -47,23 +50,25 @@ type LayerObligationKey string
 type LayerResolutionAction string
 
 const (
-	LayerResolveUnavailable LayerResolutionAction = "unavailable"
-	LayerResolveReject      LayerResolutionAction = "reject"
-	LayerResolveDrop        LayerResolutionAction = "drop"
-	LayerResolveAlias       LayerResolutionAction = "alias"
-	LayerResolveDefault     LayerResolutionAction = "default"
-	LayerResolveAdapter     LayerResolutionAction = "adapter"
-	LayerResolveProject     LayerResolutionAction = "project"
-	LayerResolveAllow       LayerResolutionAction = "allow"
+	LayerResolveUnavailable     LayerResolutionAction = "unavailable"
+	LayerResolveReject          LayerResolutionAction = "reject"
+	LayerResolveRejectIfPresent LayerResolutionAction = "reject-if-present"
+	LayerResolveDrop            LayerResolutionAction = "drop"
+	LayerResolveAlias           LayerResolutionAction = "alias"
+	LayerResolveDefault         LayerResolutionAction = "default"
+	LayerResolveAdapter         LayerResolutionAction = "adapter"
+	LayerResolveProject         LayerResolutionAction = "project"
+	LayerResolveAllow           LayerResolutionAction = "allow"
 )
 
 // LayerObligationResolution is the machine-checked action for one exact key.
 // Hook is required for generated adapter/project/alias calls. Note is human
 // context only and never resolves an obligation by itself.
 type LayerObligationResolution struct {
-	Action LayerResolutionAction
-	Hook   string
-	Note   string
+	Action LayerResolutionAction `json:"action"`
+	Hook   string                `json:"hook,omitempty"`
+	Target string                `json:"target,omitempty"`
+	Note   string                `json:"note,omitempty"`
 }
 
 func (r LayerObligationResolution) resolved() bool { return r.Action != "" }
@@ -96,8 +101,8 @@ type LayerObligation struct {
 
 // LayerObligationPolicyEntry resolves exactly one generated key.
 type LayerObligationPolicyEntry struct {
-	Key        LayerObligationKey
-	Resolution LayerObligationResolution
+	Key        LayerObligationKey        `json:"key"`
+	Resolution LayerObligationResolution `json:"resolution"`
 }
 
 // LayerObligationPolicy is deliberately a slice: duplicate keys are rejected
@@ -167,9 +172,80 @@ type fieldAlias struct {
 	profile   string
 }
 
+// findFieldReplacements recognizes only an unambiguous one-to-one reuse of
+// the same flags slot by otherwise unmatched fields. Unlike a rename alias,
+// the wire types may differ and therefore always require one bidirectional
+// adapter or rejection decision.
+func findFieldReplacements(canonical, profile *semantic.Definition, aliases []fieldAlias) []fieldAlias {
+	canonicalFields := valueFieldMap(canonical)
+	profileFields := valueFieldMap(profile)
+	aliasedCanonical := make(map[string]struct{}, len(aliases))
+	aliasedProfile := make(map[string]struct{}, len(aliases))
+	for _, alias := range aliases {
+		aliasedCanonical[alias.canonical] = struct{}{}
+		aliasedProfile[alias.profile] = struct{}{}
+	}
+	type candidates struct {
+		canonical []string
+		profile   []string
+	}
+	groups := make(map[flagGroupKey]*candidates)
+	for _, field := range canonical.Fields {
+		if field.Kind != semantic.FieldValue || field.Condition == nil {
+			continue
+		}
+		if _, exists := profileFields[field.Name]; exists {
+			continue
+		}
+		if _, aliased := aliasedCanonical[field.Name]; aliased {
+			continue
+		}
+		key := flagGroupKey{word: field.Condition.Word, bit: field.Condition.Bit}
+		group := groups[key]
+		if group == nil {
+			group = new(candidates)
+			groups[key] = group
+		}
+		group.canonical = append(group.canonical, field.Name)
+	}
+	for _, field := range profile.Fields {
+		if field.Kind != semantic.FieldValue || field.Condition == nil {
+			continue
+		}
+		if _, exists := canonicalFields[field.Name]; exists {
+			continue
+		}
+		if _, aliased := aliasedProfile[field.Name]; aliased {
+			continue
+		}
+		key := flagGroupKey{word: field.Condition.Word, bit: field.Condition.Bit}
+		group := groups[key]
+		if group == nil {
+			group = new(candidates)
+			groups[key] = group
+		}
+		group.profile = append(group.profile, field.Name)
+	}
+
+	var result []fieldAlias
+	for _, group := range groups {
+		if len(group.canonical) == 1 && len(group.profile) == 1 {
+			result = append(result, fieldAlias{canonical: group.canonical[0], profile: group.profile[0]})
+		}
+	}
+	sort.Slice(result, func(i, j int) bool {
+		if result[i].canonical != result[j].canonical {
+			return result[i].canonical < result[j].canonical
+		}
+		return result[i].profile < result[j].profile
+	})
+	return result
+}
+
 func compareLayerDefinitions(layer int, canonical, profile *semantic.Definition) []LayerObligation {
 	aliases := findFieldAliases(canonical, profile)
-	result := make([]LayerObligation, 0, len(aliases)+4)
+	replacements := findFieldReplacements(canonical, profile, aliases)
+	result := make([]LayerObligation, 0, len(aliases)+len(replacements)+4)
 	for _, alias := range aliases {
 		result = append(result, makeLayerObligation(LayerObligation{
 			Kind:        LayerObligationAlias,
@@ -186,11 +262,34 @@ func compareLayerDefinitions(layer int, canonical, profile *semantic.Definition)
 			TargetShape: profile.SemanticShape,
 		}))
 	}
+	for _, replacement := range replacements {
+		result = append(result, makeLayerObligation(LayerObligation{
+			Kind:          LayerObligationFieldReplacement,
+			Layer:         layer,
+			Direction:     LayerDirectionBoth,
+			Semantic:      canonical.Key,
+			OtherSemantic: profile.Key,
+			WireID:        canonical.WireID,
+			OtherWireID:   profile.WireID,
+			Field:         replacement.canonical,
+			OtherField:    replacement.profile,
+			SourceType:    fieldTypeString(findValueField(canonical, replacement.canonical)),
+			TargetType:    fieldTypeString(findValueField(profile, replacement.profile)),
+			SourceShape:   canonical.SemanticShape,
+			TargetShape:   profile.SemanticShape,
+		}))
+	}
 	result = append(result, compareDirection(
-		layer, canonical, profile, LayerDirectionCanonicalToProfile, aliasMap(aliases, true),
+		layer, canonical, profile, LayerDirectionCanonicalToProfile, aliasMap(aliases, true), aliasMap(replacements, true),
 	)...)
 	result = append(result, compareDirection(
-		layer, profile, canonical, LayerDirectionProfileToCanonical, aliasMap(aliases, false),
+		layer, profile, canonical, LayerDirectionProfileToCanonical, aliasMap(aliases, false), aliasMap(replacements, false),
+	)...)
+	result = append(result, projectedCanonicalFields(
+		layer, canonical, profile, aliasMap(aliases, true), aliasMap(replacements, true),
+	)...)
+	result = append(result, discardedProfileFields(
+		layer, profile, canonical, aliasMap(aliases, false), aliasMap(replacements, false),
 	)...)
 	if canonical.Key.Category == semantic.CategoryFunction && !canonical.Result.Equal(profile.Result) {
 		result = append(result, makeLayerObligation(LayerObligation{
@@ -209,7 +308,85 @@ func compareLayerDefinitions(layer int, canonical, profile *semantic.Definition)
 	return result
 }
 
-func compareDirection(layer int, source, target *semantic.Definition, direction LayerObligationDirection, aliases map[string]string) []LayerObligation {
+// projectedCanonicalFields exposes canonical data which the exact target
+// profile has no field for. Even a conditional field cannot be silently
+// omitted: its zero/absent runtime state is mechanical, but a present value is
+// a semantic downgrade and must be explicitly dropped, adapted, projected, or
+// rejected by policy. This is the field-level counterpart of projecting an
+// unavailable update constructor.
+func projectedCanonicalFields(layer int, canonical, profile *semantic.Definition, aliases, replacements map[string]string) []LayerObligation {
+	profileFields := valueFieldMap(profile)
+	var result []LayerObligation
+	for i := range canonical.Fields {
+		field := &canonical.Fields[i]
+		if field.Kind != semantic.FieldValue {
+			continue
+		}
+		profileName := field.Name
+		if alias, ok := aliases[field.Name]; ok {
+			profileName = alias
+		}
+		if replacement, ok := replacements[field.Name]; ok {
+			profileName = replacement
+		}
+		if _, exists := profileFields[profileName]; exists {
+			continue
+		}
+		obligation := makeFieldObligation(
+			LayerObligationFieldProjection,
+			layer,
+			LayerDirectionCanonicalToProfile,
+			canonical,
+			profile,
+			field,
+			nil,
+		)
+		// Rejecting only when this runtime field is present is the safe,
+		// mechanical default for additive fields. It keeps future schemas
+		// buildable without silently approving data loss; policy may replace
+		// the exact key with an explicit drop/project/adapter decision.
+		obligation.Resolution = LayerObligationResolution{Action: LayerResolveRejectIfPresent}
+		result = append(result, obligation)
+	}
+	return result
+}
+
+// discardedProfileFields exposes historical input data which has no
+// canonical field. Losing it while admitting a request or decoding a value
+// would silently change semantics, so it always requires an explicit drop,
+// adapter, or rejection policy.
+func discardedProfileFields(layer int, profile, canonical *semantic.Definition, aliases, replacements map[string]string) []LayerObligation {
+	canonicalFields := valueFieldMap(canonical)
+	var result []LayerObligation
+	for i := range profile.Fields {
+		field := &profile.Fields[i]
+		if field.Kind != semantic.FieldValue {
+			continue
+		}
+		canonicalName := field.Name
+		if alias, ok := aliases[field.Name]; ok {
+			canonicalName = alias
+		}
+		if replacement, ok := replacements[field.Name]; ok {
+			canonicalName = replacement
+		}
+		if _, exists := canonicalFields[canonicalName]; exists {
+			continue
+		}
+		result = append(result, makeFieldObligation(
+			LayerObligationDiscard,
+			layer,
+			LayerDirectionProfileToCanonical,
+			profile,
+			canonical,
+			field,
+			nil,
+		))
+	}
+	return result
+}
+
+func compareDirection(layer int, source, target *semantic.Definition, direction LayerObligationDirection, aliases, replacements map[string]string) []LayerObligation {
 	sourceFields := valueFieldMap(source)
 	result := make([]LayerObligation, 0)
 	for _, targetField := range target.Fields {
@@ -217,9 +394,17 @@ func compareDirection(layer int, source, target *semantic.Definition, direction 
 			continue
 		}
 		sourceName := targetField.Name
+		paired := false
 		for candidate, mapped := range aliases {
 			if mapped == targetField.Name {
 				sourceName = candidate
+				break
+			}
+		}
+		for candidate, mapped := range replacements {
+			if mapped == targetField.Name {
+				sourceName = candidate
+				paired = true
 				break
 			}
 		}
@@ -230,6 +415,9 @@ func compareDirection(layer int, source, target *semantic.Definition, direction 
 					LayerObligationRequired, layer, direction, source, target, nil, &targetField,
 				))
 			}
+			continue
+		}
+		if paired {
 			continue
 		}
 		if incompatibleFields(sourceField, targetField) {
@@ -244,7 +432,14 @@ func compareDirection(layer int, source, target *semantic.Definition, direction 
 			))
 		}
 	}
-	result = append(result, atomicFlagGroupObligations(layer, direction, source, target, aliases)...)
+	combined := make(map[string]string, len(aliases)+len(replacements))
+	for sourceName, targetName := range aliases {
+		combined[sourceName] = targetName
+	}
+	for sourceName, targetName := range replacements {
+		combined[sourceName] = targetName
+	}
+	result = append(result, atomicFlagGroupObligations(layer, direction, source, target, combined)...)
 	return result
 }
 
@@ -475,6 +670,16 @@ func applyLayerObligationPolicy(obligations []LayerObligation, policy LayerOblig
 		if err := validateLayerObligationResolution(obligations[obligationIndex].Kind, entry.Resolution); err != nil {
 			return LayerObligationReport{}, fmt.Errorf("gen: E_INVALID_LAYER_POLICY: key %q: %w", entry.Key, err)
 		}
+		if obligations[obligationIndex].Kind == LayerObligationOldOnly &&
+			(entry.Resolution.Action == LayerResolveAlias || entry.Resolution.Action == LayerResolveAdapter) {
+			target, _ := parseLayerPolicySemanticTarget(strings.TrimSpace(entry.Resolution.Target))
+			if target.Category != obligations[obligationIndex].Semantic.Category {
+				return LayerObligationReport{}, fmt.Errorf(
+					"gen: E_INVALID_LAYER_POLICY: key %q: old-only %s target %s has another category",
+					entry.Key, obligations[obligationIndex].Semantic, target,
+				)
+			}
+		}
 		obligations[obligationIndex].Resolution = entry.Resolution
 	}
 	return LayerObligationReport{Obligations: obligations}, nil
@@ -496,6 +701,13 @@ func validateLayerObligationResolution(kind LayerObligationKind, resolution Laye
 			resolution.Action == LayerResolveProject || resolution.Action == LayerResolveReject
 	case LayerObligationUpdateProjection:
 		allowed = resolution.Action == LayerResolveDrop || resolution.Action == LayerResolveProject || resolution.Action == LayerResolveReject
+	case LayerObligationFieldProjection:
+		allowed = resolution.Action == LayerResolveDrop || resolution.Action == LayerResolveAdapter ||
+			resolution.Action == LayerResolveProject || resolution.Action == LayerResolveRejectIfPresent
+	case LayerObligationFieldReplacement:
+		allowed = resolution.Action == LayerResolveAdapter || resolution.Action == LayerResolveReject
+	case LayerObligationDiscard:
+		allowed = resolution.Action == LayerResolveDrop || resolution.Action == LayerResolveAdapter || resolution.Action == LayerResolveReject
 	case LayerObligationPrivate:
 		allowed = resolution.Action == LayerResolveAllow || resolution.Action == LayerResolveReject
 	}
@@ -511,7 +723,33 @@ func validateLayerObligationResolution(kind LayerObligationKind, resolution Laye
 	} else if hook != "" {
 		return fmt.Errorf("action %q does not accept hook %q", resolution.Action, hook)
 	}
+	target := strings.TrimSpace(resolution.Target)
+	if kind == LayerObligationOldOnly && (resolution.Action == LayerResolveAlias || resolution.Action == LayerResolveAdapter) {
+		_, err := parseLayerPolicySemanticTarget(target)
+		if err != nil {
+			return err
+		}
+	} else if target != "" {
+		return fmt.Errorf("action %q for %s does not accept target %q", resolution.Action, kind, target)
+	}
 	return nil
+}
+
+func parseLayerPolicySemanticTarget(value string) (semantic.SemanticKey, error) {
+	category, qname, ok := strings.Cut(value, ":")
+	if !ok || qname == "" || strings.TrimSpace(qname) != qname {
+		return semantic.SemanticKey{}, fmt.Errorf("invalid semantic target %q", value)
+	}
+	key := semantic.SemanticKey{QName: qname}
+	switch category {
+	case "function":
+		key.Category = semantic.CategoryFunction
+	case "type":
+		key.Category = semantic.CategoryType
+	default:
+		return semantic.SemanticKey{}, fmt.Errorf("invalid semantic target category %q", category)
+	}
+	return key, nil
 }
 
 func makeLayerObligation(obligation LayerObligation) LayerObligation {

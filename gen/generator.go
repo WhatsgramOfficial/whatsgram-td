@@ -25,6 +25,9 @@ type Generator struct {
 	// canonical Go backend and the layer-aware wire backend. It is nil for the
 	// legacy single-schema entry point.
 	schemaSet *SchemaSet
+	// layerPlan is the single policy-applied semantic conversion plan consumed
+	// by every multi-layer backend projection.
+	layerPlan *LayerConversionPlan
 
 	// classes type bindings, key is TL type.
 	classes map[string]classBinding
@@ -87,6 +90,13 @@ func newGenerator(s *tl.Schema, schemaSet *SchemaSet, genOpt GeneratorOptions) (
 		docLineLimit:  genOpt.DocLineLimit,
 		generateFlags: genOpt.GenerateFlags,
 	}
+	if schemaSet != nil {
+		plan, err := AnalyzeLayerConversions(schemaSet, genOpt.LayerPolicy)
+		if err != nil {
+			return nil, errors.Wrap(err, "analyze layer conversions")
+		}
+		g.layerPlan = plan
+	}
 	if genOpt.DocBaseURL != "" {
 		u, err := url.Parse(genOpt.DocBaseURL)
 		if err != nil {
@@ -120,4 +130,10 @@ func newGenerator(s *tl.Schema, schemaSet *SchemaSet, genOpt GeneratorOptions) (
 // was created through the legacy single-schema entry point.
 func (g *Generator) SchemaSet() *SchemaSet {
 	return g.schemaSet
+}
+
+// LayerConversionPlan returns the single policy-applied conversion plan, or
+// nil for a legacy single-schema Generator. Callers must treat it as immutable.
+func (g *Generator) LayerConversionPlan() *LayerConversionPlan {
+	return g.layerPlan
 }

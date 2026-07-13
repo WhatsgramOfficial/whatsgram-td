@@ -141,9 +141,9 @@ func (g *Generator) buildLayerStaticModel() (*layerStaticModel, error) {
 	if err != nil {
 		return nil, err
 	}
-	conversionPlan, err := AnalyzeLayerConversions(g.schemaSet, LayerObligationPolicy{})
-	if err != nil {
-		return nil, fmt.Errorf("gen: analyze static layer conversions: %w", err)
+	conversionPlan := g.layerPlan
+	if conversionPlan == nil {
+		return nil, fmt.Errorf("gen: static layer conversion plan is absent")
 	}
 	for _, profile := range conversionPlan.Profiles {
 		for _, obligation := range profile.Obligations {

@@ -38,14 +38,24 @@ func TestLayerConversionPlanIsSingleDecisionSource(t *testing.T) {
 	if shape == nil || shape.Availability != LayerAvailabilityPresent || !shape.BodyChanged {
 		t.Fatalf("shape conversion = %+v", shape)
 	}
+	if got := len(shape.FieldProjectionObligations()); got != 2 {
+		t.Fatalf("shape field projections = %d, want 2", got)
+	}
 	foundAlias := false
+	foundReplacement := false
 	for _, mapping := range shape.Fields {
 		if mapping.ProfileName == "renamed_old" {
 			foundAlias = mapping.CanonicalName == "renamed_new" && mapping.CanonicalOrdinal >= 0
 		}
+		if mapping.ProfileName == "legacy_tone" {
+			foundReplacement = mapping.CanonicalName == "modern_tone" && mapping.CanonicalOrdinal >= 0
+		}
 	}
 	if !foundAlias {
 		t.Fatalf("shape aliases were not projected into field mappings: %+v", shape.Fields)
+	}
+	if !foundReplacement {
+		t.Fatalf("shape replacements were not projected into field mappings: %+v", shape.Fields)
 	}
 
 	canonical := plan.Profile(2)
@@ -69,6 +79,9 @@ func TestLayerConversionPlanTelegram220Through227(t *testing.T) {
 	}
 	want := map[LayerObligationKind]int{
 		LayerObligationAtomicFlagGroup:  4,
+		LayerObligationDiscard:          8,
+		LayerObligationFieldProjection:  587,
+		LayerObligationFieldReplacement: 1,
 		LayerObligationIncompatible:     8,
 		LayerObligationNewOnly:          658,
 		LayerObligationOldOnly:          4,

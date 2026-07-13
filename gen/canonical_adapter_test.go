@@ -6,6 +6,7 @@ import (
 	"go/format"
 	"os"
 	"sort"
+	"strings"
 	"testing"
 
 	"github.com/gotd/tl"
@@ -39,8 +40,8 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 
 	original := generateSnapshot(t, originalSchema)
 	adapted := generateSchemaSetSnapshot(t, universe)
-	if got, want := len(adapted), len(original)+1; got != want {
-		t.Fatalf("schema-set generated files = %d, want %d", got, want)
+	if got := len(adapted); got <= len(original)+2 {
+		t.Fatalf("schema-set generated files = %d, want canonical files plus static layer backend", got)
 	}
 	layerSource, ok := adapted["tl_layer_metadata_gen.go"]
 	if !ok {
@@ -49,12 +50,24 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 	if _, err := format.Source(layerSource); err != nil {
 		t.Fatalf("format layer metadata: %v", err)
 	}
+	codecSource, ok := adapted["tl_layer_codec_api_gen.go"]
+	if !ok {
+		t.Fatal("schema-set generator did not emit unified layer codec API")
+	}
+	if _, err := format.Source(codecSource); err != nil {
+		t.Fatalf("format layer codec API: %v", err)
+	}
 	names := make([]string, 0, len(original))
 	for name := range original {
 		names = append(names, name)
 	}
 	sort.Strings(names)
 	for _, name := range names {
+		if name == "tl_server_gen.go" {
+			// The multi-layer dispatcher intentionally replaces the canonical-ID-
+			// only server while preserving every OnX facade.
+			continue
+		}
 		got, ok := adapted[name]
 		if !ok {
 			t.Errorf("adapter did not generate %s", name)
@@ -62,6 +75,14 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 		}
 		if !bytes.Equal(got, original[name]) {
 			t.Errorf("adapter output differs for %s", name)
+		}
+	}
+	for name := range adapted {
+		if _, canonical := original[name]; canonical {
+			continue
+		}
+		if !strings.HasPrefix(name, "tl_layer_") {
+			t.Errorf("unexpected non-layer companion file %s", name)
 		}
 	}
 }
@@ -77,7 +98,9 @@ func generateSnapshot(t *testing.T, schema *tl.Schema) sourceSnapshot {
 
 func generateSchemaSetSnapshot(t *testing.T, schemaSet *SchemaSet) sourceSnapshot {
 	t.Helper()
-	generator, err := NewSchemaSetGenerator(schemaSet, canonicalTestGeneratorOptions())
+	options := canonicalTestGeneratorOptions()
+	options.LayerPolicy = layerTestPolicy(t, schemaSet)
+	generator, err := NewSchemaSetGenerator(schemaSet, options)
 	if err != nil {
 		t.Fatal(err)
 	}

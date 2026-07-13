@@ -47,6 +47,10 @@ func (g *Generator) buildLayerMetadata() (*layerMetadata, error) {
 	if g.schemaSet == nil {
 		return nil, fmt.Errorf("build layer metadata: nil schema set")
 	}
+	wires, err := g.buildLayerWireModel()
+	if err != nil {
+		return nil, fmt.Errorf("build layer metadata: shared wire model: %w", err)
+	}
 	set := g.schemaSet
 	canonical := set.Schemas[set.CanonicalLayer]
 	if canonical == nil {
@@ -106,11 +110,15 @@ func (g *Generator) buildLayerMetadata() (*layerMetadata, error) {
 			family := set.Families[key]
 			canonicalDefinition := family.ByLayer[set.CanonicalLayer]
 			targetDefinition := family.ByLayer[layer]
-			if canonicalDefinition != nil && targetDefinition != nil && canonicalDefinition.WireID == targetDefinition.WireID {
+			historical := wires.historicalTarget(layer, key)
+			if historical == nil && canonicalDefinition != nil && targetDefinition != nil && canonicalDefinition.WireID == targetDefinition.WireID {
 				continue
 			}
 			entry := layerMetadataOverride{Constant: layerSemanticConstant(key)}
-			if targetDefinition != nil {
+			if historical != nil {
+				entry.Present = true
+				entry.WireID = historical.WireID
+			} else if targetDefinition != nil {
 				entry.Present = true
 				entry.WireID = targetDefinition.WireID
 			}

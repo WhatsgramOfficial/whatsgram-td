@@ -79,7 +79,7 @@ func TestLayerStaticModelDirtyReachability(t *testing.T) {
 	if layerOne == nil {
 		t.Fatal("layer 1 profile is missing")
 	}
-	assertLayerStaticMode(t, layerOne, typeStaticKey("leaf"), layerStaticRewrite)
+	assertLayerStaticMode(t, layerOne, typeStaticKey("leaf"), layerStaticObligation)
 	assertLayerStaticMode(t, layerOne, typeStaticKey("inner"), layerStaticRetag)
 	assertLayerStaticMode(t, layerOne, typeStaticKey("holder"), layerStaticRewrite)
 	assertLayerStaticMode(t, layerOne, typeStaticKey("bareHolder"), layerStaticRewrite)
@@ -142,7 +142,7 @@ func TestLayerStaticModelDirtyReachability(t *testing.T) {
 	if exact := layerOne.family(typeStaticKey("exact")); exact != nil {
 		t.Fatalf("globally clean family leaked into emitter projection: %+v", exact)
 	}
-	if got, want := model.RewriteCount, 4; got != want {
+	if got, want := model.RewriteCount, 3; got != want {
 		t.Fatalf("rewrite variants = %d, want %d", got, want)
 	}
 }
@@ -179,13 +179,13 @@ func TestLayerStaticModelTelegram220Through227(t *testing.T) {
 	if got, want := model.FamilyCount, 598; got != want {
 		t.Fatalf("projected families = %d, want locked schema count %d", got, want)
 	}
-	if got, want := model.RewriteCount, 2496; got != want {
+	if got, want := model.RewriteCount, 2209; got != want {
 		t.Fatalf("rewrite variants = %d, want locked schema count %d", got, want)
 	}
 	if got, want := model.UnavailableCount, 658; got != want {
 		t.Fatalf("unavailable variants = %d, want locked schema count %d", got, want)
 	}
-	if got, want := model.ObligationCount, 74; got != want {
+	if got, want := model.ObligationCount, 361; got != want {
 		t.Fatalf("body obligation variants = %d, want locked schema count %d", got, want)
 	}
 	if got, want := model.ResultObligationCount, 14; got != want {
@@ -239,10 +239,74 @@ func TestLayerStaticModelTelegram220Through227(t *testing.T) {
 	)
 }
 
+func TestLayerGenerationExtendsWithNewCanonicalProfile(t *testing.T) {
+	base := buildLayerStaticSyntheticUniverseFrom(t, 2, layerStaticSyntheticOne, layerStaticSyntheticTwo)
+	extended := buildLayerStaticSyntheticUniverseFrom(t, 3, layerStaticSyntheticOne, layerStaticSyntheticTwo, layerStaticSyntheticThree)
+
+	// Layer 3 is schema-identical to Layer 2. Appending it and advancing the
+	// canonical profile must therefore be a pure regeneration: the reviewed
+	// policy for the existing semantic differences remains valid, while the
+	// generated profile catalog grows automatically.
+	policy := layerTestPolicy(t, base)
+	baseGenerator, err := NewSchemaSetGenerator(base, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	extendedGenerator, err := NewSchemaSetGenerator(extended, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatalf("append schema-identical canonical profile required a generator or policy edit: %v", err)
+	}
+
+	baseMetadata, err := baseGenerator.buildLayerMetadata()
+	if err != nil {
+		t.Fatal(err)
+	}
+	extendedMetadata, err := extendedGenerator.buildLayerMetadata()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, want := len(extendedMetadata.Profiles), len(baseMetadata.Profiles)+1; got != want {
+		t.Fatalf("extended profile count = %d, want %d", got, want)
+	}
+	baseIDs := make(map[string]uint64, len(baseMetadata.Families))
+	for _, family := range baseMetadata.Families {
+		baseIDs[family.Category+":"+family.QName] = family.ID
+	}
+	for _, family := range extendedMetadata.Families {
+		key := family.Category + ":" + family.QName
+		if want, ok := baseIDs[key]; ok && family.ID != want {
+			t.Fatalf("semantic ID for %s changed from %#016x to %#016x after appending a profile", key, want, family.ID)
+		}
+	}
+
+	baseCodec, err := baseGenerator.buildLayerCodecModel("fixture")
+	if err != nil {
+		t.Fatal(err)
+	}
+	extendedCodec, err := extendedGenerator.buildLayerCodecModel("fixture")
+	if err != nil {
+		t.Fatal(err)
+	}
+	extendedWires := make(map[uint32]layerCodecWire, len(extendedCodec.Wires))
+	for _, wire := range extendedCodec.Wires {
+		extendedWires[wire.WireID] = wire
+	}
+	for _, wire := range baseCodec.Wires {
+		added, ok := extendedWires[wire.WireID]
+		if !ok || added.EncodeName != wire.EncodeName || added.DecodeName != wire.DecodeName {
+			t.Fatalf("wire %#08x static codec identity changed after appending profile: before=%s/%s after=%s/%s", wire.WireID, wire.EncodeName, wire.DecodeName, added.EncodeName, added.DecodeName)
+		}
+	}
+}
+
 func buildLayerStaticSyntheticUniverse(t *testing.T) *SchemaSet {
+	return buildLayerStaticSyntheticUniverseFrom(t, 3, layerStaticSyntheticOne, layerStaticSyntheticTwo, layerStaticSyntheticThree)
+}
+
+func buildLayerStaticSyntheticUniverseFrom(t *testing.T, canonical int, sources ...string) *SchemaSet {
 	t.Helper()
-	profiles := make([]*semantic.SchemaModel, 0, 3)
-	for _, source := range []string{layerStaticSyntheticOne, layerStaticSyntheticTwo, layerStaticSyntheticThree} {
+	profiles := make([]*semantic.SchemaModel, 0, len(sources))
+	for _, source := range sources {
 		parsed, err := tl.Parse(bytes.NewBufferString(source))
 		if err != nil {
 			t.Fatal(err)
@@ -253,7 +317,7 @@ func buildLayerStaticSyntheticUniverse(t *testing.T) *SchemaSet {
 		}
 		profiles = append(profiles, profile)
 	}
-	universe, err := NewSchemaSet(3, profiles...)
+	universe, err := NewSchemaSet(canonical, profiles...)
 	if err != nil {
 		t.Fatal(err)
 	}

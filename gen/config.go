@@ -47,6 +47,9 @@ type GeneratorOptions struct {
 	DocBaseURL string
 	// DocLineLimit sets GoDoc comment line length limit.
 	DocLineLimit int
+	// LayerPolicy resolves exact non-mechanical decisions for SchemaSet code
+	// generation. It is ignored by the legacy single-schema entry point.
+	LayerPolicy LayerObligationPolicy
 	GenerateFlags
 }
 

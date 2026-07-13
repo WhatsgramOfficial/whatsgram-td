@@ -105,6 +105,18 @@ func TestTargetsMessage_Encode(t *testing.T) {
 	require.Equal(t, msg, decoded)
 }
 
+func TestVectorVectorRoundTrip(t *testing.T) {
+	b := new(bin.Buffer)
+	want := TestVectorVector{
+		Value: [][]string{{"a", "b"}, nil, {"c"}},
+	}
+	require.NoError(t, want.Encode(b))
+
+	var got TestVectorVector
+	require.NoError(t, got.Decode(b))
+	require.Equal(t, want, got)
+}
+
 func TestGetUpdatesResp(t *testing.T) {
 	b := new(bin.Buffer)
 	v := GetUpdatesResp{
