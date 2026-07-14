@@ -22,11 +22,11 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 // isAccountDead reports whether err means the account itself is gone and no

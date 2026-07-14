@@ -3,10 +3,10 @@ package telegram
 import (
 	"time"
 
-	"github.com/gotd/td/telegram/dcs"
-	"github.com/gotd/td/telegram/internal/manager"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/telegram/dcs"
+	"github.com/iamxvbaba/td/telegram/internal/manager"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/transport"
 )
 
 // DeviceConfig is config which send when Telegram connection session created.

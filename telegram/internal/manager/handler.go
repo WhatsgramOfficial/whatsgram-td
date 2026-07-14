@@ -1,9 +1,9 @@
 package manager
 
 import (
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Handler abstracts updates and session handler.

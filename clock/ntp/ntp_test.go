@@ -7,7 +7,7 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/clock"
+	"github.com/iamxvbaba/td/clock"
 )
 
 func TestNew(t *testing.T) {

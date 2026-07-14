@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // TestGeneratedLayerSourceBudget keeps future unchanged Layers cheap: profile

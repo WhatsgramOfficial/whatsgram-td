@@ -5,8 +5,8 @@ import (
 
 	"github.com/pion/webrtc/v4"
 
-	"github.com/gotd/td/telegram/calls"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/calls"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // This example shows how to wire the call client to an update dispatcher and

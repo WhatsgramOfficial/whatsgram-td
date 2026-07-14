@@ -14,7 +14,7 @@ import (
 	"github.com/beevik/ntp"
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/clock"
+	"github.com/iamxvbaba/td/clock"
 )
 
 // DefaultServer is the NTP server used when Options.Server is empty.

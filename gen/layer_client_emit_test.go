@@ -201,7 +201,7 @@ func TestLayerClientSyntheticGeneratedPackageRuntime(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	goMod := fmt.Sprintf("module layerfixture\n\ngo 1.25\n\nrequire github.com/gotd/td v0.0.0\nreplace github.com/gotd/td => %s\n", filepath.ToSlash(root))
+	goMod := fmt.Sprintf("module layerfixture\n\ngo 1.25\n\nrequire github.com/iamxvbaba/td v0.0.0\nreplace github.com/iamxvbaba/td => %s\n", filepath.ToSlash(root))
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -221,7 +221,7 @@ import (
     "context"
     "testing"
 
-    "github.com/gotd/td/bin"
+    "github.com/iamxvbaba/td/bin"
 )
 
 func adaptNewJoinResult(_ LayerProfile, value *OldJoin) (*NewJoin, error) {

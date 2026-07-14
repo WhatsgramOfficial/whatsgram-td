@@ -10,10 +10,10 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/proto/codec"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/proto/codec"
 )
 
 // https://core.telegram.org/mtproto/description#message-identifier-msg-id

@@ -7,7 +7,7 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // EmojiSound represents emoji sound file location.

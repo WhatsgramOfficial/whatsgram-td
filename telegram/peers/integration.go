@@ -5,9 +5,9 @@ import (
 
 	"go.uber.org/multierr"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/message/entity"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/message/entity"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // SetChannelAccessHash implements updates.ChannelAccessHasher.

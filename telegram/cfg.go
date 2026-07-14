@@ -5,8 +5,8 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/constant"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/constant"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Available MTProto default server addresses.

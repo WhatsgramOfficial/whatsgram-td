@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/clock"
-	"github.com/gotd/td/crypto"
+	"github.com/iamxvbaba/td/clock"
+	"github.com/iamxvbaba/td/crypto"
 )
 
 func TestNewPFSUsesPermKey(t *testing.T) {

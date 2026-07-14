@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgmock"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgmock"
 )
 
 func generateMessages(count int) []tg.MessageClass {

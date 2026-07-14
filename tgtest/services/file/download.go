@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 func getLocation(loc tg.InputFileLocationClass) (string, error) {

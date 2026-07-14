@@ -7,7 +7,7 @@ import (
 
 	"go.uber.org/atomic"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // NewUpload creates new Upload struct using given

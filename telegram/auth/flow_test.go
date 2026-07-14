@@ -7,9 +7,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/testutil"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/testutil"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func askCode(code string, err error) auth.CodeAuthenticatorFunc {

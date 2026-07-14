@@ -6,8 +6,8 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/telegram/peers"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/peers"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // ChatMembers is chat Members.

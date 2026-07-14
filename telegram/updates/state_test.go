@@ -11,9 +11,9 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 // diffAPI is a stub API that returns the configured differences in order,

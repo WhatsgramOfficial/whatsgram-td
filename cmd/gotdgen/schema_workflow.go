@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gotd/td/gen"
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 type schemaImportOptions struct {

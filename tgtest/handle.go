@@ -8,12 +8,12 @@ import (
 	"github.com/gotd/log"
 	"go.uber.org/multierr"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/tgerr"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/tgerr"
+	"github.com/iamxvbaba/td/transport"
 )
 
 func (s *Server) rpcHandle(ctx context.Context, c transport.Conn, b *bin.Buffer) error {

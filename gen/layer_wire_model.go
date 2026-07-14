@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerWireActionKind is one complete generated action for a semantic family

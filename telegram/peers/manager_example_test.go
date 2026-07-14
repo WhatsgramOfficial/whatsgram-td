@@ -8,10 +8,10 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/peers"
-	"github.com/gotd/td/telegram/updates"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/peers"
+	"github.com/iamxvbaba/td/telegram/updates"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func ExampleManager() {

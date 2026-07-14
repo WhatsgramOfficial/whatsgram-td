@@ -7,9 +7,9 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/telegram/internal/upconv"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/telegram/internal/upconv"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func (c *Client) updateInterceptor(updates ...tg.UpdateClass) {

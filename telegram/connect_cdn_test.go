@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 type runClientConn struct {

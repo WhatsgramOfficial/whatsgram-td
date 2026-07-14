@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // CDN represents Telegram RPC client to CDN server.

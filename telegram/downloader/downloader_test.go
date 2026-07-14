@@ -18,12 +18,12 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/exchange"
-	"github.com/gotd/td/syncio"
-	"github.com/gotd/td/testutil"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/exchange"
+	"github.com/iamxvbaba/td/syncio"
+	"github.com/iamxvbaba/td/testutil"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 type mock struct {

@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // mockObject implements bin.Object for testing.

@@ -3,7 +3,7 @@ package crypto
 import (
 	"crypto/sha1" // #nosec G505
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // MessageKeyV1 computes msg_key for MTProto v1.

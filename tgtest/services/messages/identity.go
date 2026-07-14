@@ -1,9 +1,9 @@
 package messages
 
 import (
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
-	"github.com/gotd/td/tgtest"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
+	"github.com/iamxvbaba/td/tgtest"
 )
 
 // selfUser returns the user the given session represents, binding the session

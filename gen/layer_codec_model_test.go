@@ -13,7 +13,7 @@ import (
 
 	"github.com/gotd/tl"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 func TestLayerCodecModelUniqueWireAndStaticBodies(t *testing.T) {
@@ -259,7 +259,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 func putBudgetIntVector(b *bin.Buffer, values ...int) {
@@ -415,7 +415,7 @@ func TestLayerCodecHistoricalTypeClassAndObjectRoundTrip(t *testing.T) {
 import (
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 var historicalChoiceEncodeCalls int
@@ -602,7 +602,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 var historicalRecordFail bool
@@ -750,7 +750,7 @@ func runLayerGeneratedPackage(t *testing.T, sources sourceSnapshot) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	goMod := fmt.Sprintf("module fixture\n\ngo 1.25\n\nrequire github.com/gotd/td v0.0.0\nreplace github.com/gotd/td => %s\n", filepath.ToSlash(root))
+	goMod := fmt.Sprintf("module fixture\n\ngo 1.25\n\nrequire github.com/iamxvbaba/td v0.0.0\nreplace github.com/iamxvbaba/td => %s\n", filepath.ToSlash(root))
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -848,7 +848,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 var (

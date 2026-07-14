@@ -10,13 +10,13 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/clock"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/exchange"
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/telegram/dcs"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/clock"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/exchange"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/telegram/dcs"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type (

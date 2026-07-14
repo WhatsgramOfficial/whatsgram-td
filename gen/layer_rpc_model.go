@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerRPCAction is an explicit generated RPC boundary decision. There is no

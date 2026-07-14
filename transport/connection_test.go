@@ -9,8 +9,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/proto/codec"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/proto/codec"
 )
 
 func TestConnection(t *testing.T) {

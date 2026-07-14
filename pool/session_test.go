@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/mtproto"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/mtproto"
 )
 
 func TestSyncSessionOptions(t *testing.T) {

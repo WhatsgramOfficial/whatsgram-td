@@ -6,9 +6,9 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/ascii"
-	"github.com/gotd/td/telegram/deeplink"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/ascii"
+	"github.com/iamxvbaba/td/telegram/deeplink"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Promise is a peer promise.

@@ -9,8 +9,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/tg"
 )
 
 var _ telegram.UpdateHandler = (*Manager)(nil)

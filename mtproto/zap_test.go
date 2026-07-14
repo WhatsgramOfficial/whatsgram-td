@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tmap"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tmap"
 )
 
 func BenchmarkConn_logWithType(b *testing.B) {

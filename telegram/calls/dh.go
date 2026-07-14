@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // keySize is the byte length of the DH prime, exponents and shared key.

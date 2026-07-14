@@ -12,9 +12,9 @@ import (
 	"go.uber.org/zap/zaptest"
 
 	"github.com/gotd/log/logzap"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/tdsync"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/tdsync"
+	"github.com/iamxvbaba/td/transport"
 )
 
 func TestExchangeTimeout(t *testing.T) {

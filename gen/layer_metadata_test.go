@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 func TestLayerMetadataUsesSparseProfileOverrides(t *testing.T) {

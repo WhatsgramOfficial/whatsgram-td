@@ -1,7 +1,7 @@
 package updates
 
 import (
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type update struct {

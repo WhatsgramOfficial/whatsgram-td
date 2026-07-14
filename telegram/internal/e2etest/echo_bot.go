@@ -9,10 +9,10 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/message"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/message"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 // EchoBot is a simple echo message bot.

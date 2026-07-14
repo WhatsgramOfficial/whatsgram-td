@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/tdsync"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/tdsync"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type sessionCaptureHandler struct {

@@ -3,7 +3,7 @@ package entity
 import (
 	"strings"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type utf8entity struct {

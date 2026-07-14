@@ -6,7 +6,7 @@ import (
 	"github.com/gotd/log"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func (s *internalState) applySeq(ctx context.Context, state int, updates []update) error {

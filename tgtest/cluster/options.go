@@ -5,10 +5,10 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/telegram/dcs"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/telegram/dcs"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/transport"
 )
 
 // Options of Cluster.

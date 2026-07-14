@@ -13,13 +13,13 @@ import (
 	"github.com/gotd/log"
 	"github.com/gotd/neo"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/rpc"
-	"github.com/gotd/td/tdsync"
-	"github.com/gotd/td/testutil"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tmap"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/rpc"
+	"github.com/iamxvbaba/td/tdsync"
+	"github.com/iamxvbaba/td/testutil"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tmap"
 )
 
 type testUpdateHandler struct {

@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap/zaptest"
 
 	"github.com/gotd/log/logzap"
-	"github.com/gotd/td/clock"
+	"github.com/iamxvbaba/td/clock"
 )
 
 func TestLogGroup(t *testing.T) {

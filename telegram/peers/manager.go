@@ -8,7 +8,7 @@ import (
 	"github.com/gotd/log"
 	"golang.org/x/sync/singleflight"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Manager is peer manager.

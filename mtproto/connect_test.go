@@ -10,10 +10,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/clock"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/clock"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/transport"
 )
 
 type closeConn struct {

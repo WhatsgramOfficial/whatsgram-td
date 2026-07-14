@@ -11,7 +11,7 @@ import (
 
 	"github.com/gotd/tl"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 type sourceSnapshot map[string][]byte

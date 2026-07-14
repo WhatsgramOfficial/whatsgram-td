@@ -13,7 +13,7 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // GroupCall joins a Telegram group call (voice chat) and streams audio into it.

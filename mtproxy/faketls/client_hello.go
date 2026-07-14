@@ -9,7 +9,7 @@ import (
 	"github.com/go-faster/errors"
 	utls "github.com/refraction-networking/utls"
 
-	"github.com/gotd/td/clock"
+	"github.com/iamxvbaba/td/clock"
 )
 
 // clientRandomOffset is the offset of the 32-byte ClientRandom field inside a

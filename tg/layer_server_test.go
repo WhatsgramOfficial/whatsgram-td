@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 func TestLayerUnknownRPCMethodHasTypedClassification(t *testing.T) {

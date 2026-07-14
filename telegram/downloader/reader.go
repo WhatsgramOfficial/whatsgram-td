@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 type block struct {

@@ -26,16 +26,16 @@ import (
 	"github.com/gotd/log/logzap"
 	lj "gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/telegram/auth/qrlogin"
-	"github.com/gotd/td/telegram/dcs"
-	"github.com/gotd/td/telegram/message/peer"
-	"github.com/gotd/td/telegram/query"
-	"github.com/gotd/td/telegram/updates"
-	updhook "github.com/gotd/td/telegram/updates/hook"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/telegram/auth/qrlogin"
+	"github.com/iamxvbaba/td/telegram/dcs"
+	"github.com/iamxvbaba/td/telegram/message/peer"
+	"github.com/iamxvbaba/td/telegram/query"
+	"github.com/iamxvbaba/td/telegram/updates"
+	updhook "github.com/iamxvbaba/td/telegram/updates/hook"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func sessionFolder(phone string) string {

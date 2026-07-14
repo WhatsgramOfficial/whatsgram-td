@@ -6,12 +6,12 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/exchange"
-	"github.com/gotd/td/tdsync"
-	"github.com/gotd/td/telegram/dcs"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgtest"
-	"github.com/gotd/td/tgtest/services/config"
+	"github.com/iamxvbaba/td/exchange"
+	"github.com/iamxvbaba/td/tdsync"
+	"github.com/iamxvbaba/td/telegram/dcs"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgtest"
+	"github.com/iamxvbaba/td/tgtest/services/config"
 )
 
 type setup struct {

@@ -8,9 +8,9 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/message"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/message"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func filePromiseResult(ctx context.Context) error {

@@ -3,7 +3,7 @@ package tgmock
 import (
 	"context"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // Invoker implements tg.Invoker as function.

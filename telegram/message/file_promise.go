@@ -7,9 +7,9 @@ import (
 
 	"go.uber.org/atomic"
 
-	"github.com/gotd/td/telegram/uploader"
-	"github.com/gotd/td/telegram/uploader/source"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/uploader"
+	"github.com/iamxvbaba/td/telegram/uploader/source"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Uploader is an abstraction for Telegram file uploader.

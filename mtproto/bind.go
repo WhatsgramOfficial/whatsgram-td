@@ -6,10 +6,10 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/rpc"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/rpc"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 const maxBindTempAuthKeyAttempts = 3

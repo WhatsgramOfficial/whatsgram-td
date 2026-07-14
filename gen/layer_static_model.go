@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerStaticMode is the amount of generated work needed for one family in

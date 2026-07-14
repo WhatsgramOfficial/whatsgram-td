@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 func TestLayerUnprofiledInvariantAuthBindTempAuthKey(t *testing.T) {

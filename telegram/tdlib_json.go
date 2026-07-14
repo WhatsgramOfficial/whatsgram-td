@@ -8,10 +8,10 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tdjson"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tdjson"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 var (

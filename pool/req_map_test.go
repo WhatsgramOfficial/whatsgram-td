@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/tdsync"
+	"github.com/iamxvbaba/td/tdsync"
 )
 
 func TestReqMap(t *testing.T) {

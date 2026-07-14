@@ -27,12 +27,12 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/auth/qrlogin"
-	"github.com/gotd/td/telegram/calls"
-	"github.com/gotd/td/telegram/dcs"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/auth/qrlogin"
+	"github.com/iamxvbaba/td/telegram/calls"
+	"github.com/iamxvbaba/td/telegram/dcs"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func main() {

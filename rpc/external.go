@@ -3,7 +3,7 @@ package rpc
 import (
 	"context"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // Send is a function that sends requests to the server.

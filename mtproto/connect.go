@@ -7,7 +7,7 @@ import (
 	"github.com/gotd/log"
 	"go.uber.org/multierr"
 
-	"github.com/gotd/td/exchange"
+	"github.com/iamxvbaba/td/exchange"
 )
 
 // connect establishes connection using configured transport, creating

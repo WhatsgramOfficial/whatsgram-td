@@ -6,7 +6,7 @@ import (
 
 	"github.com/gotd/ige"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // countPadding returns the amount of random padding (in bytes) to append to a

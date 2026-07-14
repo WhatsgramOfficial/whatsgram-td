@@ -5,10 +5,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/rpc"
-	"github.com/gotd/td/testutil"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/rpc"
+	"github.com/iamxvbaba/td/testutil"
 )
 
 func TestConn_dropRPC(t *testing.T) {

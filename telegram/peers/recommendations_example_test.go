@@ -8,8 +8,8 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/peers"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/peers"
 )
 
 func ExampleChannel_RecommendedChannels() {

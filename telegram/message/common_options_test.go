@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func assertCommonMessageOptions(t *testing.T, gotNoForwards bool, gotSendAs tg.InputPeerClass, gotReplyTo tg.InputReplyToClass) {

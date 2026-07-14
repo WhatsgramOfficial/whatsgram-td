@@ -9,7 +9,7 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // TestRealLayerPolicy is deliberately both a review gate and the only writer

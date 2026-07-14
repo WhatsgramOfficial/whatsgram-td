@@ -10,8 +10,8 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type mockFlow struct {

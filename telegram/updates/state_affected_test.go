@@ -12,8 +12,8 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // recordingHandler records every dispatched update for assertions.

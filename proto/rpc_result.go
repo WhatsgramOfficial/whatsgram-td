@@ -1,7 +1,7 @@
 package proto
 
 import (
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // ResultTypeID is TL type id of Result.

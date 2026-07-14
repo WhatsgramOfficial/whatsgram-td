@@ -3,9 +3,9 @@ package fileid
 import (
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/constant"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/constant"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // PhotoSizeSource represents photo metadata stored in file_id.

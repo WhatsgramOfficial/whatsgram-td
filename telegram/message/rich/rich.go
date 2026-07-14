@@ -22,7 +22,7 @@
 // the message sender (see (*message.Builder).RichMessage).
 package rich
 
-import "github.com/gotd/td/tg"
+import "github.com/iamxvbaba/td/tg"
 
 // join collapses a list of rich texts into a single RichText node, wrapping
 // multiple nodes in a textConcat and returning textEmpty for none.

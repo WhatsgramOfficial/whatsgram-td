@@ -8,10 +8,10 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/proto/codec"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/proto/codec"
 )
 
 // ServerExchangeError is returned when exchange fails due to

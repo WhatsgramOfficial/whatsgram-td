@@ -3,10 +3,10 @@ package telegram
 import (
 	"sync"
 
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tmap"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tmap"
 )
 
 // Port is default port used by telegram.

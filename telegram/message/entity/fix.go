@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // SortEntities sorts entities as TDLib does it.

@@ -1,6 +1,6 @@
 package message
 
-import "github.com/gotd/td/tg"
+import "github.com/iamxvbaba/td/tg"
 
 // Venue adds venue attachment.
 // NB: parameter accuracy may be zero and will not be used.

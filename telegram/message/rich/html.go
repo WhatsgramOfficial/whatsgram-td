@@ -8,7 +8,7 @@ import (
 	"github.com/go-faster/errors"
 	"golang.org/x/net/html"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // ParseHTML parses HTML from r into rich message blocks.

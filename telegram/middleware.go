@@ -3,8 +3,8 @@ package telegram
 import (
 	"context"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // InvokeFunc implements tg.Invoker as function.

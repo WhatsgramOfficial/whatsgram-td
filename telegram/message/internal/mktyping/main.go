@@ -7,9 +7,9 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/tdp"
-	"github.com/gotd/td/telegram/message/internal/mkrun"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tdp"
+	"github.com/iamxvbaba/td/telegram/message/internal/mkrun"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Field represents type field.
@@ -36,7 +36,7 @@ package {{ $.PackageName }}
 import (
 	"context"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 var (
@@ -44,7 +44,7 @@ var (
 	_ = context.Context(nil)
 )
 
-{{- /*gotype: github.com/gotd/td/telegram/message/internal/mkrun.Config*/ -}}
+{{- /*gotype: github.com/iamxvbaba/td/telegram/message/internal/mkrun.Config*/ -}}
 {{- range $typ := $.Data }}
 {{ $helperName := trimSuffix (trimPrefix $typ.Name "SendMessage") "Action" -}}
 // {{ $helperName }} sends {{ $typ.Name }}.

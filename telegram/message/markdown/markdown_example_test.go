@@ -6,10 +6,10 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/message"
-	"github.com/gotd/td/telegram/message/markdown"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/message"
+	"github.com/iamxvbaba/td/telegram/message/markdown"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func sendMarkdown(ctx context.Context) error {

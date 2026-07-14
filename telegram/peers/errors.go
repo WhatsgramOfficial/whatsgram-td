@@ -3,7 +3,7 @@ package peers
 import (
 	"fmt"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // PhoneNotFoundError is returned when Manager unable to find contact with given phone.

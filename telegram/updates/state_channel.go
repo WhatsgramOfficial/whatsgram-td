@@ -8,9 +8,9 @@ import (
 	"github.com/gotd/log"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 // errChannelInaccessible is a sentinel returned by getDifference when the

@@ -1,4 +1,4 @@
-module github.com/gotd/td/examples
+module github.com/iamxvbaba/td/examples
 
 go 1.25.0
 
@@ -9,7 +9,7 @@ require (
 	github.com/go-faster/errors v0.7.1
 	github.com/gotd/contrib v0.21.0
 	github.com/gotd/log/logzap v0.1.1
-	github.com/gotd/td v0.122.0
+	github.com/iamxvbaba/td v0.122.0
 	github.com/joho/godotenv v1.5.1
 	github.com/mdp/qrterminal/v3 v3.2.1
 	github.com/pion/rtp v1.10.2
@@ -99,4 +99,4 @@ require (
 	rsc.io/qr v0.2.0 // indirect
 )
 
-replace github.com/gotd/td => ./..
+replace github.com/iamxvbaba/td => ./..

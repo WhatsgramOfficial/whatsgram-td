@@ -7,7 +7,7 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/mt"
+	"github.com/iamxvbaba/td/mt"
 )
 
 func (c *Conn) storeSalt(salt int64) {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Updates carry the raw entities from the server, which may be "min"

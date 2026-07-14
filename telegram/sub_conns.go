@@ -5,8 +5,8 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/telegram/internal/manager"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/telegram/internal/manager"
 )
 
 func (c *Client) invokeSub(ctx context.Context, dc int, input bin.Encoder, output bin.Decoder) error {

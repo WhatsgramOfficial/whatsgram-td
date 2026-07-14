@@ -15,8 +15,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/gotd/log/logzap"
-	"github.com/gotd/td/telegram/updates"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/updates"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // waitCatchUp blocks until the handler has received as many messages as the

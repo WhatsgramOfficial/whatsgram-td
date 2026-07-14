@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gotd/td/telegram/deeplink"
+	"github.com/iamxvbaba/td/telegram/deeplink"
 )
 
 func main() {

@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerClientSourceModel is the generated, statically routed client facade.

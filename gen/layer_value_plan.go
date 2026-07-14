@@ -3,7 +3,7 @@ package gen
 import (
 	"fmt"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerValueKind is the generated-code strategy for one semantic TypeRef.

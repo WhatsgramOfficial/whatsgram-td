@@ -1,7 +1,7 @@
 package members
 
 import (
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // ChatInfoUnavailableError reports that chat members info is not available.

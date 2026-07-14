@@ -5,7 +5,7 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/crypto"
+	"github.com/iamxvbaba/td/crypto"
 )
 
 // Session represents connection session.

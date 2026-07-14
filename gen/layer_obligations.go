@@ -10,7 +10,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // LayerObligationKind is one non-mechanical cross-layer decision exposed by

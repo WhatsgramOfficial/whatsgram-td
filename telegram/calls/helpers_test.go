@@ -5,7 +5,7 @@ import (
 
 	"github.com/pion/webrtc/v4"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func TestRemoteDTLSRole(t *testing.T) {

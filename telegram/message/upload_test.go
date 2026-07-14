@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/telegram/uploader"
-	"github.com/gotd/td/telegram/uploader/source"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/uploader"
+	"github.com/iamxvbaba/td/telegram/uploader/source"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type mockUploader struct {

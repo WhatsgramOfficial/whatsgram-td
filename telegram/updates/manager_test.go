@@ -8,8 +8,8 @@ import (
 	"go.uber.org/zap/zaptest"
 
 	"github.com/gotd/log/logzap"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func newTestManager(t *testing.T, cfg Config) *Manager {

@@ -8,8 +8,8 @@ import (
 	"github.com/pion/webrtc/v4"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgmock"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgmock"
 )
 
 func TestGroupCallSettersAndWriteAudio(t *testing.T) {

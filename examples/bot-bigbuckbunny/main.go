@@ -29,12 +29,12 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/message"
-	"github.com/gotd/td/telegram/message/styling"
-	"github.com/gotd/td/telegram/uploader"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/message"
+	"github.com/iamxvbaba/td/telegram/message/styling"
+	"github.com/iamxvbaba/td/telegram/uploader"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // progressLogger is an uploader.Progress that logs upload progress at INFO

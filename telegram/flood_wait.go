@@ -1,7 +1,7 @@
 package telegram
 
 import (
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 // ErrFloodWait is error type of "FLOOD_WAIT" error.

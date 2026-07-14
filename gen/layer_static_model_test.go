@@ -6,7 +6,7 @@ import (
 
 	"github.com/gotd/tl"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 const layerStaticSyntheticOne = `

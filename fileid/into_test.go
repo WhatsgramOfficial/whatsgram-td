@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/constant"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/constant"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func TestFileID_AsInputFileLocation(t *testing.T) {

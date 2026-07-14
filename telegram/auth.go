@@ -1,8 +1,8 @@
 package telegram
 
 import (
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/telegram/auth/qrlogin"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/telegram/auth/qrlogin"
 )
 
 // Auth returns auth client.

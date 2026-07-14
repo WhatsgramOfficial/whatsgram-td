@@ -6,8 +6,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/testutil"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/testutil"
 )
 
 func benchWrite(codec Codec) func(payloadSize int) func(b *testing.B) {

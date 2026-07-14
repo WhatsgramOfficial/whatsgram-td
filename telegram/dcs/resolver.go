@@ -4,7 +4,7 @@ import (
 	"context"
 	"net"
 
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/transport"
 )
 
 var _ Resolver = DefaultResolver()

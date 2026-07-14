@@ -11,8 +11,8 @@ import (
 	"github.com/gotd/log/logzap"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // countDiffAPI counts UpdatesGetDifference calls and always returns an empty

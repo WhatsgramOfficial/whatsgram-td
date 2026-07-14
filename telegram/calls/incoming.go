@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // IncomingCall is a pending call request from a peer. Answer it with Accept or

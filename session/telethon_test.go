@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/crypto"
+	"github.com/iamxvbaba/td/crypto"
 )
 
 func repeat(i int) []byte {

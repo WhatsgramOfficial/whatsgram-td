@@ -1,7 +1,7 @@
 package inline
 
 import (
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // PhotoResultBuilder is photo result option builder.

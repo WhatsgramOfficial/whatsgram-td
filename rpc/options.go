@@ -5,7 +5,7 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/clock"
+	"github.com/iamxvbaba/td/clock"
 )
 
 // Options of rpc engine.

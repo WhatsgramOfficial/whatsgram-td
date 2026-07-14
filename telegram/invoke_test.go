@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/pool"
-	"github.com/gotd/td/rpc"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/pool"
+	"github.com/iamxvbaba/td/rpc"
 )
 
 // notifyInvokeConn is a fake connection which always fails Invoke with given

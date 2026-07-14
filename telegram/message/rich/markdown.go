@@ -16,7 +16,7 @@ import (
 	"github.com/yuin/goldmark/util"
 	"golang.org/x/net/html"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // mdRichParser parses GitHub Flavored Markdown (tables, task lists,

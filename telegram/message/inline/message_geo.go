@@ -3,8 +3,8 @@ package inline
 import (
 	"time"
 
-	"github.com/gotd/td/telegram/message/markup"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/message/markup"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // MessageMediaGeoBuilder is a builder of inline result geo message.

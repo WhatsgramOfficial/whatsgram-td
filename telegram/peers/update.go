@@ -1,8 +1,8 @@
 package peers
 
 import (
-	"github.com/gotd/td/constant"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/constant"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func userPeerID(id int64) (r constant.TDLibPeerID) {

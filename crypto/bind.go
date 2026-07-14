@@ -8,7 +8,7 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/ige"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // BindAuthKeyInnerTypeID is TL type id for bind_auth_key_inner.

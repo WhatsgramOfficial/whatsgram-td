@@ -10,8 +10,8 @@ import (
 
 	"github.com/gotd/contrib/bg"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
 )
 
 func main() {

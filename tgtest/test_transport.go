@@ -8,7 +8,7 @@ import (
 	"github.com/gotd/log"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type testTransportHandler struct {

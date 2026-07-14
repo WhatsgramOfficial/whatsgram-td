@@ -12,7 +12,7 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/util"
 
-	"github.com/gotd/td/telegram/message/entity"
+	"github.com/iamxvbaba/td/telegram/message/entity"
 )
 
 // newMarkdownParser builds a goldmark parser configured to produce only the

@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mt"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mt"
 )
 
 func TestConn_handleFutureSalts(t *testing.T) {

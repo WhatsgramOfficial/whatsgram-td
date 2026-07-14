@@ -8,8 +8,8 @@ import (
 	"github.com/awnumar/memguard"
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/telegram/auth/srpguard"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/auth/srpguard"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func mustHex(t *testing.T, s string) []byte {

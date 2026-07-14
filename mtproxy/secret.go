@@ -3,7 +3,7 @@ package mtproxy
 import (
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/proto/codec"
+	"github.com/iamxvbaba/td/proto/codec"
 )
 
 // SecretType represents MTProxy secret type.

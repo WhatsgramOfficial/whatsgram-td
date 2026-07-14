@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/tdp"
-	"github.com/gotd/td/tdp/internal/schema"
+	"github.com/iamxvbaba/td/tdp"
+	"github.com/iamxvbaba/td/tdp/internal/schema"
 )
 
 func TestFormat(t *testing.T) {

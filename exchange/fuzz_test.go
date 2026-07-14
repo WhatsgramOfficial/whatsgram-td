@@ -11,8 +11,8 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/gotd/log/logzap"
-	"github.com/gotd/td/testutil"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/testutil"
+	"github.com/iamxvbaba/td/transport"
 )
 
 func FuzzValid(f *testing.F) {

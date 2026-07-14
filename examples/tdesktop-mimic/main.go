@@ -27,8 +27,8 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
 )
 
 func main() {

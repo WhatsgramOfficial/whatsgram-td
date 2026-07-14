@@ -18,10 +18,10 @@ import (
 
 	"github.com/gotd/log/logzap"
 
-	"github.com/gotd/td/session"
-	"github.com/gotd/td/tdsync"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/dcs"
+	"github.com/iamxvbaba/td/session"
+	"github.com/iamxvbaba/td/tdsync"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/dcs"
 )
 
 type mtg struct {

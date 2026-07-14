@@ -3,7 +3,7 @@ package updates
 import (
 	"context"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // messageUserIDs returns the user IDs a full (non-channel) message refers to

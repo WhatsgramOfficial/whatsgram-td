@@ -3,7 +3,7 @@ package message
 import (
 	"context"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // WebPageBuilder is a WebPage media option, used to attach a link preview to a

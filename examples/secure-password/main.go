@@ -21,11 +21,11 @@ import (
 	"github.com/gotd/log/logzap"
 	"golang.org/x/term"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/telegram/auth/srpguard"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/telegram/auth/srpguard"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func main() {

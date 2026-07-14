@@ -5,7 +5,7 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // shortMessageOptional is implemented by both *tg.UpdateShortMessage and

@@ -10,7 +10,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/testutil"
+	"github.com/iamxvbaba/td/testutil"
 )
 
 func TestRSAPad(t *testing.T) {

@@ -8,13 +8,13 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/clock"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/exchange"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/rpc"
-	"github.com/gotd/td/tmap"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/clock"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/exchange"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/rpc"
+	"github.com/iamxvbaba/td/tmap"
 )
 
 // Options of Conn.

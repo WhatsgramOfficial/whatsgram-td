@@ -3,9 +3,9 @@ package message
 import (
 	"time"
 
-	"github.com/gotd/td/telegram/message/markup"
-	"github.com/gotd/td/telegram/message/peer"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/message/markup"
+	"github.com/iamxvbaba/td/telegram/message/peer"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type peerPromise = peer.Promise

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func TestBuildAnswerSDP(t *testing.T) {

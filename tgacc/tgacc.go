@@ -10,9 +10,9 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/google/uuid"
 
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgacc/oas"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgacc/oas"
 )
 
 // TestAccountManager is external test account manager.

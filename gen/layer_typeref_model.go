@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerTypeRefStrategy is the generated, static implementation selected for

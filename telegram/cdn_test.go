@@ -12,9 +12,9 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/exchange"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/exchange"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func parseCDNKeysForTest(keys ...tg.CDNPublicKey) ([]*rsa.PublicKey, error) {

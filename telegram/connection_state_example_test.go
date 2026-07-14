@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gotd/td/telegram"
+	"github.com/iamxvbaba/td/telegram"
 )
 
 func ExampleOptions_connectionState() {

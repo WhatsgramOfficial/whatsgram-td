@@ -7,8 +7,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/telegram/message/styling"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/message/styling"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func TestEditMessageBuilder_Text(t *testing.T) {

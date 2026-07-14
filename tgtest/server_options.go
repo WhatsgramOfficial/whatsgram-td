@@ -6,14 +6,14 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/clock"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tmap"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/clock"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tmap"
+	"github.com/iamxvbaba/td/transport"
 )
 
 // ServerOptions of Server.

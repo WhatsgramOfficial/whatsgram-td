@@ -8,10 +8,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/mtproxy/obfuscated2"
-	"github.com/gotd/td/proto/codec"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/mtproxy/obfuscated2"
+	"github.com/iamxvbaba/td/proto/codec"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/transport"
 )
 
 // TestPlainObfuscatedDirect verifies that PlainOptions.Obfuscated wraps a

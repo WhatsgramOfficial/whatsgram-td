@@ -6,9 +6,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/telegram/message/peer"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgmock"
+	"github.com/iamxvbaba/td/telegram/message/peer"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgmock"
 )
 
 func TestGetHistoryResolve(t *testing.T) {

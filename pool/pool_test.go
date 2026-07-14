@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tdsync"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tdsync"
 )
 
 type mockConn struct {

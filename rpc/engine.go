@@ -9,8 +9,8 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/clock"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/clock"
 )
 
 // Engine handles RPC requests.

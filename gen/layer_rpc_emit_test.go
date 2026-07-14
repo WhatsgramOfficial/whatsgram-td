@@ -12,7 +12,7 @@ import (
 
 	"github.com/gotd/tl"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
@@ -654,7 +654,7 @@ func TestLayerRPCSyntheticGeneratedPackageCompiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	goMod := fmt.Sprintf("module layerfixture\n\ngo 1.25\n\nrequire github.com/gotd/td v0.0.0\nreplace github.com/gotd/td => %s\n", filepath.ToSlash(root))
+	goMod := fmt.Sprintf("module layerfixture\n\ngo 1.25\n\nrequire github.com/iamxvbaba/td v0.0.0\nreplace github.com/iamxvbaba/td => %s\n", filepath.ToSlash(root))
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -680,7 +680,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 type layerRPCContextKey struct{}
@@ -2113,7 +2113,7 @@ func TestLayerRPCWrapperMetadataPolicyRuntime(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	goMod := fmt.Sprintf("module wrapperfixture\n\ngo 1.25\n\nrequire github.com/gotd/td v0.0.0\nreplace github.com/gotd/td => %s\n", filepath.ToSlash(root))
+	goMod := fmt.Sprintf("module wrapperfixture\n\ngo 1.25\n\nrequire github.com/iamxvbaba/td v0.0.0\nreplace github.com/iamxvbaba/td => %s\n", filepath.ToSlash(root))
 	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod), 0o600); err != nil {
 		t.Fatal(err)
 	}
@@ -2132,7 +2132,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 var tagMetadataCalls, limitMetadataCalls int

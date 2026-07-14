@@ -1,6 +1,6 @@
 package gen
 
-import "github.com/gotd/td/gen/semantic"
+import "github.com/iamxvbaba/td/gen/semantic"
 
 // SchemaSet is the normalized collection of all supported TL schema profiles.
 // It is the single cross-backend IR consumed by both the canonical Go binding

@@ -11,12 +11,12 @@ import (
 	"github.com/gotd/log/logzap"
 	"go.uber.org/zap/zapcore"
 
-	"github.com/gotd/td/examples"
-	"github.com/gotd/td/telegram"
-	"github.com/gotd/td/telegram/auth"
-	"github.com/gotd/td/telegram/updates"
-	updhook "github.com/gotd/td/telegram/updates/hook"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/examples"
+	"github.com/iamxvbaba/td/telegram"
+	"github.com/iamxvbaba/td/telegram/auth"
+	"github.com/iamxvbaba/td/telegram/updates"
+	updhook "github.com/iamxvbaba/td/telegram/updates/hook"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func main() {

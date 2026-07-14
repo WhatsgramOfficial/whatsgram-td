@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 // layerBindingIndex is the explicit bridge from the category-qualified

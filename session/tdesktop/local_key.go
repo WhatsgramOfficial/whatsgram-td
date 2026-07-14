@@ -11,8 +11,8 @@ import (
 
 	"github.com/gotd/ige"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
 )
 
 // See https://github.com/telegramdesktop/tdesktop/blob/v2.9.8/Telegram/SourceFiles/storage/details/storage_file_utilities.cpp#L322.

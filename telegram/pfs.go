@@ -7,8 +7,8 @@ import (
 
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/pool"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/pool"
 )
 
 func (c *Client) handlePrimaryConnDead(err error) {

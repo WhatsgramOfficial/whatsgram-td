@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // InviteLink represents invite link.

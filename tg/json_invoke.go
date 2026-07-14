@@ -11,9 +11,9 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/go-faster/jx"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tdjson"
-	"github.com/gotd/td/tdp"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tdjson"
+	"github.com/iamxvbaba/td/tdp"
 )
 
 // InvokeJSON invokes an MTProto method using JSON input.

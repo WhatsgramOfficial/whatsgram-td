@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/gotd/td/telegram/peers"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/peers"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // ChatMember is chat Member.

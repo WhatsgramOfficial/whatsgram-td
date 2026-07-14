@@ -1,6 +1,6 @@
 package peers
 
-import "github.com/gotd/td/tg"
+import "github.com/iamxvbaba/td/tg"
 
 type MsgAndEntities struct {
 	Msg      string

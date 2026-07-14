@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/exchange"
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/pool"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/exchange"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/pool"
 )
 
 func TestClientHandleDCConnDeadPFSDropResetsSession(t *testing.T) {

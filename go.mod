@@ -1,4 +1,4 @@
-module github.com/gotd/td
+module github.com/iamxvbaba/td
 
 go 1.25.0
 

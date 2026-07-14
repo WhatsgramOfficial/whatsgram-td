@@ -2,8 +2,8 @@
 package downloader
 
 import (
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // Downloader is Telegram file downloader.

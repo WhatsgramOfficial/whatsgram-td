@@ -1,8 +1,8 @@
 package fileid
 
 import (
-	"github.com/gotd/td/constant"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/constant"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // FromDocument creates FileID from tg.Document.

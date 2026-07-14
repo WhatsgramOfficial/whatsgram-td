@@ -14,10 +14,10 @@ import (
 
 	"github.com/gotd/neo"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/tdsync"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/tdsync"
 )
 
 func TestConn_handleSessionCreated(t *testing.T) {

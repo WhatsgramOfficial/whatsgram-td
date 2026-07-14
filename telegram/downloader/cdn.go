@@ -6,8 +6,8 @@ import (
 
 	"golang.org/x/sync/singleflight"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // cdn is a download schema that starts on the master DC and switches to CDN on

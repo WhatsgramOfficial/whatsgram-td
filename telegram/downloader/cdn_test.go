@@ -1,12 +1,12 @@
 package downloader
 
 import (
-	"github.com/gotd/td/crypto"
+	"github.com/iamxvbaba/td/crypto"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func Test_cdn_decrypt(t *testing.T) {

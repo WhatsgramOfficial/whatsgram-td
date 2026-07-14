@@ -6,7 +6,7 @@ import (
 	"encoding/binary"
 	"math/big"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 // RSAFingerprint returns fingerprint of RSA public key as defined in MTProto.

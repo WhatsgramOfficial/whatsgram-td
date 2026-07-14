@@ -5,7 +5,7 @@ import (
 
 	"golang.org/x/sync/singleflight"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 type singleFlight struct {

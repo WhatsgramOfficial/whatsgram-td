@@ -1,8 +1,8 @@
 package messages
 
 import (
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgtest"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgtest"
 )
 
 // nextMessage allocates a new message ID and PTS. Caller must hold the mutex.

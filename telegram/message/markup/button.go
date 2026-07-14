@@ -1,6 +1,6 @@
 package markup
 
-import "github.com/gotd/td/tg"
+import "github.com/iamxvbaba/td/tg"
 
 // StyleOption is a functional parameter that configures the tg.KeyboardButtonStyle
 // of a button, allowing a custom background color and a custom emoji label.

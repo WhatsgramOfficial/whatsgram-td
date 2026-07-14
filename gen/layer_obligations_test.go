@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gotd/td/gen/semantic"
+	"github.com/iamxvbaba/td/gen/semantic"
 	"github.com/gotd/tl"
 )
 

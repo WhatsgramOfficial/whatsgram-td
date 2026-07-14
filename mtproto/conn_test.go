@@ -14,13 +14,13 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/proto"
-	"github.com/gotd/td/rpc"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tmap"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/proto"
+	"github.com/iamxvbaba/td/rpc"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tmap"
 )
 
 type testHandler func(msgID int64, seqNo int32, body bin.Encoder) (bin.Encoder, error)

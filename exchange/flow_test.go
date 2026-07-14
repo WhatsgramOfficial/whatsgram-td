@@ -13,11 +13,11 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/gotd/log/logzap"
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/tdsync"
-	"github.com/gotd/td/testutil"
-	"github.com/gotd/td/transport"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/tdsync"
+	"github.com/iamxvbaba/td/testutil"
+	"github.com/iamxvbaba/td/transport"
 )
 
 func testExchange(tempMode bool) func(t *testing.T) {

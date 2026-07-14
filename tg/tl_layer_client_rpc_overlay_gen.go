@@ -5,7 +5,7 @@ package tg
 import (
 	"fmt"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 var _ = fmt.Sprintf

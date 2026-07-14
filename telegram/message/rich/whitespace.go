@@ -3,7 +3,7 @@ package rich
 import (
 	"strings"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func isSpace(r rune) bool {

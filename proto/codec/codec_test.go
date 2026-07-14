@@ -10,8 +10,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/testutil"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/testutil"
 )
 
 type codecTest struct {

@@ -6,10 +6,10 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/mt"
-	"github.com/gotd/td/proto/codec"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/mt"
+	"github.com/iamxvbaba/td/proto/codec"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func Test_readAndPrint(t *testing.T) {

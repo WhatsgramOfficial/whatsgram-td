@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/gotd/log"
-	"github.com/gotd/td/crypto"
-	"github.com/gotd/td/mtproto"
-	"github.com/gotd/td/pool"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/crypto"
+	"github.com/iamxvbaba/td/mtproto"
+	"github.com/iamxvbaba/td/pool"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func TestClientOnCDNSessionStoresSeparateMap(t *testing.T) {

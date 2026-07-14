@@ -11,10 +11,10 @@ import (
 
 	"go.uber.org/multierr"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tdjson"
-	"github.com/gotd/td/tdp"
-	"github.com/gotd/td/tgerr"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tdjson"
+	"github.com/iamxvbaba/td/tdp"
+	"github.com/iamxvbaba/td/tgerr"
 )
 
 // No-op definition for keeping imports.

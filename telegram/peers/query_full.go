@@ -6,7 +6,7 @@ import (
 	"github.com/go-faster/errors"
 	"github.com/gotd/log"
 
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // getUserFull gets tg.UserFull using given tg.InputUserClass.

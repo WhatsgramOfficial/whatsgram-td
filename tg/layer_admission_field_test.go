@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/gotd/td/bin"
+	"github.com/iamxvbaba/td/bin"
 )
 
 func encodeLayerAdmissionFixture(t testing.TB, value bin.Encoder) []byte {

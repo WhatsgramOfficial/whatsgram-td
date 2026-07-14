@@ -1,8 +1,8 @@
 package messages
 
 import (
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgtest"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgtest"
 )
 
 // defaultHistoryLimit is used when a getHistory request does not set a limit.

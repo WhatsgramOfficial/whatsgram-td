@@ -4,10 +4,10 @@ package config
 import (
 	"context"
 
-	"github.com/gotd/td/bin"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgtest"
-	"github.com/gotd/td/tgtest/services"
+	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgtest"
+	"github.com/iamxvbaba/td/tgtest/services"
 )
 
 // Service is a Telegram config service.

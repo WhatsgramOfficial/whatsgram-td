@@ -14,10 +14,10 @@ package messages
 import (
 	"sync"
 
-	"github.com/gotd/td/clock"
-	"github.com/gotd/td/tg"
-	"github.com/gotd/td/tgtest"
-	"github.com/gotd/td/tgtest/services"
+	"github.com/iamxvbaba/td/clock"
+	"github.com/iamxvbaba/td/tg"
+	"github.com/iamxvbaba/td/tgtest"
+	"github.com/iamxvbaba/td/tgtest/services"
 )
 
 // Service is a Telegram personal-messages service.

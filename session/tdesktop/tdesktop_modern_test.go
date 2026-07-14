@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gotd/td/crypto"
+	"github.com/iamxvbaba/td/crypto"
 )
 
 // buildModernKeyData builds the body of a modern "key_data" file (the part

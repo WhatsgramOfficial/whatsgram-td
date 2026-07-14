@@ -7,8 +7,8 @@ import (
 
 	"github.com/go-faster/errors"
 
-	"github.com/gotd/td/telegram/message/peer"
-	"github.com/gotd/td/tg"
+	"github.com/iamxvbaba/td/telegram/message/peer"
+	"github.com/iamxvbaba/td/tg"
 )
 
 // No-op definition for keeping imports.
