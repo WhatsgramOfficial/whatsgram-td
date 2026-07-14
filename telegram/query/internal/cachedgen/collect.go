@@ -80,7 +80,7 @@ func collect(pkg *packages.Package) []CachedQuery {
 	var r []CachedQuery
 
 	for _, def := range genutil.Funcs(pkg, func(f genutil.Func) bool {
-		return f.Args().Len() == 2 && f.Results().Len() == 2
+		return f.ReceiverNamed("Client") && f.Args().Len() == 2 && f.Results().Len() == 2
 	}) {
 		args := def.Args()
 		req, ok := isCachedQuery(args)

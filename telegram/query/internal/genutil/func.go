@@ -22,6 +22,22 @@ func (f Func) Args() *types.Tuple {
 	return f.Sig.Params()
 }
 
+// ReceiverNamed reports whether f is a method whose receiver's declared type
+// has the provided name. Both value and pointer receivers are supported.
+func (f Func) ReceiverNamed(name string) bool {
+	receiver := f.Sig.Recv()
+	if receiver == nil {
+		return false
+	}
+
+	t := receiver.Type()
+	if pointer, ok := t.(*types.Pointer); ok {
+		t = pointer.Elem()
+	}
+	named, ok := t.(*types.Named)
+	return ok && named.Obj().Name() == name
+}
+
 // Funcs collects all function from package using given filter.
 // Parameter keep may be nil.
 func Funcs(pkg *packages.Package, keep func(f Func) bool) []Func {
