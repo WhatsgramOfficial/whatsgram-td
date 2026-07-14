@@ -53,8 +53,12 @@ type layerCodecState struct {
 	// rpcAdmission is non-nil only while a generated ordinary terminal RPC
 	// body is being decoded by ServerDispatcher admission.
 	rpcAdmission *layerRPCAdmissionFieldRunner
-	generic      [1]layerBoundType
-	genericBound [1]bool
+	// probeConsumeElements is non-nil only on private speculative wrapper
+	// states. It bounds aggregate probe work independently from the semantic
+	// decode budget copied for each candidate.
+	probeConsumeElements func(int) error
+	generic              [1]layerBoundType
+	genericBound         [1]bool
 }
 
 type layerCodecBindingSnapshot struct {

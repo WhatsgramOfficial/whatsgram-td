@@ -165,6 +165,11 @@ func (s *layerCodecState) consumeDecodeVector(profile LayerProfile, ref *LayerTy
 	if length > budget.remainingElements {
 		return &LayerCodecError{Operation: "decode vector", Profile: profile, Type: ref, Reason: fmt.Sprintf("vector length %d exceeds remaining aggregate element budget %d", length, budget.remainingElements)}
 	}
+	if s.probeConsumeElements != nil {
+		if err := s.probeConsumeElements(length); err != nil {
+			return err
+		}
+	}
 	budget.remainingElements -= length
 	return nil
 }

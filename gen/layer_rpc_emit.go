@@ -12,17 +12,23 @@ import (
 // layerTypeRefModel. It contains Go identifiers and already-expanded route
 // bodies; generated code never interprets either model at runtime.
 type layerRPCSourceModel struct {
-	LayerRPC     *layerRPCModel
-	ClientBridge bool
-	Profiles     []layerRPCSourceProfile
-	Routes       []layerRPCSourceRoute
-	Handlers     []layerRPCSourceHandler
-	Adapters     []string
-	HookChecks   []layerRPCSourceHookCheck
-	Unprofiled   *layerRPCUnprofiledSource
-	MaxDepth     int
-	RouteCount   int
-	WrapperCount int
+	LayerRPC            *layerRPCModel
+	ClientBridge        bool
+	Profiles            []layerRPCSourceProfile
+	Routes              []layerRPCSourceRoute
+	DefaultWrappers     []layerRPCSourceDefaultWrapper
+	RPCWireIDs          []uint32
+	Handlers            []layerRPCSourceHandler
+	Adapters            []string
+	HookChecks          []layerRPCSourceHookCheck
+	Unprofiled          *layerRPCUnprofiledSource
+	MaxDepth            int
+	RouteCount          int
+	WrapperCount        int
+	UniqueAdmitCount    int
+	UniqueProbeCount    int
+	ProbeAttemptLimit   int
+	ProbeWorkMultiplier int
 }
 
 // layerRPCSourceHandler is the complete canonical ServerDispatcher facade for
@@ -45,16 +51,36 @@ type layerRPCSourceProfile struct {
 }
 
 type layerRPCSourceRouteRef struct {
-	WireID uint32
-	Admit  string
+	WireID       uint32
+	Admit        string
+	Wrapper      bool
+	ProbeDefault bool
 }
 
 type layerRPCSourceRoute struct {
-	Layer   int
-	WireID  uint32
-	Admit   string
-	Body    string
-	Wrapper bool
+	Layer          int
+	WireID         uint32
+	Admit          string
+	Body           string
+	Wrapper        bool
+	Probe          string
+	ProbeBody      string
+	ProbeInvariant bool
+	EmitAdmit      bool
+	EmitProbe      bool
+}
+
+type layerRPCSourceDefaultWrapper struct {
+	WireID           uint32
+	SemanticConstant string
+	Candidates       []layerRPCSourceDefaultWrapperCandidate
+}
+
+type layerRPCSourceDefaultWrapperCandidate struct {
+	WireProfile     int
+	ProfileConstant string
+	Probe           string
+	ProbeCandidate  bool
 }
 
 type layerRPCSourceHookCheck struct {
@@ -63,19 +89,32 @@ type layerRPCSourceHookCheck struct {
 }
 
 type layerRPCUnprofiledSource struct {
+	WireID     uint32
+	Method     string
+	Body       string
+	Invariants []layerRPCUnprofiledInvariantSource
+}
+
+// layerRPCUnprofiledInvariantSource is one ordinary terminal method whose
+// complete request and result wire representations are generation-time proven
+// identical in every supported profile. It can therefore use the canonical
+// static route before a client has supplied profile evidence without guessing
+// or freezing that client's layer.
+type layerRPCUnprofiledInvariantSource struct {
 	WireID uint32
 	Method string
-	Body   string
 }
 
 type layerRPCSourceEmitter struct {
-	rpc          *layerRPCModel
-	refs         *layerTypeRefModel
-	nodeByKey    map[string]*layerTypeRefNode
-	rpcRefByKey  map[semantic.SemanticKey]*layerRPCTypePlan
-	hookByName   map[string]string
-	adapterNames map[string]struct{}
-	model        *layerRPCSourceModel
+	rpc                 *layerRPCModel
+	refs                *layerTypeRefModel
+	wires               *layerWireModel
+	nodeByKey           map[string]*layerTypeRefNode
+	rpcRefByKey         map[semantic.SemanticKey]*layerRPCTypePlan
+	hookByName          map[string]string
+	adapterNames        map[string]struct{}
+	unprofiledInvariant map[semantic.SemanticKey]struct{}
+	model               *layerRPCSourceModel
 }
 
 // buildLayerRPCSourceModel lowers every exact (profile, method wire ID) route
@@ -96,18 +135,29 @@ func (g *Generator) buildLayerRPCSourceModel(rpc *layerRPCModel, refs *layerType
 	if refs.MaxDepth <= 0 || refs.BindingCapacity <= 0 {
 		return nil, fmt.Errorf("gen: layer RPC source has invalid TypeRef limits depth=%d bindings=%d", refs.MaxDepth, refs.BindingCapacity)
 	}
+	wires, err := g.buildLayerWireModel()
+	if err != nil {
+		return nil, fmt.Errorf("gen: layer RPC source wire model: %w", err)
+	}
 
 	emitter := &layerRPCSourceEmitter{
-		rpc:          rpc,
-		refs:         refs,
-		nodeByKey:    make(map[string]*layerTypeRefNode, len(refs.Nodes)),
-		rpcRefByKey:  make(map[semantic.SemanticKey]*layerRPCTypePlan, len(refs.RPCs)),
-		hookByName:   make(map[string]string),
-		adapterNames: make(map[string]struct{}),
+		rpc:                 rpc,
+		refs:                refs,
+		wires:               wires,
+		nodeByKey:           make(map[string]*layerTypeRefNode, len(refs.Nodes)),
+		rpcRefByKey:         make(map[semantic.SemanticKey]*layerRPCTypePlan, len(refs.RPCs)),
+		hookByName:          make(map[string]string),
+		adapterNames:        make(map[string]struct{}),
+		unprofiledInvariant: make(map[semantic.SemanticKey]struct{}),
 		model: &layerRPCSourceModel{
 			LayerRPC:     rpc,
 			ClientBridge: g.generateFlags.Client,
 			MaxDepth:     refs.MaxDepth,
+			// One invariant wrapper consumes one attempt per depth; a drifted
+			// same-CRC wrapper consumes at most one attempt per exact profile.
+			// Keep the bound additive so nested candidate products fail closed.
+			ProbeAttemptLimit:   len(rpc.Profiles) + refs.MaxDepth,
+			ProbeWorkMultiplier: len(rpc.Profiles),
 		},
 	}
 	for index := range refs.Nodes {
@@ -147,6 +197,10 @@ func equalLayerRPCSourceProfiles(left, right []int) bool {
 
 func (e *layerRPCSourceEmitter) build() error {
 	profiles := make(map[int]*layerRPCSourceProfile, len(e.rpc.Profiles))
+	rpcWireIDs := make(map[uint32]struct{}, len(e.rpc.Routes))
+	sourceRoutes := make(map[layerRPCRouteKey]layerRPCSourceRoute, len(e.rpc.Routes))
+	admitByBody := make(map[string]string, len(e.rpc.Routes))
+	probeByBody := make(map[string]string)
 	e.model.Profiles = make([]layerRPCSourceProfile, len(e.rpc.Profiles))
 	for index, layer := range e.rpc.Profiles {
 		e.model.Profiles[index] = layerRPCSourceProfile{
@@ -166,6 +220,11 @@ func (e *layerRPCSourceEmitter) build() error {
 		}
 		e.model.Handlers = append(e.model.Handlers, handler)
 	}
+	unprofiled, err := e.buildUnprofiled()
+	if err != nil {
+		return err
+	}
+	e.model.Unprofiled = unprofiled
 
 	for routeIndex := range e.rpc.Routes {
 		route := &e.rpc.Routes[routeIndex]
@@ -177,13 +236,78 @@ func (e *layerRPCSourceEmitter) build() error {
 		if err != nil {
 			return fmt.Errorf("gen: layer RPC source profile %d wire %#08x %s: %w", route.Layer, route.WireID, route.Method.Key, err)
 		}
+		if admitted := admitByBody[out.Body]; admitted != "" {
+			out.Admit = admitted
+		} else {
+			admitByBody[out.Body] = out.Admit
+			out.EmitAdmit = true
+			e.model.UniqueAdmitCount++
+		}
+		if out.Probe != "" {
+			if probed := probeByBody[out.ProbeBody]; probed != "" {
+				out.Probe = probed
+			} else {
+				probeByBody[out.ProbeBody] = out.Probe
+				out.EmitProbe = true
+				e.model.UniqueProbeCount++
+			}
+		}
 		e.model.Routes = append(e.model.Routes, out)
-		profile.Routes = append(profile.Routes, layerRPCSourceRouteRef{WireID: out.WireID, Admit: out.Admit})
+		sourceRoutes[layerRPCRouteKey{Layer: out.Layer, WireID: out.WireID}] = out
+		rpcWireIDs[out.WireID] = struct{}{}
+		profile.Routes = append(profile.Routes, layerRPCSourceRouteRef{WireID: out.WireID, Admit: out.Admit, Wrapper: out.Wrapper})
 		if out.Wrapper {
 			e.model.WrapperCount++
 		}
 	}
+	e.model.DefaultWrappers = make([]layerRPCSourceDefaultWrapper, 0, len(e.rpc.DefaultWrappers))
+	for _, fallback := range e.rpc.DefaultWrappers {
+		method := e.rpc.method(fallback.Key)
+		if method == nil {
+			return fmt.Errorf("gen: default wrapper %#08x has no semantic method %s", fallback.WireID, fallback.Key)
+		}
+		out := layerRPCSourceDefaultWrapper{WireID: fallback.WireID, SemanticConstant: method.Constant}
+		out.Candidates = make([]layerRPCSourceDefaultWrapperCandidate, 0, len(fallback.Layers))
+		candidateRoutes := make([]layerRPCSourceRoute, 0, len(fallback.Layers))
+		probeDefault := false
+		for _, layer := range fallback.Layers {
+			route, ok := sourceRoutes[layerRPCRouteKey{Layer: layer, WireID: fallback.WireID}]
+			if !ok || !route.Wrapper || route.Probe == "" || route.ProbeBody == "" {
+				return fmt.Errorf("gen: default wrapper %#08x profile %d has no emitted prefix probe", fallback.WireID, layer)
+			}
+			if route.Layer != layer {
+				return fmt.Errorf("gen: default wrapper %#08x profile %d emitted a stale route", fallback.WireID, layer)
+			}
+			candidateRoutes = append(candidateRoutes, route)
+			probeDefault = probeDefault || !route.ProbeInvariant
+		}
+		allInvariant := !probeDefault
+		for index, route := range candidateRoutes {
+			out.Candidates = append(out.Candidates, layerRPCSourceDefaultWrapperCandidate{
+				WireProfile:     route.Layer,
+				ProfileConstant: fmt.Sprintf("LayerProfile%d", route.Layer),
+				Probe:           route.Probe,
+				ProbeCandidate:  !allInvariant || index == 0,
+			})
+		}
+		e.model.DefaultWrappers = append(e.model.DefaultWrappers, out)
+		if probeDefault {
+			for profileIndex := range e.model.Profiles {
+				for routeIndex := range e.model.Profiles[profileIndex].Routes {
+					if e.model.Profiles[profileIndex].Routes[routeIndex].WireID == fallback.WireID &&
+						e.model.Profiles[profileIndex].Routes[routeIndex].Wrapper {
+						e.model.Profiles[profileIndex].Routes[routeIndex].ProbeDefault = true
+					}
+				}
+			}
+		}
+	}
 	e.model.RouteCount = len(e.model.Routes)
+	e.model.RPCWireIDs = make([]uint32, 0, len(rpcWireIDs))
+	for wireID := range rpcWireIDs {
+		e.model.RPCWireIDs = append(e.model.RPCWireIDs, wireID)
+	}
+	sort.Slice(e.model.RPCWireIDs, func(i, j int) bool { return e.model.RPCWireIDs[i] < e.model.RPCWireIDs[j] })
 	for index := range e.model.Profiles {
 		sort.Slice(e.model.Profiles[index].Routes, func(i, j int) bool {
 			return e.model.Profiles[index].Routes[i].WireID < e.model.Profiles[index].Routes[j].WireID
@@ -191,11 +315,6 @@ func (e *layerRPCSourceEmitter) build() error {
 	}
 	sort.Slice(e.model.HookChecks, func(i, j int) bool { return e.model.HookChecks[i].Name < e.model.HookChecks[j].Name })
 	sort.Strings(e.model.Adapters)
-	unprofiled, err := e.buildUnprofiled()
-	if err != nil {
-		return err
-	}
-	e.model.Unprofiled = unprofiled
 	return nil
 }
 
@@ -343,10 +462,10 @@ func (e *layerRPCSourceEmitter) buildHandler(method *layerRPCMethodPlan) (layerR
 	return handler, nil
 }
 
-// buildUnprofiled emits the only legal pre-profile admission path. It accepts
-// invokeWithLayer only when every generated schema proves an identical outer
-// wire ID and body shape. The selected layer is decoded directly from the
-// invariant primitive field; no canonical profile is guessed.
+// buildUnprofiled emits the legal pre-profile admission paths. invokeWithLayer
+// supplies explicit profile evidence. Ordinary terminal methods are included
+// only when generation proves their complete request and result wire forms are
+// invariant across the whole supported profile universe.
 func (e *layerRPCSourceEmitter) buildUnprofiled() (*layerRPCUnprofiledSource, error) {
 	key := semantic.SemanticKey{Category: semantic.CategoryFunction, QName: "invokeWithLayer"}
 	method := e.rpc.method(key)
@@ -390,13 +509,118 @@ func (e *layerRPCSourceEmitter) buildUnprofiled() (*layerRPCUnprofiledSource, er
 		}
 	}
 	var body strings.Builder
-	fmt.Fprintf(&body, "if err := probe.ConsumeID(0x%08x); err != nil { return LayerProfile(0), fmt.Errorf(\"consume unprofiled invokeWithLayer probe: %%w\", err) }\n", wireID)
+	fmt.Fprintf(&body, "if err := probe.ConsumeID(0x%08x); err != nil { return LayerProfile(0), false, fmt.Errorf(\"consume unprofiled invokeWithLayer probe: %%w\", err) }\n", wireID)
 	body.WriteString("selectedLayer, err := probe.Int()\n")
-	body.WriteString("if err != nil { return LayerProfile(0), fmt.Errorf(\"decode unprofiled invokeWithLayer layer probe: %w\", err) }\n")
+	body.WriteString("if err != nil { return LayerProfile(0), false, fmt.Errorf(\"decode unprofiled invokeWithLayer layer probe: %w\", err) }\n")
 	body.WriteString("selectedProfile, ok := ResolveLayerProfile(selectedLayer)\n")
-	fmt.Fprintf(&body, "if !ok { return LayerProfile(0), &LayerCodecError{Operation: \"probe unprofiled RPC wrapper\", Semantic: %s, WireID: 0x%08x, Reason: fmt.Sprintf(\"invokeWithLayer selected unsupported exact profile %%d\", selectedLayer)} }\n", method.Constant, wireID)
-	body.WriteString("return selectedProfile, nil\n")
-	return &layerRPCUnprofiledSource{WireID: wireID, Method: method.Constant, Body: body.String()}, nil
+	fmt.Fprintf(&body, "if !ok { return LayerProfile(0), false, &LayerCodecError{Operation: \"probe unprofiled RPC wrapper\", Semantic: %s, WireID: 0x%08x, Reason: fmt.Sprintf(\"invokeWithLayer selected unsupported exact profile %%d\", selectedLayer)} }\n", method.Constant, wireID)
+	body.WriteString("return selectedProfile, true, nil\n")
+	unprofiled := &layerRPCUnprofiledSource{WireID: wireID, Method: method.Constant, Body: body.String()}
+	seenWireIDs := map[uint32]semantic.SemanticKey{wireID: key}
+	for methodIndex := range e.rpc.Methods {
+		candidate := &e.rpc.Methods[methodIndex]
+		invariant, ok, err := e.buildUnprofiledInvariant(candidate)
+		if err != nil {
+			return nil, fmt.Errorf("gen: unprofiled invariant RPC %s: %w", candidate.Key, err)
+		}
+		if !ok {
+			continue
+		}
+		if previous, duplicate := seenWireIDs[invariant.WireID]; duplicate {
+			return nil, fmt.Errorf("gen: E_UNPROFILED_INVARIANT_WIRE_COLLISION: wire %#08x belongs to both %s and %s", invariant.WireID, previous, candidate.Key)
+		}
+		seenWireIDs[invariant.WireID] = candidate.Key
+		unprofiled.Invariants = append(unprofiled.Invariants, invariant)
+		e.unprofiledInvariant[candidate.Key] = struct{}{}
+	}
+	sort.Slice(unprofiled.Invariants, func(i, j int) bool {
+		return unprofiled.Invariants[i].WireID < unprofiled.Invariants[j].WireID
+	})
+	return unprofiled, nil
+}
+
+// buildUnprofiledInvariant deliberately recognizes only closed terminal RPCs.
+// Request equality includes the exact semantic body shape and recursive
+// TypeRef wire equivalence for every encoded field. Result equality includes
+// the complete result TypeRef root plus its recursive wire graph. Any policy
+// adapter, transparent wrapper, missing profile, request drift, result drift,
+// or dynamic Object/generic descriptor makes the method ineligible.
+func (e *layerRPCSourceEmitter) buildUnprofiledInvariant(method *layerRPCMethodPlan) (layerRPCUnprofiledInvariantSource, bool, error) {
+	if method == nil || !method.Handler || method.Canonical == nil || method.Canonical.Definition == nil {
+		return layerRPCUnprofiledInvariantSource{}, false, nil
+	}
+	canonical := method.profile(e.rpc.CanonicalLayer)
+	if canonical == nil || canonical.Definition == nil || canonical.Wrapper != nil ||
+		canonical.Request != layerRPCDirect || canonical.Result.Action != layerRPCDirect {
+		return layerRPCUnprofiledInvariantSource{}, false, nil
+	}
+	canonicalDefinition := canonical.Definition
+	refMethod := e.rpcRefByKey[method.Key]
+	if refMethod == nil {
+		return layerRPCUnprofiledInvariantSource{}, false, fmt.Errorf("E_UNPROFILED_INVARIANT_RESULT_TYPEREF_ABSENT: RPC TypeRef plan is absent")
+	}
+	canonicalRefProfile := refMethod.profile(e.rpc.CanonicalLayer)
+	if canonicalRefProfile == nil || !canonicalRefProfile.Available ||
+		canonicalRefProfile.CanonicalResult < 0 || canonicalRefProfile.CanonicalResult >= len(e.refs.Nodes) ||
+		canonicalRefProfile.WireResult != canonicalRefProfile.CanonicalResult {
+		return layerRPCUnprofiledInvariantSource{}, false, nil
+	}
+	resultNode := &e.refs.Nodes[canonicalRefProfile.CanonicalResult]
+	if resultNode.RequiresBinding || !resultNode.Runnable {
+		return layerRPCUnprofiledInvariantSource{}, false, nil
+	}
+
+	for _, layer := range e.rpc.Profiles {
+		profile := method.profile(layer)
+		if profile == nil || profile.Availability != LayerAvailabilityPresent || profile.Definition == nil ||
+			profile.Wrapper != nil || profile.Request != layerRPCDirect || profile.Result.Action != layerRPCDirect ||
+			profile.Result.Adapter != "" {
+			return layerRPCUnprofiledInvariantSource{}, false, nil
+		}
+		definition := profile.Definition
+		if definition.WireID != canonicalDefinition.WireID || definition.BodyShape != canonicalDefinition.BodyShape ||
+			!definition.Result.Equal(canonicalDefinition.Result) {
+			return layerRPCUnprofiledInvariantSource{}, false, nil
+		}
+		refProfile := refMethod.profile(layer)
+		if refProfile == nil || !refProfile.Available || refProfile.ResultChanged ||
+			refProfile.CanonicalResult != canonicalRefProfile.CanonicalResult ||
+			refProfile.WireResult != canonicalRefProfile.CanonicalResult {
+			return layerRPCUnprofiledInvariantSource{}, false, nil
+		}
+		resultWireProfile := nodeProfile(resultNode, layer)
+		if resultWireProfile == nil || !resultWireProfile.WireEquivalent {
+			return layerRPCUnprofiledInvariantSource{}, false, nil
+		}
+		for fieldIndex := range canonicalDefinition.Fields {
+			field := &canonicalDefinition.Fields[fieldIndex]
+			if field.Kind != semantic.FieldValue {
+				continue
+			}
+			equivalent, err := e.unprofiledTypeRefWireEquivalent(canonicalDefinition, &field.Type, layer)
+			if err != nil {
+				return layerRPCUnprofiledInvariantSource{}, false, fmt.Errorf("field %q: %w", field.Name, err)
+			}
+			if !equivalent {
+				return layerRPCUnprofiledInvariantSource{}, false, nil
+			}
+		}
+	}
+	return layerRPCUnprofiledInvariantSource{WireID: canonicalDefinition.WireID, Method: method.Constant}, true, nil
+}
+
+func (e *layerRPCSourceEmitter) unprofiledTypeRefWireEquivalent(definition *semantic.Definition, ref *semantic.TypeRef, layer int) (bool, error) {
+	collector := &layerTypeRefCollector{drafts: make(map[string]*layerTypeRefDraft)}
+	key, err := collector.add(ref, makeLayerTypeRefScope(definition))
+	if err != nil {
+		return false, err
+	}
+	node := e.nodeByKey[key]
+	if node == nil {
+		return false, fmt.Errorf("E_UNPROFILED_INVARIANT_REQUEST_TYPEREF_ABSENT: node %q is absent", key)
+	}
+	profile := nodeProfile(node, layer)
+	return profile != nil && profile.WireEquivalent, nil
 }
 
 func (e *layerRPCSourceEmitter) buildRoute(route *layerRPCRoutePlan) (layerRPCSourceRoute, error) {
@@ -456,7 +680,14 @@ func (e *layerRPCSourceEmitter) buildRoute(route *layerRPCRoutePlan) (layerRPCSo
 		if err != nil {
 			return layerRPCSourceRoute{}, err
 		}
+		probeBody, probeInvariant, err := e.buildWrapperProbe(route)
+		if err != nil {
+			return layerRPCSourceRoute{}, err
+		}
 		out.Body = body
+		out.Probe = fmt.Sprintf("layerProbeRPC%d_%08x", route.Layer, route.WireID)
+		out.ProbeBody = probeBody
+		out.ProbeInvariant = probeInvariant
 		return out, nil
 	}
 	if !route.Method.Handler || route.Method.Canonical == nil {
@@ -670,6 +901,9 @@ func (e *layerRPCSourceEmitter) buildOrdinaryRoute(route *layerRPCRoutePlan, ref
 	body.WriteString("if err != nil { return layerDecodedRPCRequest{}, err }\n")
 	body.WriteString("call := LayerCall{\n")
 	body.WriteString("\tprofile: profile,\n")
+	if _, invariant := e.unprofiledInvariant[route.Method.Key]; invariant {
+		body.WriteString("\twireInvariant: true,\n")
+	}
 	body.WriteString("\tmethod: " + route.Method.Constant + ",\n")
 	fmt.Fprintf(&body, "\twireID: 0x%08x,\n", route.WireID)
 	body.WriteString("\tcanonicalResult: &" + canonicalResult.RefName + ",\n")
@@ -756,6 +990,200 @@ func layerRPCResultHookType(node *layerTypeRefNode) string {
 		return ""
 	}
 	return node.GoType
+}
+
+// buildWrapperProbe emits a side-effect-free wire-prefix decoder. It consumes
+// only fields which precede the generic query and recursively probes that query
+// until invokeWithLayer supplies an exact profile. It deliberately performs no
+// canonical normalization, policy hook, admission callback, or terminal decode;
+// the selected profile must subsequently admit the complete original bytes.
+func (e *layerRPCSourceEmitter) buildWrapperProbe(route *layerRPCRoutePlan) (string, bool, error) {
+	if route == nil || route.Profile == nil || route.Profile.Definition == nil || route.Profile.Wrapper == nil {
+		return "", false, fmt.Errorf("incomplete wrapper prefix probe route")
+	}
+	wrapper := route.Profile.Wrapper
+	definition := route.Profile.Definition
+	flags := make(map[string]int)
+	for index := range definition.Fields {
+		field := &definition.Fields[index]
+		if field.Kind == semantic.FieldFlagsWord {
+			flags[field.Name] = field.Ordinal
+		}
+	}
+
+	var body strings.Builder
+	body.WriteString("if b == nil || state == nil { return LayerProfile(0), false, &LayerCodecError{Operation: \"probe default RPC wrapper\", Profile: profile, Reason: \"nil buffer or codec state\"} }\n")
+	body.WriteString("if err := state.checkDecodeDepth(profile, nil, \"probe default RPC wrapper\", depth); err != nil { return LayerProfile(0), false, err }\n")
+	fmt.Fprintf(&body, "if err := b.ConsumeID(0x%08x); err != nil { return LayerProfile(0), false, fmt.Errorf(\"probe RPC wrapper 0x%08x: %%w\", err) }\n", route.WireID, route.WireID)
+	profileValue := ""
+	invariant := true
+	for fieldIndex := range definition.Fields {
+		field := &definition.Fields[fieldIndex]
+		if field.Kind == semantic.FieldFlagsWord {
+			fmt.Fprintf(&body, "var rpcProbeFlags%d bin.Fields\n", field.Ordinal)
+			fmt.Fprintf(&body, "if err := rpcProbeFlags%d.Decode(b); err != nil { return LayerProfile(0), false, fmt.Errorf(\"probe RPC wrapper flags %s: %%w\", err) }\n", field.Ordinal, field.Name)
+			continue
+		}
+		if field.Ordinal == wrapper.QueryFieldOrdinal {
+			if wrapper.NestedProfile == layerRPCProfileFromField {
+				if profileValue == "" {
+					return "", false, fmt.Errorf("invokeWithLayer prefix reaches query before its profile field")
+				}
+				fmt.Fprintf(&body, "return %s, true, nil\n", profileValue)
+			} else {
+				body.WriteString("if workErr := work.consumeBytes(probeStart - b.Len()); workErr != nil { return LayerProfile(0), false, workErr }\n")
+				body.WriteString("probeStart = -1\n")
+				body.WriteString("return probeDefaultLayerRPCProfile(b, state, work, depth+1)\n")
+			}
+			return body.String(), invariant, nil
+		}
+
+		node, err := e.nodeForField(definition, field)
+		if err != nil {
+			return "", false, fmt.Errorf("wrapper prefix field %q: %w", field.Name, err)
+		}
+		if node.RequiresBinding || !node.EmitCodec || node.DecodeStateName == "" {
+			return "", false, fmt.Errorf("wrapper prefix field %q has no unbound static TypeRef decoder", field.Name)
+		}
+		pure, err := e.wrapperProbeTypeRefPure(node, route.Layer)
+		if err != nil {
+			return "", false, fmt.Errorf("wrapper prefix field %q purity: %w", field.Name, err)
+		}
+		if !pure {
+			return "", false, fmt.Errorf("E_WRAPPER_PROBE_POLICY_UNSAFE: wrapper prefix field %q TypeRef %s can invoke a policy hook or dynamic adapter in profile %d", field.Name, node.Ref.String(), route.Layer)
+		}
+		profile := nodeProfile(node, route.Layer)
+		invariant = invariant && profile != nil && profile.WireEquivalent
+		condition := ""
+		if field.Condition != nil {
+			ordinal, ok := flags[field.Condition.Word]
+			if !ok {
+				return "", false, fmt.Errorf("wrapper prefix field %q references missing flags word %q", field.Name, field.Condition.Word)
+			}
+			condition = fmt.Sprintf("rpcProbeFlags%d.Has(%d)", ordinal, field.Condition.Bit)
+		}
+		if field.Condition != nil && field.Condition.PresenceOnly {
+			if field.Ordinal == wrapper.ProfileField {
+				return "", false, fmt.Errorf("wrapper profile field %q is presence-only", field.Name)
+			}
+			continue
+		}
+		decode := fmt.Sprintf("%s(profile, b, state)", node.DecodeStateName)
+		local := fmt.Sprintf("rpcProbeField%d", field.Ordinal)
+		if field.Ordinal == wrapper.ProfileField {
+			if node.GoType != "int" || field.Condition != nil {
+				return "", false, fmt.Errorf("wrapper profile field %q is not an unconditional int", field.Name)
+			}
+			fmt.Fprintf(&body, "%s, err := %s\n", local, decode)
+			fmt.Fprintf(&body, "if err != nil { return LayerProfile(0), false, fmt.Errorf(\"probe RPC wrapper profile field %s: %%w\", err) }\n", field.Name)
+			profileValue = fmt.Sprintf("selectedProfile%d", field.Ordinal)
+			fmt.Fprintf(&body, "%s, ok := ResolveLayerProfile(%s)\n", profileValue, local)
+			fmt.Fprintf(&body, "if !ok { return LayerProfile(0), false, &LayerCodecError{Operation: \"probe default RPC wrapper\", Profile: profile, WireID: 0x%08x, Reason: fmt.Sprintf(\"invokeWithLayer selected unsupported exact profile %%d\", %s), Cause: errLayerRPCProbeUnsupportedProfile} }\n", route.WireID, local)
+			continue
+		}
+		if condition == "" {
+			fmt.Fprintf(&body, "if _, err := %s; err != nil { return LayerProfile(0), false, fmt.Errorf(\"probe RPC wrapper field %s: %%w\", err) }\n", decode, field.Name)
+		} else {
+			fmt.Fprintf(&body, "if %s { if _, err := %s; err != nil { return LayerProfile(0), false, fmt.Errorf(\"probe RPC wrapper field %s: %%w\", err) } }\n", condition, decode, field.Name)
+		}
+	}
+	return "", false, fmt.Errorf("wrapper prefix has no generic query field")
+}
+
+// wrapperProbeTypeRefPure proves that the ordinary generated decoder for one
+// prefix TypeRef cannot reach a policy action, profile-only bridge, dynamic
+// object adapter, or unresolved constructor. Prefix probes run on private
+// bytes, but user hooks are observable side effects and therefore forbidden.
+// Cycles are accepted only after the enclosing constructor action has itself
+// been classified as a mechanical direct/retag/rewrite action.
+func (e *layerRPCSourceEmitter) wrapperProbeTypeRefPure(root *layerTypeRefNode, layer int) (bool, error) {
+	if e == nil || e.wires == nil {
+		return false, fmt.Errorf("missing wire model")
+	}
+	type visitKey struct {
+		layer int
+		node  int
+	}
+	const (
+		visitNone uint8 = iota
+		visitActive
+		visitPure
+		visitImpure
+	)
+	state := make(map[visitKey]uint8)
+	var inspect func(*layerTypeRefNode) (bool, error)
+	inspect = func(node *layerTypeRefNode) (bool, error) {
+		if node == nil {
+			return false, fmt.Errorf("nil TypeRef node")
+		}
+		key := visitKey{layer: layer, node: node.Index}
+		switch state[key] {
+		case visitActive, visitPure:
+			return true, nil
+		case visitImpure:
+			return false, nil
+		}
+		state[key] = visitActive
+		pure := false
+		defer func() {
+			if pure {
+				state[key] = visitPure
+			} else {
+				state[key] = visitImpure
+			}
+		}()
+
+		switch {
+		case node.IsPrimitive():
+			pure = !node.IsObject()
+			return pure, nil
+		case node.IsObject(), node.IsGeneric():
+			return false, nil
+		case node.IsVector():
+			if node.Element < 0 || node.Element >= len(e.refs.Nodes) {
+				return false, fmt.Errorf("vector element index %d is outside TypeRef model", node.Element)
+			}
+			childPure, err := inspect(&e.refs.Nodes[node.Element])
+			pure = childPure
+			return childPure, err
+		case node.IsExactBare(), node.IsConcrete(), node.IsClass():
+			profile := nodeProfile(node, layer)
+			if profile == nil || !profile.Available || profile.Value == nil || len(profile.Value.Constructors) == 0 {
+				return false, nil
+			}
+			for _, constructor := range profile.Value.Constructors {
+				conversion := constructor.Conversion
+				if conversion == nil || conversion.Profile == nil || conversion.Profile.Definition == nil {
+					return false, nil
+				}
+				family := e.wires.family(conversion.Key)
+				action := family.profile(layer)
+				if action == nil || (action.Kind != layerWireDirect && action.Kind != layerWireRetag && action.Kind != layerWireRewrite) {
+					return false, nil
+				}
+				definition := conversion.Profile.Definition
+				for fieldIndex := range definition.Fields {
+					field := &definition.Fields[fieldIndex]
+					if field.Kind != semantic.FieldValue {
+						continue
+					}
+					child, err := e.nodeForField(definition, field)
+					if err != nil {
+						return false, err
+					}
+					childPure, err := inspect(child)
+					if err != nil || !childPure {
+						return false, err
+					}
+				}
+			}
+			pure = true
+			return true, nil
+		default:
+			return false, nil
+		}
+	}
+	return inspect(root)
 }
 
 func (e *layerRPCSourceEmitter) buildWrapperRoute(route *layerRPCRoutePlan, refProfile *layerRPCTypeProfilePlan) (string, error) {
@@ -864,7 +1292,7 @@ func (e *layerRPCSourceEmitter) buildWrapperRoute(route *layerRPCRoutePlan, refP
 	frameFields := make([]wrapperFieldSource, 0, len(definition.Fields)-1)
 	var body strings.Builder
 	fmt.Fprintf(&body, "if err := b.ConsumeID(0x%08x); err != nil { return layerDecodedRPCRequest{}, fmt.Errorf(\"consume RPC wrapper 0x%08x: %%w\", err) }\n", route.WireID, route.WireID)
-	body.WriteString("nestedProfile := profile\n")
+	body.WriteString("nestedProfile := inheritedProfile\n")
 	querySeen := false
 	bound := false
 	mappedCanonical := map[int]bool{queryMapping.CanonicalOrdinal: true}
@@ -951,7 +1379,7 @@ func (e *layerRPCSourceEmitter) buildWrapperRoute(route *layerRPCRoutePlan, refP
 			}
 			fmt.Fprintf(&body, "selectedProfile%d, ok := ResolveLayerProfile(%s)\n", field.Ordinal, local)
 			fmt.Fprintf(&body, "if !ok { return layerDecodedRPCRequest{}, &LayerCodecError{Operation: \"admit RPC wrapper\", Profile: profile, Semantic: %s, WireID: 0x%08x, Reason: fmt.Sprintf(\"invokeWithLayer selected unsupported exact profile %%d\", %s)} }\n", route.Method.Constant, route.WireID, local)
-			fmt.Fprintf(&body, "if selectedProfile%d != profile { return layerDecodedRPCRequest{}, &LayerCodecError{Operation: \"admit RPC wrapper\", Profile: profile, Semantic: %s, WireID: 0x%08x, Reason: fmt.Sprintf(\"invokeWithLayer selected profile %%d, want frozen admission profile %%d\", selectedProfile%d, profile)} }\n", field.Ordinal, route.Method.Constant, route.WireID, field.Ordinal)
+			fmt.Fprintf(&body, "if err := preflight.selectExplicitProfile(inheritedProfile, selectedProfile%d, %s, 0x%08x); err != nil { return layerDecodedRPCRequest{}, err }\n", field.Ordinal, route.Method.Constant, route.WireID)
 			fmt.Fprintf(&body, "nestedProfile = selectedProfile%d\n", field.Ordinal)
 		}
 		if canonicalField == nil {

@@ -116,7 +116,21 @@ type layerDecodedRPCRequest struct {
     call LayerCall
     wrappers []LayerRPCWrapper
     semanticIdentity LayerSemanticRequestIdentity
+    explicitProfile LayerProfile
+    profileEvidence bool
 }
+
+// layerRPCProfileAdmissionMode controls only invokeWithLayer conflict
+// semantics. Frozen admission requires every selector to match the caller's
+// exact profile. Default admission treats the caller's profile as inherited
+// until the first explicit selector, then freezes that explicit profile for
+// the remainder of the transparent wrapper chain.
+type layerRPCProfileAdmissionMode uint8
+
+const (
+    layerRPCProfileFrozen layerRPCProfileAdmissionMode = iota
+    layerRPCProfileDefault
+)
 
 // layerFreezeRPCWrapperField snapshots one non-scalar wrapper field with its
 // exact static TypeRef and generic-binding state. Value decodes from these
@@ -172,7 +186,7 @@ func layerSemanticIdentity{{ $s.Name }}(request *{{ $s.Name }}) (LayerSemanticRe
 // decodeLayerRPCRequest owns a fresh state for the complete transparent
 // wrapper chain. Exact nested TypeRef bindings therefore cannot leak between
 // requests or collide merely because different wrappers both call a slot X.
-func decodeLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight, fieldCallbacks []LayerRPCAdmissionFieldPreflight, unknownAdapter layerRPCUnknownMethodAdapter) (layerDecodedRPCRequest, error) {
+func decodeLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight, fieldCallbacks []LayerRPCAdmissionFieldPreflight, unknownAdapter layerRPCUnknownMethodAdapter, profileAdmission layerRPCProfileAdmissionMode) (layerDecodedRPCRequest, error) {
     if b == nil {
         return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, Reason: "nil buffer"}
     }
@@ -184,10 +198,12 @@ func decodeLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDeco
         callback: callback,
         fields: state.rpcAdmission,
         unknownAdapter: unknownAdapter,
+        profileAdmission: profileAdmission,
+        admissionProfile: profile,
     }
 {{- if $rpcSource.ClientBridge }}
     preflight.adaptCanonical = func(targetProfile LayerProfile, canonical *bin.Buffer) (LayerOutboundCall, error) {
-        request, err := prepareLayerRPCRequest(LayerProfileCanonical, canonical, limits, nil, fieldCallbacks, nil)
+        request, err := prepareLayerRPCRequest(LayerProfileCanonical, canonical, limits, nil, fieldCallbacks, nil, layerRPCProfileFrozen)
         if err != nil { return LayerOutboundCall{}, err }
         return request.PrepareOutbound(targetProfile)
     }
@@ -196,6 +212,13 @@ func decodeLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDeco
     if err != nil { return layerDecodedRPCRequest{}, err }
     if atomic.LoadUint32(&preflight.called) != 1 {
         return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, Reason: "terminal RPC route omitted admission preflight"}
+    }
+    if preflight.explicitProfileSet {
+        if decoded.call.Profile() != preflight.explicitProfile {
+            return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: decoded.call.Profile(), Semantic: decoded.call.Method(), WireID: decoded.call.WireID(), Reason: fmt.Sprintf("terminal profile %d differs from explicit invokeWithLayer profile %d", decoded.call.Profile(), preflight.explicitProfile)}
+        }
+        decoded.explicitProfile = preflight.explicitProfile
+        decoded.profileEvidence = true
     }
     return decoded, nil
 }
@@ -215,14 +238,288 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
         switch id {
         {{- range $route := $profile.Routes }}
         case 0x{{ printf "%08x" $route.WireID }}:
-            return {{ $route.Admit }}(profile, b, state, preflight, depth)
+            {{- if $route.ProbeDefault }}
+            if preflight.allowDefaultWrapperFallback(profile) {
+                decoded, _, probeErr := decodeDefaultLayerRPCWrapper(profile, id, b, state, preflight, depth)
+                if errors.Is(probeErr, errLayerRPCProbeNoSelector) {
+                    // This exact switch owns the wrapper CRC. A valid prefix
+                    // which reaches a naked terminal has inherited the caller
+                    // default; admit it authoritatively once, with callbacks
+                    // and policy hooks enabled only on this exact replay.
+                    previousReplay := preflight.defaultWrapperReplay
+                    preflight.defaultWrapperReplay = true
+                    decoded, exactErr := {{ $route.Admit }}(profile, profile, b, state, preflight, depth)
+                    preflight.defaultWrapperReplay = previousReplay
+                    return decoded, exactErr
+                }
+                return decoded, probeErr
+            }
+            {{- end }}
+            return {{ $route.Admit }}(profile, profile, b, state, preflight, depth)
         {{- end }}
         default:
+            if isGeneratedLayerRPCWrapperWireID(id) {
+                if decoded, handled, fallbackErr := decodeDefaultLayerRPCWrapper(profile, id, b, state, preflight, depth); handled {
+                    return decoded, fallbackErr
+                }
+            }
             return preflight.adaptUnknown(profile, b, state, depth, id)
         }
     {{- end }}
     default:
         return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
+    }
+}
+
+// decodeDefaultLayerRPCWrapper handles a generated wrapper constructor which
+// is missing from the inherited default or whose same-CRC prefix layout varies
+// by profile. Generated prefix probes use private buffer/state copies to find
+// invokeWithLayer evidence across every candidate wire layout. A unique
+// selected profile then re-decodes the complete original subtree through that
+// profile's exact static switch. When a current exact switch owns the wrapper
+// and probing reaches a naked terminal, its caller performs one authoritative
+// inherited-profile admission instead. Frozen exact admission, post-selector
+// admission and unknown adapters never run speculatively.
+func decodeDefaultLayerRPCWrapper(inheritedProfile LayerProfile, wireID uint32, b *bin.Buffer, state *layerCodecState, preflight *layerRPCAdmissionPreflightRunner, depth int) (layerDecodedRPCRequest, bool, error) {
+    if !preflight.allowDefaultWrapperFallback(inheritedProfile) {
+        return layerDecodedRPCRequest{}, false, nil
+    }
+    work, workErr := newLayerRPCProbeWorkBudget(b, state)
+    if workErr != nil { return layerDecodedRPCRequest{}, true, workErr }
+    selected, found, err := probeDefaultLayerRPCProfile(b, state, work, depth)
+    if err != nil { return layerDecodedRPCRequest{}, true, err }
+    if !found {
+        return layerDecodedRPCRequest{}, true, &LayerCodecError{Operation: "probe default RPC wrapper", Profile: inheritedProfile, WireID: wireID, Reason: "wrapper chain supplied no explicit invokeWithLayer profile", Cause: errors.Join(ErrLayerProfileRequired, errLayerRPCProbeNoSelector)}
+    }
+    expectedOwner, owned := generatedLayerRPCWrapperOwner(selected, wireID)
+    if !owned {
+        return layerDecodedRPCRequest{}, true, &LayerCodecError{Operation: "revalidate default RPC wrapper", Profile: selected, WireID: wireID, Reason: "selected profile does not own the probed wrapper constructor"}
+    }
+
+    previousReplay := preflight.defaultWrapperReplay
+    previousProbeProfile := preflight.probedProfile
+    previousProbeSet := preflight.probedProfileSet
+    preflight.defaultWrapperReplay = true
+    preflight.probedProfile = selected
+    preflight.probedProfileSet = true
+    decoded, decodeErr := decodeLayerRPCRequestState(selected, b, state, preflight, depth)
+    preflight.defaultWrapperReplay = previousReplay
+    if decodeErr != nil { return layerDecodedRPCRequest{}, true, decodeErr }
+    if !preflight.explicitProfileSet || preflight.explicitProfile != selected {
+        preflight.probedProfile = previousProbeProfile
+        preflight.probedProfileSet = previousProbeSet
+        return layerDecodedRPCRequest{}, true, &LayerCodecError{Operation: "revalidate default RPC wrapper", Profile: selected, WireID: wireID, Reason: "exact admission did not reproduce probed invokeWithLayer evidence", Cause: ErrLayerProfileRequired}
+    }
+    if decoded.call.Profile() != selected || len(decoded.wrappers) == 0 {
+        return layerDecodedRPCRequest{}, true, &LayerCodecError{Operation: "revalidate default RPC wrapper", Profile: selected, WireID: wireID, Reason: "selected profile did not own the complete wrapper route"}
+    }
+    owner := decoded.wrappers[len(decoded.wrappers)-1]
+    if owner.profile != selected || owner.wireID != wireID || owner.semantic != expectedOwner {
+        return layerDecodedRPCRequest{}, true, &LayerCodecError{Operation: "revalidate default RPC wrapper", Profile: selected, Semantic: owner.semantic, WireID: wireID, Reason: "selected exact route returned a different wrapper owner"}
+    }
+    return decoded, true, nil
+}
+
+type layerRPCProfileProbeAccumulator struct {
+    selected LayerProfile
+    found bool
+    firstErr error
+}
+
+func (a *layerRPCProfileProbeAccumulator) add(wireID uint32, profile LayerProfile, found bool, err error) error {
+    if err != nil {
+        if errors.Is(err, errLayerRPCProbeWorkExhausted) || errors.Is(err, errLayerRPCProbeUnsupportedProfile) || errors.Is(err, ErrLayerProfileAmbiguous) { return err }
+        if a.firstErr == nil || (errors.Is(err, errLayerRPCProbeNoSelector) && !errors.Is(a.firstErr, errLayerRPCProbeNoSelector)) {
+            a.firstErr = err
+        }
+        return nil
+    }
+    if !found { return nil }
+    if !a.found {
+        a.selected = profile
+        a.found = true
+        return nil
+    }
+    if a.selected != profile {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Profile: profile, WireID: wireID, Reason: fmt.Sprintf("wrapper layouts exposed conflicting invokeWithLayer profiles %d and %d", a.selected, profile), Cause: ErrLayerProfileAmbiguous}
+    }
+    return nil
+}
+
+func (a *layerRPCProfileProbeAccumulator) result(wireID uint32) (LayerProfile, bool, error) {
+    if a != nil && a.found { return a.selected, true, nil }
+    if a != nil && a.firstErr != nil { return LayerProfile(0), false, a.firstErr }
+    return LayerProfile(0), false, &LayerCodecError{Operation: "probe default RPC wrapper", WireID: wireID, Reason: "wrapper chain supplied no explicit invokeWithLayer profile", Cause: errors.Join(ErrLayerProfileRequired, errLayerRPCProbeNoSelector)}
+}
+
+func cloneLayerRPCProbeState(state *layerCodecState, work *layerRPCProbeWorkBudget) (*layerCodecState, error) {
+    if state == nil || work == nil {
+        return nil, &LayerCodecError{Operation: "probe default RPC wrapper", Reason: "nil codec state or speculative work budget"}
+    }
+    cloned := *state
+    cloned.rpcAdmission = nil
+    if state.decodeBudget != nil {
+        budget := *state.decodeBudget
+        cloned.decodeBudget = &budget
+    }
+    cloned.probeConsumeElements = work.consumeElements
+    return &cloned, nil
+}
+
+const layerRPCMaxDefaultWrapperProbeAttempts = {{ .ProbeAttemptLimit }}
+const layerRPCMaxDefaultWrapperProbeCandidates = {{ .ProbeWorkMultiplier }}
+
+var (
+    errLayerRPCProbeWorkExhausted = errors.New("default RPC wrapper speculative work exhausted")
+    errLayerRPCProbeNoSelector = errors.New("default RPC wrapper probe reached terminal without invokeWithLayer")
+    errLayerRPCProbeUnsupportedProfile = errors.New("default RPC wrapper probe selected unsupported profile")
+)
+
+// layerRPCProbeWorkBudget bounds speculative branching independently from
+// each candidate's semantic decode budget. Candidates deep-copy the latter,
+// so a wrong layout cannot starve another layout or the authoritative replay.
+type layerRPCProbeWorkBudget struct {
+    remainingAttempts int
+    remainingBytes int
+    remainingElements int
+    maxDepth int
+}
+
+func scaleLayerRPCProbeWork(unit int) (int, error) {
+    if unit < 0 {
+        return 0, fmt.Errorf("negative speculative work unit %d", unit)
+    }
+    maxInt := int(^uint(0) >> 1)
+    if unit != 0 && layerRPCMaxDefaultWrapperProbeCandidates > maxInt/unit {
+        return 0, fmt.Errorf("speculative work limit overflow for unit %d and %d profile candidates", unit, layerRPCMaxDefaultWrapperProbeCandidates)
+    }
+    return unit * layerRPCMaxDefaultWrapperProbeCandidates, nil
+}
+
+func newLayerRPCProbeWorkBudget(b *bin.Buffer, state *layerCodecState) (*layerRPCProbeWorkBudget, error) {
+    if b == nil || state == nil {
+        return nil, &LayerCodecError{Operation: "probe default RPC wrapper", Reason: "nil buffer or codec state"}
+    }
+    budget, err := state.ensureDecodeBudget(LayerProfile(0), nil, "initialize default RPC wrapper probe")
+    if err != nil { return nil, err }
+    bytes, err := scaleLayerRPCProbeWork(b.Len())
+    if err != nil {
+        return nil, &LayerCodecError{Operation: "initialize default RPC wrapper probe", Reason: "invalid speculative byte limit", Cause: err}
+    }
+    elements, err := scaleLayerRPCProbeWork(budget.remainingElements)
+    if err != nil {
+        return nil, &LayerCodecError{Operation: "initialize default RPC wrapper probe", Reason: "invalid speculative element limit", Cause: err}
+    }
+    return &layerRPCProbeWorkBudget{
+        remainingAttempts: layerRPCMaxDefaultWrapperProbeAttempts,
+        remainingBytes: bytes,
+        remainingElements: elements,
+        maxDepth: budget.maxDepth,
+    }, nil
+}
+
+func (w *layerRPCProbeWorkBudget) take(wireID uint32) error {
+    if w == nil {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", WireID: wireID, Reason: "nil speculative work budget", Cause: errLayerRPCProbeWorkExhausted}
+    }
+    if w.remainingAttempts <= 0 {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", WireID: wireID, Reason: fmt.Sprintf("speculative wrapper probe exceeded %d candidate attempts", layerRPCMaxDefaultWrapperProbeAttempts), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    w.remainingAttempts--
+    return nil
+}
+
+func (w *layerRPCProbeWorkBudget) consumeBytes(count int) error {
+    if w == nil || count < 0 {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Reason: fmt.Sprintf("invalid speculative byte consumption %d", count), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    if count > w.remainingBytes {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Reason: fmt.Sprintf("speculative wrapper probe byte work %d exceeds remaining budget %d", count, w.remainingBytes), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    w.remainingBytes -= count
+    return nil
+}
+
+func (w *layerRPCProbeWorkBudget) consumeElements(count int) error {
+    if w == nil || count < 0 {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Reason: fmt.Sprintf("invalid speculative element consumption %d", count), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    if count > w.remainingElements {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Reason: fmt.Sprintf("speculative wrapper probe element work %d exceeds remaining budget %d", count, w.remainingElements), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    w.remainingElements -= count
+    return nil
+}
+
+func (w *layerRPCProbeWorkBudget) checkDepth(depth int) error {
+    if w == nil || depth < 0 {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Reason: fmt.Sprintf("invalid speculative probe depth %d", depth), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    if depth >= w.maxDepth {
+        return &LayerCodecError{Operation: "probe default RPC wrapper", Reason: fmt.Sprintf("speculative wrapper probe exceeded depth %d", w.maxDepth), Cause: errLayerRPCProbeWorkExhausted}
+    }
+    return nil
+}
+
+// probeDefaultLayerRPCProfile is generated only from transparent wrapper
+// routes. It never probes an ordinary terminal or calls the unknown adapter.
+func probeDefaultLayerRPCProfile(b *bin.Buffer, state *layerCodecState, work *layerRPCProbeWorkBudget, depth int) (LayerProfile, bool, error) {
+    if b == nil || state == nil || work == nil {
+        return LayerProfile(0), false, &LayerCodecError{Operation: "probe default RPC wrapper", Reason: "nil buffer, codec state, or work budget"}
+    }
+    if err := work.checkDepth(depth); err != nil { return LayerProfile(0), false, err }
+    wireID, err := b.PeekID()
+    if err != nil { return LayerProfile(0), false, err }
+    switch wireID {
+{{- range $fallback := .DefaultWrappers }}
+    case 0x{{ printf "%08x" $fallback.WireID }}:
+        var candidates layerRPCProfileProbeAccumulator
+{{- range $candidate := $fallback.Candidates }}
+{{- if $candidate.ProbeCandidate }}
+        probeBuffer{{ $candidate.WireProfile }} := *b
+        probeState{{ $candidate.WireProfile }}, cloneErr := cloneLayerRPCProbeState(state, work)
+        if cloneErr != nil { return LayerProfile(0), false, cloneErr }
+        if workErr := work.take(wireID); workErr != nil { return LayerProfile(0), false, workErr }
+        selected{{ $candidate.WireProfile }}, found{{ $candidate.WireProfile }}, probeErr{{ $candidate.WireProfile }} := {{ $candidate.Probe }}({{ $candidate.ProfileConstant }}, &probeBuffer{{ $candidate.WireProfile }}, probeState{{ $candidate.WireProfile }}, work, depth)
+        if err := candidates.add(wireID, selected{{ $candidate.WireProfile }}, found{{ $candidate.WireProfile }}, probeErr{{ $candidate.WireProfile }}); err != nil { return LayerProfile(0), false, err }
+{{- end }}
+{{- end }}
+        return candidates.result(wireID)
+{{- end }}
+    default:
+        if isGeneratedLayerRPCWireID(wireID) {
+            return LayerProfile(0), false, &LayerCodecError{Operation: "probe default RPC wrapper", WireID: wireID, Reason: "wrapper chain reached a known terminal before invokeWithLayer", Cause: errors.Join(ErrLayerProfileRequired, errLayerRPCProbeNoSelector)}
+        }
+        return LayerProfile(0), false, &LayerCodecError{Operation: "probe default RPC wrapper", WireID: wireID, Reason: "wrapper chain reached an unknown terminal before invokeWithLayer", Cause: errors.Join(ErrLayerUnknownRPCMethod, errLayerRPCProbeNoSelector)}
+    }
+}
+
+func isGeneratedLayerRPCWrapperWireID(id uint32) bool {
+    switch id {
+{{- range $fallback := .DefaultWrappers }}
+    case 0x{{ printf "%08x" $fallback.WireID }}:
+        return true
+{{- end }}
+    default:
+        return false
+    }
+}
+
+func generatedLayerRPCWrapperOwner(profile LayerProfile, id uint32) (LayerSemanticID, bool) {
+    switch id {
+{{- range $fallback := .DefaultWrappers }}
+    case 0x{{ printf "%08x" $fallback.WireID }}:
+        switch profile {
+{{- range $candidate := $fallback.Candidates }}
+        case {{ $candidate.ProfileConstant }}:
+            return {{ $fallback.SemanticConstant }}, true
+{{- end }}
+        default:
+            return 0, false
+        }
+{{- end }}
+    default:
+        return 0, false
     }
 }
 
@@ -316,27 +613,79 @@ func (p *layerRPCAdmissionPreflightRunner) adaptUnknown(profile LayerProfile, b 
     return decoded, nil
 }
 
-// decodeUnprofiledLayerProfile probes only the generated invariant
-// invokeWithLayer prefix. The original buffer is not consumed; exact
-// admission re-decodes the complete request with the selected profile.
-func decodeUnprofiledLayerProfile(b *bin.Buffer) (LayerProfile, error) {
+// decodeUnprofiledLayerProfile recognizes only generation-time proven
+// pre-profile routes. invokeWithLayer returns explicit profile evidence;
+// invariant terminal methods use the canonical static route solely because
+// their complete request and result wire forms are identical in every
+// supported profile. The original buffer is never consumed by this probe.
+func decodeUnprofiledLayerProfile(b *bin.Buffer) (LayerProfile, bool, error) {
     if b == nil {
-        return LayerProfile(0), &LayerCodecError{Operation: "probe unprofiled RPC wrapper", Reason: "nil buffer"}
+        return LayerProfile(0), false, &LayerCodecError{Operation: "probe unprofiled RPC request", Reason: "nil buffer"}
     }
     probe := *b
     id, err := probe.PeekID()
-    if err != nil { return LayerProfile(0), err }
-    if id != 0x{{ printf "%08x" .Unprofiled.WireID }} {
-        return LayerProfile(0), &LayerCodecError{Operation: "probe unprofiled RPC wrapper", WireID: id, Reason: "only invariant invokeWithLayer is accepted before profile freeze"}
-    }
+    if err != nil { return LayerProfile(0), false, err }
+    switch id {
+    case 0x{{ printf "%08x" .Unprofiled.WireID }}:
 {{ .Unprofiled.Body }}
+{{- range .Unprofiled.Invariants }}
+    case 0x{{ printf "%08x" .WireID }}:
+        return LayerProfileCanonical, false, nil
+{{- end }}
+    default:
+        if isGeneratedLayerRPCWireID(id) {
+            return LayerProfile(0), false, &LayerCodecError{Operation: "probe unprofiled RPC request", WireID: id, Reason: "known RPC requires a default profile or explicit invokeWithLayer", Cause: ErrLayerProfileRequired}
+        }
+        return LayerProfile(0), false, &LayerCodecError{Operation: "probe unprofiled RPC request", WireID: id, Reason: "unknown RPC constructor", Cause: ErrLayerUnknownRPCMethod}
+    }
+}
+
+func isUnprofiledLayerRPCWireID(id uint32) bool {
+    switch id {
+    case 0x{{ printf "%08x" .Unprofiled.WireID }}{{ range .Unprofiled.Invariants }}, 0x{{ printf "%08x" .WireID }}{{ end }}:
+        return true
+    default:
+        return false
+    }
+}
+
+// isGeneratedLayerRPCWireID distinguishes a known RPC which merely needs a
+// profile from an unknown constructor. It is generated from the complete
+// multi-schema RPC route set, not the global constructor registry.
+func isGeneratedLayerRPCWireID(id uint32) bool {
+    switch id {
+{{- range $wireID := .RPCWireIDs }}
+    case 0x{{ printf "%08x" $wireID }}:
+        return true
+{{- end }}
+    default:
+        return false
+    }
 }
 
 {{ range .Routes -}}
-// {{ .Admit }} admits exactly profile {{ .Layer }}, wire ID 0x{{ printf "%08x" .WireID }}.
-func {{ .Admit }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState, preflight *layerRPCAdmissionPreflightRunner, depth int) (layerDecodedRPCRequest, error) {
+{{- if .EmitProbe }}
+// {{ .Probe }} probes only the generated wrapper prefix for profile {{ .Layer }}.
+func {{ .Probe }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState, work *layerRPCProbeWorkBudget, depth int) (selected LayerProfile, found bool, probeErr error) {
+    probeStart := -1
+    if b != nil { probeStart = b.Len() }
+    defer func() {
+        if probeStart < 0 || b == nil || work == nil { return }
+        if err := work.consumeBytes(probeStart - b.Len()); err != nil {
+            selected, found, probeErr = LayerProfile(0), false, err
+        }
+    }()
+{{ .ProbeBody }}
+}
+{{ end -}}
+{{- if .EmitAdmit }}
+// {{ .Admit }} decodes wire profile {{ .Layer }}, wire ID 0x{{ printf "%08x" .WireID }}.
+// inheritedProfile differs only while default admission unwraps a constructor
+// introduced by another generated profile.
+func {{ .Admit }}(profile LayerProfile, inheritedProfile LayerProfile, b *bin.Buffer, state *layerCodecState, preflight *layerRPCAdmissionPreflightRunner, depth int) (layerDecodedRPCRequest, error) {
 {{ .Body }}
 }
+{{ end -}}
 {{ end }}
 {{- end }}
 
@@ -388,6 +737,7 @@ func (r *layerRPCCanonicalTypeRefResult) Encode(b *bin.Buffer) error {
 type LayerRPCResult interface {
     bin.Encoder
     Prepared() LayerPreparedCall
+    WireInvariant() bool
     Freeze() (LayerFrozenResult, error)
     Prepare() (LayerPreparedResult, error)
 }
@@ -558,6 +908,13 @@ type layerRPCAdmissionPreflightRunner struct {
     callback LayerRPCAdmissionPreflight
     fields *layerRPCAdmissionFieldRunner
     unknownAdapter layerRPCUnknownMethodAdapter
+    profileAdmission layerRPCProfileAdmissionMode
+    admissionProfile LayerProfile
+    explicitProfile LayerProfile
+    explicitProfileSet bool
+    probedProfile LayerProfile
+    probedProfileSet bool
+    defaultWrapperReplay bool
 {{- if .LayerRPCSource.ClientBridge }}
     adaptCanonical func(LayerProfile, *bin.Buffer) (LayerOutboundCall, error)
 {{- end }}
@@ -565,6 +922,50 @@ type layerRPCAdmissionPreflightRunner struct {
     unknownAdapterActive uint32
     unknownAdapterDisabled uint32
     suppressFieldAdmission uint32
+}
+
+func (p *layerRPCAdmissionPreflightRunner) allowDefaultWrapperFallback(current LayerProfile) bool {
+    return p != nil && p.profileAdmission == layerRPCProfileDefault && !p.explicitProfileSet &&
+        !p.defaultWrapperReplay && current == p.admissionProfile
+}
+
+// selectExplicitProfile applies the only runtime profile-selection rule used
+// by generated transparent wrappers. In default mode exactly one explicit
+// profile may replace the inherited caller default; repeated selectors must
+// agree. Frozen mode preserves AdmitLayer's strict conflict behavior.
+func (p *layerRPCAdmissionPreflightRunner) selectExplicitProfile(current, selected LayerProfile, semantic LayerSemanticID, wireID uint32) error {
+    if p == nil {
+        return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: "nil profile admission state"}
+    }
+    switch p.profileAdmission {
+    case layerRPCProfileFrozen:
+        if current != p.admissionProfile {
+            return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: fmt.Sprintf("current profile %d differs from frozen admission profile %d", current, p.admissionProfile)}
+        }
+        if selected != p.admissionProfile {
+            return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: fmt.Sprintf("invokeWithLayer selected profile %d, want frozen admission profile %d", selected, p.admissionProfile)}
+        }
+    case layerRPCProfileDefault:
+        if p.explicitProfileSet {
+            if current != p.explicitProfile {
+                return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: fmt.Sprintf("current profile %d differs from explicit invokeWithLayer profile %d", current, p.explicitProfile)}
+            }
+            if selected != p.explicitProfile {
+                return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: fmt.Sprintf("invokeWithLayer selected profile %d, conflicts with explicit profile %d", selected, p.explicitProfile)}
+            }
+        } else if p.probedProfileSet {
+            if current != p.probedProfile || selected != p.probedProfile {
+                return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: fmt.Sprintf("invokeWithLayer profile %d under current profile %d differs from probed profile %d", selected, current, p.probedProfile), Cause: ErrLayerProfileAmbiguous}
+            }
+        } else if current != p.admissionProfile {
+            return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: fmt.Sprintf("current profile %d differs from inherited admission profile %d", current, p.admissionProfile)}
+        }
+    default:
+        return &LayerCodecError{Operation: "admit RPC wrapper", Profile: current, Semantic: semantic, WireID: wireID, Reason: "invalid profile admission mode"}
+    }
+    p.explicitProfile = selected
+    p.explicitProfileSet = true
+    return nil
 }
 
 func (p *layerRPCAdmissionPreflightRunner) run(profile LayerProfile, semantic LayerSemanticID, wireID uint32, b *bin.Buffer) error {
@@ -597,6 +998,10 @@ type layerRPCServerResult struct {
 func (r *layerRPCServerResult) Prepared() LayerPreparedCall {
     if r == nil { return LayerPreparedCall{} }
     return r.prepared
+}
+
+func (r *layerRPCServerResult) WireInvariant() bool {
+    return r != nil && r.prepared.Call().WireInvariant()
 }
 
 func (r *layerRPCServerResult) Freeze() (LayerFrozenResult, error) {
@@ -762,13 +1167,13 @@ func (s *ServerDispatcher) Handle(ctx context.Context, b *bin.Buffer) (bin.Encod
     return result.encodeCanonicalResult()
 }
 
-func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight, fieldCallbacks []LayerRPCAdmissionFieldPreflight, unknownAdapter layerRPCUnknownMethodAdapter) (LayerRequest, error) {
+func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight, fieldCallbacks []LayerRPCAdmissionFieldPreflight, unknownAdapter layerRPCUnknownMethodAdapter, profileAdmission layerRPCProfileAdmissionMode) (LayerRequest, error) {
     if b == nil {
         return LayerRequest{}, &LayerCodecError{Operation: "prepare RPC request", Profile: profile, Reason: "nil buffer"}
     }
     wireRequest := b.Raw()
     working := *b
-    decoded, err := decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter)
+    decoded, err := decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter, profileAdmission)
     if err != nil { return LayerRequest{}, err }
     if working.Len() != 0 {
         return LayerRequest{}, &LayerCodecError{Operation: "prepare RPC request", Profile: decoded.call.Profile(), Semantic: decoded.call.Method(), WireID: decoded.call.WireID(), Reason: fmt.Sprintf("%d trailing request bytes", working.Len())}
@@ -793,7 +1198,13 @@ func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDec
         semanticIdentity: semanticIdentity,
     }
     *b = working
-    return LayerRequest{lease: &layerRPCRequestLease{request: decoded.request}, prepared: prepared, wrappers: wrappers}, nil
+    return LayerRequest{
+        lease: &layerRPCRequestLease{request: decoded.request},
+        prepared: prepared,
+        wrappers: wrappers,
+        profileEvidenceProfile: decoded.explicitProfile,
+        profileEvidence: decoded.profileEvidence,
+    }, nil
 }
 
 func layerValidateRPCRequestLease(admitted LayerRequest, operation string) (*layerRPCRequestLease, error) {
@@ -805,6 +1216,12 @@ func layerValidateRPCRequestLease(admitted LayerRequest, operation string) (*lay
         prepared.semanticIdentity.method != call.Method() || prepared.semanticIdentity.requestType.method != call.Method() ||
         call.canonicalResult == nil || call.wireResult == nil || call.canonical.ref == nil || call.result.ref == nil {
         return nil, &LayerCodecError{Operation: operation, Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "invalid or zero prepared admission"}
+    }
+    if admitted.effectiveProfileKnown && admitted.effectiveProfile != call.Profile() {
+        return nil, &LayerCodecError{Operation: operation, Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "effective profile differs from the frozen terminal call"}
+    }
+    if admitted.profileEvidence && (!admitted.effectiveProfileKnown || admitted.profileEvidenceProfile != admitted.effectiveProfile) {
+        return nil, &LayerCodecError{Operation: operation, Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "profile evidence differs from the effective terminal profile"}
     }
     return lease, nil
 }
@@ -845,6 +1262,35 @@ func (s *ServerDispatcher) AdmitLayer(profile LayerProfile, b *bin.Buffer) (Laye
 // AdmitLayerWithLimits is AdmitLayer with one request-scoped bounded decode
 // budget. Limits are initialized before any wrapper or terminal typed decode.
 func (s *ServerDispatcher) AdmitLayerWithLimits(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits) (LayerRequest, error) {
+    admitted, err := s.admitLayerProfile(profile, b, limits, layerRPCProfileFrozen)
+    if err != nil { return LayerRequest{}, err }
+    admitted.effectiveProfile = admitted.Call().Profile()
+    admitted.effectiveProfileKnown = true
+    admitted.profileEvidenceProfile = profile
+    admitted.profileEvidence = true
+    return admitted, nil
+}
+
+// AdmitDefaultLayer decodes a request using an inherited caller default.
+// Naked requests keep that default. The first invokeWithLayer found anywhere
+// in the generated transparent wrapper chain overrides it and becomes explicit
+// profile evidence; subsequent selectors must agree with that profile.
+func (s *ServerDispatcher) AdmitDefaultLayer(defaultProfile LayerProfile, b *bin.Buffer) (LayerRequest, error) {
+    return s.AdmitDefaultLayerWithLimits(defaultProfile, b, LayerDecodeLimits{})
+}
+
+// AdmitDefaultLayerWithLimits is AdmitDefaultLayer with one request-scoped
+// bounded decode budget. Unlike AdmitLayer, its caller profile is inherited
+// fallback state rather than frozen client evidence.
+func (s *ServerDispatcher) AdmitDefaultLayerWithLimits(defaultProfile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits) (LayerRequest, error) {
+    admitted, err := s.admitLayerProfile(defaultProfile, b, limits, layerRPCProfileDefault)
+    if err != nil { return LayerRequest{}, err }
+    admitted.effectiveProfile = admitted.Call().Profile()
+    admitted.effectiveProfileKnown = true
+    return admitted, nil
+}
+
+func (s *ServerDispatcher) admitLayerProfile(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, profileAdmission layerRPCProfileAdmissionMode) (LayerRequest, error) {
     if s == nil {
         return LayerRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, Reason: "nil ServerDispatcher"}
     }
@@ -853,26 +1299,39 @@ func (s *ServerDispatcher) AdmitLayerWithLimits(profile LayerProfile, b *bin.Buf
     }
     var fieldCallbacks []LayerRPCAdmissionFieldPreflight
     if s.admissionFieldPreflightCount != 0 { fieldCallbacks = s.admissionFieldPreflights }
-    return prepareLayerRPCRequest(profile, b, limits, s.admissionPreflight, fieldCallbacks, s.unknownMethodAdapter)
+    return prepareLayerRPCRequest(profile, b, limits, s.admissionPreflight, fieldCallbacks, s.unknownMethodAdapter, profileAdmission)
 }
 
-// AdmitUnprofiled accepts only the generated invariant invokeWithLayer
-// prefix, probes its exact layer without consuming the original buffer, then
-// performs ordinary exact admission over the full outer request.
+// AdmitUnprofiled accepts invariant invokeWithLayer with explicit profile
+// evidence and generation-time proven invariant terminal methods without
+// profile evidence. The latter do not declare or freeze a client layer.
 func (s *ServerDispatcher) AdmitUnprofiled(b *bin.Buffer) (LayerRequest, error) {
     return s.AdmitUnprofiledWithLimits(b, LayerDecodeLimits{})
 }
 
-// AdmitUnprofiledWithLimits probes only invariant invokeWithLayer, then uses
-// the selected exact profile and the same request-scoped decode budget for
-// complete admission.
+// AdmitUnprofiledWithLimits uses one request-scoped decode budget for complete
+// admission. Invariant terminal methods are decoded through the canonical
+// static route only after generation proved that route wire-identical across
+// all profiles; ProfileEvidence remains absent for those requests.
 func (s *ServerDispatcher) AdmitUnprofiledWithLimits(b *bin.Buffer, limits LayerDecodeLimits) (LayerRequest, error) {
     if s == nil {
-        return LayerRequest{}, &LayerCodecError{Operation: "admit unprofiled RPC wrapper", Reason: "nil ServerDispatcher"}
+        return LayerRequest{}, &LayerCodecError{Operation: "admit unprofiled RPC request", Reason: "nil ServerDispatcher"}
     }
-    profile, err := decodeUnprofiledLayerProfile(b)
+    profile, profileEvidence, err := decodeUnprofiledLayerProfile(b)
     if err != nil { return LayerRequest{}, err }
-    return s.AdmitLayerWithLimits(profile, b, limits)
+    admitted, err := s.admitLayerProfile(profile, b, limits, layerRPCProfileFrozen)
+    if err != nil { return LayerRequest{}, err }
+    if admitted.profileEvidence != profileEvidence {
+        return LayerRequest{}, &LayerCodecError{Operation: "admit unprofiled RPC request", Profile: admitted.Call().Profile(), Semantic: admitted.Call().Method(), WireID: admitted.Call().WireID(), Reason: "profile probe and exact admission evidence disagree"}
+    }
+    if profileEvidence {
+        admitted.effectiveProfile = admitted.Call().Profile()
+        admitted.effectiveProfileKnown = true
+    } else {
+        admitted.profileEvidenceProfile = LayerProfile(0)
+        admitted.profileEvidence = false
+    }
+    return admitted, nil
 }
 
 func layerRPCNeedsWrapperConsumer(admitted LayerRequest) bool {
@@ -985,14 +1444,18 @@ func (s *ServerDispatcher) HandleLayer(profile LayerProfile, ctx context.Context
 }
 
 // HandleUnprofiled is the compatibility convenience for a first request.
-// Only invariant invokeWithLayer is admitted; unknown IDs may use fallback.
+// Generated invariant terminals and invokeWithLayer are admitted; unknown IDs
+// may use fallback.
 func (s *ServerDispatcher) HandleUnprofiled(ctx context.Context, b *bin.Buffer) (bin.Encoder, error) {
     if b == nil { return nil, &LayerCodecError{Operation: "decode unprofiled request", Reason: "nil buffer"} }
     id, err := b.PeekID()
     if err != nil { return nil, err }
-    if id != 0x{{ printf "%08x" .LayerRPCSource.Unprofiled.WireID }} {
+    if !isUnprofiledLayerRPCWireID(id) {
         if s != nil && s.fallback != nil { return s.fallback(ctx, b) }
-        return nil, &LayerCodecError{Operation: "decode unprofiled request", WireID: id, Reason: "only invariant invokeWithLayer is accepted before profile freeze"}
+        if isGeneratedLayerRPCWireID(id) {
+            return nil, &LayerCodecError{Operation: "decode unprofiled request", WireID: id, Reason: "known RPC requires a default profile or explicit invokeWithLayer", Cause: ErrLayerProfileRequired}
+        }
+        return nil, &LayerCodecError{Operation: "decode unprofiled request", WireID: id, Reason: "unknown RPC constructor", Cause: ErrLayerUnknownRPCMethod}
     }
     admitted, err := s.AdmitUnprofiled(b)
     if err != nil { return nil, err }

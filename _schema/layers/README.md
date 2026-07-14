@@ -74,8 +74,18 @@ until its semantic policy and typed hook are supplied.
 
 ## Runtime invariants
 
-- A connection profile is resolved exactly and then frozen. An inner
-  `invokeWithLayer` cannot change it.
+- `AdmitLayer` preserves a caller-frozen exact profile and rejects a conflicting
+  inner `invokeWithLayer`. `AdmitDefaultLayer` instead treats the caller profile
+  as inherited fallback state for naked RPCs: the first `invokeWithLayer`
+  anywhere in the transparent wrapper chain may replace it, after which
+  repeated selectors must agree. The admitted request reports the effective
+  profile separately from explicit profile evidence.
+- With neither a frozen nor inherited profile, the dispatcher accepts only
+  `invokeWithLayer` or a terminal RPC whose request graph and complete result
+  `TypeRef` graph were proven at generation time to be wire-identical in every
+  loaded profile. Such an invariant terminal (for example
+  `auth.bindTempAuthKey`) publishes neither an effective profile nor profile
+  evidence; its canonical codec route remains an internal representative.
 - Request admission consumes the complete outer wire value and freezes the
   exact result `TypeRef`, wire ID and request digest.
 - Wrapper metadata is preserved outer-to-inner. Wrappers with session,
@@ -88,7 +98,16 @@ until its semantic policy and typed hook are supplied.
   fit the protocol's 24-bit length header.
 - Frozen values may be prepared once per exact profile/call identity. Wire bytes
   are never reused across unequal profiles or result `TypeRef` identities.
+- Proactive updates still require a real frozen target profile. Only a result
+  bound to a generated wire-invariant RPC may be encoded before profile
+  evidence exists; the exception cannot be used as a generic unknown-profile
+  fallback.
 
-The source emitter coalesces identical profile bodies but keeps one static
-function family per unique wire ID. It does not use reflection, a runtime
-schema walker or a dynamic schema map.
+The source emitter coalesces identical codec profile bodies and keeps one
+static codec family per unique wire ID. Server dispatch still has an exact
+switch for every `(profile, wire ID)` route, but routes with byte-identical
+admission descriptors/bodies share one generated admit helper; identical
+wrapper probes share one probe helper as well. Source-budget tests scale with
+the emitted unique RPC syntax plus the small exact-route/coverage tables, so
+adding an unchanged future Layer does not clone every server body. None of
+these paths uses reflection, a runtime schema walker or a dynamic schema map.

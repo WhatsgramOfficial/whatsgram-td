@@ -84,8 +84,8 @@ type layerRPCFieldPlan struct {
 }
 
 // layerRPCResultPlan freezes both sides of a method result conversion. The
-// canonical reference is the handler-facing Layer 227 result; WireRef is the
-// exact result grammar expected by this profile's request ID.
+// canonical reference is the handler-facing target-schema result; WireRef is
+// the exact result grammar expected by this profile's request ID.
 type layerRPCResultPlan struct {
 	CanonicalRef      *semantic.TypeRef
 	WireRef           *semantic.TypeRef
@@ -173,6 +173,24 @@ type layerRPCRoutePlan struct {
 	Profile *layerRPCMethodProfile
 }
 
+// layerRPCDefaultWrapperPlan groups every exact generated wrapper route which
+// owns one CRC. Default admission must probe every profile-specific prefix:
+// the same outer field TypeRefs can have different transitive wire layouts in
+// different profiles even when the wrapper's direct BodyShape is unchanged.
+// No candidate is authoritative until its prefix reaches invokeWithLayer and
+// exact admission under that selected profile validates the complete request.
+type layerRPCDefaultWrapperPlan struct {
+	WireID uint32
+	Key    semantic.SemanticKey
+	Layers []int
+}
+
+// layerRPCMaxDefaultWrapperCandidatesPerCRC bounds both generated source size
+// and the width of one speculative wrapper-probe level. Runtime recursion has
+// an independent candidate-attempt budget; neither limit is a semantic decode
+// budget shared by candidates.
+const layerRPCMaxDefaultWrapperCandidatesPerCRC = 32
+
 // layerRPCModel is a generation-time RPC dispatch projection. Indexes are
 // private accelerators and are not emitted as a runtime schema catalog.
 type layerRPCModel struct {
@@ -180,6 +198,7 @@ type layerRPCModel struct {
 	Profiles        []int
 	Methods         []layerRPCMethodPlan
 	Routes          []layerRPCRoutePlan
+	DefaultWrappers []layerRPCDefaultWrapperPlan
 	AdmissionFields []layerRPCAdmissionFieldPlan
 
 	methodIndex map[semantic.SemanticKey]*layerRPCMethodPlan
@@ -198,6 +217,19 @@ func (m *layerRPCModel) route(layer int, wireID uint32) *layerRPCRoutePlan {
 		return nil
 	}
 	return m.routeIndex[layerRPCRouteKey{Layer: layer, WireID: wireID}]
+}
+
+func (m *layerRPCModel) defaultWrapper(wireID uint32) *layerRPCDefaultWrapperPlan {
+	if m == nil {
+		return nil
+	}
+	index := sort.Search(len(m.DefaultWrappers), func(index int) bool {
+		return m.DefaultWrappers[index].WireID >= wireID
+	})
+	if index >= len(m.DefaultWrappers) || m.DefaultWrappers[index].WireID != wireID {
+		return nil
+	}
+	return &m.DefaultWrappers[index]
 }
 
 // buildLayerRPCModel consumes the generator's one conversion plan, explicit
@@ -293,10 +325,64 @@ func (g *Generator) buildLayerRPCModel() (*layerRPCModel, error) {
 		}
 		model.routeIndex[key] = route
 	}
+	if err := buildLayerRPCDefaultWrappers(model); err != nil {
+		return nil, err
+	}
 	if err := buildLayerRPCAdmissionFields(model); err != nil {
 		return nil, err
 	}
 	return model, nil
+}
+
+func buildLayerRPCDefaultWrappers(model *layerRPCModel) error {
+	if model == nil {
+		return fmt.Errorf("gen: nil layer RPC model while grouping default wrapper probes")
+	}
+	grouped := make(map[uint32][]int)
+	for routeIndex := range model.Routes {
+		route := &model.Routes[routeIndex]
+		if !layerRPCDefaultWrapperProbeEligible(route) {
+			continue
+		}
+		grouped[route.WireID] = append(grouped[route.WireID], route.Layer)
+	}
+	model.DefaultWrappers = make([]layerRPCDefaultWrapperPlan, 0, len(grouped))
+	for wireID, layers := range grouped {
+		sort.Ints(layers)
+		if len(layers) > layerRPCMaxDefaultWrapperCandidatesPerCRC {
+			return fmt.Errorf("gen: default wrapper %#08x has %d profile candidates, limit %d", wireID, len(layers), layerRPCMaxDefaultWrapperCandidatesPerCRC)
+		}
+		var key semantic.SemanticKey
+		for index, layer := range layers {
+			if index != 0 && layers[index-1] == layer {
+				return fmt.Errorf("gen: default wrapper %#08x repeats profile %d", wireID, layer)
+			}
+			route := model.route(layer, wireID)
+			if route == nil || route.Method == nil || route.Profile == nil || route.Profile.Wrapper == nil {
+				return fmt.Errorf("gen: default wrapper %#08x has an invalid probe route in profile %d", wireID, layer)
+			}
+			if index == 0 {
+				key = route.Method.Key
+			} else if route.Method.Key != key {
+				return fmt.Errorf("gen: default wrapper %#08x maps to both %s and %s", wireID, key, route.Method.Key)
+			}
+		}
+		model.DefaultWrappers = append(model.DefaultWrappers, layerRPCDefaultWrapperPlan{WireID: wireID, Key: key, Layers: layers})
+	}
+	sort.Slice(model.DefaultWrappers, func(i, j int) bool {
+		return model.DefaultWrappers[i].WireID < model.DefaultWrappers[j].WireID
+	})
+	return nil
+}
+
+func layerRPCDefaultWrapperProbeEligible(route *layerRPCRoutePlan) bool {
+	if route == nil || route.Method == nil || route.Profile == nil || route.Profile.Definition == nil || route.Profile.Wrapper == nil {
+		return false
+	}
+	profile := route.Profile
+	return profile.Availability != LayerAvailabilityProfileOnly && profile.Request != layerRPCUnavailable &&
+		profile.Request != layerRPCReject && profile.RequestHook == "" && profile.Result.Action != layerRPCUnavailable &&
+		profile.Result.Action != layerRPCReject
 }
 
 func buildLayerRPCMethod(

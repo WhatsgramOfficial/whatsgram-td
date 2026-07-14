@@ -339,6 +339,17 @@ type LayerCodecError struct {
 // parsing LayerCodecError.Reason text.
 var ErrLayerUnknownRPCMethod = errors.New("unknown generated layer RPC method")
 
+// ErrLayerProfileRequired classifies a known generated RPC which cannot be
+// decoded before the caller supplies a default profile or invokeWithLayer
+// supplies explicit profile evidence. Unknown constructors use
+// ErrLayerUnknownRPCMethod instead.
+var ErrLayerProfileRequired = errors.New("layer profile required")
+
+// ErrLayerProfileAmbiguous classifies a default-admission wrapper prefix that
+// can expose conflicting invokeWithLayer profiles under multiple generated
+// wire layouts. Admission fails closed instead of guessing a decoder.
+var ErrLayerProfileAmbiguous = errors.New("ambiguous layer profile evidence")
+
 // Unwrap preserves typed policy/adapter failures across the generated codec
 // boundary. Callers may classify a failure without parsing Reason.
 func (e *LayerCodecError) Unwrap() error {
@@ -399,6 +410,7 @@ func (e *LayerCodecError) Error() string {
 // layer state.
 type LayerCall struct {
 	profile         LayerProfile
+	wireInvariant   bool
 	method          LayerSemanticID
 	wireID          uint32
 	canonicalResult *LayerTypeRef
@@ -409,9 +421,12 @@ type LayerCall struct {
 }
 
 // LayerCallIdentity is an opaque, comparable in-process identity for the
-// exact result representation frozen at request admission. Request arguments
-// are deliberately excluded; LayerPreparedCallIdentity adds their wire
-// digest for flight/result-cache collision checks.
+// result representation frozen at request admission. Request arguments are
+// deliberately excluded; LayerPreparedCallIdentity adds their wire digest for
+// flight/result-cache collision checks. Generation-time proven invariant RPCs
+// normalize only this identity's profile to canonical, while LayerCall.Profile
+// retains the actual codec profile. Their request and result bytes are proven
+// equal across all supported profiles before this normalization is emitted.
 type LayerCallIdentity struct {
 	profile         LayerProfile
 	method          LayerSemanticID
@@ -420,14 +435,23 @@ type LayerCallIdentity struct {
 	wireResult      *LayerTypeRef
 }
 
-func (c LayerCall) Profile() LayerProfile              { return c.profile }
+func (c LayerCall) Profile() LayerProfile { return c.profile }
+
+// WireInvariant reports a generation-time proof that this terminal method's
+// complete request and result wire forms are identical in every supported
+// profile. The bit is private and is set only by generated exact routes.
+func (c LayerCall) WireInvariant() bool                { return c.wireInvariant }
 func (c LayerCall) Method() LayerSemanticID            { return c.method }
 func (c LayerCall) WireID() uint32                     { return c.wireID }
 func (c LayerCall) CanonicalResultType() *LayerTypeRef { return c.canonicalResult }
 func (c LayerCall) WireResultType() *LayerTypeRef      { return c.wireResult }
 func (c LayerCall) Identity() LayerCallIdentity {
+	profile := c.profile
+	if c.wireInvariant {
+		profile = LayerProfileCanonical
+	}
 	return LayerCallIdentity{
-		profile:         c.profile,
+		profile:         profile,
 		method:          c.method,
 		wireID:          c.wireID,
 		canonicalResult: c.canonicalResult,
@@ -638,8 +662,10 @@ func (c LayerCall) EncodeFrozenResult(frozen LayerFrozenResult, b *bin.Buffer) e
 }
 
 // LayerPreparedResult is one defensive RPC result wire snapshot bound to the
-// complete admitted LayerCall identity. In particular, final bytes cannot be
-// replayed under a different profile, method, wire ID, or result TypeRef.
+// complete admitted LayerCall identity. Final bytes cannot be replayed under a
+// different profile except for methods whose complete request/result wire form
+// was generation-time proven invariant and whose identity profile is therefore
+// normalized. Method, wire ID, and result TypeRef must always remain equal.
 type LayerPreparedResult struct {
 	identity LayerCallIdentity
 	body     []byte
@@ -829,14 +855,44 @@ type layerRPCRequestLease struct {
 // Private fields prevent callers from replacing a frozen Call or constructing
 // a request which bypassed generated admission.
 type LayerRequest struct {
-	lease    *layerRPCRequestLease
-	prepared LayerPreparedCall
-	wrappers []LayerRPCWrapper
+	lease                  *layerRPCRequestLease
+	prepared               LayerPreparedCall
+	wrappers               []LayerRPCWrapper
+	effectiveProfile       LayerProfile
+	profileEvidenceProfile LayerProfile
+	effectiveProfileKnown  bool
+	profileEvidence        bool
 }
 
 func (r LayerRequest) Prepared() LayerPreparedCall { return r.prepared }
 func (r LayerRequest) Call() LayerCall             { return r.prepared.call }
-func (r LayerRequest) WrapperCount() int           { return len(r.wrappers) }
+
+// EffectiveProfile reports the authoritative profile selected for this
+// admitted terminal call. AdmitDefaultLayer returns the caller's inherited
+// default for a naked request and an invokeWithLayer override when present.
+// An unprofiled wire-invariant terminal returns false: its canonical decoder
+// route is only an internal representative and must not masquerade as client
+// profile state.
+func (r LayerRequest) EffectiveProfile() (LayerProfile, bool) {
+	if !r.effectiveProfileKnown {
+		return LayerProfile(0), false
+	}
+	return r.effectiveProfile, true
+}
+
+// ProfileEvidence reports the authoritative client profile used by this
+// admission. AdmitLayer returns its caller-supplied, already-frozen profile;
+// AdmitDefaultLayer returns only an explicit invokeWithLayer selector, not its
+// inherited default; unprofiled invokeWithLayer also returns its selector. An
+// unprofiled invariant terminal returns false even though its internal
+// wire-identical representative codec route uses LayerProfileCanonical.
+func (r LayerRequest) ProfileEvidence() (LayerProfile, bool) {
+	if !r.profileEvidence {
+		return LayerProfile(0), false
+	}
+	return r.profileEvidenceProfile, true
+}
+func (r LayerRequest) WrapperCount() int { return len(r.wrappers) }
 func (r LayerRequest) Wrapper(index int) (LayerRPCWrapper, bool) {
 	if index < 0 || index >= len(r.wrappers) {
 		return LayerRPCWrapper{}, false

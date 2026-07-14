@@ -21,6 +21,7 @@ boolFalse#bc799737 = Bool;
 boolTrue#997275b5 = Bool;
 messageRange#31000001 min_id:int max_id:int = MessageRange;
 messageRangeEmpty#31000003 = MessageRange;
+probeMeta#44000001 value:int = ProbeMeta;
 ---functions---
 echo#21000010 legacy_tag:string value:int = Pong;
 join#21000011 value:int = OldJoin;
@@ -32,6 +33,8 @@ invokeAfterMsg#cb9f372d {X:Type} msg_id:long query:!X = X;
 invokeAfterMsgs#365275f2 {X:Type} msg_ids:Vector<long> query:!X = X;
 invokeWithMessagesRange#31000002 {X:Type} range:MessageRange query:!X = X;
 invokeWithLayer#da9b0d0d {X:Type} layer:int query:!X = X;
+futureEnvelope#42000001 {X:Type} query:!X = X;
+profileEnvelope#43000001 {X:Type} padding:Vector<int> meta:ProbeMeta query:!X = X;
 // LAYER 1
 `
 
@@ -45,6 +48,7 @@ boolFalse#bc799737 = Bool;
 boolTrue#997275b5 = Bool;
 messageRange#31000001 min_id:int max_id:int = MessageRange;
 messageRangeEmpty#31000003 = MessageRange;
+probeMeta#44000002 value:int = ProbeMeta;
 ---functions---
 echo#21000020 value:int = Pong;
 join#21000021 value:int = NewJoin;
@@ -56,6 +60,8 @@ invokeAfterMsg#cb9f372d {X:Type} msg_id:long query:!X = X;
 invokeAfterMsgs#365275f2 {X:Type} msg_ids:Vector<long> query:!X = X;
 invokeWithMessagesRange#31000002 {X:Type} range:MessageRange query:!X = X;
 invokeWithLayer#da9b0d0d {X:Type} layer:int query:!X = X;
+futureEnvelope#42000002 {X:Type} query:!X = X;
+profileEnvelope#43000001 {X:Type} padding:Vector<int> meta:ProbeMeta query:!X = X;
 // LAYER 2
 `
 
@@ -178,6 +184,30 @@ func TestLayerRPCModelGenericSlotsAndRecursiveFreeze(t *testing.T) {
 	if afterWrapper.QuerySlot.Name != "X" || withLayerWrapper.QuerySlot.Name != "X" ||
 		afterWrapper.QuerySlot.Owner == withLayerWrapper.QuerySlot.Owner {
 		t.Fatalf("generic slots were keyed by the shared name rather than owner+ordinal: after=%+v withLayer=%+v", afterWrapper.QuerySlot, withLayerWrapper.QuerySlot)
+	}
+	for _, fallbackCase := range []struct {
+		wireID uint32
+		layers []int
+		method string
+	}{
+		{wireID: 0xda9b0d0d, layers: []int{1, 2}, method: "invokeWithLayer"},
+		{wireID: 0x42000001, layers: []int{1}, method: "futureEnvelope"},
+		{wireID: 0x42000002, layers: []int{2}, method: "futureEnvelope"},
+		{wireID: 0x43000001, layers: []int{1, 2}, method: "profileEnvelope"},
+	} {
+		fallback := model.defaultWrapper(fallbackCase.wireID)
+		if fallback == nil || fallback.Key.QName != fallbackCase.method || !equalLayerRPCSourceProfiles(fallback.Layers, fallbackCase.layers) {
+			t.Fatalf("default wrapper %#08x = %+v, want profiles %v", fallbackCase.wireID, fallback, fallbackCase.layers)
+		}
+		for _, layer := range fallback.Layers {
+			route := model.route(layer, fallbackCase.wireID)
+			if route == nil || route.Method == nil || route.Method.Key.QName != fallbackCase.method {
+				t.Fatalf("default wrapper %#08x profile %d route = %+v, want method %s", fallbackCase.wireID, layer, route, fallbackCase.method)
+			}
+		}
+	}
+	if fallback := model.defaultWrapper(0x21000020); fallback != nil {
+		t.Fatalf("ordinary terminal entered default wrapper fallback: %+v", fallback)
 	}
 
 	request := &layerRPCRequestNode{
@@ -388,7 +418,7 @@ func TestLayerRPCServerTemplateKeepsOneOnFacadePerSemanticMethod(t *testing.T) {
 	}
 	for _, required := range []string{
 		"HandleLayer(profile LayerProfile",
-		"decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter)",
+		"decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter, profileAdmission)",
 		"r.prepared.Call().EncodeResult(r.value, b)",
 		"duplicate layer RPC handler",
 	} {

@@ -37,8 +37,89 @@ func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
 	if model.LayerRPC != rpc || model.RouteCount != len(rpc.Routes) || len(model.Routes) != len(rpc.Routes) {
 		t.Fatalf("RPC source route coverage = model:%d routes:%d want:%d", model.RouteCount, len(model.Routes), len(rpc.Routes))
 	}
-	if model.WrapperCount != 8 {
-		t.Fatalf("wrapper route count = %d, want four wrappers in two profiles", model.WrapperCount)
+	if model.ProbeAttemptLimit != len(model.Profiles)+refs.MaxDepth || model.ProbeWorkMultiplier != len(model.Profiles) {
+		t.Fatalf("speculative probe bounds = attempts:%d multiplier:%d, want %d/%d", model.ProbeAttemptLimit, model.ProbeWorkMultiplier, len(model.Profiles)+refs.MaxDepth, len(model.Profiles))
+	}
+	if model.UniqueAdmitCount <= 0 || model.UniqueAdmitCount >= model.RouteCount {
+		t.Fatalf("RPC admit body coalescing = unique:%d exact:%d", model.UniqueAdmitCount, model.RouteCount)
+	}
+	confirmOne := findLayerRPCSourceRoute(t, model, 1, 0x21000030)
+	confirmTwo := findLayerRPCSourceRoute(t, model, 2, 0x21000030)
+	if confirmOne.Admit != confirmTwo.Admit || confirmOne.EmitAdmit == confirmTwo.EmitAdmit {
+		t.Fatalf("identical future-stable route did not share one admit helper: one=%+v two=%+v", confirmOne, confirmTwo)
+	}
+	if model.Unprofiled == nil {
+		t.Fatal("unprofiled admission model is absent")
+	}
+	if invariant := findLayerRPCUnprofiledInvariant(model, 0x21000030); invariant == nil || invariant.Method != "LayerSemanticMethodConfirm" {
+		t.Fatalf("invariant Bool bootstrap route = %+v", invariant)
+	}
+	for _, rejected := range []uint32{0x21000020, 0x21000021} {
+		if invariant := findLayerRPCUnprofiledInvariant(model, rejected); invariant != nil {
+			t.Fatalf("cross-layer request/result drift %#08x was classified invariant: %+v", rejected, invariant)
+		}
+	}
+	for _, layer := range []int{1, 2} {
+		confirm := findLayerRPCSourceRoute(t, model, layer, 0x21000030)
+		if !strings.Contains(confirm.Body, "wireInvariant: true") {
+			t.Fatalf("invariant Bool route layer %d lacks wire proof metadata:\n%s", layer, confirm.Body)
+		}
+	}
+	if echo := findLayerRPCSourceRoute(t, model, 2, 0x21000020); strings.Contains(echo.Body, "wireInvariant: true") {
+		t.Fatalf("request-drift route was marked wire invariant:\n%s", echo.Body)
+	}
+	if join := findLayerRPCSourceRoute(t, model, 2, 0x21000021); strings.Contains(join.Body, "wireInvariant: true") {
+		t.Fatalf("result-drift route was marked wire invariant:\n%s", join.Body)
+	}
+	if model.WrapperCount != 12 {
+		t.Fatalf("wrapper route count = %d, want six wrappers in two profiles", model.WrapperCount)
+	}
+	if len(model.DefaultWrappers) != 7 {
+		t.Fatalf("default wrapper fallback count = %d, want seven distinct wrapper CRCs", len(model.DefaultWrappers))
+	}
+	futureFallback := false
+	for _, fallback := range model.DefaultWrappers {
+		if fallback.WireID == 0x42000002 {
+			futureFallback = len(fallback.Candidates) == 1 && fallback.Candidates[0].WireProfile == 2 &&
+				fallback.Candidates[0].ProfileConstant == "LayerProfile2" && fallback.Candidates[0].Probe != ""
+		}
+	}
+	if !futureFallback {
+		t.Fatalf("Layer 2 future wrapper fallback = %+v", model.DefaultWrappers)
+	}
+	profileFallback := false
+	invariantFallback := false
+	for _, fallback := range model.DefaultWrappers {
+		if fallback.WireID == 0x43000001 {
+			profileFallback = len(fallback.Candidates) == 2 && fallback.Candidates[0].WireProfile == 1 &&
+				fallback.Candidates[0].ProbeCandidate && fallback.Candidates[1].WireProfile == 2 && fallback.Candidates[1].ProbeCandidate
+		}
+		if fallback.WireID == 0xcb9f372d {
+			probeCandidates := 0
+			for _, candidate := range fallback.Candidates {
+				if candidate.ProbeCandidate {
+					probeCandidates++
+				}
+			}
+			invariantFallback = len(fallback.Candidates) == 2 && probeCandidates == 1
+		}
+	}
+	if !profileFallback {
+		t.Fatalf("same-CRC profile-specific prefix probes = %+v", model.DefaultWrappers)
+	}
+	if !invariantFallback {
+		t.Fatalf("invariant same-CRC candidates were not collapsed = %+v", model.DefaultWrappers)
+	}
+	for _, profile := range model.Profiles {
+		found := false
+		for _, route := range profile.Routes {
+			if route.WireID == 0x43000001 {
+				found = route.ProbeDefault
+			}
+		}
+		if !found {
+			t.Fatalf("profile %d same-CRC drift route omitted default prefix probing", profile.Layer)
+		}
 	}
 	for name, resultType := range map[string]string{
 		"GetInt":    "int",
@@ -82,6 +163,7 @@ func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
 	}
 	for _, want := range []string{
 		"ResolveLayerProfile(rpcWrapperField",
+		"preflight.selectExplicitProfile(inheritedProfile, selectedProfile",
 		"decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)",
 		"state.bind(0, admitted.call.result)",
 		"defer state.restore(bindingSnapshot)",
@@ -91,6 +173,10 @@ func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
 		if !strings.Contains(withLayer.Body, want) {
 			t.Errorf("invokeWithLayer admission is missing %q\n%s", want, withLayer.Body)
 		}
+	}
+	futureWrapper := findLayerRPCSourceRoute(t, model, 2, 0x42000002)
+	if !futureWrapper.Wrapper || !strings.Contains(futureWrapper.Body, "nestedProfile := inheritedProfile") {
+		t.Fatalf("future wrapper does not separate wire and inherited profiles:\n%s", futureWrapper.Body)
 	}
 
 	legacy := findLayerRPCSourceRoute(t, model, 1, 0x21000012)
@@ -304,11 +390,16 @@ func TestLayerRPCServerSourceIsSyntacticallyCompilable(t *testing.T) {
 	for _, want := range []string{
 		"switch profile",
 		"switch id",
+		"func decodeDefaultLayerRPCWrapper(",
+		"layerProbeRPC2_42000002(LayerProfile2",
+		"decodeLayerRPCRequestState(selected, b, state, preflight, depth)",
+		"allowDefaultWrapperFallback(profile)",
 		"func layerAdmitRPC1_21000011",
 		"var _ func(LayerProfile, *NewJoin) (*OldJoin, error) = adaptOldJoinResult",
 		"r.prepared.Call().EncodeResult(r.value, b)",
 		"sha256.Sum256(wireRequest)",
 		"func (s *ServerDispatcher) AdmitLayer(",
+		"func (s *ServerDispatcher) AdmitDefaultLayer(",
 		"func (s *ServerDispatcher) AdmitUnprofiled(",
 		"func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerRequest) (LayerRPCResult, error)",
 		"func (s *ServerDispatcher) HasLayerRPCHandler(semantic LayerSemanticID) bool",
@@ -372,6 +463,10 @@ func TestLayerRPCSourceTelegram220Through227Completeness(t *testing.T) {
 	if model.WrapperCount != wantWrappers || wantWrappers == 0 {
 		t.Fatalf("real wrapper route coverage = %d, want %d", model.WrapperCount, wantWrappers)
 	}
+	authBind := findLayerRPCUnprofiledInvariant(model, 0xcdd42a05)
+	if authBind == nil || authBind.Method != "LayerSemanticMethodAuthBindTempAuthKey" {
+		t.Fatalf("auth.bindTempAuthKey is not a generated invariant bootstrap RPC: %+v", authBind)
+	}
 	for profileIndex := range model.Profiles {
 		profile := &model.Profiles[profileIndex]
 		want := 0
@@ -394,7 +489,83 @@ func TestLayerRPCSourceTelegram220Through227Completeness(t *testing.T) {
 	if _, err := format.Source(rendered.Bytes()); err != nil {
 		t.Fatalf("format Telegram Layers 220-227 generated RPC server: %v\n%s", err, rendered.String())
 	}
-	t.Logf("Telegram Layers 220-227 RPC source: exact_routes=%d wrapper_routes=%d", model.RouteCount, model.WrapperCount)
+	uniqueBodyBytes := 0
+	for _, route := range model.Routes {
+		if route.EmitAdmit {
+			uniqueBodyBytes += len(route.Body)
+		}
+		if route.EmitProbe {
+			uniqueBodyBytes += len(route.ProbeBody)
+		}
+	}
+	t.Logf("Telegram Layers 220-227 RPC source: exact_routes=%d unique_admits=%d wrapper_routes=%d unique_probes=%d handlers=%d admission_fields=%d",
+		model.RouteCount, model.UniqueAdmitCount, model.WrapperCount, model.UniqueProbeCount, len(model.Handlers), len(model.LayerRPC.AdmissionFields))
+	t.Logf("Telegram Layers 220-227 unique RPC body syntax=%d bytes", uniqueBodyBytes)
+}
+
+func TestLayerRPCSourceUnchangedFutureProfileReusesAdmitBodies(t *testing.T) {
+	profile, canonical := layerRPCSourceSyntheticSources()
+	future := strings.Replace(canonical, "// LAYER 2", "// LAYER 3", 1)
+	profiles := make([]*semantic.SchemaModel, 0, 3)
+	for _, source := range []string{profile, canonical, future} {
+		parsed, err := tl.Parse(bytes.NewBufferString(source))
+		if err != nil {
+			t.Fatal(err)
+		}
+		schema, err := semantic.BuildSchema(parsed, semantic.SourceRef{Layer: parsed.Layer, Repository: "https://example.invalid/official.git", Path: "api.tl"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		profiles = append(profiles, schema)
+	}
+	set, err := NewSchemaSet(3, profiles...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerRPCSourceSyntheticPolicy(t, set)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rpc, err := generator.buildLayerRPCModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	refs, err := generator.buildLayerTypeRefModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	model, err := generator.buildLayerRPCSourceModel(rpc, refs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, wireID := range []uint32{0x21000030, 0xcb9f372d, 0xda9b0d0d} {
+		previous := findLayerRPCSourceRoute(t, model, 2, wireID)
+		added := findLayerRPCSourceRoute(t, model, 3, wireID)
+		if previous.Admit != added.Admit || added.EmitAdmit {
+			t.Fatalf("unchanged future route %#08x cloned admit helper: previous=%s added=%s emit=%v", wireID, previous.Admit, added.Admit, added.EmitAdmit)
+		}
+		if previous.Probe != "" && (previous.Probe != added.Probe || added.EmitProbe) {
+			t.Fatalf("unchanged future wrapper %#08x cloned probe helper: previous=%s added=%s emit=%v", wireID, previous.Probe, added.Probe, added.EmitProbe)
+		}
+	}
+	render := func() []byte {
+		var output bytes.Buffer
+		if err := Template().ExecuteTemplate(&output, "layer_server", struct {
+			Package        string
+			LayerRPCSource *layerRPCSourceModel
+		}{Package: "tg", LayerRPCSource: model}); err != nil {
+			t.Fatal(err)
+		}
+		formatted, err := format.Source(output.Bytes())
+		if err != nil {
+			t.Fatal(err)
+		}
+		return formatted
+	}
+	first, second := render(), render()
+	if !bytes.Equal(first, second) {
+		t.Fatal("coalesced future-profile server source is nondeterministic")
+	}
 }
 
 func TestSchemaSetWriteSourceSelectsStaticLayerServer(t *testing.T) {
@@ -445,6 +616,10 @@ func TestSchemaSetWriteSourceSelectsStaticLayerServer(t *testing.T) {
 		"func (c LayerCall) PrepareFrozenResult(",
 		"type LayerSemanticRequestIdentity struct",
 		"func (p LayerPreparedCall) SemanticIdentity() LayerSemanticRequestIdentity",
+		"func (r LayerRequest) ProfileEvidence() (LayerProfile, bool)",
+		"func (r LayerRequest) EffectiveProfile() (LayerProfile, bool)",
+		"var ErrLayerProfileRequired = errors.New(\"layer profile required\")",
+		"var ErrLayerProfileAmbiguous = errors.New(\"ambiguous layer profile evidence\")",
 	} {
 		if !strings.Contains(codecAPI, want) {
 			t.Errorf("integrated layer codec API is missing %q", want)
@@ -672,6 +847,407 @@ func admitWrappedEcho(t *testing.T, dispatcher *ServerDispatcher, wire []byte) L
 		t.Fatalf("admission left %d request bytes", requestBody.Len())
 	}
 	return admitted
+}
+
+func TestGeneratedUnprofiledInvariantBootstrap(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+	dispatcher.OnConfirm(func(context.Context) (bool, error) { return true, nil })
+
+	bare := canonicalRequest(0x21000030)
+	admitted, err := dispatcher.AdmitUnprofiled(bare)
+	if err != nil { t.Fatal(err) }
+	if bare.Len() != 0 { t.Fatalf("invariant admission left %d bytes", bare.Len()) }
+	if evidence, ok := admitted.ProfileEvidence(); ok || evidence != LayerProfile(0) {
+		t.Fatalf("invariant admission fabricated profile evidence: %d/%v", evidence, ok)
+	}
+	if effective, ok := admitted.EffectiveProfile(); ok || effective != LayerProfile(0) {
+		t.Fatalf("invariant admission fabricated an effective profile: %d/%v", effective, ok)
+	}
+	if admitted.Call().Profile() != LayerProfileCanonical {
+		t.Fatalf("invariant internal codec profile = %d, want canonical", admitted.Call().Profile())
+	}
+	if !admitted.Call().WireInvariant() {
+		t.Fatal("invariant admission lost generated request/result wire proof")
+	}
+	result, err := dispatcher.DispatchAdmitted(context.Background(), admitted)
+	if err != nil { t.Fatal(err) }
+	if !result.WireInvariant() {
+		t.Fatal("invariant RPC result lost generated wire proof")
+	}
+	var encoded bin.Buffer
+	if err := result.Encode(&encoded); err != nil { t.Fatal(err) }
+	var want bin.Buffer
+	want.PutID(0x997275b5)
+	if !bytes.Equal(encoded.Raw(), want.Raw()) {
+		t.Fatalf("invariant Bool result = %x, want %x", encoded.Raw(), want.Raw())
+	}
+
+	requestDrift := canonicalRequest(0x21000020, 7)
+	if _, err := dispatcher.AdmitUnprofiled(requestDrift); err == nil {
+		t.Fatal("unprofiled admission accepted a cross-layer request-ID/body change")
+	}
+	resultDrift := canonicalRequest(0x21000021, 7)
+	if _, err := dispatcher.AdmitUnprofiled(resultDrift); err == nil {
+		t.Fatal("unprofiled admission accepted a cross-layer result TypeRef change")
+	}
+
+	var wrapped bin.Buffer
+	wrapped.PutID(0xda9b0d0d)
+	wrapped.PutInt(1)
+	wrapped.PutID(0x21000030)
+	wrappedAdmission, err := dispatcher.AdmitUnprofiled(&wrapped)
+	if err != nil { t.Fatal(err) }
+	if evidence, ok := wrappedAdmission.ProfileEvidence(); !ok || evidence != LayerProfile1 {
+		t.Fatalf("invokeWithLayer profile evidence = %d/%v, want 1/true", evidence, ok)
+	}
+	if effective, ok := wrappedAdmission.EffectiveProfile(); !ok || effective != LayerProfile1 {
+		t.Fatalf("invokeWithLayer effective profile = %d/%v, want 1/true", effective, ok)
+	}
+	if wrappedAdmission.Call().Profile() != LayerProfile1 {
+		t.Fatalf("invokeWithLayer call profile = %d, want 1", wrappedAdmission.Call().Profile())
+	}
+}
+
+func TestGeneratedDefaultLayerAdmission(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+
+	naked := canonicalRequest(0x21000020, 7)
+	admitted, err := dispatcher.AdmitDefaultLayer(LayerProfile2, naked)
+	if err != nil { t.Fatal(err) }
+	if naked.Len() != 0 { t.Fatalf("default naked admission left %d bytes", naked.Len()) }
+	if effective, ok := admitted.EffectiveProfile(); !ok || effective != LayerProfile2 {
+		t.Fatalf("default naked effective profile = %d/%v, want 2/true", effective, ok)
+	}
+	if evidence, ok := admitted.ProfileEvidence(); ok || evidence != LayerProfile(0) {
+		t.Fatalf("inherited default masqueraded as explicit evidence: %d/%v", evidence, ok)
+	}
+	if admitted.Call().Profile() != LayerProfile2 {
+		t.Fatalf("default naked call profile = %d, want 2", admitted.Call().Profile())
+	}
+
+	// Layer 1 does not know the Layer 2 CRC of this transparent envelope. A
+	// naked nested query supplies no profile evidence, so default admission
+	// fails closed without consuming the caller buffer.
+	var futureNaked bin.Buffer
+	futureNaked.PutID(0x42000002)
+	futureNaked.PutID(0x21000010)
+	futureNaked.PutString("historical")
+	futureNaked.PutInt(42)
+	futureNakedBefore := futureNaked.Copy()
+	futureNakedStrict := bin.Buffer{Buf: futureNaked.Copy()}
+	futureNakedStrictBefore := futureNakedStrict.Copy()
+	if _, err := dispatcher.AdmitDefaultLayer(LayerProfile1, &futureNaked); !errors.Is(err, ErrLayerProfileRequired) {
+		t.Fatalf("future naked wrapper error = %v, want ErrLayerProfileRequired", err)
+	}
+	if !bytes.Equal(futureNaked.Raw(), futureNakedBefore) {
+		t.Fatal("future naked wrapper probe mutated caller input")
+	}
+	if _, err := dispatcher.AdmitLayer(LayerProfile1, &futureNakedStrict); !errors.Is(err, ErrLayerUnknownRPCMethod) {
+		t.Fatalf("strict Layer 1 future wrapper error = %v, want ErrLayerUnknownRPCMethod", err)
+	}
+	if !bytes.Equal(futureNakedStrict.Raw(), futureNakedStrictBefore) {
+		t.Fatal("strict future-wrapper rejection mutated caller input")
+	}
+
+	// The same future envelope can expose invokeWithLayer. Prefix probing uses
+	// private copies, then exact Layer 2 admission re-decodes the complete bytes
+	// and reproduces that explicit evidence before accepting the request.
+	var futureSelected bin.Buffer
+	futureSelected.PutID(0x42000002)
+	futureSelected.PutID(0xda9b0d0d)
+	futureSelected.PutInt(2)
+	futureSelected.PutID(0x21000020)
+	futureSelected.PutInt(7)
+	futureAdmission, err := dispatcher.AdmitDefaultLayer(LayerProfile1, &futureSelected)
+	if err != nil { t.Fatal(err) }
+	if futureSelected.Len() != 0 || futureAdmission.Call().Profile() != LayerProfile2 || futureAdmission.WrapperCount() != 2 {
+		t.Fatalf("future selected admission = remaining:%d profile:%d wrappers:%d", futureSelected.Len(), futureAdmission.Call().Profile(), futureAdmission.WrapperCount())
+	}
+	if evidence, ok := futureAdmission.ProfileEvidence(); !ok || evidence != LayerProfile2 {
+		t.Fatalf("future selected evidence = %d/%v, want 2/true", evidence, ok)
+	}
+	outer, _ := futureAdmission.Wrapper(0)
+	selector, selectorOK := futureAdmission.Wrapper(1)
+	if outer.Profile() != LayerProfile2 || outer.WireID() != 0x42000002 ||
+		!selectorOK || selector.Profile() != LayerProfile2 || selector.WireID() != 0xda9b0d0d {
+		t.Fatalf("future wrapper profiles = outer:%d/%#08x selector:%d/%#08x/%v",
+			outer.Profile(), outer.WireID(), selector.Profile(), selector.WireID(), selectorOK)
+	}
+
+	// This wrapper keeps one CRC and direct BodyShape across profiles, while
+	// its metadata class uses profile-specific constructor IDs. The inherited
+	// Layer 1 prefix fails on Layer 2 metadata, the Layer 2 candidate uniquely
+	// reaches invokeWithLayer(2), and only then does exact replay consume bytes.
+	var driftSelected bin.Buffer
+	driftSelected.PutID(0x43000001)
+	driftSelected.PutVectorHeader(3)
+	driftSelected.PutInt(1)
+	driftSelected.PutInt(2)
+	driftSelected.PutInt(3)
+	driftSelected.PutID(0x44000002)
+	driftSelected.PutInt(9)
+	driftSelected.PutID(0xda9b0d0d)
+	driftSelected.PutInt(2)
+	driftSelected.PutID(0x21000020)
+	driftSelected.PutInt(7)
+	driftStrict := bin.Buffer{Buf: driftSelected.Copy()}
+	driftStrictBefore := driftStrict.Copy()
+	driftAdmission, err := dispatcher.AdmitDefaultLayerWithLimits(LayerProfile1, &driftSelected, LayerDecodeLimits{MaxVectorElements: 3, MaxAggregateElements: 3})
+	if err != nil { t.Fatal(err) }
+	if driftSelected.Len() != 0 || driftAdmission.Call().Profile() != LayerProfile2 || driftAdmission.WrapperCount() != 2 {
+		t.Fatalf("same-CRC drift admission = remaining:%d profile:%d wrappers:%d", driftSelected.Len(), driftAdmission.Call().Profile(), driftAdmission.WrapperCount())
+	}
+	if evidence, ok := driftAdmission.ProfileEvidence(); !ok || evidence != LayerProfile2 {
+		t.Fatalf("same-CRC drift evidence = %d/%v, want 2/true", evidence, ok)
+	}
+	if _, err := dispatcher.AdmitLayer(LayerProfile1, &driftStrict); err == nil {
+		t.Fatal("strict Layer 1 admission accepted Layer 2 metadata layout")
+	}
+	if !bytes.Equal(driftStrict.Raw(), driftStrictBefore) {
+		t.Fatal("strict same-CRC layout rejection mutated caller input")
+	}
+
+	// The inherited profile really owns this same-CRC layout, and its nested
+	// query is a naked terminal. Prefix probing supplies no explicit selector;
+	// the current exact switch must therefore perform one authoritative replay
+	// under the inherited default instead of rejecting the valid request.
+	inheritedDispatcher := NewServerDispatcher(nil)
+	inheritedPreflightCalls := 0
+	inheritedDispatcher.OnLayerRPCAdmissionPreflight(func(view LayerRPCAdmissionView) error {
+		inheritedPreflightCalls++
+		if view.Profile() != LayerProfile1 || view.Semantic() != LayerSemanticMethodEcho { t.Fatalf("inherited terminal view = profile:%d semantic:%d", view.Profile(), view.Semantic()) }
+		return nil
+	})
+	var inheritedNaked bin.Buffer
+	inheritedNaked.PutID(0x43000001)
+	inheritedNaked.PutVectorHeader(3)
+	inheritedNaked.PutInt(1); inheritedNaked.PutInt(2); inheritedNaked.PutInt(3)
+	inheritedNaked.PutID(0x44000001); inheritedNaked.PutInt(8)
+	inheritedNaked.PutID(0x21000010); inheritedNaked.PutString("historical"); inheritedNaked.PutInt(42)
+	inheritedAdmission, err := inheritedDispatcher.AdmitDefaultLayerWithLimits(LayerProfile1, &inheritedNaked, LayerDecodeLimits{MaxVectorElements: 3, MaxAggregateElements: 3})
+	if err != nil { t.Fatal(err) }
+	if inheritedNaked.Len() != 0 || inheritedAdmission.Call().Profile() != LayerProfile1 || inheritedAdmission.WrapperCount() != 1 || inheritedPreflightCalls != 1 {
+		t.Fatalf("inherited same-CRC naked admission = remaining:%d profile:%d wrappers:%d preflight:%d", inheritedNaked.Len(), inheritedAdmission.Call().Profile(), inheritedAdmission.WrapperCount(), inheritedPreflightCalls)
+	}
+	if evidence, ok := inheritedAdmission.ProfileEvidence(); ok || evidence != LayerProfile(0) {
+		t.Fatalf("inherited naked wrapper invented explicit evidence: %d/%v", evidence, ok)
+	}
+
+	var unsupportedSelector bin.Buffer
+	unsupportedSelector.PutID(0x43000001)
+	unsupportedSelector.PutVectorHeader(3)
+	unsupportedSelector.PutInt(1); unsupportedSelector.PutInt(2); unsupportedSelector.PutInt(3)
+	unsupportedSelector.PutID(0x44000001); unsupportedSelector.PutInt(8)
+	unsupportedSelector.PutID(0xda9b0d0d); unsupportedSelector.PutInt(999)
+	unsupportedSelector.PutID(0x21000010); unsupportedSelector.PutString("historical"); unsupportedSelector.PutInt(42)
+	unsupportedBefore := unsupportedSelector.Copy()
+	if _, err := inheritedDispatcher.AdmitDefaultLayerWithLimits(LayerProfile1, &unsupportedSelector, LayerDecodeLimits{MaxVectorElements: 3, MaxAggregateElements: 3}); !errors.Is(err, errLayerRPCProbeUnsupportedProfile) {
+		t.Fatalf("unsupported selector fallback error = %v", err)
+	}
+	if !bytes.Equal(unsupportedSelector.Raw(), unsupportedBefore) { t.Fatal("unsupported selector fallback mutated caller input") }
+	// Reverse which profile-specific layout is valid. Candidate order stays
+	// deterministic, so this covers both wrong-before-right and right-before-
+	// wrong without allowing either failed candidate to consume the other's
+	// semantic aggregate budget.
+	var reverseDrift bin.Buffer
+	reverseDrift.PutID(0x43000001)
+	reverseDrift.PutVectorHeader(3)
+	reverseDrift.PutInt(1)
+	reverseDrift.PutInt(2)
+	reverseDrift.PutInt(3)
+	reverseDrift.PutID(0x44000001)
+	reverseDrift.PutInt(8)
+	reverseDrift.PutID(0xda9b0d0d)
+	reverseDrift.PutInt(1)
+	reverseDrift.PutID(0x21000010)
+	reverseDrift.PutString("historical")
+	reverseDrift.PutInt(42)
+	reverseAdmission, err := dispatcher.AdmitDefaultLayerWithLimits(LayerProfile2, &reverseDrift, LayerDecodeLimits{MaxVectorElements: 3, MaxAggregateElements: 3})
+	if err != nil { t.Fatal(err) }
+	if reverseDrift.Len() != 0 || reverseAdmission.Call().Profile() != LayerProfile1 || reverseAdmission.WrapperCount() != 2 {
+		t.Fatalf("reverse same-CRC drift admission = remaining:%d profile:%d wrappers:%d", reverseDrift.Len(), reverseAdmission.Call().Profile(), reverseAdmission.WrapperCount())
+	}
+
+	// A long chain of wrappers whose generated prefix is identical in every
+	// profile must remain one linear probe path, not profiles^depth branches.
+	var invariantChain bin.Buffer
+	invariantChain.PutID(0x42000002)
+	const invariantDepth = 12
+	for index := 0; index < invariantDepth; index++ {
+		invariantChain.PutID(0xcb9f372d)
+		invariantChain.PutLong(int64(index + 1))
+	}
+	invariantChain.PutID(0xda9b0d0d)
+	invariantChain.PutInt(2)
+	invariantChain.PutID(0x21000020)
+	invariantChain.PutInt(7)
+	invariantAdmission, err := dispatcher.AdmitDefaultLayer(LayerProfile1, &invariantChain)
+	if err != nil { t.Fatal(err) }
+	if invariantChain.Len() != 0 || invariantAdmission.Call().Profile() != LayerProfile2 ||
+		invariantAdmission.WrapperCount() != invariantDepth+2 {
+		t.Fatalf("linear invariant wrapper chain = remaining:%d profile:%d wrappers:%d", invariantChain.Len(), invariantAdmission.Call().Profile(), invariantAdmission.WrapperCount())
+	}
+
+	var futureUnknown bin.Buffer
+	futureUnknown.PutID(0x42000002)
+	futureUnknown.PutID(0xfeedbeef)
+	futureUnknownBefore := futureUnknown.Copy()
+	if _, err := dispatcher.AdmitDefaultLayer(LayerProfile1, &futureUnknown); !errors.Is(err, ErrLayerUnknownRPCMethod) {
+		t.Fatalf("future wrapper unknown terminal = %v, want ErrLayerUnknownRPCMethod", err)
+	}
+	if !bytes.Equal(futureUnknown.Raw(), futureUnknownBefore) {
+		t.Fatal("unknown nested terminal probe mutated caller input")
+	}
+
+	// An inherited transparent wrapper is decoded under the caller default,
+	// while an inner invokeWithLayer overrides only its nested query.
+	var wrapped bin.Buffer
+	wrapped.PutID(0xcb9f372d)
+	wrapped.PutLong(99)
+	wrapped.PutID(0xda9b0d0d)
+	wrapped.PutInt(1)
+	wrapped.PutID(0x21000010)
+	wrapped.PutString("historical")
+	wrapped.PutInt(42)
+	strict := bin.Buffer{Buf: wrapped.Copy()}
+	strictBefore := strict.Copy()
+	admitted, err = dispatcher.AdmitDefaultLayer(LayerProfile2, &wrapped)
+	if err != nil { t.Fatal(err) }
+	if wrapped.Len() != 0 { t.Fatalf("default wrapped admission left %d bytes", wrapped.Len()) }
+	if effective, ok := admitted.EffectiveProfile(); !ok || effective != LayerProfile1 {
+		t.Fatalf("explicit override effective profile = %d/%v, want 1/true", effective, ok)
+	}
+	if evidence, ok := admitted.ProfileEvidence(); !ok || evidence != LayerProfile1 {
+		t.Fatalf("explicit override evidence = %d/%v, want 1/true", evidence, ok)
+	}
+	if admitted.Call().Profile() != LayerProfile1 || admitted.WrapperCount() != 2 {
+		t.Fatalf("explicit override call = profile:%d wrappers:%d", admitted.Call().Profile(), admitted.WrapperCount())
+	}
+	if _, err := dispatcher.AdmitLayer(LayerProfile2, &strict); err == nil {
+		t.Fatal("strict frozen admission accepted a conflicting invokeWithLayer")
+	}
+	if !bytes.Equal(strict.Raw(), strictBefore) {
+		t.Fatal("strict conflict mutated caller input")
+	}
+
+	var conflict bin.Buffer
+	conflict.PutID(0xda9b0d0d)
+	conflict.PutInt(1)
+	conflict.PutID(0xda9b0d0d)
+	conflict.PutInt(2)
+	conflict.PutID(0x21000020)
+	conflict.PutInt(7)
+	conflictBefore := conflict.Copy()
+	if _, err := dispatcher.AdmitDefaultLayer(LayerProfile2, &conflict); err == nil || !strings.Contains(err.Error(), "conflicts with explicit profile") {
+		t.Fatalf("conflicting explicit selectors error = %v", err)
+	}
+	if !bytes.Equal(conflict.Raw(), conflictBefore) { t.Fatal("explicit selector conflict mutated caller input") }
+
+	var repeated bin.Buffer
+	repeated.PutID(0xda9b0d0d)
+	repeated.PutInt(1)
+	repeated.PutID(0xda9b0d0d)
+	repeated.PutInt(1)
+	repeated.PutID(0x21000010)
+	repeated.PutString("historical")
+	repeated.PutInt(42)
+	repeatedAdmission, err := dispatcher.AdmitDefaultLayer(LayerProfile2, &repeated)
+	if err != nil { t.Fatal(err) }
+	if effective, ok := repeatedAdmission.EffectiveProfile(); !ok || effective != LayerProfile1 {
+		t.Fatalf("repeated matching selector effective profile = %d/%v, want 1/true", effective, ok)
+	}
+
+	// Duplicate wire-layout candidates which expose the same selector collapse
+	// to one result; conflicting evidence is explicitly classified ambiguous.
+	var same layerRPCProfileProbeAccumulator
+	if err := same.add(0x42000002, LayerProfile2, true, nil); err != nil { t.Fatal(err) }
+	if err := same.add(0x42000002, LayerProfile2, true, nil); err != nil { t.Fatal(err) }
+	if selected, found, err := same.result(0x42000002); err != nil || !found || selected != LayerProfile2 {
+		t.Fatalf("same-profile probe collapse = %d/%v/%v", selected, found, err)
+	}
+	var ambiguous layerRPCProfileProbeAccumulator
+	if err := ambiguous.add(0x42000002, LayerProfile1, true, nil); err != nil { t.Fatal(err) }
+	if err := ambiguous.add(0x42000002, LayerProfile2, true, nil); !errors.Is(err, ErrLayerProfileAmbiguous) {
+		t.Fatalf("conflicting probe evidence = %v, want ErrLayerProfileAmbiguous", err)
+	}
+	// An ambiguity discovered by a recursively probed inner wrapper remains
+	// fatal even if another outer-layout candidate already found evidence.
+	var nestedInner layerRPCProfileProbeAccumulator
+	if err := nestedInner.add(0x43000001, LayerProfile1, true, nil); err != nil { t.Fatal(err) }
+	nestedErr := nestedInner.add(0x43000001, LayerProfile2, true, nil)
+	var nestedOuter layerRPCProfileProbeAccumulator
+	if err := nestedOuter.add(0x42000002, LayerProfile1, true, nil); err != nil { t.Fatal(err) }
+	var ambiguityCaller bin.Buffer
+	ambiguityCaller.PutID(0x42000002)
+	ambiguityBefore := ambiguityCaller.Copy()
+	if err := nestedOuter.add(0x42000002, LayerProfile(0), false, nestedErr); !errors.Is(err, ErrLayerProfileAmbiguous) {
+		t.Fatalf("outer accumulator swallowed nested ambiguity: %v", err)
+	}
+	if !bytes.Equal(ambiguityCaller.Raw(), ambiguityBefore) { t.Fatal("nested ambiguity handling mutated caller input") }
+}
+
+func TestGeneratedUnprofiledClassification(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+	known := canonicalRequest(0x21000020, 7)
+	knownBefore := known.Copy()
+	if _, err := dispatcher.AdmitUnprofiled(known); !errors.Is(err, ErrLayerProfileRequired) {
+		t.Fatalf("known unprofiled RPC error = %v, want ErrLayerProfileRequired", err)
+	}
+	if !bytes.Equal(known.Raw(), knownBefore) { t.Fatal("profile-required admission mutated caller input") }
+
+	unknown := canonicalRequest(0xfeedbeef)
+	if _, err := dispatcher.AdmitUnprofiled(unknown); !errors.Is(err, ErrLayerUnknownRPCMethod) {
+		t.Fatalf("unknown unprofiled constructor error = %v, want ErrLayerUnknownRPCMethod", err)
+	}
+
+	malformed := canonicalRequest(0xda9b0d0d)
+	if _, err := dispatcher.AdmitUnprofiled(malformed); err == nil || errors.Is(err, ErrLayerProfileRequired) || errors.Is(err, ErrLayerUnknownRPCMethod) {
+		t.Fatalf("malformed invokeWithLayer classification = %v", err)
+	}
+}
+
+func TestGeneratedInvariantIdentitySurvivesLaterProfileFreeze(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+
+	unprofiledBody := canonicalRequest(0x21000030)
+	unprofiled, err := dispatcher.AdmitUnprofiled(unprofiledBody)
+	if err != nil { t.Fatal(err) }
+	profiledBody := canonicalRequest(0x21000030)
+	profiled, err := dispatcher.AdmitLayer(LayerProfile1, profiledBody)
+	if err != nil { t.Fatal(err) }
+	if evidence, ok := profiled.ProfileEvidence(); !ok || evidence != LayerProfile1 {
+		t.Fatalf("frozen-profile admission evidence = %d/%v, want 1/true", evidence, ok)
+	}
+	if unprofiled.Call().Profile() == profiled.Call().Profile() {
+		t.Fatal("test did not exercise distinct actual codec profiles")
+	}
+	if !unprofiled.Call().WireInvariant() || !profiled.Call().WireInvariant() {
+		t.Fatal("invariant route proof was not emitted for both profiles")
+	}
+	if unprofiled.Call().Identity() != profiled.Call().Identity() {
+		t.Fatalf("invariant call identity changed after profile freeze: %#v != %#v", unprofiled.Call().Identity(), profiled.Call().Identity())
+	}
+	if unprofiled.Prepared().Identity() != profiled.Prepared().Identity() {
+		t.Fatalf("invariant prepared identity changed after profile freeze: %#v != %#v", unprofiled.Prepared().Identity(), profiled.Prepared().Identity())
+	}
+	prepared, err := unprofiled.Call().prepareResult(true)
+	if err != nil { t.Fatal(err) }
+	var replayed bin.Buffer
+	if err := prepared.Encode(profiled.Call(), &replayed); err != nil {
+		t.Fatalf("reuse invariant cached result under later frozen profile: %v", err)
+	}
+	var want bin.Buffer
+	want.PutID(0x997275b5)
+	if !bytes.Equal(replayed.Raw(), want.Raw()) {
+		t.Fatalf("replayed invariant result = %x, want %x", replayed.Raw(), want.Raw())
+	}
+
+	drift := canonicalRequest(0x21000020, 7)
+	driftAdmission, err := dispatcher.AdmitLayer(LayerProfile2, drift)
+	if err != nil { t.Fatal(err) }
+	if driftAdmission.Call().WireInvariant() {
+		t.Fatal("request-drift method exposed a false wire-invariant proof")
+	}
 }
 
 func TestGeneratedLayerRPCAdmissionRuntime(t *testing.T) {
@@ -1111,6 +1687,89 @@ func TestGeneratedLayerRPCAdmissionPreflightAndLimits(t *testing.T) {
 	if _, err := escaped.Uint32At(0); err == nil { t.Fatal("escaped preflight Uint32At remained active") }
 	if _, err := escaped.ReadAt(0, 1); err == nil { t.Fatal("escaped preflight ReadAt remained active") }
 
+	probeDispatcher := NewServerDispatcher(nil)
+	probePreflightCalls := 0
+	probeDispatcher.OnLayerRPCAdmissionPreflight(func(view LayerRPCAdmissionView) error {
+		probePreflightCalls++
+		if view.Profile() != LayerProfile2 || view.Semantic() != LayerSemanticMethodEcho || view.WireID() != 0x21000020 {
+			t.Fatalf("fallback replay terminal view = profile:%d semantic:%d wire:%#08x", view.Profile(), view.Semantic(), view.WireID())
+		}
+		return nil
+	})
+	var probed bin.Buffer
+	probed.PutID(0x42000002)
+	probed.PutID(0xda9b0d0d)
+	probed.PutInt(2)
+	probed.PutID(0x21000020)
+	probed.PutInt(7)
+	if _, err := probeDispatcher.AdmitDefaultLayerWithLimits(LayerProfile1, &probed, LayerDecodeLimits{}); err != nil { t.Fatal(err) }
+	if probePreflightCalls != 1 {
+		t.Fatalf("prefix probe invoked terminal preflight %d times, want exact replay once", probePreflightCalls)
+	}
+	var probeDepthLimited bin.Buffer
+	probeDepthLimited.PutID(0x42000002)
+	probeDepthLimited.PutID(0xda9b0d0d)
+	probeDepthLimited.PutInt(2)
+	probeDepthLimited.PutID(0x21000020)
+	probeDepthLimited.PutInt(7)
+	probeDepthBefore := probeDepthLimited.Copy()
+	probePreflightCalls = 0
+	if _, err := probeDispatcher.AdmitDefaultLayerWithLimits(LayerProfile1, &probeDepthLimited, LayerDecodeLimits{MaxDepth: 2}); err == nil {
+		t.Fatal("fallback exact replay ignored wrapper depth limit")
+	}
+	if probePreflightCalls != 0 {
+		t.Fatalf("failed fallback probe/replay invoked terminal preflight %d times", probePreflightCalls)
+	}
+	if !bytes.Equal(probeDepthLimited.Raw(), probeDepthBefore) {
+		t.Fatal("depth-limited fallback mutated caller input")
+	}
+	realState, err := newLayerCodecDecodeState(LayerProfile2, 0, layerCodecDecodeLimits{maxVectorElements: 3, maxAggregateElements: 3})
+	if err != nil { t.Fatal(err) }
+	work := layerRPCProbeWorkBudget{remainingAttempts: 2, remainingBytes: 4, remainingElements: 5, maxDepth: 2}
+	firstProbe, err := cloneLayerRPCProbeState(realState, &work)
+	if err != nil { t.Fatal(err) }
+	secondProbe, err := cloneLayerRPCProbeState(realState, &work)
+	if err != nil { t.Fatal(err) }
+	if err := firstProbe.consumeDecodeVector(LayerProfile2, nil, 3); err != nil { t.Fatal(err) }
+	if err := secondProbe.consumeDecodeVector(LayerProfile2, nil, 2); err != nil {
+		t.Fatalf("failed candidate polluted another candidate's semantic budget: %v", err)
+	}
+	if realState.decodeBudget.remainingElements != 3 || firstProbe.decodeBudget.remainingElements != 0 || secondProbe.decodeBudget.remainingElements != 1 || work.remainingElements != 0 {
+		t.Fatalf("probe budget isolation = real:%d first:%d second:%d work:%d, want 3/0/1/0", realState.decodeBudget.remainingElements, firstProbe.decodeBudget.remainingElements, secondProbe.decodeBudget.remainingElements, work.remainingElements)
+	}
+	if err := work.consumeBytes(4); err != nil { t.Fatal(err) }
+	if err := work.consumeBytes(1); err == nil { t.Fatal("independent speculative byte budget was not enforced") }
+	if err := work.checkDepth(1); err != nil { t.Fatal(err) }
+	if err := work.checkDepth(2); err == nil { t.Fatal("independent speculative depth budget was not enforced") }
+	if err := work.take(0x43000001); err != nil { t.Fatal(err) }
+	if err := work.take(0x43000001); err != nil { t.Fatal(err) }
+	if err := work.take(0x43000001); err == nil {
+		t.Fatal("independent speculative candidate-attempt budget was not enforced")
+	}
+
+	// Resource exhaustion after an earlier candidate found profile evidence is
+	// fatal: accepting before all generated layouts were checked could hide a
+	// conflicting selector. The probe owns only copies and must not consume the
+	// caller buffer on this failure.
+	var exhaustAfterFound bin.Buffer
+	exhaustAfterFound.PutID(0x43000001)
+	exhaustAfterFound.PutVectorHeader(3)
+	exhaustAfterFound.PutInt(1); exhaustAfterFound.PutInt(2); exhaustAfterFound.PutInt(3)
+	exhaustAfterFound.PutID(0x44000001); exhaustAfterFound.PutInt(8)
+	exhaustAfterFound.PutID(0xda9b0d0d); exhaustAfterFound.PutInt(1)
+	exhaustAfterFound.PutID(0x21000010); exhaustAfterFound.PutString("historical"); exhaustAfterFound.PutInt(42)
+	exhaustBefore := exhaustAfterFound.Copy()
+	exhaustState, err := newLayerCodecDecodeState(LayerProfile1, exhaustAfterFound.Len(), layerCodecDecodeLimits{maxVectorElements: 3, maxAggregateElements: 3})
+	if err != nil { t.Fatal(err) }
+	exhaustWork := layerRPCProbeWorkBudget{remainingAttempts: 2, remainingBytes: 32, remainingElements: 6, maxDepth: 8}
+	selected, found, err := probeDefaultLayerRPCProfile(&exhaustAfterFound, exhaustState, &exhaustWork, 0)
+	if !errors.Is(err, errLayerRPCProbeWorkExhausted) || found || selected != LayerProfile(0) {
+		t.Fatalf("found-then-exhausted probe = selected:%d found:%v err:%v", selected, found, err)
+	}
+	if !bytes.Equal(exhaustAfterFound.Raw(), exhaustBefore) {
+		t.Fatal("found-then-exhausted probe mutated caller input")
+	}
+
 	rejecting := NewServerDispatcher(nil)
 	handlerCalls := 0
 	rejecting.OnBulk(func(context.Context, *BulkRequest) (*Pong, error) {
@@ -1216,6 +1875,27 @@ func TestGeneratedUnknownInnermostMethodAdapter(t *testing.T) {
 	if adapterCalls != 1 || fieldCalls != 1 {
 		t.Fatalf("naked adapter/field calls = %d/%d, want 1/1", adapterCalls, fieldCalls)
 	}
+	defaultNaked := bin.Buffer{Buf: privateBulkWire([]int{1, 2}, []int{3})}
+	defaultAdmission, err := dispatcher.AdmitDefaultLayer(LayerProfile2, &defaultNaked)
+	if err != nil { t.Fatal(err) }
+	if defaultNaked.Len() != 0 || defaultAdmission.Call().Profile() != LayerProfile2 ||
+		defaultAdmission.Call().Method() != LayerSemanticMethodBulk || adapterCalls != 2 || fieldCalls != 2 {
+		t.Fatalf("default unknown adapter = remaining:%d profile:%d semantic:%d calls:%d/%d",
+			defaultNaked.Len(), defaultAdmission.Call().Profile(), defaultAdmission.Call().Method(), adapterCalls, fieldCalls)
+	}
+	var futureWrapped bin.Buffer
+	futureWrapped.PutID(0x42000002)
+	futureWrapped.PutID(0xda9b0d0d)
+	futureWrapped.PutInt(2)
+	futureWrapped.Put(privateBulkWire([]int{1, 2}, []int{3}))
+	futurePrivate, err := dispatcher.AdmitDefaultLayer(LayerProfile1, &futureWrapped)
+	if err != nil { t.Fatal(err) }
+	if futureWrapped.Len() != 0 || futurePrivate.Call().Profile() != LayerProfile2 ||
+		futurePrivate.Call().Method() != LayerSemanticMethodBulk || futurePrivate.WrapperCount() != 2 ||
+		adapterCalls != 3 || fieldCalls != 3 {
+		t.Fatalf("future wrapper private adapter = remaining:%d profile:%d semantic:%d wrappers:%d calls:%d/%d",
+			futureWrapped.Len(), futurePrivate.Call().Profile(), futurePrivate.Call().Method(), futurePrivate.WrapperCount(), adapterCalls, fieldCalls)
+	}
 
 	var wrapped bin.Buffer
 	wrapped.PutID(0xda9b0d0d)
@@ -1229,8 +1909,8 @@ func TestGeneratedUnknownInnermostMethodAdapter(t *testing.T) {
 	if wrapped.Len() != 0 || wrappedAdmission.WrapperCount() != 2 {
 		t.Fatalf("wrapped private admission = remaining:%d wrappers:%d wire:%x", wrapped.Len(), wrappedAdmission.WrapperCount(), wrappedBefore)
 	}
-	if adapterCalls != 2 || fieldCalls != 2 {
-		t.Fatalf("wrapped adapter/field calls = %d/%d, want 2/2", adapterCalls, fieldCalls)
+	if adapterCalls != 4 || fieldCalls != 4 {
+		t.Fatalf("wrapped adapter/field calls = %d/%d, want 4/4", adapterCalls, fieldCalls)
 	}
 
 	// Official routes always win, even if the application adapter would claim
@@ -1407,6 +2087,20 @@ func TestWrapperMetadataPolicyRuntime(t *testing.T) {
 		if _, _, ok, err := metadata.Value("legacy_tag"); err != nil || ok { t.Fatalf("historical metadata leaked: %v %v", ok, err) }
 		return next(ctx)
 	})
+	// Layer 2 does not own the historical metadata-wrapper CRC. Its prefix
+	// probe must decode only raw primitive bytes: metadata policy hooks run
+	// exactly once during the authoritative Layer 1 replay.
+	var fallback bin.Buffer
+	fallback.PutID(0x41000011); fallback.PutString("legacy"); fallback.PutLong(123)
+	fallback.PutID(0xda9b0d0d); fallback.PutInt(1)
+	fallback.PutID(0x41000010); fallback.PutInt(7)
+	fallbackAdmission, err := dispatcher.AdmitDefaultLayer(LayerProfile2, &fallback)
+	if err != nil { t.Fatal(err) }
+	if fallback.Len() != 0 || fallbackAdmission.Call().Profile() != LayerProfile1 || fallbackAdmission.WrapperCount() != 2 {
+		t.Fatalf("metadata fallback = remaining:%d profile:%d wrappers:%d", fallback.Len(), fallbackAdmission.Call().Profile(), fallbackAdmission.WrapperCount())
+	}
+	if tagMetadataCalls != 1 || limitMetadataCalls != 1 { t.Fatalf("fallback probe/replay adapter calls = %d/%d", tagMetadataCalls, limitMetadataCalls) }
+	tagMetadataCalls, limitMetadataCalls = 0, 0
 	var wire bin.Buffer
 	wire.PutID(0xda9b0d0d); wire.PutInt(1)
 	wire.PutID(0x41000011); wire.PutString("legacy"); wire.PutLong(123)
@@ -1481,6 +2175,63 @@ func TestLayerRPCWrapperMetadataPolicyRejectsUnmappedAdapter(t *testing.T) {
 	_, err = generator.buildLayerRPCSourceModel(rpc, refs)
 	if err == nil || !strings.Contains(err.Error(), "E_WRAPPER_METADATA_TARGET_ABSENT") {
 		t.Fatalf("unsafe unmapped wrapper metadata adapter error = %v", err)
+	}
+}
+
+func TestLayerRPCWrapperProbeRejectsNestedPolicyDecoder(t *testing.T) {
+	const profileOne = `
+---types---
+pong#45000001 value:int = Pong;
+probeMeta#45000002 value:long = ProbeMeta;
+---functions---
+echo#45000010 value:int = Pong;
+profileEnvelope#45000020 {X:Type} meta:ProbeMeta query:!X = X;
+invokeWithLayer#da9b0d0d {X:Type} layer:int query:!X = X;
+// LAYER 1
+`
+	const profileTwo = `
+---types---
+pong#45000001 value:int = Pong;
+probeMeta#45000003 value:int = ProbeMeta;
+---functions---
+echo#45000011 value:int = Pong;
+profileEnvelope#45000020 {X:Type} meta:ProbeMeta query:!X = X;
+invokeWithLayer#da9b0d0d {X:Type} layer:int query:!X = X;
+// LAYER 2
+`
+	set := layerRPCWrapperPolicySchemaSetFromSources(t, profileOne, profileTwo)
+	plan, err := AnalyzeLayerConversions(set, LayerObligationPolicy{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy := LayerObligationPolicy{}
+	for _, obligation := range plan.Report.Unresolved() {
+		if obligation.Semantic.Category != semantic.CategoryType || obligation.Semantic.QName != "probeMeta" {
+			t.Fatalf("unexpected nested probe-policy obligation: %+v", obligation)
+		}
+		policy.Entries = append(policy.Entries, LayerObligationPolicyEntry{
+			Key:        obligation.Key,
+			Resolution: LayerObligationResolution{Action: LayerResolveAdapter, Hook: "adaptProbeMetaValue"},
+		})
+	}
+	if len(policy.Entries) == 0 {
+		t.Fatal("test schema produced no nested constructor policy")
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	rpc, err := generator.buildLayerRPCModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	refs, err := generator.buildLayerTypeRefModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, err = generator.buildLayerRPCSourceModel(rpc, refs)
+	if err == nil || !strings.Contains(err.Error(), "E_WRAPPER_PROBE_POLICY_UNSAFE") {
+		t.Fatalf("nested policy-bearing wrapper prefix error = %v", err)
 	}
 }
 
@@ -1615,6 +2366,31 @@ func layerRPCSourcePolicy(t *testing.T, set *SchemaSet, oldOnly LayerObligationR
 // gates are covered by the shared wire-model tests.
 func layerRPCSourceSyntheticSchemaSet(t *testing.T) *SchemaSet {
 	t.Helper()
+	profile, canonical := layerRPCSourceSyntheticSources()
+	profiles := make([]*semantic.SchemaModel, 0, 2)
+	for _, source := range []string{profile, canonical} {
+		parsed, err := tl.Parse(bytes.NewBufferString(source))
+		if err != nil {
+			t.Fatal(err)
+		}
+		profile, err := semantic.BuildSchema(parsed, semantic.SourceRef{
+			Layer:      parsed.Layer,
+			Repository: "https://example.invalid/official.git",
+			Path:       "api.tl",
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		profiles = append(profiles, profile)
+	}
+	set, err := NewSchemaSet(2, profiles...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return set
+}
+
+func layerRPCSourceSyntheticSources() (string, string) {
 	profile := strings.Replace(
 		layerRPCSyntheticOne,
 		"legacy#21000012 value:int = Pong;",
@@ -1649,27 +2425,7 @@ func layerRPCSourceSyntheticSchemaSet(t *testing.T) *SchemaSet {
 			"getBare#21000049 = %pong;",
 		1,
 	)
-	profiles := make([]*semantic.SchemaModel, 0, 2)
-	for _, source := range []string{profile, canonical} {
-		parsed, err := tl.Parse(bytes.NewBufferString(source))
-		if err != nil {
-			t.Fatal(err)
-		}
-		profile, err := semantic.BuildSchema(parsed, semantic.SourceRef{
-			Layer:      parsed.Layer,
-			Repository: "https://example.invalid/official.git",
-			Path:       "api.tl",
-		})
-		if err != nil {
-			t.Fatal(err)
-		}
-		profiles = append(profiles, profile)
-	}
-	set, err := NewSchemaSet(2, profiles...)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return set
+	return profile, canonical
 }
 
 func findLayerRPCSourceRoute(t *testing.T, model *layerRPCSourceModel, layer int, wireID uint32) *layerRPCSourceRoute {
@@ -1693,5 +2449,18 @@ func findLayerRPCSourceHandler(t *testing.T, model *layerRPCSourceModel, name st
 		}
 	}
 	t.Fatalf("layer RPC source handler %q was not found", name)
+	return nil
+}
+
+func findLayerRPCUnprofiledInvariant(model *layerRPCSourceModel, wireID uint32) *layerRPCUnprofiledInvariantSource {
+	if model == nil || model.Unprofiled == nil {
+		return nil
+	}
+	for index := range model.Unprofiled.Invariants {
+		invariant := &model.Unprofiled.Invariants[index]
+		if invariant.WireID == wireID {
+			return invariant
+		}
+	}
 	return nil
 }
