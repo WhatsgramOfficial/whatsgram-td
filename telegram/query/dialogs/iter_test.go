@@ -25,15 +25,23 @@ func generateDialogs(count int) []tg.DialogClass {
 func result(r []tg.DialogClass, count int) tg.MessagesDialogsClass {
 	msgs := make([]tg.MessageClass, 0, len(r))
 	for i, dlg := range r {
+		peerID, ok := peerFromDialog(dlg)
+		if !ok {
+			continue
+		}
 		msgs = append(msgs, &tg.Message{
 			ID:     i,
-			PeerID: dlg.GetPeer(),
+			PeerID: peerID,
 		})
 	}
 
 	chats := make([]tg.ChatClass, 0, len(r))
 	for i, dlg := range r {
-		id := dlg.GetPeer().(*tg.PeerChannel).ChannelID
+		peerID, ok := peerFromDialog(dlg)
+		if !ok {
+			continue
+		}
+		id := peerID.(*tg.PeerChannel).ChannelID
 		chats = append(chats, &tg.Channel{
 			ID:         id,
 			AccessHash: 10,
@@ -67,7 +75,11 @@ func TestIterator(t *testing.T) {
 	iter := NewQueryBuilder(raw).GetDialogs().BatchSize(10).Iter()
 	i := 0
 	for iter.Next(ctx) {
-		require.Equal(t, expected[i].GetPeer(), iter.Value().Dialog.GetPeer())
+		expectedPeer, ok := peerFromDialog(expected[i])
+		require.True(t, ok)
+		actualPeer, ok := peerFromDialog(iter.Value().Dialog)
+		require.True(t, ok)
+		require.Equal(t, expectedPeer, actualPeer)
 		i++
 	}
 	require.NoError(t, iter.Err())
@@ -84,4 +96,36 @@ func TestIterator(t *testing.T) {
 	total, err = iter.FetchTotal(ctx)
 	require.NoError(t, err)
 	require.Equal(t, totalRows, total)
+}
+
+func TestIteratorSkipsDialogCommunity(t *testing.T) {
+	ctx := context.Background()
+	mock := tgmock.NewRequire(t)
+	raw := tg.NewClient(mock)
+
+	const channelID = int64(42)
+	dialog := &tg.Dialog{Peer: &tg.PeerChannel{ChannelID: channelID}}
+	community := &tg.DialogCommunity{CommunityID: 100}
+	mock.Expect().ThenResult(&tg.MessagesDialogs{
+		Dialogs: []tg.DialogClass{community, dialog, community},
+		Messages: []tg.MessageClass{&tg.Message{
+			ID:     7,
+			PeerID: dialog.Peer,
+		}},
+		Chats: []tg.ChatClass{&tg.Channel{
+			ID:         channelID,
+			AccessHash: 10,
+			Photo:      &tg.ChatPhoto{},
+		}},
+	})
+	mock.Expect().ThenResult(&tg.MessagesDialogs{})
+
+	iter := NewQueryBuilder(raw).GetDialogs().BatchSize(10).Iter()
+	require.True(t, iter.Next(ctx))
+	value := iter.Value()
+	require.Equal(t, dialog, value.Dialog)
+	require.Equal(t, &tg.InputPeerChannel{ChannelID: channelID, AccessHash: 10}, value.Peer)
+	require.Equal(t, 7, value.Last.GetID())
+	require.False(t, iter.Next(ctx))
+	require.NoError(t, iter.Err())
 }
