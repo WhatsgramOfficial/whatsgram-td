@@ -10,6 +10,7 @@ Telegram MTProto API client in Go for users and bots.
 * [Roadmap](ROADMAP.md)
 * [Contributing](CONTRIBUTING.md)
 * [Architecture](ARCHITECTURE.md)
+* [Multi-layer TL generation](_schema/layers/README.md)
 * [Generated Go Documentation](https://ref.gotd.dev/pkg/github.com/gotd/td/tg.html)
 
 Before using this library, read [How To Not Get Banned](.github/SUPPORT.md#how-to-not-get-banned) guide.
