@@ -64,8 +64,17 @@ func (t *formattedSource) Has(name string) bool {
 func main() {
 	schemaPath := flag.String("schema", "", "Path to .tl file")
 	schemaManifest := flag.String("schema-manifest", "", "Path to locked multi-layer schema manifest")
+	schemaImport := flag.String("schema-import", "", "Import a local layer .tl source into the locked schema manifest and exit")
+	schemaImportGitDir := flag.String("schema-import-git-dir", "", "Local upstream Git checkout used to verify commit:path provenance for a copied source")
+	schemaImportCommit := flag.String("schema-import-commit", "", "Exact upstream commit for a copied import (auto-discovered for a clean tracked source)")
+	schemaImportBlob := flag.String("schema-import-blob", "", "Optional expected Git blob ID for the imported source")
+	schemaImportCanonical := flag.Bool("schema-import-canonical", true, "Select the imported layer as canonical and rebuild _schema/telegram.tl")
+	schemaImportReplace := flag.Bool("schema-import-replace", false, "Explicitly replace different provenance for an existing layer")
+	canonicalSchemaOutput := flag.String("canonical-schema-output", "", "Canonical merged .tl output (default: ../telegram.tl relative to manifest)")
 	layerPolicy := flag.String("layer-policy", "", "Path to versioned multi-layer conversion policy")
 	layerPolicyTemplate := flag.String("layer-policy-template", "", "Write unresolved multi-layer policy skeleton to path (or - for stdout) and exit")
+	layerPolicyAudit := flag.String("layer-policy-audit", "", "Write retained/stale/new policy migration report to path (or - for stdout) and exit")
+	layerPolicyMerge := flag.String("layer-policy-merge", "", "Write retained plus unresolved skeleton policy to path (or - for stdout) and exit")
 	targetDir := flag.String("target", "td", "Path to target dir")
 	packageName := flag.String("package", "td", "Target package name")
 	performFormat := flag.Bool("format", true, "Perform code formatting")
@@ -78,11 +87,62 @@ func main() {
 	if (*schemaPath == "") == (*schemaManifest == "") {
 		panic("provide exactly one of -schema or -schema-manifest")
 	}
+	if *schemaImport != "" {
+		if *schemaManifest == "" {
+			panic("-schema-import requires -schema-manifest")
+		}
+		if *layerPolicyTemplate != "" || *layerPolicyAudit != "" || *layerPolicyMerge != "" {
+			panic("-schema-import is a standalone workflow; run policy audit after import")
+		}
+		entry, err := runSchemaImport(schemaImportOptions{
+			ManifestPath:    *schemaManifest,
+			SourcePath:      *schemaImport,
+			GitDir:          *schemaImportGitDir,
+			Commit:          *schemaImportCommit,
+			ExpectedBlob:    *schemaImportBlob,
+			Canonical:       *schemaImportCanonical,
+			Replace:         *schemaImportReplace,
+			CanonicalOutput: *canonicalSchemaOutput,
+			PolicyPath:      *layerPolicy,
+		})
+		if err != nil {
+			panic(fmt.Sprintf("import layer schema: %+v", err))
+		}
+		fmt.Printf("Imported Layer %d (%s, blob %s, sha256 %s)\n", entry.Layer, entry.Commit, entry.Blob, entry.SHA256)
+		return
+	}
+	if *schemaImportGitDir != "" || *schemaImportCommit != "" || *schemaImportBlob != "" || *schemaImportReplace || *canonicalSchemaOutput != "" {
+		panic("schema import options require -schema-import")
+	}
 	if *layerPolicy != "" && *schemaManifest == "" {
 		panic("-layer-policy requires -schema-manifest")
 	}
 	if *layerPolicyTemplate != "" && *schemaManifest == "" {
 		panic("-layer-policy-template requires -schema-manifest")
+	}
+	if *layerPolicyAudit != "" || *layerPolicyMerge != "" {
+		if *schemaManifest == "" || *layerPolicy == "" {
+			panic("-layer-policy-audit/-layer-policy-merge require -schema-manifest and -layer-policy")
+		}
+		if *layerPolicyTemplate != "" {
+			panic("policy audit/merge cannot be combined with -layer-policy-template")
+		}
+		if *layerPolicyAudit == "-" && *layerPolicyMerge == "-" {
+			panic("policy audit and merged policy cannot both be written to stdout")
+		}
+		if *layerPolicyAudit != "" && *layerPolicyMerge != "" && *layerPolicyAudit != "-" && *layerPolicyMerge != "-" && filepath.Clean(*layerPolicyAudit) == filepath.Clean(*layerPolicyMerge) {
+			panic("policy audit and merged policy require different output paths")
+		}
+		audit, err := runLayerPolicyAudit(*schemaManifest, *layerPolicy, *layerPolicyAudit, *layerPolicyMerge)
+		if err != nil {
+			panic(fmt.Sprintf("audit layer policy: %+v", err))
+		}
+		summary := os.Stdout
+		if *layerPolicyAudit == "-" || *layerPolicyMerge == "-" {
+			summary = os.Stderr
+		}
+		fmt.Fprintf(summary, "Layer policy audit complete: retained=%d stale=%d new=%d\n", len(audit.Retained), len(audit.Stale), len(audit.New))
+		return
 	}
 
 	start := time.Now()

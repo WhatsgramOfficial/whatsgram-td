@@ -388,7 +388,7 @@ func TestLayerRPCServerTemplateKeepsOneOnFacadePerSemanticMethod(t *testing.T) {
 	}
 	for _, required := range []string{
 		"HandleLayer(profile LayerProfile",
-		"decodeLayerRPCRequest(profile, b, limits, callback)",
+		"decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter)",
 		"r.prepared.Call().EncodeResult(r.value, b)",
 		"duplicate layer RPC handler",
 	} {
@@ -443,7 +443,11 @@ func layerRPCSyntheticPolicy(t *testing.T, set *SchemaSet) LayerObligationPolicy
 		entry := LayerObligationPolicyEntry{Key: obligation.Key}
 		switch {
 		case obligation.Kind == LayerObligationResult && obligation.Semantic.QName == "join":
-			entry.Resolution = LayerObligationResolution{Action: LayerResolveAdapter, Hook: "adaptOldJoinResult"}
+			hook := "adaptOldJoinResult"
+			if obligation.Direction == LayerDirectionProfileToCanonical {
+				hook = "adaptNewJoinResult"
+			}
+			entry.Resolution = LayerObligationResolution{Action: LayerResolveAdapter, Hook: hook}
 		case obligation.Kind == LayerObligationOldOnly && obligation.Semantic.QName == "legacy":
 			entry.Resolution = LayerObligationResolution{Action: LayerResolveAdapter, Hook: "adaptLegacyRequest", Target: "function:modern"}
 		case obligation.Kind == LayerObligationDiscard && obligation.Semantic.QName == "echo":
@@ -453,7 +457,7 @@ func layerRPCSyntheticPolicy(t *testing.T, set *SchemaSet) LayerObligationPolicy
 		}
 		policy.Entries = append(policy.Entries, entry)
 	}
-	if len(policy.Entries) != 3 {
+	if len(policy.Entries) != 4 {
 		t.Fatalf("synthetic RPC policy entries = %+v", policy.Entries)
 	}
 	return policy

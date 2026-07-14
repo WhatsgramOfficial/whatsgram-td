@@ -141,13 +141,63 @@ func TestLayerTypeRefModelRetainsCanonicalAndWireRPCResults(t *testing.T) {
 	old := rpc.profile(1)
 	if old == nil || !old.ResultChanged || old.CanonicalResult < 0 || old.WireResult < 0 ||
 		model.Nodes[old.CanonicalResult].QName != "Holder" || model.Nodes[old.WireResult].QName != "Leaf" ||
-		len(old.ResultObligations) != 1 {
+		len(old.ResultObligations) != 2 {
 		t.Fatalf("changed RPC result plan = %+v", old)
 	}
 	canonical := rpc.profile(3)
 	if canonical == nil || canonical.ResultChanged || canonical.CanonicalResult != canonical.WireResult ||
 		model.Nodes[canonical.WireResult].QName != "Holder" {
 		t.Fatalf("canonical RPC result plan = %+v", canonical)
+	}
+}
+
+func TestLayerTypeRefWireEquivalenceIsConservative(t *testing.T) {
+	set := layerValueSyntheticSchemaSet(t)
+	generator := newLayerValueSyntheticGenerator(t, set)
+	model, err := generator.buildLayerTypeRefModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertEquivalent := func(node *layerTypeRefNode, layer int, want bool) {
+		t.Helper()
+		profile := nodeProfile(node, layer)
+		if profile == nil || profile.WireEquivalent != want {
+			t.Fatalf("node %s layer %d wire-equivalent = %v, want %v", node.Ref.String(), layer, profile != nil && profile.WireEquivalent, want)
+		}
+		if node.WireEquivalentName == "" {
+			t.Fatalf("node %s has no static equivalence predicate", node.Ref.String())
+		}
+	}
+
+	primitive := findLayerTypeRefNode(t, model, func(node *layerTypeRefNode) bool {
+		return node.IsPrimitive() && node.QName == "int"
+	})
+	directBare := findLayerTypeRefNode(t, model, func(node *layerTypeRefNode) bool {
+		return node.IsExactBare() && node.QName == "bareItem" && node.Bare && !node.Percent
+	})
+	directVector := findLayerTypeRefNode(t, model, func(node *layerTypeRefNode) bool {
+		return node.IsVector() && node.Ref.String() == "Vector<vector<%bareItem>>"
+	})
+	shrunkClass := findLayerTypeRefNode(t, model, func(node *layerTypeRefNode) bool {
+		return node.IsClass() && node.QName == "Leaf"
+	})
+	dynamic := findLayerTypeRefNode(t, model, func(node *layerTypeRefNode) bool { return node.IsObject() })
+	historical := findLayerTypeRefNode(t, model, func(node *layerTypeRefNode) bool {
+		return node.IsExactBare() && node.QName == "legacy" && node.Bare && !node.Percent
+	})
+
+	for _, node := range model.Nodes {
+		assertEquivalent(&node, model.CanonicalLayer, true)
+	}
+	assertEquivalent(primitive, 1, true)
+	assertEquivalent(directBare, 1, true)
+	assertEquivalent(directVector, 1, true)
+	assertEquivalent(shrunkClass, 1, false)
+	assertEquivalent(dynamic, 1, false)
+	assertEquivalent(historical, 1, false)
+
+	if len(model.WireEquivalentGroups) == 0 || len(model.WireEquivalentGroups) >= len(model.Nodes) {
+		t.Fatalf("equivalence predicate groups = %d for %d nodes; predicates were not deduplicated", len(model.WireEquivalentGroups), len(model.Nodes))
 	}
 }
 
@@ -204,6 +254,8 @@ func TestLayerTypeRefTemplateUsesDirectFunctionsAndNoRuntimeCatalog(t *testing.T
 		"func LayerConstructorBareItemType() LayerType[*BareItem]",
 		"layerPreflightConstructorBareItem",
 		"decodeState:",
+		"wireEquivalent:",
+		"func layerWireEquivalentProfiles",
 	}
 	for _, want := range checks {
 		if !strings.Contains(source, want) {
@@ -416,10 +468,13 @@ func layerTypeRefModelFingerprint(model *layerTypeRefModel) string {
 	var result strings.Builder
 	fmt.Fprintf(&result, "c=%d/p=%v/d=%d/v=%d/b=%d\n", model.CanonicalLayer, model.Profiles, model.MaxDepth, model.MaxVectorSize, model.BindingCapacity)
 	for _, node := range model.Nodes {
-		fmt.Fprintf(&result, "n=%d/%s/%s/%s/%d/%t/%t/%s/%s\n", node.Index, node.Key, node.Strategy, node.GoType, node.Element, node.EmitCodec, node.Runnable, node.EncodeName, node.DecodeName)
+		fmt.Fprintf(&result, "n=%d/%s/%s/%s/%d/%t/%t/%s/%s/%s\n", node.Index, node.Key, node.Strategy, node.GoType, node.Element, node.EmitCodec, node.Runnable, node.EncodeName, node.DecodeName, node.WireEquivalentName)
 		for _, profile := range node.Profiles {
-			fmt.Fprintf(&result, "np=%d/%t/%t/%s/%08x\n", profile.Layer, profile.Available, profile.Callable, profile.Action, profile.WireID)
+			fmt.Fprintf(&result, "np=%d/%t/%t/%s/%08x/%t\n", profile.Layer, profile.Available, profile.Callable, profile.Action, profile.WireID, profile.WireEquivalent)
 		}
+	}
+	for _, group := range model.WireEquivalentGroups {
+		fmt.Fprintf(&result, "we=%s/%v\n", group.Name, group.ProfileConstants)
 	}
 	for _, rpc := range model.RPCs {
 		fmt.Fprintf(&result, "r=%s/%s\n", rpc.Key, rpc.SemanticConstant)

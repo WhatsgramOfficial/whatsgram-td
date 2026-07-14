@@ -303,6 +303,13 @@ func layerAdaptChatInviteJoinResultToUpdates(_ LayerProfile, result MessagesChat
 	return value.Updates, nil
 }
 
+func layerAdaptUpdatesToChatInviteJoinResult(_ LayerProfile, updates UpdatesClass) (MessagesChatInviteJoinResultClass, error) {
+	if updates == nil {
+		return nil, fmt.Errorf("chat invite join returned nil historical Updates")
+	}
+	return &MessagesChatInviteJoinResultOk{Updates: updates}, nil
+}
+
 func layerAdaptWebBrowserSettingsExceptionResult(_ LayerProfile, updates UpdatesClass) (bool, error) {
 	if updates == nil {
 		return false, fmt.Errorf("web browser settings exception returned nil Updates")

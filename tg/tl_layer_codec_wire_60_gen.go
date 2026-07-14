@@ -42,8 +42,10 @@ func layerEncodeWire01a9fbfc(profile LayerProfile, value *TextMentionName, b *bi
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextMentionName, WireID: 0x01a9fbfc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x01a9fbfc)
 		return layerEncodeWire01a9fbfcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -114,10 +116,12 @@ func layerDecodeWire01a9fbfc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeTextMentionName, WireID: 0x01a9fbfc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x01a9fbfc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x01a9fbfc: %w", err)
 	}
 	return layerDecodeWire01a9fbfcBare(profile, b, state)
+
 }
 
 func layerDecodeWire01a9fbfcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*TextMentionName, error) {
@@ -168,8 +172,10 @@ func layerEncodeWire07df587c(profile LayerProfile, value *UpdateBotEditBusinessM
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdateBotEditBusinessMessage, WireID: 0x07df587c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x07df587c)
 		return layerEncodeWire07df587cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -286,10 +292,12 @@ func layerDecodeWire07df587c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeUpdateBotEditBusinessMessage, WireID: 0x07df587c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x07df587c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x07df587c: %w", err)
 	}
 	return layerDecodeWire07df587cBare(profile, b, state)
+
 }
 
 func layerDecodeWire07df587cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*UpdateBotEditBusinessMessage, error) {
@@ -365,8 +373,10 @@ func layerEncodeWire0e17e23c(profile LayerProfile, value *PhotoSizeEmpty, b *bin
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePhotoSizeEmpty, WireID: 0x0e17e23c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x0e17e23c)
 		return layerEncodeWire0e17e23cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -426,10 +436,12 @@ func layerDecodeWire0e17e23c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePhotoSizeEmpty, WireID: 0x0e17e23c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x0e17e23c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x0e17e23c: %w", err)
 	}
 	return layerDecodeWire0e17e23cBare(profile, b, state)
+
 }
 
 func layerDecodeWire0e17e23cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PhotoSizeEmpty, error) {
@@ -471,8 +483,10 @@ func layerEncodeWire13704a7c(profile LayerProfile, value *MessagesForwardMessage
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesForwardMessages, WireID: 0x13704a7c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x13704a7c)
 		return layerEncodeWire13704a7cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -811,10 +825,12 @@ func layerDecodeWire13704a7c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodMessagesForwardMessages, WireID: 0x13704a7c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x13704a7c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x13704a7c: %w", err)
 	}
 	return layerDecodeWire13704a7cBare(profile, b, state)
+
 }
 
 func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*MessagesForwardMessagesRequest, error) {
@@ -854,6 +870,14 @@ func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 			if err != nil {
 				return nil, fmt.Errorf("decode field id: %w", err)
 			}
+			if err := layerRPCAdmissionCheckVectorWire(profile, state.rpcAdmission, LayerRPCFieldMessagesForwardMessagesID, b, layerLength36, 4); err != nil {
+				return nil, fmt.Errorf("decode field id minimum wire: %w", err)
+			}
+			if state.rpcAdmission.enabled(314) {
+				if err := state.rpcAdmission.observe(314, LayerRPCFieldMessagesForwardMessagesID, layerRPCAdmissionFieldMetricVectorLength, true, int64(layerLength36)); err != nil {
+					return nil, err
+				}
+			}
 			var layerVector37 []int
 			if layerLength36 > 0 {
 				capacity := layerLength36
@@ -880,6 +904,14 @@ func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 			layerLength41, err := layerDecodeVectorLength(profile, nil, b, true, &layerDecodeState40)
 			if err != nil {
 				return nil, fmt.Errorf("decode field random_id: %w", err)
+			}
+			if err := layerRPCAdmissionCheckVectorWire(profile, state.rpcAdmission, LayerRPCFieldMessagesForwardMessagesRandomID, b, layerLength41, 8); err != nil {
+				return nil, fmt.Errorf("decode field random_id minimum wire: %w", err)
+			}
+			if state.rpcAdmission.enabled(315) {
+				if err := state.rpcAdmission.observe(315, LayerRPCFieldMessagesForwardMessagesRandomID, layerRPCAdmissionFieldMetricVectorLength, true, int64(layerLength41)); err != nil {
+					return nil, err
+				}
 			}
 			var layerVector42 []int64
 			if layerLength41 > 0 {
@@ -911,7 +943,16 @@ func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 				if err != nil {
 					return nil, fmt.Errorf("decode field top_msg_id: %w", err)
 				}
+				if state.rpcAdmission.enabled(318) {
+					if err := state.rpcAdmission.observe(318, LayerRPCFieldMessagesForwardMessagesTopMsgID, layerRPCAdmissionFieldMetricInt32, true, int64(int32(layerPrimitive47))); err != nil {
+						return nil, err
+					}
+				}
 				layerDecoded46 = layerPrimitive47
+			} else if state.rpcAdmission.enabled(318) {
+				if err := state.rpcAdmission.observe(318, LayerRPCFieldMessagesForwardMessagesTopMsgID, layerRPCAdmissionFieldMetricInt32, false, 0); err != nil {
+					return nil, err
+				}
 			}
 			var layerDecoded48 InputReplyToClass
 			if wireFlags0.Has(22) {
@@ -927,7 +968,16 @@ func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 				if err != nil {
 					return nil, fmt.Errorf("decode field schedule_date: %w", err)
 				}
+				if state.rpcAdmission.enabled(316) {
+					if err := state.rpcAdmission.observe(316, LayerRPCFieldMessagesForwardMessagesScheduleDate, layerRPCAdmissionFieldMetricInt32, true, int64(int32(layerPrimitive51))); err != nil {
+						return nil, err
+					}
+				}
 				layerDecoded50 = layerPrimitive51
+			} else if state.rpcAdmission.enabled(316) {
+				if err := state.rpcAdmission.observe(316, LayerRPCFieldMessagesForwardMessagesScheduleDate, layerRPCAdmissionFieldMetricInt32, false, 0); err != nil {
+					return nil, err
+				}
 			}
 			var layerDecoded52 int
 			if wireFlags0.Has(24) {
@@ -935,7 +985,16 @@ func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 				if err != nil {
 					return nil, fmt.Errorf("decode field schedule_repeat_period: %w", err)
 				}
+				if state.rpcAdmission.enabled(317) {
+					if err := state.rpcAdmission.observe(317, LayerRPCFieldMessagesForwardMessagesScheduleRepeatPeriod, layerRPCAdmissionFieldMetricInt32, true, int64(int32(layerPrimitive53))); err != nil {
+						return nil, err
+					}
+				}
 				layerDecoded52 = layerPrimitive53
+			} else if state.rpcAdmission.enabled(317) {
+				if err := state.rpcAdmission.observe(317, LayerRPCFieldMessagesForwardMessagesScheduleRepeatPeriod, layerRPCAdmissionFieldMetricInt32, false, 0); err != nil {
+					return nil, err
+				}
 			}
 			var layerDecoded54 InputPeerClass
 			if wireFlags0.Has(13) {
@@ -967,7 +1026,16 @@ func layerDecodeWire13704a7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 				if err != nil {
 					return nil, fmt.Errorf("decode field video_timestamp: %w", err)
 				}
+				if state.rpcAdmission.enabled(319) {
+					if err := state.rpcAdmission.observe(319, LayerRPCFieldMessagesForwardMessagesVideoTimestamp, layerRPCAdmissionFieldMetricInt32, true, int64(int32(layerPrimitive61))); err != nil {
+						return nil, err
+					}
+				}
 				layerDecoded60 = layerPrimitive61
+			} else if state.rpcAdmission.enabled(319) {
+				if err := state.rpcAdmission.observe(319, LayerRPCFieldMessagesForwardMessagesVideoTimestamp, layerRPCAdmissionFieldMetricInt32, false, 0); err != nil {
+					return nil, err
+				}
 			}
 			var layerDecoded62 int64
 			if wireFlags0.Has(21) {
@@ -1084,8 +1152,10 @@ func layerEncodeWire147ee23c(profile LayerProfile, value *MessagesSearchResultsC
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessagesSearchResultsCalendar, WireID: 0x147ee23c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x147ee23c)
 		return layerEncodeWire147ee23cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -1351,10 +1421,12 @@ func layerDecodeWire147ee23c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeMessagesSearchResultsCalendar, WireID: 0x147ee23c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x147ee23c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x147ee23c: %w", err)
 	}
 	return layerDecodeWire147ee23cBare(profile, b, state)
+
 }
 
 func layerDecodeWire147ee23cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*MessagesSearchResultsCalendar, error) {
@@ -1555,8 +1627,10 @@ func layerEncodeWire16a4b93c(profile LayerProfile, value *StoryItem, b *bin.Buff
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStoryItem, WireID: 0x16a4b93c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x16a4b93c)
 		return layerEncodeWire16a4b93cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -2117,10 +2191,12 @@ func layerDecodeWire16a4b93c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeStoryItem, WireID: 0x16a4b93c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x16a4b93c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x16a4b93c: %w", err)
 	}
 	return layerDecodeWire16a4b93cBare(profile, b, state)
+
 }
 
 func layerDecodeWire16a4b93cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*StoryItem, error) {
@@ -2442,8 +2518,10 @@ func layerEncodeWire21e753bc(profile LayerProfile, value *UploadWebFile, b *bin.
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUploadWebFile, WireID: 0x21e753bc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x21e753bc)
 		return layerEncodeWire21e753bcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -2521,10 +2599,12 @@ func layerDecodeWire21e753bc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeUploadWebFile, WireID: 0x21e753bc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x21e753bc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x21e753bc: %w", err)
 	}
 	return layerDecodeWire21e753bcBare(profile, b, state)
+
 }
 
 func layerDecodeWire21e753bcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*UploadWebFile, error) {
@@ -2614,8 +2694,10 @@ func layerEncodeWire25e073fc(profile LayerProfile, value *PageListItemBlocks, b 
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemBlocks, WireID: 0x25e073fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x25e073fc)
 		return layerEncodeWire25e073fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -3164,10 +3246,12 @@ func layerDecodeWire25e073fc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePageListItemBlocks, WireID: 0x25e073fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x25e073fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x25e073fc: %w", err)
 	}
 	return layerDecodeWire25e073fcBare(profile, b, state)
+
 }
 
 func layerDecodeWire25e073fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PageListItemBlocks, error) {
@@ -3442,8 +3526,10 @@ func layerEncodeWire27bcbbfc(profile LayerProfile, value *InputPeerChannel, b *b
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputPeerChannel, WireID: 0x27bcbbfc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x27bcbbfc)
 		return layerEncodeWire27bcbbfcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -3514,10 +3600,12 @@ func layerDecodeWire27bcbbfc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeInputPeerChannel, WireID: 0x27bcbbfc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x27bcbbfc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x27bcbbfc: %w", err)
 	}
 	return layerDecodeWire27bcbbfcBare(profile, b, state)
+
 }
 
 func layerDecodeWire27bcbbfcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*InputPeerChannel, error) {
@@ -3576,8 +3664,10 @@ func layerEncodeWire2a2a697c(profile LayerProfile, value *PaymentsSaveStarGiftRe
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodPaymentsSaveStarGift, WireID: 0x2a2a697c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x2a2a697c)
 		return layerEncodeWire2a2a697cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -3654,10 +3744,12 @@ func layerDecodeWire2a2a697c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodPaymentsSaveStarGift, WireID: 0x2a2a697c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x2a2a697c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x2a2a697c: %w", err)
 	}
 	return layerDecodeWire2a2a697cBare(profile, b, state)
+
 }
 
 func layerDecodeWire2a2a697cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PaymentsSaveStarGiftRequest, error) {
@@ -3708,8 +3800,10 @@ func layerEncodeWire2f58683c(profile LayerProfile, value *PageListItemText, b *b
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemText, WireID: 0x2f58683c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x2f58683c)
 		return layerEncodeWire2f58683cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -3789,10 +3883,12 @@ func layerDecodeWire2f58683c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePageListItemText, WireID: 0x2f58683c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x2f58683c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x2f58683c: %w", err)
 	}
 	return layerDecodeWire2f58683cBare(profile, b, state)
+
 }
 
 func layerDecodeWire2f58683cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PageListItemText, error) {
@@ -3848,8 +3944,10 @@ func layerEncodeWire35436bbc(profile LayerProfile, value *MessagesDeclineURLAuth
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesDeclineURLAuth, WireID: 0x35436bbc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x35436bbc)
 		return layerEncodeWire35436bbcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -3909,10 +4007,12 @@ func layerDecodeWire35436bbc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodMessagesDeclineURLAuth, WireID: 0x35436bbc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x35436bbc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x35436bbc: %w", err)
 	}
 	return layerDecodeWire35436bbcBare(profile, b, state)
+
 }
 
 func layerDecodeWire35436bbcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*MessagesDeclineURLAuthRequest, error) {
@@ -3927,6 +4027,15 @@ func layerDecodeWire35436bbcBare(profile LayerProfile, b *bin.Buffer, state *lay
 	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			var layerDecoded1 string
+			if state.rpcAdmission.enabled(272) {
+				layerPayloadLength3, err := layerRPCAdmissionBytesLength(profile, state.rpcAdmission.semantic, state.rpcAdmission.wireID, LayerRPCFieldMessagesDeclineURLAuthURL, b)
+				if err != nil {
+					return nil, fmt.Errorf("decode field url admission metric: %w", err)
+				}
+				if err := state.rpcAdmission.observe(272, LayerRPCFieldMessagesDeclineURLAuthURL, layerRPCAdmissionFieldMetricBytesLength, true, int64(layerPayloadLength3)); err != nil {
+					return nil, err
+				}
+			}
 			layerPrimitive2, err := b.String()
 			if err != nil {
 				return nil, fmt.Errorf("decode field url: %w", err)
@@ -3954,8 +4063,10 @@ func layerEncodeWire396ca5fc(profile LayerProfile, value *StatsBroadcastStats, b
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStatsBroadcastStats, WireID: 0x396ca5fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x396ca5fc)
 		return layerEncodeWire396ca5fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -4342,10 +4453,12 @@ func layerDecodeWire396ca5fc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeStatsBroadcastStats, WireID: 0x396ca5fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x396ca5fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x396ca5fc: %w", err)
 	}
 	return layerDecodeWire396ca5fcBare(profile, b, state)
+
 }
 
 func layerDecodeWire396ca5fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*StatsBroadcastStats, error) {
@@ -4597,8 +4710,10 @@ func layerEncodeWire3e0bdd7c(profile LayerProfile, value *AccountUpdateUsernameR
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodAccountUpdateUsername, WireID: 0x3e0bdd7c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x3e0bdd7c)
 		return layerEncodeWire3e0bdd7cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -4658,10 +4773,12 @@ func layerDecodeWire3e0bdd7c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodAccountUpdateUsername, WireID: 0x3e0bdd7c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x3e0bdd7c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x3e0bdd7c: %w", err)
 	}
 	return layerDecodeWire3e0bdd7cBare(profile, b, state)
+
 }
 
 func layerDecodeWire3e0bdd7cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*AccountUpdateUsernameRequest, error) {
@@ -4676,6 +4793,15 @@ func layerDecodeWire3e0bdd7cBare(profile LayerProfile, b *bin.Buffer, state *lay
 	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			var layerDecoded1 string
+			if state.rpcAdmission.enabled(58) {
+				layerPayloadLength3, err := layerRPCAdmissionBytesLength(profile, state.rpcAdmission.semantic, state.rpcAdmission.wireID, LayerRPCFieldAccountUpdateUsernameUsername, b)
+				if err != nil {
+					return nil, fmt.Errorf("decode field username admission metric: %w", err)
+				}
+				if err := state.rpcAdmission.observe(58, LayerRPCFieldAccountUpdateUsernameUsername, layerRPCAdmissionFieldMetricBytesLength, true, int64(layerPayloadLength3)); err != nil {
+					return nil, err
+				}
+			}
 			layerPrimitive2, err := b.String()
 			if err != nil {
 				return nil, fmt.Errorf("decode field username: %w", err)
@@ -4703,8 +4829,10 @@ func layerEncodeWire41df43fc(profile LayerProfile, value *SavedStarGift, b *bin.
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeSavedStarGift, WireID: 0x41df43fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x41df43fc)
 		return layerEncodeWire41df43fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -4986,10 +5114,12 @@ func layerDecodeWire41df43fc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeSavedStarGift, WireID: 0x41df43fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x41df43fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x41df43fc: %w", err)
 	}
 	return layerDecodeWire41df43fcBare(profile, b, state)
+
 }
 
 func layerDecodeWire41df43fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*SavedStarGift, error) {
@@ -5277,8 +5407,10 @@ func layerEncodeWire48aaae3c(profile LayerProfile, value *StarGiftAttributeIDMod
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStarGiftAttributeIDModel, WireID: 0x48aaae3c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x48aaae3c)
 		return layerEncodeWire48aaae3cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -5348,10 +5480,12 @@ func layerDecodeWire48aaae3c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeStarGiftAttributeIDModel, WireID: 0x48aaae3c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x48aaae3c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x48aaae3c: %w", err)
 	}
 	return layerDecodeWire48aaae3cBare(profile, b, state)
+
 }
 
 func layerDecodeWire48aaae3cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*StarGiftAttributeIDModel, error) {
@@ -5403,8 +5537,10 @@ func layerEncodeWire4b09ebbc(profile LayerProfile, value *StorageFileMov, b *bin
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStorageFileMov, WireID: 0x4b09ebbc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x4b09ebbc)
 		return layerEncodeWire4b09ebbcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -5473,10 +5609,12 @@ func layerDecodeWire4b09ebbc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeStorageFileMov, WireID: 0x4b09ebbc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x4b09ebbc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x4b09ebbc: %w", err)
 	}
 	return layerDecodeWire4b09ebbcBare(profile, b, state)
+
 }
 
 func layerDecodeWire4b09ebbcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*StorageFileMov, error) {
@@ -5517,8 +5655,10 @@ func layerEncodeWire50cd067c(profile LayerProfile, value *StatsStoryStats, b *bi
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStatsStoryStats, WireID: 0x50cd067c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x50cd067c)
 		return layerEncodeWire50cd067cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -5601,10 +5741,12 @@ func layerDecodeWire50cd067c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeStatsStoryStats, WireID: 0x50cd067c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x50cd067c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x50cd067c: %w", err)
 	}
 	return layerDecodeWire50cd067cBare(profile, b, state)
+
 }
 
 func layerDecodeWire50cd067cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*StatsStoryStats, error) {
@@ -5655,8 +5797,10 @@ func layerEncodeWire5a686d7c(profile LayerProfile, value *ChatInviteAlready, b *
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChatInviteAlready, WireID: 0x5a686d7c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x5a686d7c)
 		return layerEncodeWire5a686d7cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -5726,10 +5870,12 @@ func layerDecodeWire5a686d7c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeChatInviteAlready, WireID: 0x5a686d7c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x5a686d7c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x5a686d7c: %w", err)
 	}
 	return layerDecodeWire5a686d7cBare(profile, b, state)
+
 }
 
 func layerDecodeWire5a686d7cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*ChatInviteAlready, error) {
@@ -5773,8 +5919,10 @@ func layerEncodeWire64f36dfc(profile LayerProfile, value *ChannelAdminLogEventAc
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannelAdminLogEventActionToggleAntiSpam, WireID: 0x64f36dfc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x64f36dfc)
 		return layerEncodeWire64f36dfcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -5844,10 +5992,12 @@ func layerDecodeWire64f36dfc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeChannelAdminLogEventActionToggleAntiSpam, WireID: 0x64f36dfc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x64f36dfc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x64f36dfc: %w", err)
 	}
 	return layerDecodeWire64f36dfcBare(profile, b, state)
+
 }
 
 func layerDecodeWire64f36dfcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*ChannelAdminLogEventActionToggleAntiSpam, error) {
@@ -5899,8 +6049,10 @@ func layerEncodeWire695c9e7c(profile LayerProfile, value *UpdateReadChannelDiscu
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdateReadChannelDiscussionOutbox, WireID: 0x695c9e7c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x695c9e7c)
 		return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -5972,10 +6124,12 @@ func layerDecodeWire695c9e7c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeUpdateReadChannelDiscussionOutbox, WireID: 0x695c9e7c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x695c9e7c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x695c9e7c: %w", err)
 	}
 	return layerDecodeWire695c9e7cBare(profile, b, state)
+
 }
 
 func layerDecodeWire695c9e7cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*UpdateReadChannelDiscussionOutbox, error) {
@@ -6043,8 +6197,10 @@ func layerEncodeWire725afbbc(profile LayerProfile, value *ContactsResolveUsernam
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodContactsResolveUsername, WireID: 0x725afbbc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x725afbbc)
 		return layerEncodeWire725afbbcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -6116,10 +6272,12 @@ func layerDecodeWire725afbbc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodContactsResolveUsername, WireID: 0x725afbbc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x725afbbc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x725afbbc: %w", err)
 	}
 	return layerDecodeWire725afbbcBare(profile, b, state)
+
 }
 
 func layerDecodeWire725afbbcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*ContactsResolveUsernameRequest, error) {
@@ -6138,25 +6296,47 @@ func layerDecodeWire725afbbcBare(profile LayerProfile, b *bin.Buffer, state *lay
 				return nil, fmt.Errorf("decode flags flags: %w", err)
 			}
 			var layerDecoded1 string
+			if state.rpcAdmission.enabled(218) {
+				layerPayloadLength3, err := layerRPCAdmissionBytesLength(profile, state.rpcAdmission.semantic, state.rpcAdmission.wireID, LayerRPCFieldContactsResolveUsernameUsername, b)
+				if err != nil {
+					return nil, fmt.Errorf("decode field username admission metric: %w", err)
+				}
+				if err := state.rpcAdmission.observe(218, LayerRPCFieldContactsResolveUsernameUsername, layerRPCAdmissionFieldMetricBytesLength, true, int64(layerPayloadLength3)); err != nil {
+					return nil, err
+				}
+			}
 			layerPrimitive2, err := b.String()
 			if err != nil {
 				return nil, fmt.Errorf("decode field username: %w", err)
 			}
 			layerDecoded1 = layerPrimitive2
-			var layerDecoded3 string
+			var layerDecoded4 string
 			if wireFlags0.Has(0) {
-				layerPrimitive4, err := b.String()
+				if state.rpcAdmission.enabled(217) {
+					layerPayloadLength6, err := layerRPCAdmissionBytesLength(profile, state.rpcAdmission.semantic, state.rpcAdmission.wireID, LayerRPCFieldContactsResolveUsernameReferer, b)
+					if err != nil {
+						return nil, fmt.Errorf("decode field referer admission metric: %w", err)
+					}
+					if err := state.rpcAdmission.observe(217, LayerRPCFieldContactsResolveUsernameReferer, layerRPCAdmissionFieldMetricBytesLength, true, int64(layerPayloadLength6)); err != nil {
+						return nil, err
+					}
+				}
+				layerPrimitive5, err := b.String()
 				if err != nil {
 					return nil, fmt.Errorf("decode field referer: %w", err)
 				}
-				layerDecoded3 = layerPrimitive4
+				layerDecoded4 = layerPrimitive5
+			} else if state.rpcAdmission.enabled(217) {
+				if err := state.rpcAdmission.observe(217, LayerRPCFieldContactsResolveUsernameReferer, layerRPCAdmissionFieldMetricBytesLength, false, 0); err != nil {
+					return nil, err
+				}
 			}
 			if true {
 				value.Username = layerDecoded1
 			}
 			if wireFlags0.Has(0) {
 				value.Flags.Set(0)
-				value.Referer = layerDecoded3
+				value.Referer = layerDecoded4
 			}
 			return value, nil
 
@@ -6179,8 +6359,10 @@ func layerEncodeWire7bfbdefc(profile LayerProfile, value *AttachMenuPeerTypeBroa
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAttachMenuPeerTypeBroadcast, WireID: 0x7bfbdefc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x7bfbdefc)
 		return layerEncodeWire7bfbdefcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -6249,10 +6431,12 @@ func layerDecodeWire7bfbdefc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeAttachMenuPeerTypeBroadcast, WireID: 0x7bfbdefc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x7bfbdefc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x7bfbdefc: %w", err)
 	}
 	return layerDecodeWire7bfbdefcBare(profile, b, state)
+
 }
 
 func layerDecodeWire7bfbdefcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*AttachMenuPeerTypeBroadcast, error) {
@@ -6293,8 +6477,10 @@ func layerEncodeWire86f8613c(profile LayerProfile, value *PremiumBoostsList, b *
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePremiumBoostsList, WireID: 0x86f8613c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x86f8613c)
 		return layerEncodeWire86f8613cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -6461,10 +6647,12 @@ func layerDecodeWire86f8613c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePremiumBoostsList, WireID: 0x86f8613c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x86f8613c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x86f8613c: %w", err)
 	}
 	return layerDecodeWire86f8613cBare(profile, b, state)
+
 }
 
 func layerDecodeWire86f8613cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PremiumBoostsList, error) {
@@ -6584,8 +6772,10 @@ func layerEncodeWire88f27fbc(profile LayerProfile, value *SendMessageRecordRound
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeSendMessageRecordRoundAction, WireID: 0x88f27fbc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x88f27fbc)
 		return layerEncodeWire88f27fbcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -6654,10 +6844,12 @@ func layerDecodeWire88f27fbc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeSendMessageRecordRoundAction, WireID: 0x88f27fbc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x88f27fbc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x88f27fbc: %w", err)
 	}
 	return layerDecodeWire88f27fbcBare(profile, b, state)
+
 }
 
 func layerDecodeWire88f27fbcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*SendMessageRecordRoundAction, error) {
@@ -6698,8 +6890,10 @@ func layerEncodeWire8c79b63c(profile LayerProfile, value *MessagePeerReaction, b
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessagePeerReaction, WireID: 0x8c79b63c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x8c79b63c)
 		return layerEncodeWire8c79b63cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -6796,10 +6990,12 @@ func layerDecodeWire8c79b63c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeMessagePeerReaction, WireID: 0x8c79b63c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x8c79b63c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x8c79b63c: %w", err)
 	}
 	return layerDecodeWire8c79b63cBare(profile, b, state)
+
 }
 
 func layerDecodeWire8c79b63cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*MessagePeerReaction, error) {
@@ -6878,8 +7074,10 @@ func layerEncodeWire991399fc(profile LayerProfile, value *KeyboardButtonSwitchIn
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonSwitchInline, WireID: 0x991399fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x991399fc)
 		return layerEncodeWire991399fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -7057,10 +7255,12 @@ func layerDecodeWire991399fc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonSwitchInline, WireID: 0x991399fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x991399fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x991399fc: %w", err)
 	}
 	return layerDecodeWire991399fcBare(profile, b, state)
+
 }
 
 func layerDecodeWire991399fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*KeyboardButtonSwitchInline, error) {
@@ -7165,8 +7365,10 @@ func layerEncodeWire9ddb347c(profile LayerProfile, value *UpdateBotNewBusinessMe
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdateBotNewBusinessMessage, WireID: 0x9ddb347c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0x9ddb347c)
 		return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -7283,10 +7485,12 @@ func layerDecodeWire9ddb347c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeUpdateBotNewBusinessMessage, WireID: 0x9ddb347c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0x9ddb347c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0x9ddb347c: %w", err)
 	}
 	return layerDecodeWire9ddb347cBare(profile, b, state)
+
 }
 
 func layerDecodeWire9ddb347cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*UpdateBotNewBusinessMessage, error) {
@@ -7362,8 +7566,10 @@ func layerEncodeWireaef6abbc(profile LayerProfile, value *PaymentsStarGiftActive
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePaymentsStarGiftActiveAuctions, WireID: 0xaef6abbc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xaef6abbc)
 		return layerEncodeWireaef6abbcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -7565,10 +7771,12 @@ func layerDecodeWireaef6abbc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePaymentsStarGiftActiveAuctions, WireID: 0xaef6abbc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xaef6abbc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xaef6abbc: %w", err)
 	}
 	return layerDecodeWireaef6abbcBare(profile, b, state)
+
 }
 
 func layerDecodeWireaef6abbcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PaymentsStarGiftActiveAuctions, error) {
@@ -7686,15 +7894,15 @@ func layerEncodeWired0b5e1fc(profile LayerProfile, value *MessagesGetMyStickersR
 	}
 	return layerCodecEncodeAtomic(profile, b, func() error {
 		switch profile {
-		case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
-
-		case LayerProfile227:
+		case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesGetMyStickers, WireID: 0xd0b5e1fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xd0b5e1fc)
 		return layerEncodeWired0b5e1fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -7717,12 +7925,7 @@ func layerPreflightWired0b5e1fcBare(profile LayerProfile, value *MessagesGetMySt
 	}
 	state = &child
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
-		{
-			return 1, nil
-
-		}
-	case LayerProfile227:
+	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			return 1, nil
 
@@ -7739,16 +7942,11 @@ func layerEncodeWired0b5e1fcBareBody(profile LayerProfile, value *MessagesGetMyS
 	}
 	state = &child
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			b.PutLong(value.OffsetID)
 			b.PutInt(value.Limit)
 			return nil
-
-		}
-	case LayerProfile227:
-		{
-			return value.EncodeBare(b)
 
 		}
 	default:
@@ -7758,17 +7956,17 @@ func layerEncodeWired0b5e1fcBareBody(profile LayerProfile, value *MessagesGetMyS
 
 func layerDecodeWired0b5e1fc(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*MessagesGetMyStickersRequest, error) {
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
-
-	case LayerProfile227:
+	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodMessagesGetMyStickers, WireID: 0xd0b5e1fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xd0b5e1fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xd0b5e1fc: %w", err)
 	}
 	return layerDecodeWired0b5e1fcBare(profile, b, state)
+
 }
 
 func layerDecodeWired0b5e1fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*MessagesGetMyStickersRequest, error) {
@@ -7780,7 +7978,7 @@ func layerDecodeWired0b5e1fcBare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(MessagesGetMyStickersRequest)
 	_ = value
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			var layerDecoded1 int64
 			layerPrimitive2, err := b.Long()
@@ -7793,20 +7991,17 @@ func layerDecodeWired0b5e1fcBare(profile LayerProfile, b *bin.Buffer, state *lay
 			if err != nil {
 				return nil, fmt.Errorf("decode field limit: %w", err)
 			}
+			if state.rpcAdmission.enabled(379) {
+				if err := state.rpcAdmission.observe(379, LayerRPCFieldMessagesGetMyStickersLimit, layerRPCAdmissionFieldMetricInt32, true, int64(int32(layerPrimitive4))); err != nil {
+					return nil, err
+				}
+			}
 			layerDecoded3 = layerPrimitive4
 			if true {
 				value.OffsetID = layerDecoded1
 			}
 			if true {
 				value.Limit = layerDecoded3
-			}
-			return value, nil
-
-		}
-	case LayerProfile227:
-		{
-			if err := value.DecodeBare(b); err != nil {
-				return nil, fmt.Errorf("decode canonical bare body: %w", err)
 			}
 			return value, nil
 
@@ -7829,8 +8024,10 @@ func layerEncodeWiredf77f3bc(profile LayerProfile, value *AccountResetAuthorizat
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodAccountResetAuthorization, WireID: 0xdf77f3bc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xdf77f3bc)
 		return layerEncodeWiredf77f3bcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -7900,10 +8097,12 @@ func layerDecodeWiredf77f3bc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodAccountResetAuthorization, WireID: 0xdf77f3bc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xdf77f3bc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xdf77f3bc: %w", err)
 	}
 	return layerDecodeWiredf77f3bcBare(profile, b, state)
+
 }
 
 func layerDecodeWiredf77f3bcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*AccountResetAuthorizationRequest, error) {
@@ -7963,8 +8162,10 @@ func layerEncodeWiree0955a3c(profile LayerProfile, value *AuthSentCodePaymentReq
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAuthSentCodePaymentRequired, WireID: 0xe0955a3c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xe0955a3c)
 		return layerEncodeWiree0955a3cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -8213,10 +8414,12 @@ func layerDecodeWiree0955a3c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeAuthSentCodePaymentRequired, WireID: 0xe0955a3c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xe0955a3c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xe0955a3c: %w", err)
 	}
 	return layerDecodeWiree0955a3cBare(profile, b, state)
+
 }
 
 func layerDecodeWiree0955a3cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*AuthSentCodePaymentRequired, error) {
@@ -8598,8 +8801,10 @@ func layerEncodeWiree4c449fc(profile LayerProfile, value *InputRichMessage, b *b
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputRichMessage, WireID: 0xe4c449fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xe4c449fc)
 		return layerEncodeWiree4c449fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -8936,10 +9141,12 @@ func layerDecodeWiree4c449fc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeInputRichMessage, WireID: 0xe4c449fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xe4c449fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xe4c449fc: %w", err)
 	}
 	return layerDecodeWiree4c449fcBare(profile, b, state)
+
 }
 
 func layerDecodeWiree4c449fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*InputRichMessage, error) {
@@ -9117,8 +9324,10 @@ func layerEncodeWireeafc32bc(profile LayerProfile, value *ChatReactionsNone, b *
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChatReactionsNone, WireID: 0xeafc32bc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xeafc32bc)
 		return layerEncodeWireeafc32bcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -9187,10 +9396,12 @@ func layerDecodeWireeafc32bc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeChatReactionsNone, WireID: 0xeafc32bc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xeafc32bc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xeafc32bc: %w", err)
 	}
 	return layerDecodeWireeafc32bcBare(profile, b, state)
+
 }
 
 func layerDecodeWireeafc32bcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*ChatReactionsNone, error) {
@@ -9231,8 +9442,10 @@ func layerEncodeWireed56c9fc(profile LayerProfile, value *AccountWebAuthorizatio
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAccountWebAuthorizations, WireID: 0xed56c9fc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xed56c9fc)
 		return layerEncodeWireed56c9fcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -9386,10 +9599,12 @@ func layerDecodeWireed56c9fc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeAccountWebAuthorizations, WireID: 0xed56c9fc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xed56c9fc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xed56c9fc: %w", err)
 	}
 	return layerDecodeWireed56c9fcBare(profile, b, state)
+
 }
 
 func layerDecodeWireed56c9fcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*AccountWebAuthorizations, error) {
@@ -9482,8 +9697,10 @@ func layerEncodeWiref5537ebc(profile LayerProfile, value *StickersChangeStickerR
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodStickersChangeSticker, WireID: 0xf5537ebc, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xf5537ebc)
 		return layerEncodeWiref5537ebcBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -9607,10 +9824,12 @@ func layerDecodeWiref5537ebc(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodStickersChangeSticker, WireID: 0xf5537ebc, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xf5537ebc); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xf5537ebc: %w", err)
 	}
 	return layerDecodeWiref5537ebcBare(profile, b, state)
+
 }
 
 func layerDecodeWiref5537ebcBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*StickersChangeStickerRequest, error) {
@@ -9636,27 +9855,53 @@ func layerDecodeWiref5537ebcBare(profile LayerProfile, b *bin.Buffer, state *lay
 			layerDecoded6 = layerClass7
 			var layerDecoded8 string
 			if wireFlags0.Has(0) {
+				if state.rpcAdmission.enabled(706) {
+					layerPayloadLength10, err := layerRPCAdmissionBytesLength(profile, state.rpcAdmission.semantic, state.rpcAdmission.wireID, LayerRPCFieldStickersChangeStickerEmoji, b)
+					if err != nil {
+						return nil, fmt.Errorf("decode field emoji admission metric: %w", err)
+					}
+					if err := state.rpcAdmission.observe(706, LayerRPCFieldStickersChangeStickerEmoji, layerRPCAdmissionFieldMetricBytesLength, true, int64(layerPayloadLength10)); err != nil {
+						return nil, err
+					}
+				}
 				layerPrimitive9, err := b.String()
 				if err != nil {
 					return nil, fmt.Errorf("decode field emoji: %w", err)
 				}
 				layerDecoded8 = layerPrimitive9
+			} else if state.rpcAdmission.enabled(706) {
+				if err := state.rpcAdmission.observe(706, LayerRPCFieldStickersChangeStickerEmoji, layerRPCAdmissionFieldMetricBytesLength, false, 0); err != nil {
+					return nil, err
+				}
 			}
-			var layerDecoded10 MaskCoords
+			var layerDecoded11 MaskCoords
 			if wireFlags0.Has(1) {
-				layerConcrete11, err := layerDecodeWireaed6dbb2(profile, b, state)
+				layerConcrete12, err := layerDecodeWireaed6dbb2(profile, b, state)
 				if err != nil {
 					return nil, fmt.Errorf("decode field mask_coords: %w", err)
 				}
-				layerDecoded10 = *layerConcrete11
+				layerDecoded11 = *layerConcrete12
 			}
-			var layerDecoded12 string
+			var layerDecoded13 string
 			if wireFlags0.Has(2) {
-				layerPrimitive13, err := b.String()
+				if state.rpcAdmission.enabled(707) {
+					layerPayloadLength15, err := layerRPCAdmissionBytesLength(profile, state.rpcAdmission.semantic, state.rpcAdmission.wireID, LayerRPCFieldStickersChangeStickerKeywords, b)
+					if err != nil {
+						return nil, fmt.Errorf("decode field keywords admission metric: %w", err)
+					}
+					if err := state.rpcAdmission.observe(707, LayerRPCFieldStickersChangeStickerKeywords, layerRPCAdmissionFieldMetricBytesLength, true, int64(layerPayloadLength15)); err != nil {
+						return nil, err
+					}
+				}
+				layerPrimitive14, err := b.String()
 				if err != nil {
 					return nil, fmt.Errorf("decode field keywords: %w", err)
 				}
-				layerDecoded12 = layerPrimitive13
+				layerDecoded13 = layerPrimitive14
+			} else if state.rpcAdmission.enabled(707) {
+				if err := state.rpcAdmission.observe(707, LayerRPCFieldStickersChangeStickerKeywords, layerRPCAdmissionFieldMetricBytesLength, false, 0); err != nil {
+					return nil, err
+				}
 			}
 			if true {
 				value.Sticker = layerDecoded6
@@ -9667,11 +9912,11 @@ func layerDecodeWiref5537ebcBare(profile LayerProfile, b *bin.Buffer, state *lay
 			}
 			if wireFlags0.Has(1) {
 				value.Flags.Set(1)
-				value.MaskCoords = layerDecoded10
+				value.MaskCoords = layerDecoded11
 			}
 			if wireFlags0.Has(2) {
 				value.Flags.Set(2)
-				value.Keywords = layerDecoded12
+				value.Keywords = layerDecoded13
 			}
 			return value, nil
 
@@ -9692,8 +9937,10 @@ func layerEncodeWiref85c413c(profile LayerProfile, value *VideoSizeEmojiMarkup, 
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeVideoSizeEmojiMarkup, WireID: 0xf85c413c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xf85c413c)
 		return layerEncodeWiref85c413cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -9773,10 +10020,12 @@ func layerDecodeWiref85c413c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeVideoSizeEmojiMarkup, WireID: 0xf85c413c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xf85c413c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xf85c413c: %w", err)
 	}
 	return layerDecodeWiref85c413cBare(profile, b, state)
+
 }
 
 func layerDecodeWiref85c413cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*VideoSizeEmojiMarkup, error) {
@@ -9848,8 +10097,10 @@ func layerEncodeWirefb8fe43c(profile LayerProfile, value *PaymentsSavedInfo, b *
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePaymentsSavedInfo, WireID: 0xfb8fe43c, Reason: "wire ID is unavailable in exact profile"}
 		}
+
 		b.PutID(0xfb8fe43c)
 		return layerEncodeWirefb8fe43cBareBody(profile, value, b, state)
+
 	})
 }
 
@@ -9947,10 +10198,12 @@ func layerDecodeWirefb8fe43c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePaymentsSavedInfo, WireID: 0xfb8fe43c, Reason: "wire ID is unavailable in exact profile"}
 	}
+
 	if err := b.ConsumeID(0xfb8fe43c); err != nil {
 		return nil, fmt.Errorf("consume layer wire 0xfb8fe43c: %w", err)
 	}
 	return layerDecodeWirefb8fe43cBare(profile, b, state)
+
 }
 
 func layerDecodeWirefb8fe43cBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*PaymentsSavedInfo, error) {

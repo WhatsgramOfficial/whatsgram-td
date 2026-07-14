@@ -53,6 +53,136 @@ func (r *LayerTypeRef) Element() *LayerTypeRef {
     return r.element
 }
 
+// LayerRPCFieldID is the stable semantic identity of one observable top-level
+// RPC request field. Generated IDs depend only on method qname and canonical
+// field name; wire IDs, profile layers, ordinals and byte offsets are excluded.
+type LayerRPCFieldID uint64
+
+type layerRPCAdmissionFieldMetric uint8
+
+const (
+    layerRPCAdmissionFieldMetricInvalid layerRPCAdmissionFieldMetric = iota
+    layerRPCAdmissionFieldMetricVectorLength
+    layerRPCAdmissionFieldMetricBytesLength
+    layerRPCAdmissionFieldMetricInt32
+)
+
+// LayerRPCAdmissionFieldView is the immutable scalar observation delivered
+// while an admitted terminal request is decoded. It never aliases wire bytes.
+type LayerRPCAdmissionFieldView struct {
+    profile LayerProfile
+    semantic LayerSemanticID
+    wireID uint32
+    fieldID LayerRPCFieldID
+    present bool
+    metric layerRPCAdmissionFieldMetric
+    value int64
+}
+
+func (v LayerRPCAdmissionFieldView) Profile() LayerProfile { return v.profile }
+func (v LayerRPCAdmissionFieldView) Semantic() LayerSemanticID { return v.semantic }
+func (v LayerRPCAdmissionFieldView) WireID() uint32 { return v.wireID }
+func (v LayerRPCAdmissionFieldView) FieldID() LayerRPCFieldID { return v.fieldID }
+func (v LayerRPCAdmissionFieldView) Present() bool { return v.present }
+
+func (v LayerRPCAdmissionFieldView) VectorLength() (int, bool) {
+    if !v.present || v.metric != layerRPCAdmissionFieldMetricVectorLength { return 0, false }
+    return int(v.value), true
+}
+
+// BytesLength returns the TL payload byte length, excluding its header and
+// padding. For string fields this is the encoded byte length, not rune count.
+func (v LayerRPCAdmissionFieldView) BytesLength() (int, bool) {
+    if !v.present || v.metric != layerRPCAdmissionFieldMetricBytesLength { return 0, false }
+    return int(v.value), true
+}
+
+func (v LayerRPCAdmissionFieldView) Int32() (int32, bool) {
+    if !v.present || v.metric != layerRPCAdmissionFieldMetricInt32 { return 0, false }
+    return int32(v.value), true
+}
+
+// LayerRPCAdmissionFieldPreflight rejects a terminal request from inside its
+// generated typed decoder. Each registered top-level field is reported once;
+// an absent conditional field is reported once with Present false.
+type LayerRPCAdmissionFieldPreflight func(LayerRPCAdmissionFieldView) error
+
+type layerRPCAdmissionFieldRunner struct {
+    callbacks []LayerRPCAdmissionFieldPreflight
+    profile LayerProfile
+    semantic LayerSemanticID
+    wireID uint32
+    begun bool
+}
+
+func (r *layerRPCAdmissionFieldRunner) begin(profile LayerProfile, semantic LayerSemanticID, wireID uint32) error {
+    if r == nil { return nil }
+    if r.begun {
+        return &LayerCodecError{Operation: "preflight RPC admission fields", Profile: profile, Semantic: semantic, WireID: wireID, Reason: "terminal field preflight began more than once"}
+    }
+    r.profile, r.semantic, r.wireID, r.begun = profile, semantic, wireID, true
+    return nil
+}
+
+func (r *layerRPCAdmissionFieldRunner) enabled(index int) bool {
+    return r != nil && index >= 0 && index < len(r.callbacks) && r.callbacks[index] != nil
+}
+
+func (r *layerRPCAdmissionFieldRunner) observe(index int, fieldID LayerRPCFieldID, metric layerRPCAdmissionFieldMetric, present bool, value int64) error {
+    if r == nil || len(r.callbacks) == 0 { return nil }
+    if !r.begun {
+        return &LayerCodecError{Operation: "preflight RPC admission field", FieldID: fieldID, Reason: "terminal field preflight has not begun"}
+    }
+    if index < 0 || index >= len(r.callbacks) {
+        return &LayerCodecError{Operation: "preflight RPC admission field", Profile: r.profile, Semantic: r.semantic, WireID: r.wireID, FieldID: fieldID, Reason: "generated field callback index is out of range"}
+    }
+    callback := r.callbacks[index]
+    if callback == nil { return nil }
+    return callback(LayerRPCAdmissionFieldView{
+        profile: r.profile, semantic: r.semantic, wireID: r.wireID,
+        fieldID: fieldID, present: present, metric: metric, value: value,
+    })
+}
+
+// layerRPCAdmissionBytesLength validates one complete TL bytes/string body
+// without consuming or copying it, so admission can reject before allocation.
+func layerRPCAdmissionBytesLength(profile LayerProfile, semantic LayerSemanticID, wireID uint32, fieldID LayerRPCFieldID, b *bin.Buffer) (int, error) {
+    if b == nil {
+        return 0, &LayerCodecError{Operation: "preflight RPC bytes field", Profile: profile, Semantic: semantic, WireID: wireID, FieldID: fieldID, Reason: "nil buffer"}
+    }
+    raw := b.Raw()
+    if len(raw) == 0 {
+        return 0, &LayerCodecError{Operation: "preflight RPC bytes field", Profile: profile, Semantic: semantic, WireID: wireID, FieldID: fieldID, Reason: "truncated TL bytes header"}
+    }
+    header, length := 1, int(raw[0])
+    switch raw[0] {
+    case 254:
+        if len(raw) < 4 {
+            return 0, &LayerCodecError{Operation: "preflight RPC bytes field", Profile: profile, Semantic: semantic, WireID: wireID, FieldID: fieldID, Reason: "truncated long TL bytes header"}
+        }
+        header = 4
+        length = int(raw[1]) | int(raw[2])<<8 | int(raw[3])<<16
+    case 255:
+        return 0, &LayerCodecError{Operation: "preflight RPC bytes field", Profile: profile, Semantic: semantic, WireID: wireID, FieldID: fieldID, Reason: "invalid TL bytes header"}
+    }
+    encoded := (header + length + 3) &^ 3
+    if encoded < header || encoded > len(raw) {
+        return 0, &LayerCodecError{Operation: "preflight RPC bytes field", Profile: profile, Semantic: semantic, WireID: wireID, FieldID: fieldID, Reason: "truncated TL bytes payload"}
+    }
+    return length, nil
+}
+
+func layerRPCAdmissionCheckVectorWire(profile LayerProfile, runner *layerRPCAdmissionFieldRunner, fieldID LayerRPCFieldID, b *bin.Buffer, length, minimumElementBytes int) error {
+    if minimumElementBytes <= 0 || length <= 0 { return nil }
+    if b == nil || length > b.Len()/minimumElementBytes {
+        var semantic LayerSemanticID
+        var wireID uint32
+        if runner != nil { semantic, wireID = runner.semantic, runner.wireID }
+        return &LayerCodecError{Operation: "preflight RPC vector field", Profile: profile, Semantic: semantic, WireID: wireID, FieldID: fieldID, Reason: "vector count exceeds minimum remaining wire bytes"}
+    }
+    return nil
+}
+
 // LayerType is a generated static codec descriptor. Runtime code invokes its
 // direct function pointers; it never interprets a schema catalog or reflects
 // over values. preflight remains an internal validation/testing contract;
@@ -63,10 +193,15 @@ type LayerType[T any] struct {
     encode func(LayerProfile, T, *bin.Buffer) error
     decode func(LayerProfile, *bin.Buffer) (T, error)
     decodeState func(LayerProfile, *bin.Buffer, *layerCodecState) (T, error)
+    wireEquivalent func(LayerProfile) bool
 }
 
 // Ref returns immutable complete TL type metadata.
 func (t LayerType[T]) Ref() *LayerTypeRef { return t.ref }
+
+func (t LayerType[T]) canonicalWireEquivalent(profile LayerProfile) bool {
+    return profile == LayerProfileCanonical || t.wireEquivalent != nil && t.wireEquivalent(profile)
+}
 
 // EncodeLayer is the only profile-aware encoding entry point. RPC results,
 // active updates, and difference responses all call this function.
@@ -137,6 +272,7 @@ type LayerCodecError struct {
     Profile   LayerProfile
     Semantic  LayerSemanticID
     WireID    uint32
+    FieldID   LayerRPCFieldID
     Type      *LayerTypeRef
     Reason    string
     Cause     error
@@ -278,10 +414,12 @@ func FreezeLayer[T any](typ LayerType[T], value T) (LayerFrozen[T], error) {
         return LayerFrozen[T]{}, &LayerCodecError{Operation: "freeze", Profile: LayerProfileCanonical, Reason: "invalid layer type descriptor"}
     }
     var encoded bin.Buffer
-    if err := EncodeLayer(LayerProfileCanonical, typ, value, &encoded); err != nil {
+    // The destination is private and discarded on error, so the public
+    // transactional wrapper and exact-profile lookup are unnecessary here.
+    if err := typ.encode(LayerProfileCanonical, value, &encoded); err != nil {
         return LayerFrozen[T]{}, fmt.Errorf("freeze canonical layer value: %w", err)
     }
-    return LayerFrozen[T]{typ: typ, body: append([]byte(nil), encoded.Raw()...), valid: true}, nil
+    return LayerFrozen[T]{typ: typ, body: encoded.Copy(), valid: true}, nil
 }
 
 // EncodeFrozenLayer is a convenience path: every call decodes the immutable
@@ -336,8 +474,17 @@ func (p LayerPreparedValue[T]) validate(profile LayerProfile, typ LayerType[T], 
 // PrepareFrozenLayer performs canonical decode, target conversion, and target
 // encoding exactly once, then defensively owns the resulting wire bytes.
 func PrepareFrozenLayer[T any](profile LayerProfile, frozen LayerFrozen[T]) (LayerPreparedValue[T], error) {
-    if !frozen.valid || frozen.typ.ref == nil || frozen.typ.decode == nil {
+    if _, ok := ResolveLayerProfile(int(profile)); !ok {
+        return LayerPreparedValue[T]{}, &LayerCodecError{Operation: "prepare frozen", Profile: profile, Reason: "unsupported exact profile"}
+    }
+    if !frozen.valid || frozen.typ.ref == nil || frozen.typ.encode == nil || frozen.typ.decode == nil {
         return LayerPreparedValue[T]{}, &LayerCodecError{Operation: "prepare frozen", Profile: profile, Reason: "invalid frozen layer value"}
+    }
+    // Equivalence is a closed generation-time proof over the complete
+    // TypeRef. Canonical bytes may only bypass decode/adapt/encode for those
+    // exact profiles; the returned snapshot still owns a defensive copy.
+    if frozen.typ.canonicalWireEquivalent(profile) {
+        return LayerPreparedValue[T]{profile: profile, ref: frozen.typ.ref, body: append([]byte(nil), frozen.body...), valid: true}, nil
     }
     var encoded bin.Buffer
     if err := EncodeFrozenLayer(profile, frozen, &encoded); err != nil {
@@ -588,11 +735,11 @@ func (w LayerRPCWrapper) Value(name string) (value any, present bool, ok bool, e
 }
 
 // layerRPCRequestLease is shared by every value-copy of a LayerRequest.
-// Server dispatch atomically consumes dispatched; callers cannot duplicate a
-// request by copying its public admission token.
+// Dispatch or exact-profile outbound preparation atomically consumes it;
+// callers cannot duplicate a request by copying its public admission token.
 type layerRPCRequestLease struct {
     request bin.Object
-    dispatched uint32
+    consumed uint32
 }
 
 // LayerRequest is one canonical generated RPC request, its immutable

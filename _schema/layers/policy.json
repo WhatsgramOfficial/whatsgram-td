@@ -794,11 +794,27 @@
       }
     },
     {
+      "key": "layer-obligation/v1/result/0021cd83f053df9a1e6a51d2397976ce14a89a766a95558778f5ef70f75ff502",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=223; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
+      }
+    },
+    {
       "key": "layer-obligation/v1/result/03fac28658518be930ba0c3d9f78fc3beed75a92ab442b7a88bec2946fb8229d",
       "resolution": {
         "action": "adapter",
         "hook": "layerAdaptChatInviteJoinResultToUpdates",
         "note": "kind=result; layer=220; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/0db184135fb54c660d6c1f0442e7ae193e697328dfda49df1c3f7b2f5fe76da3",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=222; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
       }
     },
     {
@@ -834,6 +850,14 @@
       }
     },
     {
+      "key": "layer-obligation/v1/result/55ec60f05c38594d5fc10a006adb0978ea3324b23aa4c07e0ee4506f4bc782db",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=225; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
+      }
+    },
+    {
       "key": "layer-obligation/v1/result/566407bb0d68c549610d4cd362f2c53c282ca4f9e85a0e08fb9a9db6fea4a001",
       "resolution": {
         "action": "adapter",
@@ -866,6 +890,14 @@
       }
     },
     {
+      "key": "layer-obligation/v1/result/78613fcc40156c4eda540a53fe2ac18f7d76368154546dcdc6a00ec0a91a75a4",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=224; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
+      }
+    },
+    {
       "key": "layer-obligation/v1/result/7b9fcabae0b44c1da9c74dc56042b7e5cbae95e9e28c68d98b44c1e62d0e95d7",
       "resolution": {
         "action": "adapter",
@@ -874,11 +906,89 @@
       }
     },
     {
+      "key": "layer-obligation/v1/result/7bd045dc743d65867fe0df125db82be33b40b47a020f61b49c5a2b7a3198f285",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=221; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/946f8c3bf87815584c129adb13624d2c3366d465721c3b96d700d5196c338d99",
+      "resolution": {
+        "action": "reject",
+        "note": "kind=result; layer=225; direction=profile-to-canonical; semantic=function:messages.setBotGuestChatResult; wire=0x052b08db-\u003e0xb8f106e3; type=Bool-\u003eInputBotInlineMessageID; source_shape=2119e0621b64e30a53235d10eb16deda5eb6af3a21bde047970e7b1b47eadab6; target_shape=1a6d361b9256cd293d4c7102bfa256ff759cb841824850ddc4d2da15b82b446d"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/9e22a2eb8592bafc158a15c6a0572bb35db413db05c37d11006c1e0d84b65c01",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=221; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/9e63d6ba6f8d1a2d45f2822557326ec6ad78d69bac0a004f2c6ff4dead011cb2",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=222; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
+      }
+    },
+    {
       "key": "layer-obligation/v1/result/9faaec37dfed4e5fa7250f1a9fd0a4fd4b90c08401b68504a968b2e249525939",
       "resolution": {
         "action": "adapter",
         "hook": "layerAdaptChatInviteJoinResultToUpdates",
         "note": "kind=result; layer=220; direction=canonical-to-profile; semantic=function:messages.importChatInvite; wire=0xde91436e-\u003e0x6c50051c; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4; target_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/9fffb6c4b22d51ceeb2f42e382f1593b533460e542a5736f35f02d299c3b1ad0",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=223; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/a435206391753916deb8ffd8bb40723f2aca357378d08a2def45691e059907c6",
+      "resolution": {
+        "action": "reject",
+        "note": "kind=result; layer=226; direction=profile-to-canonical; semantic=function:account.toggleWebBrowserSettingsException; wire=0x2d0a0571-\u003e0x60ed4229; type=Bool-\u003eUpdates; source_shape=248c17505adfcffbf5154296b6d86a63fe2691e40205f126a866ec2aee5b9d37; target_shape=71a777e81899a1a141d5b9ec01112186bc2c8d9b532989a1d33f7fe4603e1810"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/b2594d798ba4cac65f32ae2c9970ac09807622bbe8e16c55a50a16b23fbe16ef",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=224; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/b5ce1e12c040e76429510342d5befe78f715761fa169db07b2c82cef943473ff",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=220; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/ce616b2663d7db69fe806c3cd2560a24d79e522600d30c15e1900d764f938f41",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=220; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/result/cf0cb7ff241319a5846e82487ae3e553b1705422ddab67f3d15436b86ac52bb0",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
+        "note": "kind=result; layer=225; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
       }
     },
     {

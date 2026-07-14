@@ -76,23 +76,27 @@ type layerRPCValuePlan struct {
 // layerRPCFieldPlan describes one encoded value field in an exact method
 // profile. Flags words have no value plan and are retained for ordinal checks.
 type layerRPCFieldPlan struct {
-	Ordinal int
-	Name    string
-	Shape   *semantic.FieldShape
-	Value   *layerRPCValuePlan
+	Ordinal   int
+	Name      string
+	Shape     *semantic.FieldShape
+	Value     *layerRPCValuePlan
+	Admission *layerRPCAdmissionFieldUse
 }
 
 // layerRPCResultPlan freezes both sides of a method result conversion. The
 // canonical reference is the handler-facing Layer 227 result; WireRef is the
 // exact result grammar expected by this profile's request ID.
 type layerRPCResultPlan struct {
-	CanonicalRef   *semantic.TypeRef
-	WireRef        *semantic.TypeRef
-	CanonicalValue *layerRPCValuePlan
-	WireValue      *layerRPCValuePlan
-	Action         layerRPCAction
-	Adapter        string
-	Obligations    []LayerObligation
+	CanonicalRef      *semantic.TypeRef
+	WireRef           *semantic.TypeRef
+	CanonicalValue    *layerRPCValuePlan
+	WireValue         *layerRPCValuePlan
+	Action            layerRPCAction
+	Adapter           string
+	Obligations       []LayerObligation
+	ClientAction      layerRPCAction
+	ClientAdapter     string
+	ClientObligations []LayerObligation
 }
 
 // layerRPCWrapperPlan is a transparent generic RPC envelope. QuerySlot and
@@ -115,17 +119,19 @@ type layerRPCWrapperPlan struct {
 // layerRPCMethodProfile is one exact profile view of a semantic method. A
 // method which is not present still has an explicit unavailable entry.
 type layerRPCMethodProfile struct {
-	Layer              int
-	Availability       LayerAvailability
-	Definition         *semantic.Definition
-	WireID             uint32
-	Fields             []layerRPCFieldPlan
-	Request            layerRPCAction
-	RequestHook        string
-	RequestObligations []LayerObligation
-	Result             layerRPCResultPlan
-	Wrapper            *layerRPCWrapperPlan
-	Conversion         *LayerFamilyConversion
+	Layer                    int
+	Availability             LayerAvailability
+	Definition               *semantic.Definition
+	WireID                   uint32
+	Fields                   []layerRPCFieldPlan
+	Request                  layerRPCAction
+	RequestHook              string
+	RequestObligations       []LayerObligation
+	ClientRequest            layerRPCAction
+	ClientRequestObligations []LayerObligation
+	Result                   layerRPCResultPlan
+	Wrapper                  *layerRPCWrapperPlan
+	Conversion               *LayerFamilyConversion
 }
 
 // layerRPCMethodPlan owns exactly one semantic handler registration. All wire
@@ -170,10 +176,11 @@ type layerRPCRoutePlan struct {
 // layerRPCModel is a generation-time RPC dispatch projection. Indexes are
 // private accelerators and are not emitted as a runtime schema catalog.
 type layerRPCModel struct {
-	CanonicalLayer int
-	Profiles       []int
-	Methods        []layerRPCMethodPlan
-	Routes         []layerRPCRoutePlan
+	CanonicalLayer  int
+	Profiles        []int
+	Methods         []layerRPCMethodPlan
+	Routes          []layerRPCRoutePlan
+	AdmissionFields []layerRPCAdmissionFieldPlan
 
 	methodIndex map[semantic.SemanticKey]*layerRPCMethodPlan
 	routeIndex  map[layerRPCRouteKey]*layerRPCRoutePlan
@@ -286,6 +293,9 @@ func (g *Generator) buildLayerRPCModel() (*layerRPCModel, error) {
 		}
 		model.routeIndex[key] = route
 	}
+	if err := buildLayerRPCAdmissionFields(model); err != nil {
+		return nil, err
+	}
 	return model, nil
 }
 
@@ -359,12 +369,14 @@ func buildLayerRPCMethodProfile(
 	layer int,
 ) (layerRPCMethodProfile, error) {
 	profile := layerRPCMethodProfile{
-		Layer:        layer,
-		Availability: conversion.Availability,
-		Conversion:   conversion,
-		Request:      layerRPCUnavailable,
+		Layer:         layer,
+		Availability:  conversion.Availability,
+		Conversion:    conversion,
+		Request:       layerRPCUnavailable,
+		ClientRequest: layerRPCUnavailable,
 		Result: layerRPCResultPlan{
-			Action: layerRPCUnavailable,
+			Action:       layerRPCUnavailable,
+			ClientAction: layerRPCUnavailable,
 		},
 	}
 	var canonicalDefinition *semantic.Definition
@@ -424,12 +436,15 @@ func buildLayerRPCMethodProfile(
 
 	profile.RequestObligations = layerRPCAdmissionObligations(conversion.BodyObligations())
 	profile.Request, profile.RequestHook = classifyLayerRPCObligations(profile.RequestObligations, true)
+	profile.ClientRequestObligations = layerRPCClientRequestObligations(conversion.BodyObligations())
+	profile.ClientRequest, _ = classifyLayerRPCObligations(profile.ClientRequestObligations, true)
 	if conversion.Availability == LayerAvailabilityProfileOnly {
 		// A historical-only request has no canonical request struct. Even an
 		// explicit adapter is the entire admission path; direct is impossible.
 		if profile.Request == layerRPCDirect {
 			profile.Request = layerRPCReject
 		}
+		profile.ClientRequest = layerRPCReject
 		profile.Result.Action = layerRPCReject
 		if profile.Request == layerRPCAdapter && profile.RequestHook != "" {
 			// The named old-only adapter owns both request admission and its
@@ -437,7 +452,8 @@ func buildLayerRPCMethodProfile(
 			profile.Result.Action = layerRPCAdapter
 			profile.Result.Adapter = profile.RequestHook
 		}
-		profile.Result.Obligations = append([]LayerObligation(nil), conversion.ResultObligations()...)
+		profile.Result.Obligations = layerRPCResultObligations(conversion.ResultObligations(), LayerDirectionCanonicalToProfile)
+		profile.Result.ClientObligations = layerRPCResultObligations(conversion.ResultObligations(), LayerDirectionProfileToCanonical)
 		return profile, nil
 	}
 	// Present methods are converted field-by-field by their unique wire codec;
@@ -447,15 +463,23 @@ func buildLayerRPCMethodProfile(
 		return layerRPCMethodProfile{}, fmt.Errorf("present method has no canonical binding")
 	}
 
-	profile.Result.Obligations = append([]LayerObligation(nil), conversion.ResultObligations()...)
+	profile.Result.Obligations = layerRPCResultObligations(conversion.ResultObligations(), LayerDirectionCanonicalToProfile)
+	profile.Result.ClientObligations = layerRPCResultObligations(conversion.ResultObligations(), LayerDirectionProfileToCanonical)
 	if canonicalDefinition.Result.Equal(definition.Result) {
 		profile.Result.Action = layerRPCDirect
+		profile.Result.ClientAction = layerRPCDirect
 	} else {
 		profile.Result.Action, profile.Result.Adapter = classifyLayerRPCObligations(profile.Result.Obligations, false)
 		if profile.Result.Action == layerRPCDirect {
 			// A changed result is never silently considered direct, even if a
 			// future analyzer accidentally omits its obligation.
 			profile.Result.Action = layerRPCReject
+		}
+		profile.Result.ClientAction, profile.Result.ClientAdapter = classifyLayerRPCObligations(profile.Result.ClientObligations, false)
+		if profile.Result.ClientAction == layerRPCDirect {
+			// A changed result can only be decoded back to canonical through an
+			// explicit profile-to-canonical policy decision.
+			profile.Result.ClientAction = layerRPCReject
 		}
 	}
 
@@ -548,6 +572,27 @@ func layerRPCAdmissionObligations(obligations []LayerObligation) []LayerObligati
 	for _, obligation := range obligations {
 		switch obligation.Direction {
 		case LayerDirectionProfileToCanonical, LayerDirectionBoth:
+			result = append(result, obligation)
+		}
+	}
+	return result
+}
+
+func layerRPCClientRequestObligations(obligations []LayerObligation) []LayerObligation {
+	result := make([]LayerObligation, 0, len(obligations))
+	for _, obligation := range obligations {
+		switch obligation.Direction {
+		case LayerDirectionCanonicalToProfile, LayerDirectionBoth:
+			result = append(result, obligation)
+		}
+	}
+	return result
+}
+
+func layerRPCResultObligations(obligations []LayerObligation, direction LayerObligationDirection) []LayerObligation {
+	result := make([]LayerObligation, 0, len(obligations))
+	for _, obligation := range obligations {
+		if obligation.Direction == direction || obligation.Direction == LayerDirectionBoth {
 			result = append(result, obligation)
 		}
 	}

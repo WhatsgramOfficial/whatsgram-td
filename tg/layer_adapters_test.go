@@ -135,6 +135,16 @@ func TestLayerResultAdapters(t *testing.T) {
 	if _, err := layerAdaptChatInviteJoinResultToUpdates(profile, &MessagesChatInviteJoinResultWebView{}); err == nil {
 		t.Fatal("webview join result was accepted as historical Updates")
 	}
+	reversed, err := layerAdaptUpdatesToChatInviteJoinResult(profile, updates)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if value, ok := reversed.(*MessagesChatInviteJoinResultOk); !ok || value.Updates != updates {
+		t.Fatalf("reversed historical Updates = %#v", reversed)
+	}
+	if _, err := layerAdaptUpdatesToChatInviteJoinResult(profile, nil); err == nil {
+		t.Fatal("nil historical Updates was accepted as a canonical join result")
+	}
 	if ok, err := layerAdaptWebBrowserSettingsExceptionResult(LayerProfile(226), updates); err != nil || !ok {
 		t.Fatalf("updates-to-bool = %v,%v", ok, err)
 	}

@@ -315,7 +315,7 @@ func TestLayerRPCServerSourceIsSyntacticallyCompilable(t *testing.T) {
 		"func (s *ServerDispatcher) HandleUnprofiled(",
 		"type LayerRPCWrapperConsumer func(context.Context, LayerRequest, LayerRPCNext) error",
 		"func (s *ServerDispatcher) OnLayerRPCWrappers(",
-		"atomic.CompareAndSwapUint32(&lease.dispatched, 0, 1)",
+		"atomic.CompareAndSwapUint32(&lease.consumed, 0, 1)",
 		"type LayerRPCResult interface",
 		"Prepare() (LayerPreparedResult, error)",
 		"return r.prepared.Call().prepareResult(r.value)",
@@ -457,6 +457,7 @@ func TestLayerRPCSyntheticGeneratedPackageCompiles(t *testing.T) {
 	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{
 		LayerPolicy: layerTestPolicy(t, set),
 		GenerateFlags: GenerateFlags{
+			Client: true,
 			Server: true,
 		},
 	})
@@ -492,6 +493,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/sha256"
+	"errors"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -1168,6 +1170,129 @@ func TestGeneratedLayerRPCAdmissionPreflightAndLimits(t *testing.T) {
 	}
 	if !bytes.Equal(unprofiledWireLimited.Raw(), unprofiledBefore) { t.Fatal("unprofiled wire limit consumed input") }
 }
+
+func privateBulkWire(first, second []int) []byte {
+	return bulkWire(0xf1000001, first, second)
+}
+
+func registerPrivateBulkAdapter(t *testing.T, dispatcher *ServerDispatcher, calls *int) {
+	t.Helper()
+	dispatcher.OnLayerRPCUnknownMethod(func(view LayerRPCUnknownMethodView) (LayerOutboundCall, bool, error) {
+		*calls++
+		if view.WireID() != 0xf1000001 {
+			return LayerOutboundCall{}, false, nil
+		}
+		private, err := view.Buffer()
+		if err != nil { return LayerOutboundCall{}, true, err }
+		if err := private.ConsumeID(0xf1000001); err != nil { return LayerOutboundCall{}, true, err }
+		var canonical bin.Buffer
+		canonical.PutID(0x21000023)
+		canonical.Put(private.Raw())
+		private.Buf = private.Buf[len(private.Buf):]
+		outbound, err := view.AdaptCanonical(&canonical)
+		return outbound, true, err
+	})
+}
+
+func TestGeneratedUnknownInnermostMethodAdapter(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+	adapterCalls := 0
+	fieldCalls := 0
+	if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldBulkFirst, func(view LayerRPCAdmissionFieldView) error {
+		fieldCalls++
+		length, ok := view.VectorLength()
+		if !ok || length != 2 { t.Fatalf("private bulk first metric = %d/%v", length, ok) }
+		return nil
+	}); err != nil { t.Fatal(err) }
+	registerPrivateBulkAdapter(t, dispatcher, &adapterCalls)
+
+	naked := bin.Buffer{Buf: privateBulkWire([]int{1, 2}, []int{3})}
+	admitted, err := dispatcher.AdmitLayer(LayerProfile2, &naked)
+	if err != nil { t.Fatal(err) }
+	if naked.Len() != 0 { t.Fatalf("naked private admission left %d bytes", naked.Len()) }
+	if admitted.Call().Profile() != LayerProfile2 || admitted.Call().Method() != LayerSemanticMethodBulk || admitted.Call().WireID() != 0x21000023 {
+		t.Fatalf("adapted call = profile:%d semantic:%d wire:%#08x", admitted.Call().Profile(), admitted.Call().Method(), admitted.Call().WireID())
+	}
+	if adapterCalls != 1 || fieldCalls != 1 {
+		t.Fatalf("naked adapter/field calls = %d/%d, want 1/1", adapterCalls, fieldCalls)
+	}
+
+	var wrapped bin.Buffer
+	wrapped.PutID(0xda9b0d0d)
+	wrapped.PutInt(2)
+	wrapped.PutID(0xcb9f372d)
+	wrapped.PutLong(77)
+	wrapped.Put(privateBulkWire([]int{1, 2}, []int{3}))
+	wrappedBefore := wrapped.Copy()
+	wrappedAdmission, err := dispatcher.AdmitUnprofiled(&wrapped)
+	if err != nil { t.Fatal(err) }
+	if wrapped.Len() != 0 || wrappedAdmission.WrapperCount() != 2 {
+		t.Fatalf("wrapped private admission = remaining:%d wrappers:%d wire:%x", wrapped.Len(), wrappedAdmission.WrapperCount(), wrappedBefore)
+	}
+	if adapterCalls != 2 || fieldCalls != 2 {
+		t.Fatalf("wrapped adapter/field calls = %d/%d, want 2/2", adapterCalls, fieldCalls)
+	}
+
+	// Official routes always win, even if the application adapter would claim
+	// the same constructor as private.
+	overlap := NewServerDispatcher(nil)
+	overlapCalls := 0
+	overlap.OnLayerRPCUnknownMethod(func(LayerRPCUnknownMethodView) (LayerOutboundCall, bool, error) {
+		overlapCalls++
+		return LayerOutboundCall{}, true, context.Canceled
+	})
+	official := canonicalRequest(0x21000020, 9)
+	if _, err := overlap.AdmitLayer(LayerProfile2, official); err != nil { t.Fatal(err) }
+	if overlapCalls != 0 { t.Fatalf("official route invoked private adapter %d times", overlapCalls) }
+
+	malformed := bin.Buffer{}
+	malformed.PutID(0xf1000001)
+	malformedBefore := malformed.Copy()
+	if _, err := dispatcher.AdmitLayer(LayerProfile2, &malformed); err == nil { t.Fatal("malformed private method was admitted") }
+	if !bytes.Equal(malformed.Raw(), malformedBefore) { t.Fatal("malformed private method consumed caller input") }
+
+	unhandled := bin.Buffer{}
+	unhandled.PutID(0xf1000002)
+	unhandledBefore := unhandled.Copy()
+	if _, err := dispatcher.AdmitLayer(LayerProfile2, &unhandled); !errors.Is(err, ErrLayerUnknownRPCMethod) {
+		t.Fatalf("unhandled private error = %v", err)
+	}
+	if !bytes.Equal(unhandled.Raw(), unhandledBefore) { t.Fatal("unhandled private method consumed caller input") }
+}
+
+func TestGeneratedUnknownMethodAdapterCannotBypassCanonicalAdmission(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+	dispatcher.OnLayerRPCUnknownMethod(func(view LayerRPCUnknownMethodView) (LayerOutboundCall, bool, error) {
+		private, err := view.Buffer()
+		if err != nil { return LayerOutboundCall{}, true, err }
+		private.Buf = private.Buf[len(private.Buf):]
+		outbound, err := PrepareLayerOutboundCall(LayerProfile2, &BulkRequest{First: []int{1}, Second: []int{2}})
+		return outbound, true, err
+	})
+	private := bin.Buffer{}
+	private.PutID(0xf1000003)
+	before := private.Copy()
+	if _, err := dispatcher.AdmitLayer(LayerProfile2, &private); err == nil || !strings.Contains(err.Error(), "authoritative canonical admission bridge") {
+		t.Fatalf("unapproved private call error = %v", err)
+	}
+	if !bytes.Equal(private.Raw(), before) { t.Fatal("unapproved private call consumed input") }
+
+	notConsumed := NewServerDispatcher(nil)
+	notConsumed.OnLayerRPCUnknownMethod(func(view LayerRPCUnknownMethodView) (LayerOutboundCall, bool, error) {
+		var canonical bin.Buffer
+		canonical.Put(privateBulkWire([]int{1}, []int{2}))
+		canonical.Buf[0], canonical.Buf[1], canonical.Buf[2], canonical.Buf[3] = 0x23, 0x00, 0x00, 0x21
+		outbound, err := view.AdaptCanonical(&canonical)
+		return outbound, true, err
+	})
+	private = bin.Buffer{}
+	private.PutID(0xf1000004)
+	before = private.Copy()
+	if _, err := notConsumed.AdmitLayer(LayerProfile2, &private); err == nil || !strings.Contains(err.Error(), "left") {
+		t.Fatalf("unconsumed private terminal error = %v", err)
+	}
+	if !bytes.Equal(private.Raw(), before) { t.Fatal("unconsumed private terminal consumed caller input") }
+}
 `)
 	formattedRuntimeTest, err := format.Source(runtimeTest)
 	if err != nil {
@@ -1465,7 +1590,11 @@ func layerRPCSourcePolicy(t *testing.T, set *SchemaSet, oldOnly LayerObligationR
 		entry := LayerObligationPolicyEntry{Key: obligation.Key}
 		switch {
 		case obligation.Kind == LayerObligationResult && obligation.Semantic.QName == "join":
-			entry.Resolution = LayerObligationResolution{Action: LayerResolveAdapter, Hook: "adaptOldJoinResult"}
+			hook := "adaptOldJoinResult"
+			if obligation.Direction == LayerDirectionProfileToCanonical {
+				hook = "adaptNewJoinResult"
+			}
+			entry.Resolution = LayerObligationResolution{Action: LayerResolveAdapter, Hook: hook}
 		case obligation.Kind == LayerObligationOldOnly && obligation.Semantic.QName == "legacy":
 			entry.Resolution = oldOnly
 		case obligation.Kind == LayerObligationDiscard && obligation.Semantic.QName == "echo":
@@ -1475,7 +1604,7 @@ func layerRPCSourcePolicy(t *testing.T, set *SchemaSet, oldOnly LayerObligationR
 		}
 		policy.Entries = append(policy.Entries, entry)
 	}
-	if len(policy.Entries) != 3 {
+	if len(policy.Entries) != 4 {
 		t.Fatalf("synthetic RPC source policy entries = %+v", policy.Entries)
 	}
 	return policy
@@ -1496,7 +1625,8 @@ func layerRPCSourceSyntheticSchemaSet(t *testing.T) *SchemaSet {
 			"getDouble#21000035 = double;\n"+
 			"getString#21000036 = string;\n"+
 			"getBytes#21000037 = bytes;\n"+
-			"getObject#21000038 = Object;",
+			"getObject#21000038 = Object;\n"+
+			"getBare#21000039 = %pong;",
 		1,
 	)
 	canonical := strings.Replace(
@@ -1515,7 +1645,8 @@ func layerRPCSourceSyntheticSchemaSet(t *testing.T) *SchemaSet {
 			"getDouble#21000045 = double;\n"+
 			"getString#21000046 = string;\n"+
 			"getBytes#21000047 = bytes;\n"+
-			"getObject#21000048 = Object;",
+			"getObject#21000048 = Object;\n"+
+			"getBare#21000049 = %pong;",
 		1,
 	)
 	profiles := make([]*semantic.SchemaModel, 0, 2)

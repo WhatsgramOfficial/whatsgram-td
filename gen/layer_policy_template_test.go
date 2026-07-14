@@ -58,7 +58,7 @@ func TestLayerPolicyTemplateTelegram220Through227(t *testing.T) {
 		t.Fatal(err)
 	}
 	document := BuildLayerPolicyTemplate(g.LayerConversionPlan().Report)
-	if got, want := len(document.Entries), 157; got != want {
+	if got, want := len(document.Entries), 171; got != want {
 		t.Fatalf("unresolved policy entries = %d, want %d", got, want)
 	}
 	for i := 1; i < len(document.Entries); i++ {

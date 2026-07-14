@@ -13,18 +13,19 @@ import (
 
 // config is input data for templates.
 type config struct {
-	Layer          int
-	Flags          GenerateFlags
-	Package        string
-	Structs        []structDef
-	Interfaces     []interfaceDef
-	Mappings       map[string][]constructorMapping
-	Registry       []bindingDef
-	Errors         []errCheckDef
-	LayerMetadata  *layerMetadata
-	LayerCodec     *layerCodecModel
-	LayerTypeRefs  *layerTypeRefModel
-	LayerRPCSource *layerRPCSourceModel
+	Layer             int
+	Flags             GenerateFlags
+	Package           string
+	Structs           []structDef
+	Interfaces        []interfaceDef
+	Mappings          map[string][]constructorMapping
+	Registry          []bindingDef
+	Errors            []errCheckDef
+	LayerMetadata     *layerMetadata
+	LayerCodec        *layerCodecModel
+	LayerTypeRefs     *layerTypeRefModel
+	LayerRPCSource    *layerRPCSourceModel
+	LayerClientSource *layerClientSourceModel
 }
 
 // FileSystem represents a directory of generated package.
@@ -231,20 +232,36 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 		if err != nil {
 			return errors.Wrap(err, "layer TypeRefs")
 		}
-		codec, err := g.buildLayerCodecModel(pkgName)
-		if err != nil {
-			return errors.Wrap(err, "layer codec")
-		}
-		var rpcSource *layerRPCSourceModel
-		if g.generateFlags.Server {
-			rpc, err := g.buildLayerRPCModel()
+		var (
+			rpc          *layerRPCModel
+			rpcSource    *layerRPCSourceModel
+			clientSource *layerClientSourceModel
+		)
+		if g.generateFlags.Server || g.generateFlags.Client {
+			rpc, err = g.buildLayerRPCModel()
 			if err != nil {
 				return errors.Wrap(err, "layer RPC model")
 			}
-			rpcSource, err = g.buildLayerRPCSourceModel(rpc, typeRefs)
-			if err != nil {
-				return errors.Wrap(err, "layer RPC source")
+			if g.generateFlags.Server {
+				rpcSource, err = g.buildLayerRPCSourceModel(rpc, typeRefs)
+				if err != nil {
+					return errors.Wrap(err, "layer RPC source")
+				}
 			}
+			if g.generateFlags.Client {
+				clientSource, err = g.buildLayerClientSourceModel(rpc, typeRefs)
+				if err != nil {
+					return errors.Wrap(err, "layer client source")
+				}
+			}
+		}
+		var codecRPC *layerRPCModel
+		if g.generateFlags.Server {
+			codecRPC = rpc
+		}
+		codec, err := g.buildLayerCodecModel(pkgName, codecRPC)
+		if err != nil {
+			return errors.Wrap(err, "layer codec")
 		}
 		metadata, err := g.buildLayerMetadata()
 		if err != nil {
@@ -307,9 +324,19 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 		if rpcSource != nil {
 			if err := w.Generate("layer_server", "tl_server_gen.go", config{
 				Package:        pkgName,
+				Flags:          g.generateFlags,
 				LayerRPCSource: rpcSource,
 			}); err != nil {
 				return errors.Wrap(err, "layer RPC server")
+			}
+		}
+		if clientSource != nil {
+			if err := w.Generate("layer_client", "tl_layer_client_gen.go", config{
+				Package:           pkgName,
+				Flags:             g.generateFlags,
+				LayerClientSource: clientSource,
+			}); err != nil {
+				return errors.Wrap(err, "layer RPC client")
 			}
 		}
 	}

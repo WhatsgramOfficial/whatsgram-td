@@ -13,6 +13,7 @@ import (
 // bodies; generated code never interprets either model at runtime.
 type layerRPCSourceModel struct {
 	LayerRPC     *layerRPCModel
+	ClientBridge bool
 	Profiles     []layerRPCSourceProfile
 	Routes       []layerRPCSourceRoute
 	Handlers     []layerRPCSourceHandler
@@ -104,8 +105,9 @@ func (g *Generator) buildLayerRPCSourceModel(rpc *layerRPCModel, refs *layerType
 		hookByName:   make(map[string]string),
 		adapterNames: make(map[string]struct{}),
 		model: &layerRPCSourceModel{
-			LayerRPC: rpc,
-			MaxDepth: refs.MaxDepth,
+			LayerRPC:     rpc,
+			ClientBridge: g.generateFlags.Client,
+			MaxDepth:     refs.MaxDepth,
 		},
 	}
 	for index := range refs.Nodes {

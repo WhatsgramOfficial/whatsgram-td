@@ -40,6 +40,68 @@ var (
 {{ template "layer_server_header" . }}
 
 {{- with .LayerRPCSource }}
+{{- $rpcSource := . }}
+// Stable generated identities for observable top-level RPC request fields.
+const (
+{{- range .LayerRPC.AdmissionFields }}
+    {{ .Constant }} LayerRPCFieldID = 0x{{ printf "%016x" .ID }}
+{{- end }}
+    layerRPCAdmissionFieldCount = {{ len .LayerRPC.AdmissionFields }}
+)
+
+// LayerRPCAdmissionFieldCoverageStatus is one generated profile's ability to
+// expose a registered canonical metric from its exact typed decoder.
+type LayerRPCAdmissionFieldCoverageStatus uint8
+
+const (
+    LayerRPCAdmissionFieldCoverageInvalid LayerRPCAdmissionFieldCoverageStatus = iota
+    LayerRPCAdmissionFieldObservable
+    LayerRPCAdmissionFieldMethodUnavailable
+    LayerRPCAdmissionFieldUnmapped
+    LayerRPCAdmissionFieldIncompatible
+    LayerRPCAdmissionFieldAdapterUnproven
+)
+
+type LayerRPCAdmissionFieldCoverage struct {
+    Profile LayerProfile
+    WireID uint32
+    ProfileField string
+    Status LayerRPCAdmissionFieldCoverageStatus
+    Reason string
+}
+
+// VisitLayerRPCAdmissionFieldCoverage visits immutable generated coverage in
+// profile order without allocating or exposing mutable schema tables.
+func VisitLayerRPCAdmissionFieldCoverage(fieldID LayerRPCFieldID, visit func(LayerRPCAdmissionFieldCoverage) bool) error {
+    if visit == nil { return fmt.Errorf("tg: nil layer RPC admission field coverage visitor") }
+    switch fieldID {
+{{- range .LayerRPC.AdmissionFields }}
+    case {{ .Constant }}:
+{{- range .Coverage }}
+        if !visit(LayerRPCAdmissionFieldCoverage{Profile: LayerProfile({{ .Layer }}), WireID: 0x{{ printf "%08x" .WireID }}, ProfileField: {{ printf "%q" .ProfileField }}, Status: {{ .StatusConstant }}, Reason: {{ printf "%q" .Reason }}}) { return nil }
+{{- end }}
+        return nil
+{{- end }}
+    default:
+        return fmt.Errorf("tg: unknown layer RPC admission field %#016x", uint64(fieldID))
+    }
+}
+
+func layerRPCAdmissionFieldRegistration(fieldID LayerRPCFieldID) (int, error) {
+    switch fieldID {
+{{- range .LayerRPC.AdmissionFields }}
+    case {{ .Constant }}:
+{{- if .Complete }}
+        return {{ .Index }}, nil
+{{- else }}
+        return -1, fmt.Errorf("tg: layer RPC admission field {{ .Constant }} is not observable in every routable profile: %s", {{ printf "%q" .Failure }})
+{{- end }}
+{{- end }}
+    default:
+        return -1, fmt.Errorf("tg: unknown layer RPC admission field %#016x", uint64(fieldID))
+    }
+}
+
 // Static result-policy contracts. Missing hooks and signature drift are
 // deliberate generated-package compile errors.
 {{ range .HookChecks -}}
@@ -110,13 +172,26 @@ func layerSemanticIdentity{{ $s.Name }}(request *{{ $s.Name }}) (LayerSemanticRe
 // decodeLayerRPCRequest owns a fresh state for the complete transparent
 // wrapper chain. Exact nested TypeRef bindings therefore cannot leak between
 // requests or collide merely because different wrappers both call a slot X.
-func decodeLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight) (layerDecodedRPCRequest, error) {
+func decodeLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight, fieldCallbacks []LayerRPCAdmissionFieldPreflight, unknownAdapter layerRPCUnknownMethodAdapter) (layerDecodedRPCRequest, error) {
     if b == nil {
         return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, Reason: "nil buffer"}
     }
     state, err := newLayerCodecDecodeState(profile, b.Len(), limits.layerCodecDecodeLimits())
     if err != nil { return layerDecodedRPCRequest{}, err }
-    preflight := layerRPCAdmissionPreflightRunner{callback: callback}
+    fieldRunner := layerRPCAdmissionFieldRunner{callbacks: fieldCallbacks}
+    if len(fieldCallbacks) != 0 { state.rpcAdmission = &fieldRunner }
+    preflight := layerRPCAdmissionPreflightRunner{
+        callback: callback,
+        fields: state.rpcAdmission,
+        unknownAdapter: unknownAdapter,
+    }
+{{- if $rpcSource.ClientBridge }}
+    preflight.adaptCanonical = func(targetProfile LayerProfile, canonical *bin.Buffer) (LayerOutboundCall, error) {
+        request, err := prepareLayerRPCRequest(LayerProfileCanonical, canonical, limits, nil, fieldCallbacks, nil)
+        if err != nil { return LayerOutboundCall{}, err }
+        return request.PrepareOutbound(targetProfile)
+    }
+{{- end }}
     decoded, err := decodeLayerRPCRequestState(profile, b, state, &preflight, 0)
     if err != nil { return layerDecodedRPCRequest{}, err }
     if atomic.LoadUint32(&preflight.called) != 1 {
@@ -143,12 +218,102 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
             return {{ $route.Admit }}(profile, b, state, preflight, depth)
         {{- end }}
         default:
-            return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
+            return preflight.adaptUnknown(profile, b, state, depth, id)
         }
     {{- end }}
     default:
         return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
     }
+}
+
+type layerRPCUnknownMethodResult struct {
+    profile LayerProfile
+    semantic LayerSemanticID
+    wireID uint32
+    encode func(*bin.Buffer) error
+}
+
+type layerRPCUnknownMethodAdapter func(LayerRPCUnknownMethodView) (layerRPCUnknownMethodResult, bool, error)
+
+func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32) error {
+    return &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: wireID, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
+}
+
+// adaptUnknown is reachable only from the generated exact-profile switch
+// default. Every official constructor, including wrappers, therefore wins
+// before a private extension can observe the innermost terminal body.
+func (p *layerRPCAdmissionPreflightRunner) adaptUnknown(profile LayerProfile, b *bin.Buffer, state *layerCodecState, depth int, wireID uint32) (layerDecodedRPCRequest, error) {
+    unknown := layerRPCUnknownMethodError(profile, wireID)
+    if p == nil || p.unknownAdapter == nil || atomic.LoadUint32(&p.unknownAdapterDisabled) != 0 {
+        return layerDecodedRPCRequest{}, unknown
+    }
+    if b == nil || state == nil {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, WireID: wireID, Reason: "nil buffer or codec state"}
+    }
+    if !atomic.CompareAndSwapUint32(&p.unknownAdapterActive, 0, 1) {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, WireID: wireID, Reason: "recursive unknown method adapter invocation"}
+    }
+    defer atomic.StoreUint32(&p.unknownAdapterActive, 0)
+
+    private := &bin.Buffer{Buf: append([]byte(nil), b.Raw()...)}
+    lease := &layerRPCUnknownMethodViewLease{active: 1, body: private}
+{{- if $rpcSource.ClientBridge }}
+    lease.adaptCanonical = func(canonical *bin.Buffer) (LayerOutboundCall, error) {
+        if p.adaptCanonical == nil {
+            return LayerOutboundCall{}, &LayerCodecError{Operation: "adapt canonical unknown RPC method", Profile: profile, WireID: wireID, Reason: "canonical exact adapter is unavailable"}
+        }
+        return p.adaptCanonical(profile, canonical)
+    }
+{{- end }}
+    view := LayerRPCUnknownMethodView{profile: profile, wireID: wireID, wireSize: private.Len(), lease: lease}
+    adapted, handled, err := p.unknownAdapter(view)
+    atomic.StoreUint32(&lease.active, 0)
+    if err != nil { return layerDecodedRPCRequest{}, err }
+    if !handled {
+        if atomic.LoadUint32(&lease.approved) != 0 {
+            return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, WireID: wireID, Reason: "adapter prepared a canonical request but reported it unhandled"}
+        }
+        return layerDecodedRPCRequest{}, unknown
+    }
+    if private.Len() != 0 {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, WireID: wireID, Reason: fmt.Sprintf("adapter left %d private terminal bytes", private.Len())}
+    }
+    if atomic.LoadUint32(&lease.approved) != 1 {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, WireID: wireID, Reason: "adapter did not use the authoritative canonical admission bridge"}
+    }
+    if adapted.profile != profile || adapted.semantic != lease.approvedSemantic || adapted.wireID != lease.approvedWireID || adapted.encode == nil {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, Semantic: adapted.semantic, WireID: adapted.wireID, Reason: "adapted exact call identity does not match the approved canonical request"}
+    }
+
+    var exact bin.Buffer
+    if err := adapted.encode(&exact); err != nil {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "encode adapted unknown RPC method", Profile: profile, Semantic: adapted.semantic, WireID: adapted.wireID, Reason: err.Error(), Cause: err}
+    }
+    if exact.Len() != lease.approvedWireSize || sha256.Sum256(exact.Raw()) != lease.approvedWireDigest {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "adapt unknown innermost RPC method", Profile: profile, Semantic: adapted.semantic, WireID: adapted.wireID, Reason: "adapter returned a call different from the field-admitted canonical request"}
+    }
+
+    // The canonical bridge already ran this dispatcher's field callbacks before
+    // materializing the canonical request. Revalidation deliberately shares the
+    // outer decode state and general preflight, but suppresses a second field
+    // observation and disables this extension point to prevent recursion.
+    atomic.StoreUint32(&p.unknownAdapterDisabled, 1)
+    atomic.StoreUint32(&p.suppressFieldAdmission, 1)
+    admittedFields := state.rpcAdmission
+    state.rpcAdmission = nil
+    decoded, decodeErr := decodeLayerRPCRequestState(profile, &exact, state, p, depth)
+    state.rpcAdmission = admittedFields
+    atomic.StoreUint32(&p.suppressFieldAdmission, 0)
+    atomic.StoreUint32(&p.unknownAdapterDisabled, 0)
+    if decodeErr != nil { return layerDecodedRPCRequest{}, decodeErr }
+    if exact.Len() != 0 {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "revalidate adapted unknown RPC method", Profile: profile, Semantic: adapted.semantic, WireID: adapted.wireID, Reason: fmt.Sprintf("%d trailing exact bytes", exact.Len())}
+    }
+    if decoded.call.Profile() != profile || decoded.call.Method() != adapted.semantic || decoded.call.WireID() != adapted.wireID {
+        return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "revalidate adapted unknown RPC method", Profile: profile, Semantic: adapted.semantic, WireID: adapted.wireID, Reason: "generated exact decoder returned a different call identity"}
+    }
+    b.Buf = b.Buf[len(b.Buf):]
+    return decoded, nil
 }
 
 // decodeUnprofiledLayerProfile probes only the generated invariant
@@ -242,6 +407,93 @@ type LayerRPCWrapperConsumer func(context.Context, LayerRequest, LayerRPCNext) e
 // consumed. Returning an error rejects admission with that exact error.
 type LayerRPCAdmissionPreflight func(LayerRPCAdmissionView) error
 
+type layerRPCUnknownMethodViewLease struct {
+    active uint32
+    body *bin.Buffer
+    approved uint32
+    approvedSemantic LayerSemanticID
+    approvedWireID uint32
+    approvedWireSize int
+    approvedWireDigest [sha256.Size]byte
+{{- if .LayerRPCSource.ClientBridge }}
+    adaptCanonical func(*bin.Buffer) (LayerOutboundCall, error)
+{{- end }}
+}
+
+// LayerRPCUnknownMethodView is a synchronous, transactional view of an
+// unknown innermost terminal method. Buffer returns a defensive private copy;
+// adapter failures and unhandled results can never consume or mutate the
+// caller's request. The view and returned cursor must not escape the callback
+// or be accessed from another goroutine.
+type LayerRPCUnknownMethodView struct {
+    profile LayerProfile
+    wireID uint32
+    wireSize int
+    lease *layerRPCUnknownMethodViewLease
+}
+
+func (v LayerRPCUnknownMethodView) Profile() LayerProfile { return v.profile }
+func (v LayerRPCUnknownMethodView) WireID() uint32 { return v.wireID }
+func (v LayerRPCUnknownMethodView) WireSize() int { return v.wireSize }
+
+func (v LayerRPCUnknownMethodView) activeLease(operation string) (*layerRPCUnknownMethodViewLease, error) {
+    if v.lease == nil || atomic.LoadUint32(&v.lease.active) != 1 {
+        return nil, &LayerCodecError{Operation: operation, Profile: v.profile, WireID: v.wireID, Reason: "unknown method adapter view is no longer active"}
+    }
+    return v.lease, nil
+}
+
+// Buffer returns the one private cursor owned by this synchronous callback. A
+// handled adapter must completely consume it. The cursor must not escape or be
+// accessed concurrently; only the caller's original buffer is isolated by the
+// defensive copy.
+func (v LayerRPCUnknownMethodView) Buffer() (*bin.Buffer, error) {
+    lease, err := v.activeLease("inspect unknown innermost RPC method")
+    if err != nil { return nil, err }
+    return lease.body, nil
+}
+
+{{- if .LayerRPCSource.ClientBridge }}
+// AdaptCanonical performs the only authoritative private-to-generated bridge.
+// It admits one canonical terminal request using this dispatcher's exact field
+// callbacks before materialization, then statically re-profiles it. The core
+// later verifies the returned opaque call with the adapter disabled.
+func (v LayerRPCUnknownMethodView) AdaptCanonical(canonical *bin.Buffer) (LayerOutboundCall, error) {
+    lease, err := v.activeLease("adapt canonical unknown RPC method")
+    if err != nil { return LayerOutboundCall{}, err }
+    if canonical == nil {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "adapt canonical unknown RPC method", Profile: v.profile, WireID: v.wireID, Reason: "nil canonical buffer"}
+    }
+    if lease.adaptCanonical == nil {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "adapt canonical unknown RPC method", Profile: v.profile, WireID: v.wireID, Reason: "canonical bridge is unavailable"}
+    }
+    if !atomic.CompareAndSwapUint32(&lease.approved, 0, 2) {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "adapt canonical unknown RPC method", Profile: v.profile, WireID: v.wireID, Reason: "canonical bridge may be used only once"}
+    }
+    outbound, err := lease.adaptCanonical(canonical)
+    if err != nil { return LayerOutboundCall{}, err }
+    if outbound.Profile() != v.profile || outbound.Method() == 0 || outbound.WireID() == 0 {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "adapt canonical unknown RPC method", Profile: v.profile, Semantic: outbound.Method(), WireID: outbound.WireID(), Reason: "canonical bridge returned an invalid exact identity"}
+    }
+    var exact bin.Buffer
+    if err := outbound.Encode(&exact); err != nil { return LayerOutboundCall{}, err }
+    if exact.Len() == 0 {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "adapt canonical unknown RPC method", Profile: v.profile, Semantic: outbound.Method(), WireID: outbound.WireID(), Reason: "canonical bridge encoded an empty exact request"}
+    }
+    lease.approvedSemantic = outbound.Method()
+    lease.approvedWireID = outbound.WireID()
+    lease.approvedWireSize = exact.Len()
+    lease.approvedWireDigest = sha256.Sum256(exact.Raw())
+    atomic.StoreUint32(&lease.approved, 1)
+    return outbound, nil
+}
+
+// LayerRPCUnknownMethodAdapter handles only an exact-profile switch miss at
+// the innermost terminal. handled=false preserves ErrLayerUnknownRPCMethod.
+// A handled result must come from view.AdaptCanonical.
+type LayerRPCUnknownMethodAdapter func(LayerRPCUnknownMethodView) (LayerOutboundCall, bool, error)
+{{- end }}
+
 type layerRPCAdmissionViewLease struct {
     active uint32
     body []byte
@@ -304,7 +556,15 @@ func (v LayerRPCAdmissionView) ReadAt(offset, length int) ([]byte, error) {
 
 type layerRPCAdmissionPreflightRunner struct {
     callback LayerRPCAdmissionPreflight
+    fields *layerRPCAdmissionFieldRunner
+    unknownAdapter layerRPCUnknownMethodAdapter
+{{- if .LayerRPCSource.ClientBridge }}
+    adaptCanonical func(LayerProfile, *bin.Buffer) (LayerOutboundCall, error)
+{{- end }}
     called uint32
+    unknownAdapterActive uint32
+    unknownAdapterDisabled uint32
+    suppressFieldAdmission uint32
 }
 
 func (p *layerRPCAdmissionPreflightRunner) run(profile LayerProfile, semantic LayerSemanticID, wireID uint32, b *bin.Buffer) error {
@@ -316,6 +576,9 @@ func (p *layerRPCAdmissionPreflightRunner) run(profile LayerProfile, semantic La
     }
     if b == nil {
         return &LayerCodecError{Operation: "preflight RPC admission", Profile: profile, Semantic: semantic, WireID: wireID, Reason: "nil terminal wire buffer"}
+    }
+    if atomic.LoadUint32(&p.suppressFieldAdmission) == 0 {
+        if err := p.fields.begin(profile, semantic, wireID); err != nil { return err }
     }
     if p.callback == nil { return nil }
     body := b.Raw()
@@ -377,6 +640,9 @@ type ServerDispatcher struct {
     handlers map[LayerSemanticID]layerRPCRegisteredHandler
     wrapperConsumer LayerRPCWrapperConsumer
     admissionPreflight LayerRPCAdmissionPreflight
+    admissionFieldPreflights []LayerRPCAdmissionFieldPreflight
+    admissionFieldPreflightCount int
+    unknownMethodAdapter layerRPCUnknownMethodAdapter
 }
 
 func NewServerDispatcher(fallback func(ctx context.Context, b *bin.Buffer) (bin.Encoder, error)) *ServerDispatcher {
@@ -384,6 +650,29 @@ func NewServerDispatcher(fallback func(ctx context.Context, b *bin.Buffer) (bin.
         fallback: fallback,
         handlers: make(map[LayerSemanticID]layerRPCRegisteredHandler),
     }
+}
+
+// OnLayerRPCAdmissionFieldPreflight registers one generated canonical field
+// metric. Registration fails closed unless every routable profile exposes the
+// same metric directly; unavailable methods are the only accepted absence.
+// Register callbacks before serving concurrent admissions.
+func (s *ServerDispatcher) OnLayerRPCAdmissionFieldPreflight(fieldID LayerRPCFieldID, callback LayerRPCAdmissionFieldPreflight) error {
+    if s == nil { return fmt.Errorf("tg: register layer RPC admission field preflight on nil ServerDispatcher") }
+    if callback == nil { return fmt.Errorf("tg: register nil layer RPC admission field preflight") }
+    index, err := layerRPCAdmissionFieldRegistration(fieldID)
+    if err != nil { return err }
+    if s.admissionFieldPreflights == nil {
+        s.admissionFieldPreflights = make([]LayerRPCAdmissionFieldPreflight, layerRPCAdmissionFieldCount)
+    }
+    if index < 0 || index >= len(s.admissionFieldPreflights) {
+        return fmt.Errorf("tg: generated layer RPC admission field index %d is out of range", index)
+    }
+    if s.admissionFieldPreflights[index] != nil {
+        return fmt.Errorf("tg: duplicate layer RPC admission field preflight for %#016x", uint64(fieldID))
+    }
+    s.admissionFieldPreflights[index] = callback
+    s.admissionFieldPreflightCount++
+    return nil
 }
 
 // OnLayerRPCWrappers registers the single owner of wrapper semantics such as
@@ -405,6 +694,29 @@ func (s *ServerDispatcher) OnLayerRPCAdmissionPreflight(callback LayerRPCAdmissi
     if s.admissionPreflight != nil { panic("tg: duplicate layer RPC admission preflight") }
     s.admissionPreflight = callback
 }
+
+{{- if .LayerRPCSource.ClientBridge }}
+// OnLayerRPCUnknownMethod registers the single private-schema extension point.
+// Generated official routes always take precedence; the callback is reachable
+// only after all known transparent wrappers have been recursively peeled.
+func (s *ServerDispatcher) OnLayerRPCUnknownMethod(callback LayerRPCUnknownMethodAdapter) {
+    if s == nil { panic("tg: register unknown layer RPC method adapter on nil ServerDispatcher") }
+    if callback == nil { panic("tg: register nil unknown layer RPC method adapter") }
+    if s.unknownMethodAdapter != nil { panic("tg: duplicate unknown layer RPC method adapter") }
+    s.unknownMethodAdapter = func(view LayerRPCUnknownMethodView) (layerRPCUnknownMethodResult, bool, error) {
+        outbound, handled, err := callback(view)
+        if err != nil || !handled {
+            return layerRPCUnknownMethodResult{}, handled, err
+        }
+        return layerRPCUnknownMethodResult{
+            profile: outbound.Profile(),
+            semantic: outbound.Method(),
+            wireID: outbound.WireID(),
+            encode: outbound.Encode,
+        }, true, nil
+    }
+}
+{{- end }}
 
 // register preserves the existing OnX facade while rejecting accidental
 // duplicate ownership of one semantic method. Multiple layer wire IDs do not
@@ -450,15 +762,16 @@ func (s *ServerDispatcher) Handle(ctx context.Context, b *bin.Buffer) (bin.Encod
     return result.encodeCanonicalResult()
 }
 
-func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight) (LayerRequest, error) {
+func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDecodeLimits, callback LayerRPCAdmissionPreflight, fieldCallbacks []LayerRPCAdmissionFieldPreflight, unknownAdapter layerRPCUnknownMethodAdapter) (LayerRequest, error) {
     if b == nil {
         return LayerRequest{}, &LayerCodecError{Operation: "prepare RPC request", Profile: profile, Reason: "nil buffer"}
     }
     wireRequest := b.Raw()
-    decoded, err := decodeLayerRPCRequest(profile, b, limits, callback)
+    working := *b
+    decoded, err := decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter)
     if err != nil { return LayerRequest{}, err }
-    if b.Len() != 0 {
-        return LayerRequest{}, &LayerCodecError{Operation: "prepare RPC request", Profile: decoded.call.Profile(), Semantic: decoded.call.Method(), WireID: decoded.call.WireID(), Reason: fmt.Sprintf("%d trailing request bytes", b.Len())}
+    if working.Len() != 0 {
+        return LayerRequest{}, &LayerCodecError{Operation: "prepare RPC request", Profile: decoded.call.Profile(), Semantic: decoded.call.Method(), WireID: decoded.call.WireID(), Reason: fmt.Sprintf("%d trailing request bytes", working.Len())}
     }
     if len(wireRequest) == 0 || decoded.request == nil {
         return LayerRequest{}, &LayerCodecError{Operation: "prepare RPC request", Profile: decoded.call.Profile(), Semantic: decoded.call.Method(), WireID: decoded.call.WireID(), Reason: "empty wire request or nil canonical request"}
@@ -479,8 +792,48 @@ func prepareLayerRPCRequest(profile LayerProfile, b *bin.Buffer, limits LayerDec
         wireDigest: sha256.Sum256(wireRequest),
         semanticIdentity: semanticIdentity,
     }
+    *b = working
     return LayerRequest{lease: &layerRPCRequestLease{request: decoded.request}, prepared: prepared, wrappers: wrappers}, nil
 }
+
+func layerValidateRPCRequestLease(admitted LayerRequest, operation string) (*layerRPCRequestLease, error) {
+    lease := admitted.lease
+    prepared := admitted.Prepared()
+    call := admitted.Call()
+    if lease == nil || lease.request == nil || prepared.wireSize <= 0 || prepared.call.Identity() != call.Identity() ||
+        !prepared.semanticIdentity.valid || prepared.semanticIdentity.requestType == nil ||
+        prepared.semanticIdentity.method != call.Method() || prepared.semanticIdentity.requestType.method != call.Method() ||
+        call.canonicalResult == nil || call.wireResult == nil || call.canonical.ref == nil || call.result.ref == nil {
+        return nil, &LayerCodecError{Operation: operation, Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "invalid or zero prepared admission"}
+    }
+    return lease, nil
+}
+
+{{- if .LayerRPCSource.ClientBridge }}
+// PrepareOutbound atomically converts an admitted terminal canonical request
+// into one opaque exact-profile outbound call. It never exposes the canonical
+// request object. A successful conversion consumes the shared admission lease,
+// so no value-copy can subsequently dispatch or reprofile the same request.
+// Wrappers are rejected because reducing them to a terminal call would discard
+// wrapper-specific side effects and ordering semantics.
+func (r LayerRequest) PrepareOutbound(profile LayerProfile) (LayerOutboundCall, error) {
+    call := r.Call()
+    lease, err := layerValidateRPCRequestLease(r, "prepare admitted RPC outbound call")
+    if err != nil { return LayerOutboundCall{}, err }
+    if len(r.wrappers) != 0 {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "prepare admitted RPC outbound call", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "transparent RPC wrappers cannot be discarded while reprofiling"}
+    }
+    outbound, err := PrepareLayerOutboundCall(profile, lease.request)
+    if err != nil { return LayerOutboundCall{}, err }
+    if outbound.Profile() != profile || outbound.Method() != call.Method() || outbound.WireID() == 0 {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "prepare admitted RPC outbound call", Profile: profile, Semantic: call.Method(), WireID: outbound.WireID(), Reason: "outbound semantic identity does not match admitted request"}
+    }
+    if !atomic.CompareAndSwapUint32(&lease.consumed, 0, 1) {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "prepare admitted RPC outbound call", Profile: profile, Semantic: call.Method(), WireID: outbound.WireID(), Reason: "admission lease was already consumed"}
+    }
+    return outbound, nil
+}
+{{- end }}
 
 // AdmitLayer decodes and completely consumes one request using an already
 // frozen exact profile. An explicit invokeWithLayer must select that same
@@ -498,7 +851,9 @@ func (s *ServerDispatcher) AdmitLayerWithLimits(profile LayerProfile, b *bin.Buf
     if _, ok := ResolveLayerProfile(int(profile)); !ok {
         return LayerRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, Reason: "unsupported exact profile"}
     }
-    return prepareLayerRPCRequest(profile, b, limits, s.admissionPreflight)
+    var fieldCallbacks []LayerRPCAdmissionFieldPreflight
+    if s.admissionFieldPreflightCount != 0 { fieldCallbacks = s.admissionFieldPreflights }
+    return prepareLayerRPCRequest(profile, b, limits, s.admissionPreflight, fieldCallbacks, s.unknownMethodAdapter)
 }
 
 // AdmitUnprofiled accepts only the generated invariant invokeWithLayer
@@ -535,15 +890,10 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
     if s == nil {
         return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Reason: "nil ServerDispatcher"}
     }
-    lease := admitted.lease
     prepared := admitted.Prepared()
     call := admitted.Call()
-    if lease == nil || lease.request == nil || prepared.wireSize <= 0 || prepared.call.Identity() != call.Identity() ||
-        !prepared.semanticIdentity.valid || prepared.semanticIdentity.requestType == nil ||
-        prepared.semanticIdentity.method != call.Method() || prepared.semanticIdentity.requestType.method != call.Method() ||
-        call.canonicalResult == nil || call.wireResult == nil || call.canonical.ref == nil || call.result.ref == nil {
-        return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "invalid or zero prepared admission"}
-    }
+    lease, err := layerValidateRPCRequestLease(admitted, "dispatch admitted RPC")
+    if err != nil { return nil, err }
     handler, ok := s.handlers[call.Method()]
     if !ok || handler.invoke == nil || handler.canonicalResult == nil {
         return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "RPC handler is not registered"}
@@ -552,8 +902,8 @@ func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerR
     if needsConsumer && s.wrapperConsumer == nil {
         return nil, &LayerCodecError{Operation: "dispatch admitted RPC wrappers", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "non-layer RPC wrappers require a registered consumer"}
     }
-    if !atomic.CompareAndSwapUint32(&lease.dispatched, 0, 1) {
-        return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "admission lease was already dispatched"}
+    if !atomic.CompareAndSwapUint32(&lease.consumed, 0, 1) {
+        return nil, &LayerCodecError{Operation: "dispatch admitted RPC", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "admission lease was already consumed"}
     }
 
     var result LayerRPCResult

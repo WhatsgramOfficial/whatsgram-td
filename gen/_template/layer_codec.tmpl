@@ -246,8 +246,10 @@ func {{ .EncodeName }}(profile LayerProfile, value *{{ .CanonicalType }}, b *bin
         {{ end }}default:
             return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "wire ID is unavailable in exact profile"}
         }
+        {{ if .Encodable }}
         b.PutID(0x{{ .Hex }})
         return {{ .EncodeBareName }}Body(profile, value, b, state)
+        {{ end }}
     })
 }
 
@@ -296,10 +298,12 @@ func {{ .DecodeName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
     {{ end }}default:
         return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "wire ID is unavailable in exact profile"}
     }
+    {{ if .Decodable }}
     if err := b.ConsumeID(0x{{ .Hex }}); err != nil {
         return nil, fmt.Errorf("consume layer wire 0x{{ .Hex }}: %w", err)
     }
     return {{ .DecodeBareName }}(profile, b, state)
+    {{ end }}
 }
 
 func {{ .DecodeBareName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*{{ .CanonicalType }}, error) {

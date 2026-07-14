@@ -56,12 +56,20 @@ func TestRealLayerPolicy(t *testing.T) {
 	if unresolved := resolved.LayerConversionPlan().Report.Unresolved(); len(unresolved) != 0 {
 		t.Fatalf("real policy leaves %d unresolved obligations; first=%+v", len(unresolved), unresolved[0])
 	}
-	if got, want := len(document.Entries), 164; got != want {
+	if got, want := len(document.Entries), 178; got != want {
 		t.Fatalf("reviewed policy entry count = %d, want %d", got, want)
 	}
 	codec, err := resolved.buildLayerCodecModel("tg")
 	if err != nil {
 		t.Fatal(err)
+	}
+	// inputStorePaymentAuthCode exists in historical profiles, but the reviewed
+	// required-field policy rejects every profile-to-canonical projection. Keep
+	// that all-reject shape explicit so the template cannot emit a dead boxed
+	// decode tail after a terminating switch (go vet must remain clean).
+	paymentAuthCode := findLayerCodecWire(t, codec, 0x9bb2636d)
+	if !paymentAuthCode.Encodable || paymentAuthCode.Decodable {
+		t.Fatalf("inputStorePaymentAuthCode codec capability = encode:%v decode:%v, want true/false", paymentAuthCode.Encodable, paymentAuthCode.Decodable)
 	}
 	rpc, err := resolved.buildLayerRPCModel()
 	if err != nil {
@@ -218,6 +226,17 @@ func realLayerResolution(obligation LayerObligation) (LayerObligationResolution,
 	case LayerObligationRequired:
 		return realRequiredLayerResolution(obligation)
 	case LayerObligationResult:
+		if obligation.Direction == LayerDirectionProfileToCanonical {
+			switch obligation.Semantic.QName {
+			case "channels.joinChannel", "messages.importChatInvite":
+				return adapter("layerAdaptUpdatesToChatInviteJoinResult")
+			case "account.toggleWebBrowserSettingsException", "messages.setBotGuestChatResult":
+				// The historical Bool contains no canonical result payload. A
+				// layer-aware client must reject these exact profiles rather than
+				// invent Updates or an inline-message identifier.
+				return LayerObligationResolution{Action: LayerResolveReject}, true, nil
+			}
+		}
 		switch obligation.Semantic.QName {
 		case "channels.joinChannel", "messages.importChatInvite":
 			return adapter("layerAdaptChatInviteJoinResultToUpdates")

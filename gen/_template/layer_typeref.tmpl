@@ -20,6 +20,9 @@ type layerCodecState struct {
     // remain value-scoped, while sibling and nested vectors consume one
     // request-wide aggregate budget.
     decodeBudget *layerCodecDecodeBudget
+    // rpcAdmission is non-nil only while a generated ordinary terminal RPC
+    // body is being decoded by ServerDispatcher admission.
+    rpcAdmission *layerRPCAdmissionFieldRunner
     generic [{{ .LayerTypeRefs.BindingCapacity }}]layerBoundType
     genericBound [{{ .LayerTypeRefs.BindingCapacity }}]bool
 }
@@ -75,6 +78,17 @@ func layerUnavailableTypeRef(operation string, profile LayerProfile, ref *LayerT
 //   layerEncodeDynamicObject/profile-aware decode use bin.Object.
 // The wire and class emitters provide those functions. Profile-only wire IDs
 // have no canonical signature and therefore never become callable here.
+
+{{- range $group := .LayerTypeRefs.WireEquivalentGroups }}
+func {{ $group.Name }}(profile LayerProfile) bool {
+    switch profile {
+    case {{ range $index, $constant := $group.ProfileConstants }}{{ if $index }}, {{ end }}{{ $constant }}{{ end }}:
+        return true
+    default:
+        return false
+    }
+}
+{{- end }}
 
 {{- range $node := .LayerTypeRefs.Nodes }}
 var {{ $node.RefName }} = LayerTypeRef{
@@ -358,6 +372,7 @@ var {{ $node.DescriptorName }} = LayerType[{{ $node.GoType }}]{
     encode: {{ $node.EncodeName }},
     decode: {{ $node.DecodeName }},
     decodeState: {{ $node.DecodeStateName }},
+    wireEquivalent: {{ $node.WireEquivalentName }},
 }
 {{- end }}
 
@@ -415,6 +430,7 @@ var {{ $accessor.DescriptorName }} = LayerType[{{ $accessor.GoType }}]{
     encode: {{ $accessor.EncodeName }},
     decode: {{ $accessor.DecodeName }},
     decodeState: {{ $accessor.DecodeStateName }},
+    wireEquivalent: {{ $accessor.WireEquivalentName }},
 }
 {{- end }}
 

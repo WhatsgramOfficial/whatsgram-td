@@ -50,15 +50,16 @@ func (s layerTypeRefStrategy) String() string {
 // what lets request admission freeze a complete result descriptor rather than
 // consulting mutable session Layer state later.
 type layerTypeRefModel struct {
-	CanonicalLayer  int
-	Profiles        []int
-	Nodes           []layerTypeRefNode
-	RPCs            []layerRPCTypePlan
-	Accessors       []layerTypeAccessorPlan
-	MaxGenericSlots int
-	BindingCapacity int
-	MaxDepth        int
-	MaxVectorSize   int
+	CanonicalLayer       int
+	Profiles             []int
+	Nodes                []layerTypeRefNode
+	WireEquivalentGroups []layerTypeRefWireEquivalentGroup
+	RPCs                 []layerRPCTypePlan
+	Accessors            []layerTypeAccessorPlan
+	MaxGenericSlots      int
+	BindingCapacity      int
+	MaxDepth             int
+	MaxVectorSize        int
 }
 
 // layerTypeRefNode is one immutable generated TypeRef descriptor. Ref is kept
@@ -106,6 +107,7 @@ type layerTypeRefNode struct {
 	PreflightStateName    string
 	EncodeStateName       string
 	DecodeStateName       string
+	WireEquivalentName    string
 
 	SemanticConstant string
 	ClassCodecSuffix string
@@ -142,6 +144,15 @@ type layerTypeRefProfilePlan struct {
 	WireDecodeName     string
 	Value              *layerValuePlan
 	Reason             string
+	WireEquivalent     bool
+}
+
+// layerTypeRefWireEquivalentGroup deduplicates the generated profile
+// predicates used by public LayerType descriptors. The predicate is static
+// source, not a runtime schema/catalog lookup.
+type layerTypeRefWireEquivalentGroup struct {
+	Name             string
+	ProfileConstants []string
 }
 
 // layerRPCTypePlan is one semantic method family. Its profile entries are
@@ -228,6 +239,7 @@ type layerTypeAccessorPlan struct {
 	SemanticConstant       string
 	QName                  string
 	Profiles               []layerTypeRefProfilePlan
+	WireEquivalentName     string
 }
 
 func (a layerTypeAccessorPlan) IsConstructor() bool { return a.Kind == "constructor" }
@@ -533,7 +545,140 @@ func (g *Generator) finishLayerTypeRefNodes(
 			return nil, nil, err
 		}
 	}
+	if err := finishLayerTypeRefWireEquivalence(model, wires); err != nil {
+		return nil, nil, err
+	}
 	return model, indices, nil
+}
+
+// finishLayerTypeRefWireEquivalence proves, at generation time, when a
+// canonical frozen byte snapshot is already the exact target-profile wire
+// representation. It deliberately recognizes only closed, statically proven
+// cases. Retags, rewrites, policy hooks, dynamic Object and generic bindings
+// remain on the ordinary decode/adapt/encode path.
+func finishLayerTypeRefWireEquivalence(model *layerTypeRefModel, wires *layerWireModel) error {
+	if model == nil || wires == nil {
+		return fmt.Errorf("gen: layer TypeRef wire equivalence requires TypeRef and wire models")
+	}
+	states := make([][]uint8, len(model.Nodes))
+	for index := range states {
+		states[index] = make([]uint8, len(model.Profiles))
+	}
+	var visit func(int, int) (bool, error)
+	visit = func(nodeIndex, profileIndex int) (bool, error) {
+		if nodeIndex < 0 || nodeIndex >= len(model.Nodes) || profileIndex < 0 || profileIndex >= len(model.Profiles) {
+			return false, fmt.Errorf("gen: invalid TypeRef wire equivalence index node=%d profile=%d", nodeIndex, profileIndex)
+		}
+		node := &model.Nodes[nodeIndex]
+		profile := &node.Profiles[profileIndex]
+		switch states[nodeIndex][profileIndex] {
+		case 2:
+			return profile.WireEquivalent, nil
+		case 1:
+			return false, fmt.Errorf("gen: cyclic TypeRef wire equivalence at node %d profile %d", nodeIndex, profile.Layer)
+		}
+		states[nodeIndex][profileIndex] = 1
+		equivalent := profile.Layer == model.CanonicalLayer
+		if !equivalent {
+			switch node.Strategy {
+			case layerTypeRefPrimitive:
+				equivalent = profile.Available
+			case layerTypeRefExactBare, layerTypeRefConcrete:
+				equivalent = profile.Available && profile.Callable && profile.Action == layerWireDirect
+			case layerTypeRefClass:
+				equivalent = layerTypeRefClassWireEquivalent(wires, node.QName, model.CanonicalLayer, profile.Layer)
+			case layerTypeRefVector:
+				var err error
+				equivalent, err = visit(node.Element, profileIndex)
+				if err != nil {
+					return false, err
+				}
+			case layerTypeRefGeneric, layerTypeRefObject:
+				// The runtime binding/dynamic constructor determines the wire
+				// shape, so the complete descriptor cannot prove equivalence.
+				equivalent = false
+			default:
+				return false, fmt.Errorf("gen: unsupported TypeRef strategy %s for wire equivalence", node.Strategy)
+			}
+		}
+		profile.WireEquivalent = equivalent
+		states[nodeIndex][profileIndex] = 2
+		return equivalent, nil
+	}
+	for nodeIndex := range model.Nodes {
+		for profileIndex := range model.Profiles {
+			if _, err := visit(nodeIndex, profileIndex); err != nil {
+				return err
+			}
+		}
+	}
+
+	groups := make(map[string]int)
+	for nodeIndex := range model.Nodes {
+		node := &model.Nodes[nodeIndex]
+		constants := make([]string, 0, len(node.Profiles))
+		layers := make([]string, 0, len(node.Profiles))
+		for _, profile := range node.Profiles {
+			if !profile.WireEquivalent {
+				continue
+			}
+			constants = append(constants, profile.ProfileConstant)
+			layers = append(layers, fmt.Sprint(profile.Layer))
+		}
+		key := strings.Join(layers, ",")
+		groupIndex, ok := groups[key]
+		if !ok {
+			groupIndex = len(model.WireEquivalentGroups)
+			groups[key] = groupIndex
+			model.WireEquivalentGroups = append(model.WireEquivalentGroups, layerTypeRefWireEquivalentGroup{
+				Name:             fmt.Sprintf("layerWireEquivalentProfiles%d", groupIndex),
+				ProfileConstants: constants,
+			})
+		}
+		node.WireEquivalentName = model.WireEquivalentGroups[groupIndex].Name
+	}
+	return nil
+}
+
+func layerTypeRefClassWireEquivalent(wires *layerWireModel, qname string, canonicalLayer, profileLayer int) bool {
+	class := wires.class(qname)
+	if class == nil {
+		return false
+	}
+	var canonical, profile *layerClassProfilePlan
+	for index := range class.Profiles {
+		candidate := &class.Profiles[index]
+		switch candidate.Layer {
+		case canonicalLayer:
+			canonical = candidate
+		case profileLayer:
+			profile = candidate
+		}
+	}
+	if canonical == nil || profile == nil || len(canonical.Constructors) == 0 ||
+		len(profile.Constructors) != len(canonical.Constructors) {
+		return false
+	}
+	for _, canonicalConstructor := range canonical.Constructors {
+		if canonicalConstructor.Kind != layerWireDirect {
+			return false
+		}
+		matched := false
+		for _, profileConstructor := range profile.Constructors {
+			if profileConstructor.Key != canonicalConstructor.Key {
+				continue
+			}
+			if profileConstructor.Kind != layerWireDirect || profileConstructor.WireID != canonicalConstructor.WireID {
+				return false
+			}
+			matched = true
+			break
+		}
+		if !matched {
+			return false
+		}
+	}
+	return true
 }
 
 func groupLayerTypeRefProfiles(profiles []layerTypeRefProfilePlan) []layerTypeRefProfilePlan {
@@ -1007,12 +1152,13 @@ func (g *Generator) buildLayerTypeAccessors(model *layerTypeRefModel, wires *lay
 			return nil, fmt.Errorf("gen: dynamic Object TypeRef node is not runnable")
 		}
 		if err := add(&result, layerTypeAccessorPlan{
-			Name:           "LayerObjectType",
-			Kind:           "object",
-			Node:           node.Index,
-			GoType:         node.GoType,
-			DescriptorName: node.DescriptorName,
-			QName:          node.QName,
+			Name:               "LayerObjectType",
+			Kind:               "object",
+			Node:               node.Index,
+			GoType:             node.GoType,
+			DescriptorName:     node.DescriptorName,
+			WireEquivalentName: node.WireEquivalentName,
+			QName:              node.QName,
 		}); err != nil {
 			return nil, err
 		}
@@ -1028,12 +1174,13 @@ func (g *Generator) buildLayerTypeAccessors(model *layerTypeRefModel, wires *lay
 			return nil, fmt.Errorf("gen: canonical class %q has no runnable TypeRef descriptor", class.QName)
 		}
 		if err := add(&result, layerTypeAccessorPlan{
-			Name:           "LayerClass" + layerTypeRefClassSuffix(class.QName) + "Type",
-			Kind:           "class",
-			Node:           node.Index,
-			GoType:         node.GoType,
-			DescriptorName: node.DescriptorName,
-			QName:          class.QName,
+			Name:               "LayerClass" + layerTypeRefClassSuffix(class.QName) + "Type",
+			Kind:               "class",
+			Node:               node.Index,
+			GoType:             node.GoType,
+			DescriptorName:     node.DescriptorName,
+			WireEquivalentName: node.WireEquivalentName,
+			QName:              class.QName,
 		}); err != nil {
 			return nil, err
 		}
@@ -1074,6 +1221,7 @@ func (g *Generator) buildLayerTypeAccessors(model *layerTypeRefModel, wires *lay
 			SemanticConstant:       layerSemanticConstant(definition.Key),
 			QName:                  definition.Key.QName,
 			Profiles:               append([]layerTypeRefProfilePlan(nil), node.Profiles...),
+			WireEquivalentName:     node.WireEquivalentName,
 		}
 		if err := add(&result, accessor); err != nil {
 			return nil, err

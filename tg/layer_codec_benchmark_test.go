@@ -1,6 +1,7 @@
 package tg
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/gotd/td/bin"
@@ -12,6 +13,19 @@ var layerBenchmarkValue = &UpdateUserStatus{
 }
 
 var layerBenchmarkDecoded *UpdateUserStatus
+
+var layerBenchmarkFanoutBytes int
+
+var layerBenchmarkProfiles = []LayerProfile{
+	LayerProfile220,
+	LayerProfile221,
+	LayerProfile222,
+	LayerProfile223,
+	LayerProfile224,
+	LayerProfile225,
+	LayerProfile226,
+	LayerProfile227,
+}
 
 func BenchmarkLayerEncodeUpdateUserStatus(b *testing.B) {
 	typ := LayerConstructorUpdateUserStatusType()
@@ -78,9 +92,85 @@ func BenchmarkLayerPreparedFanout(b *testing.B) {
 	}
 }
 
-func layerBenchmarkProfileName(profile LayerProfile) string {
-	if profile == LayerProfile220 {
-		return "layer_220"
+// BenchmarkLayerFrozenFanout models one immutable active update delivered to
+// N physical connections distributed across P exact wire profiles. The
+// profile-cache case is the intended server boundary: prepare at most once per
+// profile, then copy the immutable prepared body into each connection buffer.
+func BenchmarkLayerFrozenFanout(b *testing.B) {
+	const connections = 1024
+	typ := LayerConstructorUpdateUserStatusType()
+	frozen, err := FreezeLayer(typ, layerBenchmarkValue)
+	if err != nil {
+		b.Fatal(err)
 	}
-	return "layer_227"
+	profiles := layerBenchmarkProfiles
+	prepared := make([]LayerPreparedValue[*UpdateUserStatus], len(profiles))
+	var totalWire int64
+	for index, profile := range profiles {
+		prepared[index], err = PrepareFrozenLayer(profile, frozen)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+	for connection := 0; connection < connections; connection++ {
+		totalWire += int64(prepared[connection%len(prepared)].WireSize())
+	}
+
+	b.Run(fmt.Sprintf("prepare_per_connection/N=%d/P=%d", connections, len(profiles)), func(b *testing.B) {
+		outputs := make([][]byte, connections)
+		b.ReportAllocs()
+		b.ReportMetric(connections, "connections/op")
+		b.ReportMetric(float64(len(profiles)), "profiles/op")
+		b.SetBytes(totalWire)
+		for b.Loop() {
+			written := 0
+			for connection := 0; connection < connections; connection++ {
+				profile := profiles[connection%len(profiles)]
+				value, err := PrepareFrozenLayer(profile, frozen)
+				if err != nil {
+					b.Fatal(err)
+				}
+				outputs[connection] = outputs[connection][:0]
+				outputs[connection], err = value.Append(profile, typ, outputs[connection])
+				if err != nil {
+					b.Fatal(err)
+				}
+				written += len(outputs[connection])
+			}
+			layerBenchmarkFanoutBytes = written
+		}
+	})
+
+	b.Run(fmt.Sprintf("prepare_cache_by_profile/N=%d/P=%d", connections, len(profiles)), func(b *testing.B) {
+		outputs := make([][]byte, connections)
+		cache := make([]LayerPreparedValue[*UpdateUserStatus], len(profiles))
+		b.ReportAllocs()
+		b.ReportMetric(connections, "connections/op")
+		b.ReportMetric(float64(len(profiles)), "profiles/op")
+		b.SetBytes(totalWire)
+		for b.Loop() {
+			for index, profile := range profiles {
+				cache[index], err = PrepareFrozenLayer(profile, frozen)
+				if err != nil {
+					b.Fatal(err)
+				}
+			}
+			written := 0
+			for connection := 0; connection < connections; connection++ {
+				profileIndex := connection % len(profiles)
+				profile := profiles[profileIndex]
+				outputs[connection] = outputs[connection][:0]
+				outputs[connection], err = cache[profileIndex].Append(profile, typ, outputs[connection])
+				if err != nil {
+					b.Fatal(err)
+				}
+				written += len(outputs[connection])
+			}
+			layerBenchmarkFanoutBytes = written
+		}
+	})
+}
+
+func layerBenchmarkProfileName(profile LayerProfile) string {
+	return fmt.Sprintf("layer_%d", profile)
 }

@@ -1,0 +1,275 @@
+{{ define "layer_client" }}
+{{ template "header" . }}
+
+{{- with .LayerClientSource }}
+// Static profile-to-canonical result policy contracts. A missing hook or a
+// signature drift is a generated-package compile error, never a runtime
+// canonical-byte fallback.
+{{ range .HookChecks -}}
+var _ {{ .Signature }} = {{ .Name }}
+{{ end }}
+
+{{ range .Encoders }}{{ . }}
+{{ end }}
+{{ range .Adapters }}{{ . }}
+{{ end }}
+
+type layerClientRequestEncoder func(LayerProfile, any, *bin.Buffer, *layerCodecState) error
+type layerClientResultAdapter func(LayerProfile, any) (any, error)
+
+// layerClientCall freezes the exact request method ID and complete result
+// TypeRef before Invoker sees either side of the RPC.
+type layerClientCall struct {
+    profile LayerProfile
+    method LayerSemanticID
+    wireID uint32
+    canonicalResult *LayerTypeRef
+    wireResult *LayerTypeRef
+    request any
+    encodeRequest layerClientRequestEncoder
+    decodeResult layerBoundType
+    adaptResult layerClientResultAdapter
+}
+
+func (c *layerClientCall) Encode(b *bin.Buffer) error {
+    if c == nil || c.canonicalResult == nil || c.wireResult == nil || c.request == nil || c.encodeRequest == nil {
+        return &LayerCodecError{Operation: "encode RPC client request", Reason: "invalid frozen client call"}
+    }
+    if _, ok := ResolveLayerProfile(int(c.profile)); !ok {
+        return &LayerCodecError{Operation: "encode RPC client request", Profile: c.profile, Semantic: c.method, WireID: c.wireID, Reason: "unsupported exact profile"}
+    }
+    if b == nil {
+        return &LayerCodecError{Operation: "encode RPC client request", Profile: c.profile, Semantic: c.method, WireID: c.wireID, Reason: "nil buffer"}
+    }
+    state := layerCodecState{}
+    return layerCodecEncodeAtomic(c.profile, b, func() error {
+        return c.encodeRequest(c.profile, c.request, b, &state)
+    })
+}
+
+// LayerOutboundCall is an opaque, statically generated canonical-request to
+// exact-profile wire call. Its profile, semantic method, wire ID, request
+// codec, and result contract are selected together; callers cannot replace
+// one part independently. The canonical request must not be mutated while an
+// Encode or LayerClient invocation is in progress.
+type LayerOutboundCall struct {
+    call layerClientCall
+}
+
+func (c LayerOutboundCall) Profile() LayerProfile { return c.call.profile }
+func (c LayerOutboundCall) Method() LayerSemanticID { return c.call.method }
+func (c LayerOutboundCall) WireID() uint32 { return c.call.wireID }
+
+// Encode writes the exact target method ID followed by its target-profile
+// request body. Unsupported routes fail closed without canonical fallback.
+func (c LayerOutboundCall) Encode(b *bin.Buffer) error { return c.call.Encode(b) }
+
+// Append appends one exact target-profile request atomically to dst.
+func (c LayerOutboundCall) Append(dst []byte) ([]byte, error) {
+    b := bin.Buffer{Buf: dst}
+    if err := c.Encode(&b); err != nil { return dst, err }
+    return b.Buf, nil
+}
+
+type layerClientResultDecoder struct {
+    call *layerClientCall
+    value any
+    decoded bool
+}
+
+func (d *layerClientResultDecoder) Decode(b *bin.Buffer) error {
+    if d == nil || d.call == nil || d.call.canonicalResult == nil || d.call.wireResult == nil ||
+        d.call.decodeResult.ref == nil || d.call.decodeResult.decode == nil {
+        return &LayerCodecError{Operation: "decode RPC client result", Reason: "invalid frozen client result descriptor"}
+    }
+    if b == nil {
+        return &LayerCodecError{Operation: "decode RPC client result", Profile: d.call.profile, Semantic: d.call.method, WireID: d.call.wireID, Reason: "nil buffer"}
+    }
+    state, err := newLayerCodecDecodeState(d.call.profile, b.Len(), layerCodecDecodeLimits{})
+    if err != nil { return err }
+    value, err := d.call.decodeResult.decode(d.call.profile, b, state)
+    if err != nil {
+        return &LayerCodecError{Operation: "decode RPC client result", Profile: d.call.profile, Semantic: d.call.method, WireID: d.call.wireID, Type: d.call.wireResult, Reason: err.Error(), Cause: err}
+    }
+    if b.Len() != 0 {
+        return &LayerCodecError{Operation: "decode RPC client result", Profile: d.call.profile, Semantic: d.call.method, WireID: d.call.wireID, Type: d.call.wireResult, Reason: fmt.Sprintf("%d trailing result bytes", b.Len())}
+    }
+    if d.call.adaptResult != nil {
+        value, err = d.call.adaptResult(d.call.profile, value)
+        if err != nil {
+            return &LayerCodecError{Operation: "adapt RPC client result", Profile: d.call.profile, Semantic: d.call.method, WireID: d.call.wireID, Type: d.call.canonicalResult, Reason: err.Error(), Cause: err}
+        }
+    }
+    d.value = value
+    d.decoded = true
+    return nil
+}
+
+// LayerClient is an immutable exact-profile facade over the existing Invoker.
+// Existing Client and NewClient behavior is unchanged.
+type LayerClient struct {
+    rpc Invoker
+    profile LayerProfile
+}
+
+// NewLayerClient binds all subsequent RPCs to one exact generated profile.
+func NewLayerClient(profile LayerProfile, invoker Invoker) (*LayerClient, error) {
+    if _, ok := ResolveLayerProfile(int(profile)); !ok {
+        return nil, &LayerCodecError{Operation: "create RPC layer client", Profile: profile, Reason: "unsupported exact profile"}
+    }
+    if invoker == nil {
+        return nil, &LayerCodecError{Operation: "create RPC layer client", Profile: profile, Reason: "nil invoker"}
+    }
+    return &LayerClient{rpc: invoker, profile: profile}, nil
+}
+
+func (c *LayerClient) Profile() LayerProfile {
+    if c == nil { return LayerProfile(0) }
+    return c.profile
+}
+
+func (c *LayerClient) Invoker() Invoker {
+    if c == nil { return nil }
+    return c.rpc
+}
+
+// PrepareLayerOutboundCall binds one canonical terminal RPC request to one
+// exact generated profile. The generated type switch is complete for every
+// ordinary canonical method; transparent wrappers are deliberately excluded.
+func PrepareLayerOutboundCall(profile LayerProfile, request bin.Object) (LayerOutboundCall, error) {
+    if _, ok := ResolveLayerProfile(int(profile)); !ok {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "prepare RPC client call", Profile: profile, Reason: "unsupported exact profile"}
+    }
+    switch typed := request.(type) {
+    {{- range $method := .Methods }}
+    case *{{ $method.Structure.Name }}:
+        return layerPrepareClient{{ $method.Name }}(profile, typed)
+    {{- end }}
+    default:
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "prepare RPC client call", Profile: profile, Reason: fmt.Sprintf("unsupported canonical RPC request type %T", request)}
+    }
+}
+
+func (c *LayerClient) invoke(ctx context.Context, outbound LayerOutboundCall) (any, error) {
+    call := &outbound.call
+    if c == nil || c.rpc == nil {
+        return nil, &LayerCodecError{Operation: "invoke RPC layer client", Profile: call.profile, Semantic: call.method, WireID: call.wireID, Reason: "nil layer client or invoker"}
+    }
+    if call.profile != c.profile {
+        return nil, &LayerCodecError{Operation: "invoke RPC layer client", Profile: call.profile, Semantic: call.method, WireID: call.wireID, Reason: fmt.Sprintf("frozen call profile %d does not match client profile %d", call.profile, c.profile)}
+    }
+    output := layerClientResultDecoder{call: call}
+    if err := c.rpc.Invoke(ctx, outbound, &output); err != nil { return nil, err }
+    if !output.decoded {
+        return nil, &LayerCodecError{Operation: "invoke RPC layer client", Profile: call.profile, Semantic: call.method, WireID: call.wireID, Reason: "invoker returned without decoding the result"}
+    }
+    return output.value, nil
+}
+
+// Invoke accepts one canonical generated method request. The generated type
+// switch selects a semantic method, never a mutable wire-ID registry.
+func (c *LayerClient) Invoke(ctx context.Context, request bin.Object) (any, error) {
+    switch typed := request.(type) {
+    {{- range $method := .Methods }}
+    case *{{ $method.Structure.Name }}:
+        {{- if $method.ErrorOnly }}
+        return nil, c.invoke{{ $method.Name }}(ctx, typed)
+        {{- else }}
+        return c.invoke{{ $method.Name }}(ctx, typed)
+        {{- end }}
+    {{- end }}
+    default:
+        profile := LayerProfile(0)
+        if c != nil { profile = c.profile }
+        return nil, &LayerCodecError{Operation: "invoke RPC layer client", Profile: profile, Reason: fmt.Sprintf("unsupported canonical RPC request type %T", request)}
+    }
+}
+
+{{ range $method := .Methods }}
+func layerPrepareClient{{ $method.Name }}(profile LayerProfile, request *{{ $method.Structure.Name }}) (LayerOutboundCall, error) {
+    if request == nil {
+        return LayerOutboundCall{}, &LayerCodecError{Operation: "prepare RPC client call", Profile: profile, Semantic: {{ $method.Method.Constant }}, Reason: "nil canonical request"}
+    }
+{{ $method.PrepareBody }}
+}
+
+{{- if $method.ErrorOnly }}
+func (c *LayerClient) invoke{{ $method.Name }}(ctx context.Context, request *{{ $method.Structure.Name }}) error {
+    if c == nil {
+        return &LayerCodecError{Operation: "invoke RPC layer client", Semantic: {{ $method.Method.Constant }}, Reason: "nil layer client"}
+    }
+    call, err := layerPrepareClient{{ $method.Name }}(c.profile, request)
+    if err != nil { return err }
+    _, err = c.invoke(ctx, call)
+    return err
+}
+
+// {{ $method.Name }} invokes {{ $method.Structure.RawType }} using the exact
+// immutable profile selected by NewLayerClient.
+func (c *LayerClient) {{ $method.Name }}({{ template "request_params" $method.Structure }}) error {
+    {{ template "pack_request" $method.Structure }}
+    return c.invoke{{ $method.Name }}(ctx, request)
+}
+{{- else }}
+func (c *LayerClient) invoke{{ $method.Name }}(ctx context.Context, request *{{ $method.Structure.Name }}) ({{ $method.ResultType }}, error) {
+    var zero {{ $method.ResultType }}
+    if c == nil {
+        return zero, &LayerCodecError{Operation: "invoke RPC layer client", Semantic: {{ $method.Method.Constant }}, Reason: "nil layer client"}
+    }
+    call, err := layerPrepareClient{{ $method.Name }}(c.profile, request)
+    if err != nil { return zero, err }
+    raw, err := c.invoke(ctx, call)
+    if err != nil { return zero, err }
+    {{- if $method.PointerResult }}
+    switch typed := raw.(type) {
+    case {{ $method.ResultGoType }}:
+        copy := typed
+        return &copy, nil
+    case *{{ $method.ResultGoType }}:
+        if typed == nil { return zero, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: "nil canonical result"} }
+        return typed, nil
+    default:
+        return zero, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: fmt.Sprintf("canonical result has type %T, want {{ $method.ResultType }}", raw)}
+    }
+    {{- else if $method.PointerValueResult }}
+    switch typed := raw.(type) {
+    case {{ $method.ResultGoType }}:
+        return typed, nil
+    case *{{ $method.ResultGoType }}:
+        if typed == nil { return zero, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: "nil canonical result"} }
+        return *typed, nil
+    default:
+        return zero, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: fmt.Sprintf("canonical result has type %T, want {{ $method.ResultType }}", raw)}
+    }
+    {{- else if $method.BoolResult }}
+    value, ok := raw.(BoolClass)
+    if !ok {
+        return false, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: fmt.Sprintf("canonical Bool result has type %T", raw)}
+    }
+    switch value.(type) {
+    case *BoolTrue:
+        return true, nil
+    case *BoolFalse:
+        return false, nil
+    default:
+        return false, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: fmt.Sprintf("canonical Bool result has constructor %T", value)}
+    }
+    {{- else }}
+    typed, ok := raw.({{ $method.ResultType }})
+    if !ok {
+        return zero, &LayerCodecError{Operation: "decode RPC client result", Profile: c.profile, Semantic: {{ $method.Method.Constant }}, Reason: fmt.Sprintf("canonical result has type %T, want {{ $method.ResultType }}", raw)}
+    }
+    return typed, nil
+    {{- end }}
+}
+
+// {{ $method.Name }} invokes {{ $method.Structure.RawType }} using the exact
+// immutable profile selected by NewLayerClient.
+func (c *LayerClient) {{ $method.Name }}({{ template "request_params" $method.Structure }}) ({{ $method.ResultType }}, error) {
+    {{ template "pack_request" $method.Structure }}
+    return c.invoke{{ $method.Name }}(ctx, request)
+}
+{{- end }}
+{{ end }}
+{{- end }}
+{{ end }}

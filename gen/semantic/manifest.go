@@ -172,11 +172,20 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 	if err != nil {
 		return nil, err
 	}
-	root := filepath.Dir(manifestPath)
+	return LoadManifestUniverse(manifest, filepath.Dir(manifestPath), nil)
+}
+
+// LoadManifestUniverse validates and loads an in-memory manifest using schema
+// files rooted at root. overrides, keyed by manifest File, replace selected
+// filesystem inputs. The schema import workflow uses this to prove the complete
+// future universe before changing manifest.json or any layer file.
+func LoadManifestUniverse(manifest Manifest, root string, overrides map[string][]byte) (*Universe, error) {
+	if err := validateManifest(manifest); err != nil {
+		return nil, err
+	}
 	overlays := make([]*tl.Schema, 0, len(manifest.Overlays))
 	for _, entry := range manifest.Overlays {
-		name := filepath.Join(root, filepath.FromSlash(entry.File))
-		data, err := os.ReadFile(name)
+		data, err := readManifestSchemaInput(root, entry.File, overrides)
 		if err != nil {
 			return nil, fmt.Errorf("semantic: overlay %q read schema: %w", entry.File, err)
 		}
@@ -196,8 +205,7 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 
 	schemas := make([]*SchemaModel, 0, len(manifest.Layers))
 	for _, entry := range manifest.Layers {
-		name := filepath.Join(root, filepath.FromSlash(entry.File))
-		data, err := os.ReadFile(name)
+		data, err := readManifestSchemaInput(root, entry.File, overrides)
 		if err != nil {
 			return nil, fmt.Errorf("semantic: layer %d read schema: %w", entry.Layer, err)
 		}
@@ -235,6 +243,13 @@ func LoadUniverse(manifestPath string) (*Universe, error) {
 		schemas = append(schemas, model)
 	}
 	return NewUniverse(manifest.CanonicalLayer, schemas...)
+}
+
+func readManifestSchemaInput(root, file string, overrides map[string][]byte) ([]byte, error) {
+	if data, ok := overrides[file]; ok {
+		return append([]byte(nil), data...), nil
+	}
+	return os.ReadFile(filepath.Join(root, filepath.FromSlash(file)))
 }
 
 // validateExplicitIDs prevents official inputs from silently changing a wire

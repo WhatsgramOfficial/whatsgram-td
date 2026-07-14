@@ -304,6 +304,18 @@ func compareLayerDefinitions(layer int, canonical, profile *semantic.Definition)
 			SourceShape: canonical.SemanticShape,
 			TargetShape: profile.SemanticShape,
 		}))
+		result = append(result, makeLayerObligation(LayerObligation{
+			Kind:        LayerObligationResult,
+			Layer:       layer,
+			Direction:   LayerDirectionProfileToCanonical,
+			Semantic:    canonical.Key,
+			WireID:      profile.WireID,
+			OtherWireID: canonical.WireID,
+			SourceType:  profile.Result.String(),
+			TargetType:  canonical.Result.String(),
+			SourceShape: profile.SemanticShape,
+			TargetShape: canonical.SemanticShape,
+		}))
 	}
 	return result
 }

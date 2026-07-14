@@ -65,6 +65,8 @@ type layerCodecWire struct {
 	DecodeName     string
 	DecodeBareName string
 	ProfileOnly    bool
+	Encodable      bool
+	Decodable      bool
 	Profiles       []layerCodecProfileBody
 	ProfileGroups  []layerCodecProfileBody
 	RejectProfiles []int
@@ -92,6 +94,7 @@ type layerCodecHookContract struct {
 type layerCodecEmitter struct {
 	model        *layerCodecModel
 	wire         *layerWireModel
+	rpc          *layerRPCModel
 	values       *layerValueCompiler
 	hookByName   map[string]string
 	genericSlots map[string]int
@@ -100,7 +103,7 @@ type layerCodecEmitter struct {
 
 // buildLayerCodecModel compiles the shared wire/conversion/value plans into a
 // static source model. It does not perform a second schema comparison.
-func (g *Generator) buildLayerCodecModel(pkg string) (*layerCodecModel, error) {
+func (g *Generator) buildLayerCodecModel(pkg string, rpcModels ...*layerRPCModel) (*layerCodecModel, error) {
 	if g == nil || g.schemaSet == nil {
 		return nil, fmt.Errorf("gen: layer codec requires a schema-set generator")
 	}
@@ -116,6 +119,17 @@ func (g *Generator) buildLayerCodecModel(pkg string) (*layerCodecModel, error) {
 		return nil, err
 	}
 
+	var rpc *layerRPCModel
+	if len(rpcModels) > 1 {
+		return nil, fmt.Errorf("gen: layer codec received %d RPC models", len(rpcModels))
+	}
+	if len(rpcModels) == 1 {
+		rpc = rpcModels[0]
+		if rpc != nil && (rpc.CanonicalLayer != wire.CanonicalLayer || !equalLayerRPCSourceProfiles(rpc.Profiles, wire.Profiles)) {
+			return nil, fmt.Errorf("gen: layer codec RPC model does not share the exact profile universe")
+		}
+	}
+
 	emitter := &layerCodecEmitter{
 		model: &layerCodecModel{
 			Package:                  pkg,
@@ -129,6 +143,7 @@ func (g *Generator) buildLayerCodecModel(pkg string) (*layerCodecModel, error) {
 			DefaultAggregateElements: layerCodecDefaultAggregateElements,
 		},
 		wire:       wire,
+		rpc:        rpc,
 		values:     values,
 		hookByName: make(map[string]string),
 	}
@@ -265,6 +280,13 @@ func (e *layerCodecEmitter) buildWires() error {
 		}
 		out.ProfileGroups = groupLayerCodecProfileBodies(out.Profiles)
 		e.model.Wires = append(e.model.Wires, out)
+	}
+	for wireIndex := range e.model.Wires {
+		wire := &e.model.Wires[wireIndex]
+		for _, profile := range wire.Profiles {
+			wire.Encodable = wire.Encodable || profile.EncodeReject == ""
+			wire.Decodable = wire.Decodable || profile.DecodeReject == ""
+		}
 	}
 	return nil
 }
@@ -730,8 +752,13 @@ func (e *layerCodecEmitter) buildProfileBody(wire *layerWirePlan, action *layerW
 	e.temp = 0
 	body := layerCodecProfileBody{Layer: action.Layer}
 	conversion := action.Conversion
+	admissionProfile, err := e.layerRPCAdmissionProfile(wire, action)
+	if err != nil {
+		return body, err
+	}
 	canonicalPrimitiveFastPath := action.Layer == e.wire.CanonicalLayer &&
-		action.Kind == layerWireDirect && layerCodecPrimitiveOnlyBody(wire.Canonical.Definition)
+		action.Kind == layerWireDirect && layerCodecPrimitiveOnlyBody(wire.Canonical.Definition) &&
+		!layerRPCProfileHasAdmissionFields(admissionProfile)
 	preflight, err := e.emitPreflightBody(action.Layer, conversion, wire.Canonical)
 	if err != nil {
 		return body, err
@@ -742,7 +769,7 @@ func (e *layerCodecEmitter) buildProfileBody(wire *layerWirePlan, action *layerW
 	} else if canonicalPrimitiveFastPath {
 		body.Encode = "return value.EncodeBare(b)\n"
 	} else {
-		encoded, err := e.emitEncodeBody(action.Layer, conversion, wire.Canonical)
+		encoded, err := e.emitEncodeBody(action.Layer, conversion, wire.Canonical, admissionProfile)
 		if err != nil {
 			return body, err
 		}
@@ -754,13 +781,43 @@ func (e *layerCodecEmitter) buildProfileBody(wire *layerWirePlan, action *layerW
 	} else if canonicalPrimitiveFastPath {
 		body.Decode = "if err := value.DecodeBare(b); err != nil { return nil, fmt.Errorf(\"decode canonical bare body: %w\", err) }\nreturn value, nil\n"
 	} else {
-		decoded, err := e.emitDecodeBody(action.Layer, conversion, wire.Canonical)
+		decoded, err := e.emitDecodeBody(action.Layer, conversion, wire.Canonical, admissionProfile)
 		if err != nil {
 			return body, err
 		}
 		body.Decode = decoded
 	}
 	return body, nil
+}
+
+func (e *layerCodecEmitter) layerRPCAdmissionProfile(wire *layerWirePlan, action *layerWireProfileAction) (*layerRPCMethodProfile, error) {
+	if e == nil || e.rpc == nil || wire == nil || action == nil || wire.Key.Category != semantic.CategoryFunction {
+		return nil, nil
+	}
+	method := e.rpc.method(wire.Key)
+	if method == nil {
+		return nil, nil
+	}
+	profile := method.profile(action.Layer)
+	if profile == nil || profile.Definition == nil || action.Conversion == nil || action.Conversion.Profile == nil {
+		return nil, nil
+	}
+	if profile.Definition != action.Conversion.Profile.Definition || profile.WireID != wire.WireID {
+		return nil, fmt.Errorf("gen: layer RPC admission profile %s layer %d disagrees with codec wire %#08x", wire.Key, action.Layer, wire.WireID)
+	}
+	return profile, nil
+}
+
+func layerRPCProfileHasAdmissionFields(profile *layerRPCMethodProfile) bool {
+	if profile == nil {
+		return false
+	}
+	for index := range profile.Fields {
+		if profile.Fields[index].Admission != nil {
+			return true
+		}
+	}
+	return false
 }
 
 // layerCodecPrimitiveOnlyBody is the conservative zero-overhead canonical
@@ -1108,7 +1165,7 @@ func (e *layerCodecEmitter) emitPreflightValue(plan *layerValuePlan, expression,
 	}
 }
 
-func (e *layerCodecEmitter) emitEncodeBody(layer int, conversion *LayerFamilyConversion, canonical *layerDefinitionBinding) (string, error) {
+func (e *layerCodecEmitter) emitEncodeBody(layer int, conversion *LayerFamilyConversion, canonical *layerDefinitionBinding, admissionProfile *layerRPCMethodProfile) (string, error) {
 	restore := e.useGenericSlots(canonical.Definition)
 	defer restore()
 	profile := conversion.Profile.Definition
@@ -1137,6 +1194,13 @@ func (e *layerCodecEmitter) emitEncodeBody(layer int, conversion *LayerFamilyCon
 	planned := make(map[int]encodeField)
 	for profileOrdinal := range profile.Fields {
 		field := &profile.Fields[profileOrdinal]
+		var admission *layerRPCAdmissionFieldUse
+		if admissionProfile != nil {
+			if admissionProfile.Definition != profile || profileOrdinal >= len(admissionProfile.Fields) || admissionProfile.Fields[profileOrdinal].Name != field.Name {
+				return "", fmt.Errorf("gen: stale layer RPC admission field mapping for encode %s profile %d field %q", canonical.Key, layer, field.Name)
+			}
+			admission = admissionProfile.Fields[profileOrdinal].Admission
+		}
 		if field.Kind != semantic.FieldValue || field.Condition != nil && field.Condition.PresenceOnly {
 			continue
 		}
@@ -1176,6 +1240,15 @@ func (e *layerCodecEmitter) emitEncodeBody(layer int, conversion *LayerFamilyCon
 			if err != nil {
 				return "", fmt.Errorf("default profile field %q: %w", field.Name, err)
 			}
+		}
+		if obligation != nil && admission != nil && obligation.Resolution.Action == LayerResolveAlias {
+			if canonicalField == nil || !layerRPCAdmissionPureRenameAlias(obligation, canonicalField.Semantic, field) {
+				return "", fmt.Errorf("gen: observable RPC field %s.%s has an alias without a pure-rename proof", canonical.Key, field.Name)
+			}
+			// A metric-bearing pure rename is a mechanical wire rename. Calling
+			// arbitrary policy code here could change value/presence after the
+			// admission callback and invalidate the generated proof.
+			obligation = nil
 		}
 
 		if obligation != nil {
@@ -1435,7 +1508,7 @@ func (e *layerCodecEmitter) emitEncodeBody(layer int, conversion *LayerFamilyCon
 	return b.String(), nil
 }
 
-func (e *layerCodecEmitter) emitDecodeBody(layer int, conversion *LayerFamilyConversion, canonical *layerDefinitionBinding) (string, error) {
+func (e *layerCodecEmitter) emitDecodeBody(layer int, conversion *LayerFamilyConversion, canonical *layerDefinitionBinding, admissionProfile *layerRPCMethodProfile) (string, error) {
 	restore := e.useGenericSlots(canonical.Definition)
 	defer restore()
 	profile := conversion.Profile.Definition
@@ -1449,6 +1522,13 @@ func (e *layerCodecEmitter) emitDecodeBody(layer int, conversion *LayerFamilyCon
 	decoded := make(map[int]decodedField)
 	for profileOrdinal := range profile.Fields {
 		field := &profile.Fields[profileOrdinal]
+		var admission *layerRPCAdmissionFieldUse
+		if admissionProfile != nil {
+			if admissionProfile.Definition != profile || profileOrdinal >= len(admissionProfile.Fields) || admissionProfile.Fields[profileOrdinal].Name != field.Name {
+				return "", fmt.Errorf("gen: stale layer RPC admission field mapping for %s profile %d field %q", canonical.Key, layer, field.Name)
+			}
+			admission = admissionProfile.Fields[profileOrdinal].Admission
+		}
 		if field.Kind == semantic.FieldFlagsWord {
 			fmt.Fprintf(&b, "var wireFlags%d bin.Fields\nif err := wireFlags%d.Decode(b); err != nil { return nil, fmt.Errorf(\"decode flags %s: %%w\", err) }\n", profileOrdinal, profileOrdinal, field.Name)
 			continue
@@ -1479,7 +1559,7 @@ func (e *layerCodecEmitter) emitDecodeBody(layer int, conversion *LayerFamilyCon
 				return "", fmt.Errorf("decode field %q: %w", field.Name, err)
 			}
 			fmt.Fprintf(&b, "var %s %s\n", local, goType)
-			statement, err := e.emitDecodeValue(plan, local, "b", "state", "field "+field.Name)
+			statement, err := e.emitDecodeValue(plan, local, "b", "state", "field "+field.Name, admission)
 			if err != nil {
 				return "", err
 			}
@@ -1489,7 +1569,11 @@ func (e *layerCodecEmitter) emitDecodeBody(layer int, conversion *LayerFamilyCon
 		if field.Condition != nil {
 			fmt.Fprintf(&b, "if %s {\n", present)
 			b.WriteString(indentLayerCodec(inner.String(), "\t"))
-			b.WriteString("}\n")
+			if admission != nil {
+				fmt.Fprintf(&b, "} else if state.rpcAdmission.enabled(%d) {\n\tif err := state.rpcAdmission.observe(%d, %s, %s, false, 0); err != nil { return nil, err }\n}\n", admission.Index, admission.Index, admission.Constant, layerRPCAdmissionMetricGoConstant(admission.Metric))
+			} else {
+				b.WriteString("}\n")
+			}
 		} else {
 			b.WriteString(inner.String())
 		}
@@ -1558,6 +1642,19 @@ func (e *layerCodecEmitter) emitDecodeBody(layer int, conversion *LayerFamilyCon
 		obligation, err := layerCodecFieldAdapter(conversion, LayerDirectionProfileToCanonical, field.Name, canonicalField.Semantic.Name)
 		if err != nil {
 			return "", err
+		}
+		var admission *layerRPCAdmissionFieldUse
+		if admissionProfile != nil {
+			admission = admissionProfile.Fields[profileOrdinal].Admission
+		}
+		if obligation != nil && admission != nil && obligation.Resolution.Action == LayerResolveAlias {
+			if !layerRPCAdmissionPureRenameAlias(obligation, canonicalField.Semantic, field) {
+				return "", fmt.Errorf("gen: observable RPC field %s.%s has an alias without a pure-rename proof", canonical.Key, field.Name)
+			}
+			// See the encode side: metric-bearing pure aliases are generated as
+			// direct assignments so a policy hook cannot rewrite value/presence
+			// after admission observed the wire scalar.
+			obligation = nil
 		}
 		assignment := entry.local
 		present := entry.present
@@ -1847,9 +1944,16 @@ func (e *layerCodecEmitter) emitEncodeValue(plan *layerValuePlan, expression, bu
 	return statement, nil
 }
 
-func (e *layerCodecEmitter) emitDecodeValue(plan *layerValuePlan, target, buffer, state, context string) (string, error) {
+func (e *layerCodecEmitter) emitDecodeValue(plan *layerValuePlan, target, buffer, state, context string, admissionUses ...*layerRPCAdmissionFieldUse) (string, error) {
 	if plan == nil {
 		return "", fmt.Errorf("decode %s: nil value plan", context)
+	}
+	if len(admissionUses) > 1 {
+		return "", fmt.Errorf("decode %s: multiple admission field uses", context)
+	}
+	var admission *layerRPCAdmissionFieldUse
+	if len(admissionUses) == 1 {
+		admission = admissionUses[0]
 	}
 	var b strings.Builder
 	switch plan.Kind {
@@ -1859,7 +1963,18 @@ func (e *layerCodecEmitter) emitDecodeValue(plan *layerValuePlan, target, buffer
 			return "", err
 		}
 		local := e.nextTemp("primitive")
-		fmt.Fprintf(&b, "%s, err := %s.%s()\nif err != nil { return nil, fmt.Errorf(\"decode %s: %%w\", err) }\n%s = %s\n", local, buffer, method, context, target, local)
+		if admission != nil && admission.Metric == layerRPCAdmissionMetricBytesLength {
+			length := e.nextTemp("payloadLength")
+			fmt.Fprintf(&b, "if %s.rpcAdmission.enabled(%d) {\n", state, admission.Index)
+			fmt.Fprintf(&b, "\t%s, err := layerRPCAdmissionBytesLength(profile, %s.rpcAdmission.semantic, %s.rpcAdmission.wireID, %s, %s)\n", length, state, state, admission.Constant, buffer)
+			fmt.Fprintf(&b, "\tif err != nil { return nil, fmt.Errorf(\"decode %s admission metric: %%w\", err) }\n", context)
+			fmt.Fprintf(&b, "\tif err := %s.rpcAdmission.observe(%d, %s, %s, true, int64(%s)); err != nil { return nil, err }\n}\n", state, admission.Index, admission.Constant, layerRPCAdmissionMetricGoConstant(admission.Metric), length)
+		}
+		fmt.Fprintf(&b, "%s, err := %s.%s()\nif err != nil { return nil, fmt.Errorf(\"decode %s: %%w\", err) }\n", local, buffer, method, context)
+		if admission != nil && admission.Metric == layerRPCAdmissionMetricInt32 {
+			fmt.Fprintf(&b, "if %s.rpcAdmission.enabled(%d) { if err := %s.rpcAdmission.observe(%d, %s, %s, true, int64(int32(%s))); err != nil { return nil, err } }\n", state, admission.Index, state, admission.Index, admission.Constant, layerRPCAdmissionMetricGoConstant(admission.Metric), local)
+		}
+		fmt.Fprintf(&b, "%s = %s\n", target, local)
 	case layerValueExactBare, layerValueBoxedConcrete:
 		if len(plan.Constructors) != 1 || plan.Constructors[0].Canonical == nil {
 			return "", fmt.Errorf("decode %s: %s has no canonical constructor", context, plan.Kind)
@@ -1902,6 +2017,10 @@ func (e *layerCodecEmitter) emitDecodeValue(plan *layerValuePlan, target, buffer
 			mode = "true"
 		}
 		fmt.Fprintf(&b, "%s, err := layerDecodeVectorLength(profile, nil, %s, %s, %s)\nif err != nil { return nil, fmt.Errorf(\"decode %s: %%w\", err) }\n", length, buffer, mode, vectorStatePtr, context)
+		if admission != nil {
+			fmt.Fprintf(&b, "if err := layerRPCAdmissionCheckVectorWire(profile, %s.rpcAdmission, %s, %s, %s, %d); err != nil { return nil, fmt.Errorf(\"decode %s minimum wire: %%w\", err) }\n", state, admission.Constant, buffer, length, admission.MinWireSize, context)
+			fmt.Fprintf(&b, "if %s.rpcAdmission.enabled(%d) { if err := %s.rpcAdmission.observe(%d, %s, %s, true, int64(%s)); err != nil { return nil, err } }\n", state, admission.Index, state, admission.Index, admission.Constant, layerRPCAdmissionMetricGoConstant(admission.Metric), length)
+		}
 		result := e.nextTemp("vector")
 		fmt.Fprintf(&b, "var %s %s\nif %s > 0 { capacity := %s; if capacity > bin.PreallocateLimit { capacity = bin.PreallocateLimit }; %s = make(%s, 0, capacity) }\n", result, goType, length, length, result, goType)
 		elementType, err := layerCodecGoType(plan.Element)
@@ -1945,6 +2064,19 @@ func layerCodecPrimitiveMethod(primitive string) (string, error) {
 		return "Bool", nil
 	default:
 		return "", fmt.Errorf("unsupported TL primitive %q", primitive)
+	}
+}
+
+func layerRPCAdmissionMetricGoConstant(metric layerRPCAdmissionMetricKind) string {
+	switch metric {
+	case layerRPCAdmissionMetricVectorLength:
+		return "layerRPCAdmissionFieldMetricVectorLength"
+	case layerRPCAdmissionMetricBytesLength:
+		return "layerRPCAdmissionFieldMetricBytesLength"
+	case layerRPCAdmissionMetricInt32:
+		return "layerRPCAdmissionFieldMetricInt32"
+	default:
+		return "layerRPCAdmissionFieldMetricInvalid"
 	}
 }
 

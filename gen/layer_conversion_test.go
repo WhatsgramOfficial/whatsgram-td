@@ -30,7 +30,7 @@ func TestLayerConversionPlanIsSingleDecisionSource(t *testing.T) {
 		t.Fatalf("update projection conversion = %+v", update)
 	}
 	result := profile.Family(functionStaticKey("getShape"))
-	if result == nil || !result.ResultChanged || len(result.ResultObligations()) != 1 {
+	if result == nil || !result.ResultChanged || len(result.ResultObligations()) != 2 {
 		t.Fatalf("result conversion = %+v", result)
 	}
 
@@ -86,7 +86,7 @@ func TestLayerConversionPlanTelegram220Through227(t *testing.T) {
 		LayerObligationNewOnly:          658,
 		LayerObligationOldOnly:          4,
 		LayerObligationRequired:         74,
-		LayerObligationResult:           14,
+		LayerObligationResult:           28,
 		LayerObligationUpdateProjection: 44,
 	}
 	for kind, expected := range want {

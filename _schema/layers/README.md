@@ -15,25 +15,51 @@ codec and no fallback to canonical bytes when a projection fails.
 
 ## Adding a Layer
 
-1. Copy the exact upstream TL source into `layer-N.tl`.
-2. Append its provenance and digest to `manifest.json`, and select it as
-   `canonical_layer` when it is the new canonical model.
-3. Run the policy audit without weakening an existing decision:
+1. Import the exact source from a local upstream checkout. `gotdgen` discovers
+   `// LAYER N`, finds the last commit on `HEAD` which changed the manifest's
+   source path, verifies that commit is reachable from a fetched ref of the
+   configured upstream remote and verifies the bytes against that commit's Git
+   object, computes SHA-256, writes `layer-N.tl`,
+   updates manifest provenance/canonical selection, and rebuilds
+   `_schema/telegram.tl` with the locked overlays. No network is used:
+
+   The import stages and syncs the complete output set before replacing any
+   tracked file. Layer and canonical schema files are replaced first;
+   `manifest.json` is replaced last as the commit marker. A replacement error
+   rolls every target back to the complete previous set.
+
+   ```powershell
+   go run ./cmd/gotdgen --schema-manifest _schema/layers/manifest.json `
+     --schema-import ..\tdesktop\tdesktop\Telegram\SourceFiles\mtproto\scheme\api.tl
+   ```
+
+   Fetch the upstream checkout before importing. A copied source must still be
+   verified against a local checkout; pass
+   `--schema-import-git-dir <checkout>` and, when needed, the exact
+   `--schema-import-commit <40-hex>`. Replacing different bytes/provenance for
+   an already-recorded Layer additionally requires `--schema-import-replace`.
+2. Audit the existing policy without weakening an existing decision. Unlike
+   normal generation, audit mode reports stale keys instead of aborting before
+   a review artifact can be produced:
 
    ```powershell
    go run ./cmd/gotdgen --schema-manifest _schema/layers/manifest.json `
      --layer-policy _schema/layers/policy.json `
-     --layer-policy-template _schema/layers/policy.next.json `
-     --package tg --target tg
+     --layer-policy-audit _schema/layers/policy.audit.json `
+     --layer-policy-merge _schema/layers/policy.next.json
    ```
 
-4. Review every new obligation. Mechanical ID/body reuse needs no policy.
+   The audit has three deterministic sections: `retained` (exact key still
+   valid), `stale` (never copied forward), and `new` (empty-action skeleton).
+   The merged file contains retained plus new entries and deliberately fails
+   normal generation until every new action is reviewed.
+3. Review every new obligation. Mechanical ID/body reuse needs no policy.
    Removed fields, replacements, old-only definitions, changed RPC results and
    unavailable update constructors require an explicit `reject`, `drop`,
    `default`, `alias`, `project` or typed `adapter` decision. Copy only reviewed
    entries into `policy.json`; stale keys and unresolved obligations are hard
    generation errors.
-5. Regenerate and verify:
+4. Regenerate and verify:
 
    ```powershell
    go generate .
