@@ -430,7 +430,7 @@ func TestLayerRPCServerSourceIsSyntacticallyCompilable(t *testing.T) {
 	}
 }
 
-func TestLayerRPCSourceTelegram220Through227Completeness(t *testing.T) {
+func TestLayerRPCSourceTelegram225Through228Completeness(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
@@ -487,7 +487,7 @@ func TestLayerRPCSourceTelegram220Through227Completeness(t *testing.T) {
 		t.Fatal(err)
 	}
 	if _, err := format.Source(rendered.Bytes()); err != nil {
-		t.Fatalf("format Telegram Layers 220-227 generated RPC server: %v\n%s", err, rendered.String())
+		t.Fatalf("format Telegram Layers 225-228 generated RPC server: %v\n%s", err, rendered.String())
 	}
 	uniqueBodyBytes := 0
 	for _, route := range model.Routes {
@@ -498,9 +498,9 @@ func TestLayerRPCSourceTelegram220Through227Completeness(t *testing.T) {
 			uniqueBodyBytes += len(route.ProbeBody)
 		}
 	}
-	t.Logf("Telegram Layers 220-227 RPC source: exact_routes=%d unique_admits=%d wrapper_routes=%d unique_probes=%d handlers=%d admission_fields=%d",
+	t.Logf("Telegram Layers 225-228 RPC source: exact_routes=%d unique_admits=%d wrapper_routes=%d unique_probes=%d handlers=%d admission_fields=%d",
 		model.RouteCount, model.UniqueAdmitCount, model.WrapperCount, model.UniqueProbeCount, len(model.Handlers), len(model.LayerRPC.AdmissionFields))
-	t.Logf("Telegram Layers 220-227 unique RPC body syntax=%d bytes", uniqueBodyBytes)
+	t.Logf("Telegram Layers 225-228 unique RPC body syntax=%d bytes", uniqueBodyBytes)
 }
 
 func TestLayerRPCSourceUnchangedFutureProfileReusesAdmitBodies(t *testing.T) {

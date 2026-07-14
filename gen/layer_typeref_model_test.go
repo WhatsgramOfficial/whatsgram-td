@@ -285,7 +285,7 @@ func TestLayerTypeRefTemplateUsesDirectFunctionsAndNoRuntimeCatalog(t *testing.T
 	}
 }
 
-func TestLayerTypeRefModelTelegram220Through227Completeness(t *testing.T) {
+func TestLayerTypeRefModelTelegram225Through228Completeness(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
@@ -345,8 +345,8 @@ func TestLayerTypeRefModelTelegram220Through227Completeness(t *testing.T) {
 			}
 		}
 	}
-	if resultChanges != 14 {
-		t.Fatalf("result-changing RPC profiles = %d, want 14", resultChanges)
+	if resultChanges != 4 {
+		t.Fatalf("result-changing RPC profiles = %d, want 4", resultChanges)
 	}
 	if wrapperProfiles == 0 {
 		t.Fatal("real schemas produced no generic wrapper replacement metadata")
@@ -393,7 +393,7 @@ func TestLayerTypeRefModelTelegram220Through227Completeness(t *testing.T) {
 		t.Fatalf("real TypeRef gates generic=%d profile_only_exact=%d", nonRunnableGeneric, profileOnlyExact)
 	}
 	t.Logf(
-		"Telegram Layers 220-227 TypeRef model: nodes=%d roots_checked=%d RPCs=%d result_changes=%d wrapper_profiles=%d generic_nodes=%d profile_only_exact=%d",
+		"Telegram Layers 225-228 TypeRef model: nodes=%d roots_checked=%d RPCs=%d result_changes=%d wrapper_profiles=%d generic_nodes=%d profile_only_exact=%d",
 		len(model.Nodes), rootCount, len(model.RPCs), resultChanges, wrapperProfiles, nonRunnableGeneric, profileOnlyExact,
 	)
 }

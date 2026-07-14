@@ -27,8 +27,8 @@ func TestLayerRPCAdmissionFieldRegistrationCoverage(t *testing.T) {
 	if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldUsersGetUsersID, nil); err == nil {
 		t.Fatal("nil field callback was accepted")
 	}
-	if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldChannelsEditAdminRank, callback); err == nil {
-		t.Fatal("incomplete cross-profile coverage was accepted")
+	if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldAccountToggleWebBrowserSettingsExceptionURL, callback); err != nil {
+		t.Fatalf("field observable on every admitted profile was rejected: %v", err)
 	}
 	if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldUsersGetUsersID, callback); err != nil {
 		t.Fatal(err)

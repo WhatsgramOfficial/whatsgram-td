@@ -23,7 +23,7 @@ func TestPrepareFrozenLayerUsesOnlyProvenWireEquivalentFastPath(t *testing.T) {
 		encode: func(profile LayerProfile, value *layerFrozenProbe, b *bin.Buffer) error {
 			encodeCalls++
 			encoded := value.Value
-			if profile == LayerProfile221 {
+			if profile == LayerProfile226 {
 				encoded += 1000
 			}
 			b.PutInt(encoded)
@@ -46,7 +46,7 @@ func TestPrepareFrozenLayerUsesOnlyProvenWireEquivalentFastPath(t *testing.T) {
 			return &layerFrozenProbe{Value: value}, nil
 		},
 		wireEquivalent: func(profile LayerProfile) bool {
-			return profile == LayerProfile220 || profile == LayerProfileCanonical
+			return profile == LayerProfile225 || profile == LayerProfileCanonical
 		},
 	}
 
@@ -64,7 +64,7 @@ func TestPrepareFrozenLayerUsesOnlyProvenWireEquivalentFastPath(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	equivalent, err := PrepareFrozenLayer(LayerProfile220, frozen)
+	equivalent, err := PrepareFrozenLayer(LayerProfile225, frozen)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +74,7 @@ func TestPrepareFrozenLayerUsesOnlyProvenWireEquivalentFastPath(t *testing.T) {
 	if got := preparedProbeValue(t, canonical, LayerProfileCanonical, typ); got != 7 {
 		t.Fatalf("canonical prepared value = %d, want 7", got)
 	}
-	if got := preparedProbeValue(t, equivalent, LayerProfile220, typ); got != 7 {
+	if got := preparedProbeValue(t, equivalent, LayerProfile225, typ); got != 7 {
 		t.Fatalf("equivalent prepared value = %d, want 7", got)
 	}
 
@@ -82,18 +82,18 @@ func TestPrepareFrozenLayerUsesOnlyProvenWireEquivalentFastPath(t *testing.T) {
 	if got := frozenProbeValue(t, frozen.body); got != 7 {
 		t.Fatalf("prepared snapshot aliases frozen body: %d", got)
 	}
-	if got := preparedProbeValue(t, equivalent, LayerProfile220, typ); got != 7 {
+	if got := preparedProbeValue(t, equivalent, LayerProfile225, typ); got != 7 {
 		t.Fatalf("prepared profile snapshots alias each other: %d", got)
 	}
 
-	rewritten, err := PrepareFrozenLayer(LayerProfile221, frozen)
+	rewritten, err := PrepareFrozenLayer(LayerProfile226, frozen)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if encodeCalls != 2 || decodeCalls != 1 {
 		t.Fatalf("non-equivalent prepare calls = encode:%d decode:%d, want 2/1", encodeCalls, decodeCalls)
 	}
-	if got := preparedProbeValue(t, rewritten, LayerProfile221, typ); got != 1007 {
+	if got := preparedProbeValue(t, rewritten, LayerProfile226, typ); got != 1007 {
 		t.Fatalf("non-equivalent prepared value = %d, want 1007", got)
 	}
 
@@ -108,16 +108,16 @@ func TestPrepareFrozenLayerUsesOnlyProvenWireEquivalentFastPath(t *testing.T) {
 	wrongType := typ
 	wrongType.ref = &LayerTypeRef{kind: LayerTypePrimitive, qname: "test.frozen.other"}
 	var target bin.Buffer
-	if err := equivalent.Encode(LayerProfile220, wrongType, &target); err == nil || target.Len() != 0 {
+	if err := equivalent.Encode(LayerProfile225, wrongType, &target); err == nil || target.Len() != 0 {
 		t.Fatalf("prepared snapshot accepted wrong TypeRef: bytes=%x err=%v", target.Raw(), err)
 	}
 
 	var first, second bin.Buffer
-	if err := equivalent.Encode(LayerProfile220, typ, &first); err != nil {
+	if err := equivalent.Encode(LayerProfile225, typ, &first); err != nil {
 		t.Fatal(err)
 	}
 	first.Buf[0] = 0xff
-	if err := equivalent.Encode(LayerProfile220, typ, &second); err != nil {
+	if err := equivalent.Encode(LayerProfile225, typ, &second); err != nil {
 		t.Fatal(err)
 	}
 	if bytes.Equal(first.Raw(), second.Raw()) || frozenProbeValue(t, second.Raw()) != 7 {

@@ -561,6 +561,9 @@ func (p *layerRPCAdmissionPreflightRunner) adaptUnknown(profile LayerProfile, b 
         }
         return p.adaptCanonical(profile, canonical)
     }
+    lease.adaptClientRPCOverlay = func(overlay LayerClientRPCOverlay) (*bin.Buffer, bool, error) {
+        return adaptLayerClientRPCOverlay(overlay, profile, private, state)
+    }
 {{- end }}
     view := LayerRPCUnknownMethodView{profile: profile, wireID: wireID, wireSize: private.Len(), lease: lease}
     adapted, handled, err := p.unknownAdapter(view)
@@ -767,6 +770,7 @@ type layerRPCUnknownMethodViewLease struct {
     approvedWireDigest [sha256.Size]byte
 {{- if .LayerRPCSource.ClientBridge }}
     adaptCanonical func(*bin.Buffer) (LayerOutboundCall, error)
+    adaptClientRPCOverlay func(LayerClientRPCOverlay) (*bin.Buffer, bool, error)
 {{- end }}
 }
 
@@ -836,6 +840,26 @@ func (v LayerRPCUnknownMethodView) AdaptCanonical(canonical *bin.Buffer) (LayerO
     lease.approvedWireDigest = sha256.Sum256(exact.Raw())
     atomic.StoreUint32(&lease.approved, 1)
     return outbound, nil
+}
+
+// AdaptClientRPCOverlay invokes one gotdgen-compiled client-private method
+// decoder against this view's exact connection profile, then passes its
+// canonical value through the authoritative admission/re-profiling bridge.
+// handled=false means the selected overlay does not own this constructor.
+func (v LayerRPCUnknownMethodView) AdaptClientRPCOverlay(overlay LayerClientRPCOverlay) (LayerOutboundCall, bool, error) {
+    lease, err := v.activeLease("adapt generated client RPC overlay")
+    if err != nil { return LayerOutboundCall{}, true, err }
+    if lease.adaptClientRPCOverlay == nil {
+        return LayerOutboundCall{}, true, &LayerCodecError{Operation: "adapt generated client RPC overlay", Profile: v.profile, WireID: v.wireID, Reason: "generated client overlay bridge is unavailable"}
+    }
+    canonical, handled, err := lease.adaptClientRPCOverlay(overlay)
+    if err != nil || !handled { return LayerOutboundCall{}, handled, err }
+    if canonical == nil {
+        return LayerOutboundCall{}, true, &LayerCodecError{Operation: "adapt generated client RPC overlay", Profile: v.profile, WireID: v.wireID, Reason: "generated client overlay returned nil canonical request"}
+    }
+    outbound, err := v.AdaptCanonical(canonical)
+    if err != nil { return LayerOutboundCall{}, true, err }
+    return outbound, true, nil
 }
 
 // LayerRPCUnknownMethodAdapter handles only an exact-profile switch miss at

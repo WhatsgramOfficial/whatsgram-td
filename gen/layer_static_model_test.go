@@ -147,7 +147,7 @@ func TestLayerStaticModelDirtyReachability(t *testing.T) {
 	}
 }
 
-func TestLayerStaticModelTelegram220Through227(t *testing.T) {
+func TestLayerStaticModelTelegram225Through228(t *testing.T) {
 	universe, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
@@ -176,19 +176,19 @@ func TestLayerStaticModelTelegram220Through227(t *testing.T) {
 	if model.ResultObligationCount == 0 {
 		t.Fatal("real layer set produced no explicit result obligations")
 	}
-	if got, want := model.FamilyCount, 598; got != want {
+	if got, want := model.FamilyCount, 472; got != want {
 		t.Fatalf("projected families = %d, want locked schema count %d", got, want)
 	}
-	if got, want := model.RewriteCount, 2209; got != want {
+	if got, want := model.RewriteCount, 1056; got != want {
 		t.Fatalf("rewrite variants = %d, want locked schema count %d", got, want)
 	}
-	if got, want := model.UnavailableCount, 658; got != want {
+	if got, want := model.UnavailableCount, 206; got != want {
 		t.Fatalf("unavailable variants = %d, want locked schema count %d", got, want)
 	}
-	if got, want := model.ObligationCount, 361; got != want {
+	if got, want := model.ObligationCount, 62; got != want {
 		t.Fatalf("body obligation variants = %d, want locked schema count %d", got, want)
 	}
-	if got, want := model.ResultObligationCount, 14; got != want {
+	if got, want := model.ResultObligationCount, 4; got != want {
 		t.Fatalf("result obligation variants = %d, want locked schema count %d", got, want)
 	}
 
@@ -226,15 +226,15 @@ func TestLayerStaticModelTelegram220Through227(t *testing.T) {
 			t.Fatalf("canonical family %s body/result mode = %s/%s, want direct/direct", family.Key, family.Mode, family.Result.Mode)
 		}
 	}
-	layer220 := model.profile(220)
+	layer225 := model.profile(225)
 	for _, name := range []string{"invokeWithLayer", "initConnection", "invokeAfterMsg"} {
-		family := layer220.family(functionStaticKey(name))
+		family := layer225.family(functionStaticKey(name))
 		if family == nil || family.Mode != layerStaticRewrite || !family.NestedDirty {
 			t.Fatalf("dynamic generic wrapper %s was not forced through layer-aware rewrite: %+v", name, family)
 		}
 	}
 	t.Logf(
-		"layers 220-227 static projection: families=%d/%d rewrite=%d unavailable=%d obligation=%d result_obligation=%d direct=%d retag=%d",
+		"layers 225-228 static projection: families=%d/%d rewrite=%d unavailable=%d obligation=%d result_obligation=%d direct=%d retag=%d",
 		model.FamilyCount, len(universe.Families), model.RewriteCount, model.UnavailableCount, model.ObligationCount, model.ResultObligationCount, directCount, retagCount,
 	)
 }

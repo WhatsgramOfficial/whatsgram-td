@@ -212,107 +212,12 @@ func layerCodecEncodeAtomic(profile LayerProfile, b *bin.Buffer, encode func() e
 	return encode()
 }
 
-// Static policy contract for layerAdaptComposeMessageToneDecode. Missing hooks and signature drift
+// Static policy contract for layerCaptureChatInviteJoinQueryIDFromWebViewDecode. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesComposeMessageWithAIRequest, bool, string) (InputAiComposeToneClass, bool, error) = layerAdaptComposeMessageToneDecode
+var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView, WebViewResultURL) error = layerCaptureChatInviteJoinQueryIDFromWebViewDecode
 
-// Static policy contract for layerAdaptComposeMessageToneEncode. Missing hooks and signature drift
+// Static policy contract for layerRequireCapturedChatInviteJoinQueryIDDecode. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesComposeMessageWithAIRequest, bool, InputAiComposeToneClass) (string, bool, error) = layerAdaptComposeMessageToneEncode
-
-// Static policy contract for layerAdaptInputMediaPollCorrectAnswersDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *InputMediaPoll, bool, [][]byte) ([]int, bool, error) = layerAdaptInputMediaPollCorrectAnswersDecode
-
-// Static policy contract for layerAdaptInputMediaPollCorrectAnswersEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *InputMediaPoll, bool, []int) ([][]byte, bool, error) = layerAdaptInputMediaPollCorrectAnswersEncode
-
-// Static policy contract for layerAdaptPollAnswerVotersAtomicDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *PollAnswerVoters, bool, int) error = layerAdaptPollAnswerVotersAtomicDecode
-
-// Static policy contract for layerCaptureChatInviteJoinWebViewQueryIDDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView, int64) error = layerCaptureChatInviteJoinWebViewQueryIDDecode
-
-// Static policy contract for layerCaptureChatInviteJoinWebViewURLDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView, string) error = layerCaptureChatInviteJoinWebViewURLDecode
-
-// Static policy contract for layerCaptureStarGiftAttributeBackdropRarityPermilleDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributeBackdrop, int) error = layerCaptureStarGiftAttributeBackdropRarityPermilleDecode
-
-// Static policy contract for layerCaptureStarGiftAttributeModelRarityPermilleDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributeModel, int) error = layerCaptureStarGiftAttributeModelRarityPermilleDecode
-
-// Static policy contract for layerCaptureStarGiftAttributePatternRarityPermilleDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributePattern, int) error = layerCaptureStarGiftAttributePatternRarityPermilleDecode
-
-// Static policy contract for layerEncodeChatInviteJoinWebViewQueryIDEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error) = layerEncodeChatInviteJoinWebViewQueryIDEncode
-
-// Static policy contract for layerEncodeChatInviteJoinWebViewURLEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView) (string, error) = layerEncodeChatInviteJoinWebViewURLEncode
-
-// Static policy contract for layerEncodeStarGiftAttributeBackdropRarityPermilleEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributeBackdrop) (int, error) = layerEncodeStarGiftAttributeBackdropRarityPermilleEncode
-
-// Static policy contract for layerEncodeStarGiftAttributeModelRarityPermilleEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributeModel) (int, error) = layerEncodeStarGiftAttributeModelRarityPermilleEncode
-
-// Static policy contract for layerEncodeStarGiftAttributePatternRarityPermilleEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributePattern) (int, error) = layerEncodeStarGiftAttributePatternRarityPermilleEncode
-
-// Static policy contract for layerRequireChatInviteJoinWebViewDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView) (WebViewResultURL, error) = layerRequireChatInviteJoinWebViewDecode
-
-// Static policy contract for layerRequireSendBotRequestedPeerMessageIDEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *MessagesSendBotRequestedPeerRequest, bool, int) (int, error) = layerRequireSendBotRequestedPeerMessageIDEncode
-
-// Static policy contract for layerRequireStarGiftAttributeBackdropRarityDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributeBackdrop) (StarGiftAttributeRarityClass, error) = layerRequireStarGiftAttributeBackdropRarityDecode
-
-// Static policy contract for layerRequireStarGiftAttributeModelRarityDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributeModel) (StarGiftAttributeRarityClass, error) = layerRequireStarGiftAttributeModelRarityDecode
-
-// Static policy contract for layerRequireStarGiftAttributePatternRarityDecode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *StarGiftAttributePattern) (StarGiftAttributeRarityClass, error) = layerRequireStarGiftAttributePatternRarityDecode
-
-// Static policy contract for layerRequireURLAuthResultAcceptedURLEncode. Missing hooks and signature drift
-// intentionally fail compilation. Production encoding invokes each hook once
-// inside one transactional pass; hooks must not mutate their input value.
-var _ func(LayerProfile, *URLAuthResultAccepted, bool, string) (string, error) = layerRequireURLAuthResultAcceptedURLEncode
+var _ func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error) = layerRequireCapturedChatInviteJoinQueryIDDecode

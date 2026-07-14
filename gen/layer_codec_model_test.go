@@ -90,6 +90,58 @@ func TestLayerCodecModelUniqueWireAndStaticBodies(t *testing.T) {
 	}
 }
 
+func TestLayerCodecRejectSkipsUnrepresentableRequiredPreflight(t *testing.T) {
+	const profileOne = `
+---types---
+thing#12000001 value:string = Thing;
+// LAYER 1
+`
+	const profileTwo = `
+---types---
+thing#12000002 = Thing;
+// LAYER 2
+`
+	profiles := make([]*semantic.SchemaModel, 0, 2)
+	for _, source := range []string{profileOne, profileTwo} {
+		parsed, err := tl.Parse(bytes.NewBufferString(source))
+		if err != nil {
+			t.Fatal(err)
+		}
+		profile, err := semantic.BuildSchema(parsed, semantic.SourceRef{Layer: parsed.Layer})
+		if err != nil {
+			t.Fatal(err)
+		}
+		profiles = append(profiles, profile)
+	}
+	set, err := NewSchemaSet(2, profiles...)
+	if err != nil {
+		t.Fatal(err)
+	}
+	initial, err := NewSchemaSetGenerator(set, GeneratorOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy := LayerObligationPolicy{}
+	for _, obligation := range initial.LayerConversionPlan().Report.Unresolved() {
+		policy.Entries = append(policy.Entries, LayerObligationPolicyEntry{
+			Key:        obligation.Key,
+			Resolution: LayerObligationResolution{Action: LayerResolveReject},
+		})
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	model, err := generator.buildLayerCodecModel("fixture")
+	if err != nil {
+		t.Fatal(err)
+	}
+	historical := findLayerCodecWire(t, model, 0x12000001)
+	if len(historical.Profiles) != 1 || historical.Profiles[0].EncodeReject == "" || historical.Profiles[0].DecodeReject == "" {
+		t.Fatalf("rejected required projection = %+v", historical.Profiles)
+	}
+}
+
 func TestLayerCodecProjectionPresenceAndMalformedFlags(t *testing.T) {
 	required := &layerFieldBinding{
 		Semantic: &semantic.FieldShape{Name: "required"},
@@ -910,35 +962,12 @@ func TestGeneratedAdapterOnceAndRollback(t *testing.T) {
 	runLayerGeneratedPackage(t, sources)
 }
 
-func TestLayerCodecModelTelegram220Through227Completeness(t *testing.T) {
+func TestLayerCodecModelTelegram225Through228Completeness(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
 	}
 	policy := layerTestPolicy(t, set)
-	initial, err := NewSchemaSetGenerator(set, GeneratorOptions{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	var replacement *LayerObligation
-	for index := range initial.LayerConversionPlan().Report.Obligations {
-		obligation := &initial.LayerConversionPlan().Report.Obligations[index]
-		if obligation.Kind != LayerObligationFieldReplacement {
-			continue
-		}
-		replacement = obligation
-		for policyIndex := range policy.Entries {
-			if policy.Entries[policyIndex].Key == obligation.Key {
-				policy.Entries[policyIndex].Resolution = LayerObligationResolution{
-					Action: LayerResolveAdapter,
-					Hook:   "layerTestFieldReplacement",
-				}
-			}
-		}
-	}
-	if replacement == nil {
-		t.Fatal("real schema set has no field-replacement obligation")
-	}
 	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
 	if err != nil {
 		t.Fatal(err)
@@ -963,25 +992,11 @@ func TestLayerCodecModelTelegram220Through227Completeness(t *testing.T) {
 			}
 		}
 	}
-	if profileBodies == 0 || profileOnly == 0 {
+	if profileBodies == 0 || profileOnly != 0 {
 		t.Fatalf("real codec coverage profiles=%d profile_only=%d", profileBodies, profileOnly)
 	}
 	if profileGroups <= 0 || profileGroups >= profileBodies {
 		t.Fatalf("profile body coalescing ineffective: groups=%d bodies=%d", profileGroups, profileBodies)
-	}
-	var replacementPreflight, replacementEncode, replacementDecode bool
-	for _, wire := range model.Wires {
-		for _, profile := range wire.Profiles {
-			if profile.Layer != replacement.Layer {
-				continue
-			}
-			replacementPreflight = replacementPreflight || strings.Contains(profile.Preflight, "layerTestFieldReplacementEncode")
-			replacementEncode = replacementEncode || strings.Contains(profile.Encode, "layerTestFieldReplacementEncode")
-			replacementDecode = replacementDecode || strings.Contains(profile.Decode, "layerTestFieldReplacementDecode")
-		}
-	}
-	if !replacementPreflight || !replacementEncode || !replacementDecode {
-		t.Fatalf("field replacement was not lowered to preflighted bidirectional typed adapters: preflight=%t encode=%t decode=%t", replacementPreflight, replacementEncode, replacementDecode)
 	}
 	invokeWithLayer := findLayerCodecWire(t, model, 0xda9b0d0d)
 	for _, profile := range invokeWithLayer.Profiles {
@@ -999,7 +1014,7 @@ func TestLayerCodecModelTelegram220Through227Completeness(t *testing.T) {
 			}
 		}
 	}
-	t.Logf("Telegram 220-227 codec model: wires=%d exact_profile_bodies=%d coalesced_groups=%d profile_only=%d hooks=%d declarations=%d", len(model.Wires), profileBodies, profileGroups, profileOnly, len(model.Hooks), len(model.Declarations))
+	t.Logf("Telegram 225-228 codec model: wires=%d exact_profile_bodies=%d coalesced_groups=%d profile_only=%d hooks=%d declarations=%d", len(model.Wires), profileBodies, profileGroups, profileOnly, len(model.Hooks), len(model.Declarations))
 }
 
 func newLayerCodecTestGenerator(t *testing.T, set *SchemaSet) *Generator {

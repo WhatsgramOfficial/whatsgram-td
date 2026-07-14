@@ -57,6 +57,21 @@ func TestCanonicalAdapterGeneratedSourceZeroDiff(t *testing.T) {
 	if _, err := format.Source(codecSource); err != nil {
 		t.Fatalf("format layer codec API: %v", err)
 	}
+	clientOverlaySource, ok := adapted["tl_layer_client_rpc_overlay_gen.go"]
+	if !ok {
+		t.Fatal("schema-set generator did not emit static client RPC overlays")
+	}
+	if _, err := format.Source(clientOverlaySource); err != nil {
+		t.Fatalf("format client RPC overlay: %v", err)
+	}
+	for _, forbidden := range []string{"tl.Parse", "parseSchema", "reflect."} {
+		if bytes.Contains(clientOverlaySource, []byte(forbidden)) {
+			t.Fatalf("static client RPC overlay contains runtime interpreter marker %q", forbidden)
+		}
+	}
+	if !bytes.Contains(clientOverlaySource, []byte("return 15")) {
+		t.Fatal("static client RPC overlay does not contain all audited DrKLO methods")
+	}
 	names := make([]string, 0, len(original))
 	for name := range original {
 		names = append(names, name)

@@ -56,7 +56,7 @@ func TestRealLayerPolicy(t *testing.T) {
 	if unresolved := resolved.LayerConversionPlan().Report.Unresolved(); len(unresolved) != 0 {
 		t.Fatalf("real policy leaves %d unresolved obligations; first=%+v", len(unresolved), unresolved[0])
 	}
-	if got, want := len(document.Entries), 178; got != want {
+	if got, want := len(document.Entries), 35; got != want {
 		t.Fatalf("reviewed policy entry count = %d, want %d", got, want)
 	}
 	codec, err := resolved.buildLayerCodecModel("tg")
@@ -89,27 +89,8 @@ func TestRealLayerPolicy(t *testing.T) {
 func assertRealLayerHookContracts(t *testing.T, codec []layerCodecHookContract, rpc []layerRPCSourceHookCheck) {
 	t.Helper()
 	wantCodec := map[string]string{
-		"layerAdaptComposeMessageToneDecode":                        "func(LayerProfile, *MessagesComposeMessageWithAIRequest, bool, string) (InputAiComposeToneClass, bool, error)",
-		"layerAdaptComposeMessageToneEncode":                        "func(LayerProfile, *MessagesComposeMessageWithAIRequest, bool, InputAiComposeToneClass) (string, bool, error)",
-		"layerAdaptInputMediaPollCorrectAnswersDecode":              "func(LayerProfile, *InputMediaPoll, bool, [][]byte) ([]int, bool, error)",
-		"layerAdaptInputMediaPollCorrectAnswersEncode":              "func(LayerProfile, *InputMediaPoll, bool, []int) ([][]byte, bool, error)",
-		"layerAdaptPollAnswerVotersAtomicDecode":                    "func(LayerProfile, *PollAnswerVoters, bool, int) error",
-		"layerCaptureChatInviteJoinWebViewQueryIDDecode":            "func(LayerProfile, *MessagesChatInviteJoinResultWebView, int64) error",
-		"layerCaptureChatInviteJoinWebViewURLDecode":                "func(LayerProfile, *MessagesChatInviteJoinResultWebView, string) error",
-		"layerCaptureStarGiftAttributeBackdropRarityPermilleDecode": "func(LayerProfile, *StarGiftAttributeBackdrop, int) error",
-		"layerCaptureStarGiftAttributeModelRarityPermilleDecode":    "func(LayerProfile, *StarGiftAttributeModel, int) error",
-		"layerCaptureStarGiftAttributePatternRarityPermilleDecode":  "func(LayerProfile, *StarGiftAttributePattern, int) error",
-		"layerEncodeChatInviteJoinWebViewQueryIDEncode":             "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error)",
-		"layerEncodeChatInviteJoinWebViewURLEncode":                 "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (string, error)",
-		"layerEncodeStarGiftAttributeBackdropRarityPermilleEncode":  "func(LayerProfile, *StarGiftAttributeBackdrop) (int, error)",
-		"layerEncodeStarGiftAttributeModelRarityPermilleEncode":     "func(LayerProfile, *StarGiftAttributeModel) (int, error)",
-		"layerEncodeStarGiftAttributePatternRarityPermilleEncode":   "func(LayerProfile, *StarGiftAttributePattern) (int, error)",
-		"layerRequireChatInviteJoinWebViewDecode":                   "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (WebViewResultURL, error)",
-		"layerRequireSendBotRequestedPeerMessageIDEncode":           "func(LayerProfile, *MessagesSendBotRequestedPeerRequest, bool, int) (int, error)",
-		"layerRequireStarGiftAttributeBackdropRarityDecode":         "func(LayerProfile, *StarGiftAttributeBackdrop) (StarGiftAttributeRarityClass, error)",
-		"layerRequireStarGiftAttributeModelRarityDecode":            "func(LayerProfile, *StarGiftAttributeModel) (StarGiftAttributeRarityClass, error)",
-		"layerRequireStarGiftAttributePatternRarityDecode":          "func(LayerProfile, *StarGiftAttributePattern) (StarGiftAttributeRarityClass, error)",
-		"layerRequireURLAuthResultAcceptedURLEncode":                "func(LayerProfile, *URLAuthResultAccepted, bool, string) (string, error)",
+		"layerCaptureChatInviteJoinQueryIDFromWebViewDecode": "func(LayerProfile, *MessagesChatInviteJoinResultWebView, WebViewResultURL) error",
+		"layerRequireCapturedChatInviteJoinQueryIDDecode":    "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error)",
 	}
 	gotCodec := make(map[string]string, len(codec))
 	for _, hook := range codec {
@@ -120,11 +101,9 @@ func assertRealLayerHookContracts(t *testing.T, codec []layerCodecHookContract, 
 	}
 
 	wantRPC := map[string]string{
-		"layerAdaptBotGuestChatResult":                 "func(LayerProfile, InputBotInlineMessageIDClass) (bool, error)",
-		"layerAdaptChatInviteJoinResultToUpdates":      "func(LayerProfile, MessagesChatInviteJoinResultClass) (UpdatesClass, error)",
-		"layerAdaptWebBrowserSettingsExceptionResult":  "func(LayerProfile, UpdatesClass) (bool, error)",
-		"layerAliasChannelsEditCreator":                "func(LayerProfile, InputChannelClass, InputUserClass, InputCheckPasswordSRPClass) (*MessagesEditChatCreatorRequest, error)",
-		"layerAliasChannelsGetFutureCreatorAfterLeave": "func(LayerProfile, InputChannelClass) (*MessagesGetFutureChatCreatorAfterLeaveRequest, error)",
+		"layerAdaptBotGuestChatResult":                "func(LayerProfile, InputBotInlineMessageIDClass) (bool, error)",
+		"layerAdaptChatInviteJoinResultToUpdates":     "func(LayerProfile, MessagesChatInviteJoinResultClass) (UpdatesClass, error)",
+		"layerAdaptWebBrowserSettingsExceptionResult": "func(LayerProfile, UpdatesClass) (bool, error)",
 	}
 	gotRPC := make(map[string]string, len(rpc))
 	for _, hook := range rpc {
@@ -157,22 +136,8 @@ func buildRealLayerPolicy(report LayerObligationReport) (LayerPolicyDocument, er
 
 func realLayerResolution(obligation LayerObligation) (LayerObligationResolution, bool, error) {
 	// Mechanical field projections remain fail-closed with the analyzer's
-	// reject-if-present default. These seven reviewed replacements are carried
-	// by required/discard adapters and therefore explicitly permit the original
-	// canonical field to disappear from the historical shape.
+	// reject-if-present default.
 	if obligation.Kind == LayerObligationFieldProjection {
-		if obligation.Direction == LayerDirectionCanonicalToProfile &&
-			obligation.Semantic.QName == "messages.chatInviteJoinResultWebView" &&
-			obligation.Layer == 226 && obligation.Field == "webview" {
-			return LayerObligationResolution{Action: LayerResolveDrop}, true, nil
-		}
-		if obligation.Direction == LayerDirectionCanonicalToProfile &&
-			(obligation.Semantic.QName == "starGiftAttributeBackdrop" ||
-				obligation.Semantic.QName == "starGiftAttributeModel" ||
-				obligation.Semantic.QName == "starGiftAttributePattern") &&
-			(obligation.Layer == 220 || obligation.Layer == 221) && obligation.Field == "rarity" {
-			return LayerObligationResolution{Action: LayerResolveDrop}, true, nil
-		}
 		return LayerObligationResolution{}, false, nil
 	}
 	if obligation.Resolution.resolved() {
@@ -183,45 +148,12 @@ func realLayerResolution(obligation LayerObligation) (LayerObligationResolution,
 		return LayerObligationResolution{Action: LayerResolveAdapter, Hook: hook}, true, nil
 	}
 	switch obligation.Kind {
-	case LayerObligationAtomicFlagGroup:
-		if obligation.Semantic.QName == "pollAnswerVoters" {
-			return adapter("layerAdaptPollAnswerVotersAtomic")
-		}
 	case LayerObligationDiscard:
 		switch obligation.Semantic.QName + ":" + obligation.Field {
-		case "messages.chatInviteJoinResultWebView:query_id":
-			return adapter("layerCaptureChatInviteJoinWebViewQueryID")
 		case "messages.chatInviteJoinResultWebView:url":
-			return adapter("layerCaptureChatInviteJoinWebViewURL")
-		case "starGiftAttributeBackdrop:rarity_permille":
-			return adapter("layerCaptureStarGiftAttributeBackdropRarityPermille")
-		case "starGiftAttributeModel:rarity_permille":
-			return adapter("layerCaptureStarGiftAttributeModelRarityPermille")
-		case "starGiftAttributePattern:rarity_permille":
-			return adapter("layerCaptureStarGiftAttributePatternRarityPermille")
-		}
-	case LayerObligationFieldReplacement:
-		if obligation.Semantic.QName == "messages.composeMessageWithAI" && obligation.Field == "tone" && obligation.OtherField == "change_tone" {
-			return adapter("layerAdaptComposeMessageTone")
-		}
-	case LayerObligationIncompatible:
-		if obligation.Semantic.QName == "inputMediaPoll" && obligation.Field == "correct_answers" {
-			return adapter("layerAdaptInputMediaPollCorrectAnswers")
-		}
-	case LayerObligationOldOnly:
-		switch obligation.Semantic.QName {
-		case "channels.editCreator":
-			return LayerObligationResolution{
-				Action: LayerResolveAlias,
-				Hook:   "layerAliasChannelsEditCreator",
-				Target: "function:messages.editChatCreator",
-			}, true, nil
-		case "channels.getFutureCreatorAfterLeave":
-			return LayerObligationResolution{
-				Action: LayerResolveAlias,
-				Hook:   "layerAliasChannelsGetFutureCreatorAfterLeave",
-				Target: "function:messages.getFutureChatCreatorAfterLeave",
-			}, true, nil
+			return LayerObligationResolution{Action: LayerResolveDrop}, true, nil
+		case "messages.chatInviteJoinResultWebView:webview":
+			return adapter("layerCaptureChatInviteJoinQueryIDFromWebView")
 		}
 	case LayerObligationRequired:
 		return realRequiredLayerResolution(obligation)
@@ -259,43 +191,19 @@ func realRequiredLayerResolution(obligation LayerObligation) (LayerObligationRes
 		return LayerObligationResolution{Action: LayerResolveDefault}, true, nil
 	}
 	switch obligation.Semantic.QName {
-	case "channels.editAdmin", "messages.getPollResults", "auth.sentCodePaymentRequired",
-		"dialog", "forumTopic", "pageListOrderedItemBlocks", "pageListOrderedItemText",
-		"poll", "pollAnswerVoters", "updateMessagePollVote":
+	case "auth.sentCodePaymentRequired", "pageListOrderedItemBlocks", "pageListOrderedItemText":
 		return defaulted()
-	case "messages.sendBotRequestedPeer":
-		return adapter("layerRequireSendBotRequestedPeerMessageID")
 	case "inputStorePaymentAuthCode":
 		return LayerObligationResolution{Action: LayerResolveReject}, true, nil
-	case "urlAuthResultAccepted":
-		return adapter("layerRequireURLAuthResultAcceptedURL")
 	case "messages.chatInviteJoinResultWebView":
 		if obligation.Direction == LayerDirectionCanonicalToProfile {
 			switch obligation.OtherField {
-			case "query_id":
-				return adapter("layerEncodeChatInviteJoinWebViewQueryID")
-			case "url":
-				return adapter("layerEncodeChatInviteJoinWebViewURL")
+			case "url", "webview":
+				return LayerObligationResolution{Action: LayerResolveReject}, true, nil
 			}
 		}
-		if obligation.Direction == LayerDirectionProfileToCanonical && obligation.OtherField == "webview" {
-			return adapter("layerRequireChatInviteJoinWebView")
-		}
-	case "starGiftAttributeBackdrop", "starGiftAttributeModel", "starGiftAttributePattern":
-		var suffix string
-		switch obligation.Semantic.QName {
-		case "starGiftAttributeBackdrop":
-			suffix = "Backdrop"
-		case "starGiftAttributeModel":
-			suffix = "Model"
-		case "starGiftAttributePattern":
-			suffix = "Pattern"
-		}
-		if obligation.Direction == LayerDirectionCanonicalToProfile && obligation.OtherField == "rarity_permille" {
-			return adapter("layerEncodeStarGiftAttribute" + suffix + "RarityPermille")
-		}
-		if obligation.Direction == LayerDirectionProfileToCanonical && obligation.OtherField == "rarity" {
-			return adapter("layerRequireStarGiftAttribute" + suffix + "Rarity")
+		if obligation.Direction == LayerDirectionProfileToCanonical && obligation.OtherField == "query_id" {
+			return adapter("layerRequireCapturedChatInviteJoinQueryID")
 		}
 	}
 	return LayerObligationResolution{}, false, fmt.Errorf("unreviewed required layer obligation: %+v", obligation)

@@ -51,12 +51,13 @@ type Family struct {
 
 // Universe is the validated collection of all supported layer schemas.
 type Universe struct {
-	CanonicalLayer int
-	Schemas        map[int]*SchemaModel
-	Families       map[SemanticKey]*Family
-	ByWire         map[int]map[uint32]*Definition
-	WireCodecs     map[uint32]*WireCodec
-	SemanticDigest ShapeDigest
+	CanonicalLayer    int
+	Schemas           map[int]*SchemaModel
+	Families          map[SemanticKey]*Family
+	ByWire            map[int]map[uint32]*Definition
+	WireCodecs        map[uint32]*WireCodec
+	ClientRPCOverlays []*ClientRPCOverlay
+	SemanticDigest    ShapeDigest
 }
 
 // NewUniverse validates layer identity and groups definitions by semantic key.

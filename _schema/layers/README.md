@@ -6,6 +6,10 @@ Layer and records the upstream repository, commit, blob and SHA-256 for every
 input. `policy.json` contains the reviewed decisions which cannot be inferred
 from TL structure alone.
 
+The maintained exact-profile window starts at Layer 225. Layers below 225 are
+intentionally absent from the manifest and fail closed at runtime; extending
+the window requires importing the exact schema and reviewing its obligations.
+
 The generated `tg` package has one stable canonical Go model (the manifest's
 canonical Layer) and static wire codecs for every unique constructor or method
 ID present in the universe. Exact profiles map a semantic name to its wire ID
@@ -71,6 +75,32 @@ codec and no fallback to canonical bytes when a projection fails.
 Adding an unchanged 228/229 profile therefore only extends generated profile
 metadata and switch cases. A genuinely changed schema stops at generation time
 until its semantic policy and typed hook are supplied.
+
+## Client-private RPC overlays
+
+`client_rpc_overlays` in `manifest.json` is intentionally separate from the
+official Layer universe. Each entry locks a derived TL file by SHA-256 and the
+upstream client commit/source blobs from which its serializers were audited.
+gotdgen binds every private function to the current canonical function by
+semantic name and emits a direct CRC switch plus static typed field decoders.
+Nested constructors always decode with the connection's exact Layer profile.
+
+Schema-identical fields map automatically. Renames, type converters and
+explicitly consumed/dropped client-only fields are declared per method in the
+manifest. Missing optional fields and required primitive/vector zero values can
+be generated mechanically; a missing required object, result mismatch,
+unmapped source field, unknown converter, CRC collision or stale rule aborts
+generation. Upgrading canonical Layer therefore needs only the ordinary Layer
+import and regeneration when the comparison remains mechanical; otherwise the
+generator stops for an explicit review instead of guessing.
+
+The current DrKLO inputs keep the 15 long-lived core private RPCs and four
+theme RPCs in separate overlays. They generate into
+`tg/tl_layer_client_rpc_overlay_gen.go`. Production adapters call
+`LayerRPCUnknownMethodView.AdaptClientRPCOverlay`, which shares the outer
+request decode budget and authoritative canonical admission bridge. There is
+no runtime TL parser, schema map, reflection walker, or client-driven Layer
+selection in this path.
 
 ## Runtime invariants
 

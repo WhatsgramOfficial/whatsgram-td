@@ -16,8 +16,6 @@ func layerTestPolicy(t *testing.T, set *SchemaSet) LayerObligationPolicy {
 	for _, obligation := range initial.LayerConversionPlan().Report.Unresolved() {
 		resolution := LayerObligationResolution{Action: LayerResolveReject}
 		switch obligation.Kind {
-		case LayerObligationRequired:
-			resolution.Action = LayerResolveDefault
 		case LayerObligationDiscard, LayerObligationUpdateProjection:
 			resolution.Action = LayerResolveDrop
 		case LayerObligationPrivate:

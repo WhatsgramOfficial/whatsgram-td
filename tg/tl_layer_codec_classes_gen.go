@@ -70,13 +70,7 @@ func layerPreflightClassAiComposeTone(profile LayerProfile, value AiComposeToneC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AiComposeTone:
 			return layerPreflightWirecff63ea9Bare(profile, value, state)
@@ -104,13 +98,7 @@ func layerEncodeClassAiComposeToneBody(profile LayerProfile, value AiComposeTone
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AiComposeTone:
 			b.PutID(0xcff63ea9)
@@ -133,12 +121,7 @@ func layerDecodeClassAiComposeTone(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch id {
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9bad6414:
 			return layerDecodeWire9bad6414(profile, b, state)
@@ -191,7 +174,7 @@ func layerPreflightClassAttachMenuBots(profile LayerProfile, value AttachMenuBot
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AttachMenuBots:
 			return layerPreflightWire3c4301c0Bare(profile, value, state)
@@ -219,7 +202,7 @@ func layerEncodeClassAttachMenuBotsBody(profile LayerProfile, value AttachMenuBo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AttachMenuBots:
 			b.PutID(0x3c4301c0)
@@ -242,7 +225,7 @@ func layerDecodeClassAttachMenuBots(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3c4301c0:
 			return layerDecodeWire3c4301c0(profile, b, state)
@@ -325,7 +308,7 @@ func layerPreflightClassAttachMenuPeerType(profile LayerProfile, value AttachMen
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AttachMenuPeerTypeBotPM:
 			return layerPreflightWirec32bfa1aBare(profile, value, state)
@@ -359,7 +342,7 @@ func layerEncodeClassAttachMenuPeerTypeBody(profile LayerProfile, value AttachMe
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AttachMenuPeerTypeBotPM:
 			b.PutID(0xc32bfa1a)
@@ -391,7 +374,7 @@ func layerDecodeClassAttachMenuPeerType(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0509113f:
 			return layerDecodeWire0509113f(profile, b, state)
@@ -480,7 +463,7 @@ func layerPreflightClassBaseTheme(profile LayerProfile, value BaseThemeClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BaseThemeArctic:
 			return layerPreflightWire5b11125aBare(profile, value, state)
@@ -514,7 +497,7 @@ func layerEncodeClassBaseThemeBody(profile LayerProfile, value BaseThemeClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BaseThemeArctic:
 			b.PutID(0x5b11125a)
@@ -546,7 +529,7 @@ func layerDecodeClassBaseTheme(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x5b11125a:
 			return layerDecodeWire5b11125a(profile, b, state)
@@ -605,7 +588,7 @@ func layerPreflightClassBool(profile LayerProfile, value BoolClass, state *layer
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BoolFalse:
 			return layerPreflightWirebc799737Bare(profile, value, state)
@@ -633,7 +616,7 @@ func layerEncodeClassBoolBody(profile LayerProfile, value BoolClass, b *bin.Buff
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BoolFalse:
 			b.PutID(0xbc799737)
@@ -656,7 +639,7 @@ func layerDecodeClassBool(profile LayerProfile, b *bin.Buffer, state *layerCodec
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x997275b5:
 			return layerDecodeWire997275b5(profile, b, state)
@@ -709,7 +692,7 @@ func layerPreflightClassBotApp(profile LayerProfile, value BotAppClass, state *l
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotApp:
 			return layerPreflightWire95fcd1d6Bare(profile, value, state)
@@ -737,7 +720,7 @@ func layerEncodeClassBotAppBody(profile LayerProfile, value BotAppClass, b *bin.
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotApp:
 			b.PutID(0x95fcd1d6)
@@ -760,7 +743,7 @@ func layerDecodeClassBotApp(profile LayerProfile, b *bin.Buffer, state *layerCod
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x5da674b7:
 			return layerDecodeWire5da674b7(profile, b, state)
@@ -863,7 +846,7 @@ func layerPreflightClassBotCommandScope(profile LayerProfile, value BotCommandSc
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotCommandScopeChatAdmins:
 			return layerPreflightWireb9aa606aBare(profile, value, state)
@@ -901,7 +884,7 @@ func layerEncodeClassBotCommandScopeBody(profile LayerProfile, value BotCommandS
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotCommandScopeChatAdmins:
 			b.PutID(0xb9aa606a)
@@ -939,7 +922,7 @@ func layerDecodeClassBotCommandScope(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0a1321f3:
 			return layerDecodeWire0a1321f3(profile, b, state)
@@ -1062,7 +1045,7 @@ func layerPreflightClassBotInlineMessage(profile LayerProfile, value BotInlineMe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *BotInlineMessageMediaAuto:
 			return layerPreflightWire764cf810Bare(profile, value, state)
@@ -1082,7 +1065,7 @@ func layerPreflightClassBotInlineMessage(profile LayerProfile, value BotInlineMe
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotInlineMessageMediaAuto:
 			return layerPreflightWire764cf810Bare(profile, value, state)
@@ -1122,7 +1105,7 @@ func layerEncodeClassBotInlineMessageBody(profile LayerProfile, value BotInlineM
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *BotInlineMessageMediaAuto:
 			b.PutID(0x764cf810)
@@ -1149,7 +1132,7 @@ func layerEncodeClassBotInlineMessageBody(profile LayerProfile, value BotInlineM
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotInlineMessageMediaAuto:
 			b.PutID(0x764cf810)
@@ -1190,7 +1173,7 @@ func layerDecodeClassBotInlineMessage(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x051846fd:
 			return layerDecodeWire051846fd(profile, b, state)
@@ -1209,7 +1192,7 @@ func layerDecodeClassBotInlineMessage(profile LayerProfile, b *bin.Buffer, state
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x051846fd:
 			return layerDecodeWire051846fd(profile, b, state)
@@ -1274,7 +1257,7 @@ func layerPreflightClassBotInlineResult(profile LayerProfile, value BotInlineRes
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotInlineMediaResult:
 			return layerPreflightWire17db940bBare(profile, value, state)
@@ -1302,7 +1285,7 @@ func layerEncodeClassBotInlineResultBody(profile LayerProfile, value BotInlineRe
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotInlineMediaResult:
 			b.PutID(0x17db940b)
@@ -1325,7 +1308,7 @@ func layerDecodeClassBotInlineResult(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x11965f3a:
 			return layerDecodeWire11965f3a(profile, b, state)
@@ -1388,7 +1371,7 @@ func layerPreflightClassBotMenuButton(profile LayerProfile, value BotMenuButtonC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotMenuButton:
 			return layerPreflightWirec7b57ce6Bare(profile, value, state)
@@ -1418,7 +1401,7 @@ func layerEncodeClassBotMenuButtonBody(profile LayerProfile, value BotMenuButton
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BotMenuButton:
 			b.PutID(0xc7b57ce6)
@@ -1444,7 +1427,7 @@ func layerDecodeClassBotMenuButton(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4258c205:
 			return layerDecodeWire4258c205(profile, b, state)
@@ -1509,7 +1492,7 @@ func layerPreflightClassBusinessAwayMessageSchedule(profile LayerProfile, value 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BusinessAwayMessageScheduleAlways:
 			return layerPreflightWirec9b9e2b9Bare(profile, value, state)
@@ -1539,7 +1522,7 @@ func layerEncodeClassBusinessAwayMessageScheduleBody(profile LayerProfile, value
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *BusinessAwayMessageScheduleAlways:
 			b.PutID(0xc9b9e2b9)
@@ -1565,7 +1548,7 @@ func layerDecodeClassBusinessAwayMessageSchedule(profile LayerProfile, b *bin.Bu
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xc3f2f501:
 			return layerDecodeWirec3f2f501(profile, b, state)
@@ -2120,115 +2103,7 @@ func layerPreflightClassChannelAdminLogEventAction(profile LayerProfile, value C
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *ChannelAdminLogEventActionChangeAbout:
-			return layerPreflightWire55188a2eBare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeAvailableReactions:
-			return layerPreflightWirebe4e0ef8Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeEmojiStatus:
-			return layerPreflightWire3ea9feb1Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeEmojiStickerSet:
-			return layerPreflightWire46d840abBare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeHistoryTTL:
-			return layerPreflightWire6e941a38Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeLinkedChat:
-			return layerPreflightWire050c7ac8Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeLocation:
-			return layerPreflightWire0e6b76aeBare(profile, value, state)
-		case *ChannelAdminLogEventActionChangePeerColor:
-			return layerPreflightWire5796e780Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangePhoto:
-			return layerPreflightWire434bd2afBare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeProfilePeerColor:
-			return layerPreflightWire5e477b25Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeStickerSet:
-			return layerPreflightWireb1c3caa7Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeTitle:
-			return layerPreflightWiree6dfb825Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeUsername:
-			return layerPreflightWire6a4afc38Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeUsernames:
-			return layerPreflightWiref04fb3a9Bare(profile, value, state)
-		case *ChannelAdminLogEventActionChangeWallpaper:
-			return layerPreflightWire31bb5d52Bare(profile, value, state)
-		case *ChannelAdminLogEventActionCreateTopic:
-			return layerPreflightWire58707d28Bare(profile, value, state)
-		case *ChannelAdminLogEventActionDefaultBannedRights:
-			return layerPreflightWire2df5fc0aBare(profile, value, state)
-		case *ChannelAdminLogEventActionDeleteMessage:
-			return layerPreflightWire42e047bbBare(profile, value, state)
-		case *ChannelAdminLogEventActionDeleteTopic:
-			return layerPreflightWireae168909Bare(profile, value, state)
-		case *ChannelAdminLogEventActionDiscardGroupCall:
-			return layerPreflightWiredb9f9140Bare(profile, value, state)
-		case *ChannelAdminLogEventActionEditMessage:
-			return layerPreflightWire709b2405Bare(profile, value, state)
-		case *ChannelAdminLogEventActionEditTopic:
-			return layerPreflightWiref06fe208Bare(profile, value, state)
-		case *ChannelAdminLogEventActionExportedInviteDelete:
-			return layerPreflightWire5a50fca4Bare(profile, value, state)
-		case *ChannelAdminLogEventActionExportedInviteEdit:
-			return layerPreflightWiree90ebb59Bare(profile, value, state)
-		case *ChannelAdminLogEventActionExportedInviteRevoke:
-			return layerPreflightWire410a134eBare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantInvite:
-			return layerPreflightWiree31c34d8Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantJoin:
-			return layerPreflightWire183040d3Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantJoinByInvite:
-			return layerPreflightWirefe9fc158Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantJoinByRequest:
-			return layerPreflightWireafb6144aBare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantLeave:
-			return layerPreflightWiref89777f2Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantMute:
-			return layerPreflightWiref92424d2Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantSubExtend:
-			return layerPreflightWire64642db3Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantToggleAdmin:
-			return layerPreflightWired5676710Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantToggleBan:
-			return layerPreflightWiree6d83d7eBare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantUnmute:
-			return layerPreflightWiree64429c0Bare(profile, value, state)
-		case *ChannelAdminLogEventActionParticipantVolume:
-			return layerPreflightWire3e7f6847Bare(profile, value, state)
-		case *ChannelAdminLogEventActionPinTopic:
-			return layerPreflightWire5d8d353bBare(profile, value, state)
-		case *ChannelAdminLogEventActionSendMessage:
-			return layerPreflightWire278f2868Bare(profile, value, state)
-		case *ChannelAdminLogEventActionStartGroupCall:
-			return layerPreflightWire23209745Bare(profile, value, state)
-		case *ChannelAdminLogEventActionStopPoll:
-			return layerPreflightWire8f079643Bare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleAntiSpam:
-			return layerPreflightWire64f36dfcBare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleAutotranslation:
-			return layerPreflightWirec517f77eBare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleForum:
-			return layerPreflightWire02cc6383Bare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleGroupCallSetting:
-			return layerPreflightWire56d6a247Bare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleInvites:
-			return layerPreflightWire1b7907aeBare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleNoForwards:
-			return layerPreflightWirecb2ac766Bare(profile, value, state)
-		case *ChannelAdminLogEventActionTogglePreHistoryHidden:
-			return layerPreflightWire5f5c95f1Bare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleSignatureProfiles:
-			return layerPreflightWire60a79c79Bare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleSignatures:
-			return layerPreflightWire26ae0971Bare(profile, value, state)
-		case *ChannelAdminLogEventActionToggleSlowMode:
-			return layerPreflightWire53909779Bare(profile, value, state)
-		case *ChannelAdminLogEventActionUpdatePinned:
-			return layerPreflightWiree9e82c18Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelAdminLogEventActionChangeAbout:
 			return layerPreflightWire55188a2eBare(profile, value, state)
@@ -2356,166 +2231,7 @@ func layerEncodeClassChannelAdminLogEventActionBody(profile LayerProfile, value 
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *ChannelAdminLogEventActionChangeAbout:
-			b.PutID(0x55188a2e)
-			return layerEncodeWire55188a2eBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeAvailableReactions:
-			b.PutID(0xbe4e0ef8)
-			return layerEncodeWirebe4e0ef8BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeEmojiStatus:
-			b.PutID(0x3ea9feb1)
-			return layerEncodeWire3ea9feb1BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeEmojiStickerSet:
-			b.PutID(0x46d840ab)
-			return layerEncodeWire46d840abBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeHistoryTTL:
-			b.PutID(0x6e941a38)
-			return layerEncodeWire6e941a38BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeLinkedChat:
-			b.PutID(0x050c7ac8)
-			return layerEncodeWire050c7ac8BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeLocation:
-			b.PutID(0x0e6b76ae)
-			return layerEncodeWire0e6b76aeBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangePeerColor:
-			b.PutID(0x5796e780)
-			return layerEncodeWire5796e780BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangePhoto:
-			b.PutID(0x434bd2af)
-			return layerEncodeWire434bd2afBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeProfilePeerColor:
-			b.PutID(0x5e477b25)
-			return layerEncodeWire5e477b25BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeStickerSet:
-			b.PutID(0xb1c3caa7)
-			return layerEncodeWireb1c3caa7BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeTitle:
-			b.PutID(0xe6dfb825)
-			return layerEncodeWiree6dfb825BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeUsername:
-			b.PutID(0x6a4afc38)
-			return layerEncodeWire6a4afc38BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeUsernames:
-			b.PutID(0xf04fb3a9)
-			return layerEncodeWiref04fb3a9BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionChangeWallpaper:
-			b.PutID(0x31bb5d52)
-			return layerEncodeWire31bb5d52BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionCreateTopic:
-			b.PutID(0x58707d28)
-			return layerEncodeWire58707d28BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionDefaultBannedRights:
-			b.PutID(0x2df5fc0a)
-			return layerEncodeWire2df5fc0aBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionDeleteMessage:
-			b.PutID(0x42e047bb)
-			return layerEncodeWire42e047bbBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionDeleteTopic:
-			b.PutID(0xae168909)
-			return layerEncodeWireae168909BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionDiscardGroupCall:
-			b.PutID(0xdb9f9140)
-			return layerEncodeWiredb9f9140BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionEditMessage:
-			b.PutID(0x709b2405)
-			return layerEncodeWire709b2405BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionEditTopic:
-			b.PutID(0xf06fe208)
-			return layerEncodeWiref06fe208BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionExportedInviteDelete:
-			b.PutID(0x5a50fca4)
-			return layerEncodeWire5a50fca4BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionExportedInviteEdit:
-			b.PutID(0xe90ebb59)
-			return layerEncodeWiree90ebb59BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionExportedInviteRevoke:
-			b.PutID(0x410a134e)
-			return layerEncodeWire410a134eBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantInvite:
-			b.PutID(0xe31c34d8)
-			return layerEncodeWiree31c34d8BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantJoin:
-			b.PutID(0x183040d3)
-			return layerEncodeWire183040d3BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantJoinByInvite:
-			b.PutID(0xfe9fc158)
-			return layerEncodeWirefe9fc158BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantJoinByRequest:
-			b.PutID(0xafb6144a)
-			return layerEncodeWireafb6144aBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantLeave:
-			b.PutID(0xf89777f2)
-			return layerEncodeWiref89777f2BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantMute:
-			b.PutID(0xf92424d2)
-			return layerEncodeWiref92424d2BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantSubExtend:
-			b.PutID(0x64642db3)
-			return layerEncodeWire64642db3BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantToggleAdmin:
-			b.PutID(0xd5676710)
-			return layerEncodeWired5676710BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantToggleBan:
-			b.PutID(0xe6d83d7e)
-			return layerEncodeWiree6d83d7eBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantUnmute:
-			b.PutID(0xe64429c0)
-			return layerEncodeWiree64429c0BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionParticipantVolume:
-			b.PutID(0x3e7f6847)
-			return layerEncodeWire3e7f6847BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionPinTopic:
-			b.PutID(0x5d8d353b)
-			return layerEncodeWire5d8d353bBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionSendMessage:
-			b.PutID(0x278f2868)
-			return layerEncodeWire278f2868BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionStartGroupCall:
-			b.PutID(0x23209745)
-			return layerEncodeWire23209745BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionStopPoll:
-			b.PutID(0x8f079643)
-			return layerEncodeWire8f079643BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleAntiSpam:
-			b.PutID(0x64f36dfc)
-			return layerEncodeWire64f36dfcBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleAutotranslation:
-			b.PutID(0xc517f77e)
-			return layerEncodeWirec517f77eBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleForum:
-			b.PutID(0x02cc6383)
-			return layerEncodeWire02cc6383BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleGroupCallSetting:
-			b.PutID(0x56d6a247)
-			return layerEncodeWire56d6a247BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleInvites:
-			b.PutID(0x1b7907ae)
-			return layerEncodeWire1b7907aeBareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleNoForwards:
-			b.PutID(0xcb2ac766)
-			return layerEncodeWirecb2ac766BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionTogglePreHistoryHidden:
-			b.PutID(0x5f5c95f1)
-			return layerEncodeWire5f5c95f1BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleSignatureProfiles:
-			b.PutID(0x60a79c79)
-			return layerEncodeWire60a79c79BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleSignatures:
-			b.PutID(0x26ae0971)
-			return layerEncodeWire26ae0971BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionToggleSlowMode:
-			b.PutID(0x53909779)
-			return layerEncodeWire53909779BareBody(profile, value, b, state)
-		case *ChannelAdminLogEventActionUpdatePinned:
-			b.PutID(0xe9e82c18)
-			return layerEncodeWiree9e82c18BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelAdminLogEventActionChangeAbout:
 			b.PutID(0x55188a2e)
@@ -2688,114 +2404,7 @@ func layerDecodeClassChannelAdminLogEventAction(profile LayerProfile, b *bin.Buf
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch id {
-		case 0x02cc6383:
-			return layerDecodeWire02cc6383(profile, b, state)
-		case 0x050c7ac8:
-			return layerDecodeWire050c7ac8(profile, b, state)
-		case 0x0e6b76ae:
-			return layerDecodeWire0e6b76ae(profile, b, state)
-		case 0x183040d3:
-			return layerDecodeWire183040d3(profile, b, state)
-		case 0x1b7907ae:
-			return layerDecodeWire1b7907ae(profile, b, state)
-		case 0x23209745:
-			return layerDecodeWire23209745(profile, b, state)
-		case 0x26ae0971:
-			return layerDecodeWire26ae0971(profile, b, state)
-		case 0x278f2868:
-			return layerDecodeWire278f2868(profile, b, state)
-		case 0x2df5fc0a:
-			return layerDecodeWire2df5fc0a(profile, b, state)
-		case 0x31bb5d52:
-			return layerDecodeWire31bb5d52(profile, b, state)
-		case 0x3e7f6847:
-			return layerDecodeWire3e7f6847(profile, b, state)
-		case 0x3ea9feb1:
-			return layerDecodeWire3ea9feb1(profile, b, state)
-		case 0x410a134e:
-			return layerDecodeWire410a134e(profile, b, state)
-		case 0x42e047bb:
-			return layerDecodeWire42e047bb(profile, b, state)
-		case 0x434bd2af:
-			return layerDecodeWire434bd2af(profile, b, state)
-		case 0x46d840ab:
-			return layerDecodeWire46d840ab(profile, b, state)
-		case 0x53909779:
-			return layerDecodeWire53909779(profile, b, state)
-		case 0x55188a2e:
-			return layerDecodeWire55188a2e(profile, b, state)
-		case 0x56d6a247:
-			return layerDecodeWire56d6a247(profile, b, state)
-		case 0x5796e780:
-			return layerDecodeWire5796e780(profile, b, state)
-		case 0x58707d28:
-			return layerDecodeWire58707d28(profile, b, state)
-		case 0x5a50fca4:
-			return layerDecodeWire5a50fca4(profile, b, state)
-		case 0x5d8d353b:
-			return layerDecodeWire5d8d353b(profile, b, state)
-		case 0x5e477b25:
-			return layerDecodeWire5e477b25(profile, b, state)
-		case 0x5f5c95f1:
-			return layerDecodeWire5f5c95f1(profile, b, state)
-		case 0x60a79c79:
-			return layerDecodeWire60a79c79(profile, b, state)
-		case 0x64642db3:
-			return layerDecodeWire64642db3(profile, b, state)
-		case 0x64f36dfc:
-			return layerDecodeWire64f36dfc(profile, b, state)
-		case 0x6a4afc38:
-			return layerDecodeWire6a4afc38(profile, b, state)
-		case 0x6e941a38:
-			return layerDecodeWire6e941a38(profile, b, state)
-		case 0x709b2405:
-			return layerDecodeWire709b2405(profile, b, state)
-		case 0x8f079643:
-			return layerDecodeWire8f079643(profile, b, state)
-		case 0xae168909:
-			return layerDecodeWireae168909(profile, b, state)
-		case 0xafb6144a:
-			return layerDecodeWireafb6144a(profile, b, state)
-		case 0xb1c3caa7:
-			return layerDecodeWireb1c3caa7(profile, b, state)
-		case 0xbe4e0ef8:
-			return layerDecodeWirebe4e0ef8(profile, b, state)
-		case 0xc517f77e:
-			return layerDecodeWirec517f77e(profile, b, state)
-		case 0xcb2ac766:
-			return layerDecodeWirecb2ac766(profile, b, state)
-		case 0xd5676710:
-			return layerDecodeWired5676710(profile, b, state)
-		case 0xdb9f9140:
-			return layerDecodeWiredb9f9140(profile, b, state)
-		case 0xe31c34d8:
-			return layerDecodeWiree31c34d8(profile, b, state)
-		case 0xe64429c0:
-			return layerDecodeWiree64429c0(profile, b, state)
-		case 0xe6d83d7e:
-			return layerDecodeWiree6d83d7e(profile, b, state)
-		case 0xe6dfb825:
-			return layerDecodeWiree6dfb825(profile, b, state)
-		case 0xe90ebb59:
-			return layerDecodeWiree90ebb59(profile, b, state)
-		case 0xe9e82c18:
-			return layerDecodeWiree9e82c18(profile, b, state)
-		case 0xf04fb3a9:
-			return layerDecodeWiref04fb3a9(profile, b, state)
-		case 0xf06fe208:
-			return layerDecodeWiref06fe208(profile, b, state)
-		case 0xf89777f2:
-			return layerDecodeWiref89777f2(profile, b, state)
-		case 0xf92424d2:
-			return layerDecodeWiref92424d2(profile, b, state)
-		case 0xfe9fc158:
-			return layerDecodeWirefe9fc158(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x02cc6383:
 			return layerDecodeWire02cc6383(profile, b, state)
@@ -2948,7 +2557,7 @@ func layerPreflightClassChannelLocation(profile LayerProfile, value ChannelLocat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelLocation:
 			return layerPreflightWire209b82dbBare(profile, value, state)
@@ -2976,7 +2585,7 @@ func layerEncodeClassChannelLocationBody(profile LayerProfile, value ChannelLoca
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelLocation:
 			b.PutID(0x209b82db)
@@ -2999,7 +2608,7 @@ func layerDecodeClassChannelLocation(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x209b82db:
 			return layerDecodeWire209b82db(profile, b, state)
@@ -3052,7 +2661,7 @@ func layerPreflightClassChannelMessagesFilter(profile LayerProfile, value Channe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelMessagesFilter:
 			return layerPreflightWirecd77d957Bare(profile, value, state)
@@ -3080,7 +2689,7 @@ func layerEncodeClassChannelMessagesFilterBody(profile LayerProfile, value Chann
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelMessagesFilter:
 			b.PutID(0xcd77d957)
@@ -3103,7 +2712,7 @@ func layerDecodeClassChannelMessagesFilter(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x94d42ee7:
 			return layerDecodeWire94d42ee7(profile, b, state)
@@ -3196,25 +2805,7 @@ func layerPreflightClassChannelParticipant(profile LayerProfile, value ChannelPa
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *ChannelParticipant:
-			return layerPreflightWirecb397619Bare(profile, value, state)
-		case *ChannelParticipantAdmin:
-			return layerPreflightWire34c3bb53Bare(profile, value, state)
-		case *ChannelParticipantBanned:
-			return layerPreflightWire6df8014eBare(profile, value, state)
-		case *ChannelParticipantCreator:
-			return layerPreflightWire2fe601d3Bare(profile, value, state)
-		case *ChannelParticipantLeft:
-			return layerPreflightWire1b03f006Bare(profile, value, state)
-		case *ChannelParticipantSelf:
-			return layerPreflightWire4f607befBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelParticipant:
 			return layerPreflightWire1bd54456Bare(profile, value, state)
@@ -3250,31 +2841,7 @@ func layerEncodeClassChannelParticipantBody(profile LayerProfile, value ChannelP
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *ChannelParticipant:
-			b.PutID(0xcb397619)
-			return layerEncodeWirecb397619BareBody(profile, value, b, state)
-		case *ChannelParticipantAdmin:
-			b.PutID(0x34c3bb53)
-			return layerEncodeWire34c3bb53BareBody(profile, value, b, state)
-		case *ChannelParticipantBanned:
-			b.PutID(0x6df8014e)
-			return layerEncodeWire6df8014eBareBody(profile, value, b, state)
-		case *ChannelParticipantCreator:
-			b.PutID(0x2fe601d3)
-			return layerEncodeWire2fe601d3BareBody(profile, value, b, state)
-		case *ChannelParticipantLeft:
-			b.PutID(0x1b03f006)
-			return layerEncodeWire1b03f006BareBody(profile, value, b, state)
-		case *ChannelParticipantSelf:
-			b.PutID(0x4f607bef)
-			return layerEncodeWire4f607befBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelParticipant:
 			b.PutID(0x1bd54456)
@@ -3309,24 +2876,7 @@ func layerDecodeClassChannelParticipant(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch id {
-		case 0x1b03f006:
-			return layerDecodeWire1b03f006(profile, b, state)
-		case 0x2fe601d3:
-			return layerDecodeWire2fe601d3(profile, b, state)
-		case 0x34c3bb53:
-			return layerDecodeWire34c3bb53(profile, b, state)
-		case 0x4f607bef:
-			return layerDecodeWire4f607bef(profile, b, state)
-		case 0x6df8014e:
-			return layerDecodeWire6df8014e(profile, b, state)
-		case 0xcb397619:
-			return layerDecodeWirecb397619(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1b03f006:
 			return layerDecodeWire1b03f006(profile, b, state)
@@ -3447,7 +2997,7 @@ func layerPreflightClassChannelParticipantsFilter(profile LayerProfile, value Ch
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelParticipantsAdmins:
 			return layerPreflightWireb4608969Bare(profile, value, state)
@@ -3487,7 +3037,7 @@ func layerEncodeClassChannelParticipantsFilterBody(profile LayerProfile, value C
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelParticipantsAdmins:
 			b.PutID(0xb4608969)
@@ -3528,7 +3078,7 @@ func layerDecodeClassChannelParticipantsFilter(profile LayerProfile, b *bin.Buff
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0656ac4b:
 			return layerDecodeWire0656ac4b(profile, b, state)
@@ -3609,6 +3159,26 @@ func layerProjectClassChat(profile LayerProfile, value ChatClass) (ChatClass, bo
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeChatForbidden, Reason: "project hook returned a constructor outside class Chat"}
 		}
 		return result, true, nil
+	case *Community:
+		projected, keep, err := layerProjectFamilyCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(ChatClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeCommunity, Reason: "project hook returned a constructor outside class Chat"}
+		}
+		return result, true, nil
+	case *CommunityForbidden:
+		projected, keep, err := layerProjectFamilyCommunityForbidden(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(ChatClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeCommunityForbidden, Reason: "project hook returned a constructor outside class Chat"}
+		}
+		return result, true, nil
 	default:
 		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "unknown canonical class constructor"}
 	}
@@ -3623,7 +3193,7 @@ func layerPreflightClassChat(profile LayerProfile, value ChatClass, state *layer
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *Channel:
 			return layerPreflightWire1c32b11cBare(profile, value, state)
@@ -3635,6 +3205,26 @@ func layerPreflightClassChat(profile LayerProfile, value ChatClass, state *layer
 			return layerPreflightWire29562865Bare(profile, value, state)
 		case *ChatForbidden:
 			return layerPreflightWire6592a1a7Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *Channel:
+			return layerPreflightWired49f34c6Bare(profile, value, state)
+		case *ChannelForbidden:
+			return layerPreflightWire17d493d5Bare(profile, value, state)
+		case *Chat:
+			return layerPreflightWire41cbf256Bare(profile, value, state)
+		case *ChatEmpty:
+			return layerPreflightWire29562865Bare(profile, value, state)
+		case *ChatForbidden:
+			return layerPreflightWire6592a1a7Bare(profile, value, state)
+		case *Community:
+			return layerPreflightWire65efe954Bare(profile, value, state)
+		case *CommunityForbidden:
+			return layerPreflightWirefd3cdab8Bare(profile, value, state)
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
@@ -3657,7 +3247,7 @@ func layerEncodeClassChatBody(profile LayerProfile, value ChatClass, b *bin.Buff
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *Channel:
 			b.PutID(0x1c32b11c)
@@ -3678,6 +3268,33 @@ func layerEncodeClassChatBody(profile LayerProfile, value ChatClass, b *bin.Buff
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *Channel:
+			b.PutID(0xd49f34c6)
+			return layerEncodeWired49f34c6BareBody(profile, value, b, state)
+		case *ChannelForbidden:
+			b.PutID(0x17d493d5)
+			return layerEncodeWire17d493d5BareBody(profile, value, b, state)
+		case *Chat:
+			b.PutID(0x41cbf256)
+			return layerEncodeWire41cbf256BareBody(profile, value, b, state)
+		case *ChatEmpty:
+			b.PutID(0x29562865)
+			return layerEncodeWire29562865BareBody(profile, value, b, state)
+		case *ChatForbidden:
+			b.PutID(0x6592a1a7)
+			return layerEncodeWire6592a1a7BareBody(profile, value, b, state)
+		case *Community:
+			b.PutID(0x65efe954)
+			return layerEncodeWire65efe954BareBody(profile, value, b, state)
+		case *CommunityForbidden:
+			b.PutID(0xfd3cdab8)
+			return layerEncodeWirefd3cdab8BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -3689,7 +3306,7 @@ func layerDecodeClassChat(profile LayerProfile, b *bin.Buffer, state *layerCodec
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x17d493d5:
 			return layerDecodeWire17d493d5(profile, b, state)
@@ -3701,6 +3318,25 @@ func layerDecodeClassChat(profile LayerProfile, b *bin.Buffer, state *layerCodec
 			return layerDecodeWire41cbf256(profile, b, state)
 		case 0x6592a1a7:
 			return layerDecodeWire6592a1a7(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x17d493d5:
+			return layerDecodeWire17d493d5(profile, b, state)
+		case 0x29562865:
+			return layerDecodeWire29562865(profile, b, state)
+		case 0x41cbf256:
+			return layerDecodeWire41cbf256(profile, b, state)
+		case 0x6592a1a7:
+			return layerDecodeWire6592a1a7(profile, b, state)
+		case 0x65efe954:
+			return layerDecodeWire65efe954(profile, b, state)
+		case 0xd49f34c6:
+			return layerDecodeWired49f34c6(profile, b, state)
+		case 0xfd3cdab8:
+			return layerDecodeWirefd3cdab8(profile, b, state)
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
@@ -3734,6 +3370,16 @@ func layerProjectClassChatFull(profile LayerProfile, value ChatFullClass) (ChatF
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeChatFull, Reason: "project hook returned a constructor outside class ChatFull"}
 		}
 		return result, true, nil
+	case *CommunityFull:
+		projected, keep, err := layerProjectFamilyCommunityFull(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(ChatFullClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeCommunityFull, Reason: "project hook returned a constructor outside class ChatFull"}
+		}
+		return result, true, nil
 	default:
 		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "unknown canonical class constructor"}
 	}
@@ -3748,7 +3394,7 @@ func layerPreflightClassChatFull(profile LayerProfile, value ChatFullClass, stat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *ChannelFull:
 			return layerPreflightWiree4e0b29dBare(profile, value, state)
@@ -3764,6 +3410,18 @@ func layerPreflightClassChatFull(profile LayerProfile, value ChatFullClass, stat
 			return layerPreflightWirea04e8d3aBare(profile, value, state)
 		case *ChatFull:
 			return layerPreflightWire2633421bBare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *ChannelFull:
+			return layerPreflightWirea04e8d3aBare(profile, value, state)
+		case *ChatFull:
+			return layerPreflightWire2633421bBare(profile, value, state)
+		case *CommunityFull:
+			return layerPreflightWirecbb7a507Bare(profile, value, state)
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
@@ -3786,7 +3444,7 @@ func layerEncodeClassChatFullBody(profile LayerProfile, value ChatFullClass, b *
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *ChannelFull:
 			b.PutID(0xe4e0b29d)
@@ -3810,6 +3468,21 @@ func layerEncodeClassChatFullBody(profile LayerProfile, value ChatFullClass, b *
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *ChannelFull:
+			b.PutID(0xa04e8d3a)
+			return layerEncodeWirea04e8d3aBareBody(profile, value, b, state)
+		case *ChatFull:
+			b.PutID(0x2633421b)
+			return layerEncodeWire2633421bBareBody(profile, value, b, state)
+		case *CommunityFull:
+			b.PutID(0xcbb7a507)
+			return layerEncodeWirecbb7a507BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -3821,7 +3494,7 @@ func layerDecodeClassChatFull(profile LayerProfile, b *bin.Buffer, state *layerC
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		case 0x2633421b:
 			return layerDecodeWire2633421b(profile, b, state)
@@ -3836,6 +3509,17 @@ func layerDecodeClassChatFull(profile LayerProfile, b *bin.Buffer, state *layerC
 			return layerDecodeWire2633421b(profile, b, state)
 		case 0xa04e8d3a:
 			return layerDecodeWirea04e8d3a(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x2633421b:
+			return layerDecodeWire2633421b(profile, b, state)
+		case 0xa04e8d3a:
+			return layerDecodeWirea04e8d3a(profile, b, state)
+		case 0xcbb7a507:
+			return layerDecodeWirecbb7a507(profile, b, state)
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
@@ -3893,7 +3577,7 @@ func layerPreflightClassChatInvite(profile LayerProfile, value ChatInviteClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatInvite:
 			return layerPreflightWire5c9d3702Bare(profile, value, state)
@@ -3923,7 +3607,7 @@ func layerEncodeClassChatInviteBody(profile LayerProfile, value ChatInviteClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatInvite:
 			b.PutID(0x5c9d3702)
@@ -3949,7 +3633,7 @@ func layerDecodeClassChatInvite(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x5a686d7c:
 			return layerDecodeWire5a686d7c(profile, b, state)
@@ -4014,19 +3698,7 @@ func layerPreflightClassChatParticipant(profile LayerProfile, value ChatParticip
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *ChatParticipant:
-			return layerPreflightWirec02d4007Bare(profile, value, state)
-		case *ChatParticipantAdmin:
-			return layerPreflightWirea0933f5bBare(profile, value, state)
-		case *ChatParticipantCreator:
-			return layerPreflightWiree46bcee4Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatParticipant:
 			return layerPreflightWire38e79fdeBare(profile, value, state)
@@ -4056,22 +3728,7 @@ func layerEncodeClassChatParticipantBody(profile LayerProfile, value ChatPartici
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *ChatParticipant:
-			b.PutID(0xc02d4007)
-			return layerEncodeWirec02d4007BareBody(profile, value, b, state)
-		case *ChatParticipantAdmin:
-			b.PutID(0xa0933f5b)
-			return layerEncodeWirea0933f5bBareBody(profile, value, b, state)
-		case *ChatParticipantCreator:
-			b.PutID(0xe46bcee4)
-			return layerEncodeWiree46bcee4BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatParticipant:
 			b.PutID(0x38e79fde)
@@ -4097,18 +3754,7 @@ func layerDecodeClassChatParticipant(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch id {
-		case 0xa0933f5b:
-			return layerDecodeWirea0933f5b(profile, b, state)
-		case 0xc02d4007:
-			return layerDecodeWirec02d4007(profile, b, state)
-		case 0xe46bcee4:
-			return layerDecodeWiree46bcee4(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0360d5d2:
 			return layerDecodeWire0360d5d2(profile, b, state)
@@ -4163,7 +3809,7 @@ func layerPreflightClassChatParticipants(profile LayerProfile, value ChatPartici
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatParticipants:
 			return layerPreflightWire3cbc93f8Bare(profile, value, state)
@@ -4191,7 +3837,7 @@ func layerEncodeClassChatParticipantsBody(profile LayerProfile, value ChatPartic
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatParticipants:
 			b.PutID(0x3cbc93f8)
@@ -4214,7 +3860,7 @@ func layerDecodeClassChatParticipants(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3cbc93f8:
 			return layerDecodeWire3cbc93f8(profile, b, state)
@@ -4267,7 +3913,7 @@ func layerPreflightClassChatPhoto(profile LayerProfile, value ChatPhotoClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatPhoto:
 			return layerPreflightWire1c6e1c11Bare(profile, value, state)
@@ -4295,7 +3941,7 @@ func layerEncodeClassChatPhotoBody(profile LayerProfile, value ChatPhotoClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatPhoto:
 			b.PutID(0x1c6e1c11)
@@ -4318,7 +3964,7 @@ func layerDecodeClassChatPhoto(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1c6e1c11:
 			return layerDecodeWire1c6e1c11(profile, b, state)
@@ -4381,7 +4027,7 @@ func layerPreflightClassChatReactions(profile LayerProfile, value ChatReactionsC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatReactionsAll:
 			return layerPreflightWire52928bcaBare(profile, value, state)
@@ -4411,7 +4057,7 @@ func layerEncodeClassChatReactionsBody(profile LayerProfile, value ChatReactions
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatReactionsAll:
 			b.PutID(0x52928bca)
@@ -4437,7 +4083,7 @@ func layerDecodeClassChatReactions(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x52928bca:
 			return layerDecodeWire52928bca(profile, b, state)
@@ -4492,7 +4138,7 @@ func layerPreflightClassChatTheme(profile LayerProfile, value ChatThemeClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatTheme:
 			return layerPreflightWirec3dffc04Bare(profile, value, state)
@@ -4520,7 +4166,7 @@ func layerEncodeClassChatThemeBody(profile LayerProfile, value ChatThemeClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatTheme:
 			b.PutID(0xc3dffc04)
@@ -4543,7 +4189,7 @@ func layerDecodeClassChatTheme(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3458f9c8:
 			return layerDecodeWire3458f9c8(profile, b, state)
@@ -4572,6 +4218,16 @@ func layerProjectClassDialog(profile LayerProfile, value DialogClass) (DialogCla
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeDialog, Reason: "project hook returned a constructor outside class Dialog"}
 		}
 		return result, true, nil
+	case *DialogCommunity:
+		projected, keep, err := layerProjectFamilyDialogCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(DialogClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeDialogCommunity, Reason: "project hook returned a constructor outside class Dialog"}
+		}
+		return result, true, nil
 	case *DialogFolder:
 		projected, keep, err := layerProjectFamilyDialogFolder(profile, value)
 		if err != nil || !keep {
@@ -4596,20 +4252,22 @@ func layerPreflightClassDialog(profile LayerProfile, value DialogClass, state *l
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *Dialog:
-			return layerPreflightWired58a08c6Bare(profile, value, state)
+			return layerPreflightWirefc89f7f3Bare(profile, value, state)
 		case *DialogFolder:
 			return layerPreflightWire71bd134cBare(profile, value, state)
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch value := projected.(type) {
 		case *Dialog:
 			return layerPreflightWirefc89f7f3Bare(profile, value, state)
+		case *DialogCommunity:
+			return layerPreflightWiref78a0973Bare(profile, value, state)
 		case *DialogFolder:
 			return layerPreflightWire71bd134cBare(profile, value, state)
 		default:
@@ -4634,11 +4292,11 @@ func layerEncodeClassDialogBody(profile LayerProfile, value DialogClass, b *bin.
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *Dialog:
-			b.PutID(0xd58a08c6)
-			return layerEncodeWired58a08c6BareBody(profile, value, b, state)
+			b.PutID(0xfc89f7f3)
+			return layerEncodeWirefc89f7f3BareBody(profile, value, b, state)
 		case *DialogFolder:
 			b.PutID(0x71bd134c)
 			return layerEncodeWire71bd134cBareBody(profile, value, b, state)
@@ -4646,11 +4304,14 @@ func layerEncodeClassDialogBody(profile LayerProfile, value DialogClass, b *bin.
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch value := projected.(type) {
 		case *Dialog:
 			b.PutID(0xfc89f7f3)
 			return layerEncodeWirefc89f7f3BareBody(profile, value, b, state)
+		case *DialogCommunity:
+			b.PutID(0xf78a0973)
+			return layerEncodeWiref78a0973BareBody(profile, value, b, state)
 		case *DialogFolder:
 			b.PutID(0x71bd134c)
 			return layerEncodeWire71bd134cBareBody(profile, value, b, state)
@@ -4669,19 +4330,21 @@ func layerDecodeClassDialog(profile LayerProfile, b *bin.Buffer, state *layerCod
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x71bd134c:
 			return layerDecodeWire71bd134c(profile, b, state)
-		case 0xd58a08c6:
-			return layerDecodeWired58a08c6(profile, b, state)
+		case 0xfc89f7f3:
+			return layerDecodeWirefc89f7f3(profile, b, state)
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch id {
 		case 0x71bd134c:
 			return layerDecodeWire71bd134c(profile, b, state)
+		case 0xf78a0973:
+			return layerDecodeWiref78a0973(profile, b, state)
 		case 0xfc89f7f3:
 			return layerDecodeWirefc89f7f3(profile, b, state)
 		default:
@@ -4741,7 +4404,7 @@ func layerPreflightClassDialogFilter(profile LayerProfile, value DialogFilterCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *DialogFilter:
 			return layerPreflightWireaa472651Bare(profile, value, state)
@@ -4771,7 +4434,7 @@ func layerEncodeClassDialogFilterBody(profile LayerProfile, value DialogFilterCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *DialogFilter:
 			b.PutID(0xaa472651)
@@ -4797,7 +4460,7 @@ func layerDecodeClassDialogFilter(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x363293ae:
 			return layerDecodeWire363293ae(profile, b, state)
@@ -4828,6 +4491,16 @@ func layerProjectClassDialogPeer(profile LayerProfile, value DialogPeerClass) (D
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeDialogPeer, Reason: "project hook returned a constructor outside class DialogPeer"}
 		}
 		return result, true, nil
+	case *DialogPeerCommunity:
+		projected, keep, err := layerProjectFamilyDialogPeerCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(DialogPeerClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeDialogPeerCommunity, Reason: "project hook returned a constructor outside class DialogPeer"}
+		}
+		return result, true, nil
 	case *DialogPeerFolder:
 		projected, keep, err := layerProjectFamilyDialogPeerFolder(profile, value)
 		if err != nil || !keep {
@@ -4852,10 +4525,22 @@ func layerPreflightClassDialogPeer(profile LayerProfile, value DialogPeerClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *DialogPeer:
 			return layerPreflightWiree56dbf05Bare(profile, value, state)
+		case *DialogPeerFolder:
+			return layerPreflightWire514519e2Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *DialogPeer:
+			return layerPreflightWiree56dbf05Bare(profile, value, state)
+		case *DialogPeerCommunity:
+			return layerPreflightWire2f65c8e4Bare(profile, value, state)
 		case *DialogPeerFolder:
 			return layerPreflightWire514519e2Bare(profile, value, state)
 		default:
@@ -4880,11 +4565,26 @@ func layerEncodeClassDialogPeerBody(profile LayerProfile, value DialogPeerClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *DialogPeer:
 			b.PutID(0xe56dbf05)
 			return layerEncodeWiree56dbf05BareBody(profile, value, b, state)
+		case *DialogPeerFolder:
+			b.PutID(0x514519e2)
+			return layerEncodeWire514519e2BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *DialogPeer:
+			b.PutID(0xe56dbf05)
+			return layerEncodeWiree56dbf05BareBody(profile, value, b, state)
+		case *DialogPeerCommunity:
+			b.PutID(0x2f65c8e4)
+			return layerEncodeWire2f65c8e4BareBody(profile, value, b, state)
 		case *DialogPeerFolder:
 			b.PutID(0x514519e2)
 			return layerEncodeWire514519e2BareBody(profile, value, b, state)
@@ -4903,8 +4603,19 @@ func layerDecodeClassDialogPeer(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
+		case 0x514519e2:
+			return layerDecodeWire514519e2(profile, b, state)
+		case 0xe56dbf05:
+			return layerDecodeWiree56dbf05(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x2f65c8e4:
+			return layerDecodeWire2f65c8e4(profile, b, state)
 		case 0x514519e2:
 			return layerDecodeWire514519e2(profile, b, state)
 		case 0xe56dbf05:
@@ -4956,7 +4667,7 @@ func layerPreflightClassDocument(profile LayerProfile, value DocumentClass, stat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *Document:
 			return layerPreflightWire8fd4c4d8Bare(profile, value, state)
@@ -4984,7 +4695,7 @@ func layerEncodeClassDocumentBody(profile LayerProfile, value DocumentClass, b *
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *Document:
 			b.PutID(0x8fd4c4d8)
@@ -5007,7 +4718,7 @@ func layerDecodeClassDocument(profile LayerProfile, b *bin.Buffer, state *layerC
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x36f8c871:
 			return layerDecodeWire36f8c871(profile, b, state)
@@ -5120,7 +4831,7 @@ func layerPreflightClassDocumentAttribute(profile LayerProfile, value DocumentAt
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *DocumentAttributeAnimated:
 			return layerPreflightWire11b58939Bare(profile, value, state)
@@ -5160,7 +4871,7 @@ func layerEncodeClassDocumentAttributeBody(profile LayerProfile, value DocumentA
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *DocumentAttributeAnimated:
 			b.PutID(0x11b58939)
@@ -5201,7 +4912,7 @@ func layerDecodeClassDocumentAttribute(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x11b58939:
 			return layerDecodeWire11b58939(profile, b, state)
@@ -5266,7 +4977,7 @@ func layerPreflightClassDraftMessage(profile LayerProfile, value DraftMessageCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *DraftMessage:
 			return layerPreflightWire96eaa5ebBare(profile, value, state)
@@ -5276,7 +4987,7 @@ func layerPreflightClassDraftMessage(profile LayerProfile, value DraftMessageCla
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *DraftMessage:
 			return layerPreflightWire60fe3294Bare(profile, value, state)
@@ -5304,7 +5015,7 @@ func layerEncodeClassDraftMessageBody(profile LayerProfile, value DraftMessageCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *DraftMessage:
 			b.PutID(0x96eaa5eb)
@@ -5316,7 +5027,7 @@ func layerEncodeClassDraftMessageBody(profile LayerProfile, value DraftMessageCl
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *DraftMessage:
 			b.PutID(0x60fe3294)
@@ -5339,7 +5050,7 @@ func layerDecodeClassDraftMessage(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x1b0c841a:
 			return layerDecodeWire1b0c841a(profile, b, state)
@@ -5348,7 +5059,7 @@ func layerDecodeClassDraftMessage(profile LayerProfile, b *bin.Buffer, state *la
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1b0c841a:
 			return layerDecodeWire1b0c841a(profile, b, state)
@@ -5411,7 +5122,7 @@ func layerPreflightClassEmailVerification(profile LayerProfile, value EmailVerif
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmailVerificationApple:
 			return layerPreflightWire96d074fdBare(profile, value, state)
@@ -5441,7 +5152,7 @@ func layerEncodeClassEmailVerificationBody(profile LayerProfile, value EmailVeri
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmailVerificationApple:
 			b.PutID(0x96d074fd)
@@ -5467,7 +5178,7 @@ func layerDecodeClassEmailVerification(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x922e55a9:
 			return layerDecodeWire922e55a9(profile, b, state)
@@ -5532,7 +5243,7 @@ func layerPreflightClassEmailVerifyPurpose(profile LayerProfile, value EmailVeri
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmailVerifyPurposeLoginChange:
 			return layerPreflightWire527d22ebBare(profile, value, state)
@@ -5562,7 +5273,7 @@ func layerEncodeClassEmailVerifyPurposeBody(profile LayerProfile, value EmailVer
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmailVerifyPurposeLoginChange:
 			b.PutID(0x527d22eb)
@@ -5588,7 +5299,7 @@ func layerDecodeClassEmailVerifyPurpose(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4345be73:
 			return layerDecodeWire4345be73(profile, b, state)
@@ -5653,7 +5364,7 @@ func layerPreflightClassEmojiGroup(profile LayerProfile, value EmojiGroupClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiGroup:
 			return layerPreflightWire7a9abda9Bare(profile, value, state)
@@ -5683,7 +5394,7 @@ func layerEncodeClassEmojiGroupBody(profile LayerProfile, value EmojiGroupClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiGroup:
 			b.PutID(0x7a9abda9)
@@ -5709,7 +5420,7 @@ func layerDecodeClassEmojiGroup(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x093bcf34:
 			return layerDecodeWire093bcf34(profile, b, state)
@@ -5764,7 +5475,7 @@ func layerPreflightClassEmojiKeyword(profile LayerProfile, value EmojiKeywordCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiKeyword:
 			return layerPreflightWired5b3b9f9Bare(profile, value, state)
@@ -5792,7 +5503,7 @@ func layerEncodeClassEmojiKeywordBody(profile LayerProfile, value EmojiKeywordCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiKeyword:
 			b.PutID(0xd5b3b9f9)
@@ -5815,7 +5526,7 @@ func layerDecodeClassEmojiKeyword(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x236df622:
 			return layerDecodeWire236df622(profile, b, state)
@@ -5868,7 +5579,7 @@ func layerPreflightClassEmojiList(profile LayerProfile, value EmojiListClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiList:
 			return layerPreflightWire7a1e11d1Bare(profile, value, state)
@@ -5896,7 +5607,7 @@ func layerEncodeClassEmojiListBody(profile LayerProfile, value EmojiListClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiList:
 			b.PutID(0x7a1e11d1)
@@ -5919,7 +5630,7 @@ func layerDecodeClassEmojiList(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x481eadfa:
 			return layerDecodeWire481eadfa(profile, b, state)
@@ -5992,7 +5703,7 @@ func layerPreflightClassEmojiStatus(profile LayerProfile, value EmojiStatusClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiStatus:
 			return layerPreflightWiree7ff068aBare(profile, value, state)
@@ -6024,7 +5735,7 @@ func layerEncodeClassEmojiStatusBody(profile LayerProfile, value EmojiStatusClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EmojiStatus:
 			b.PutID(0xe7ff068a)
@@ -6053,7 +5764,7 @@ func layerDecodeClassEmojiStatus(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x07141dbf:
 			return layerDecodeWire07141dbf(profile, b, state)
@@ -6140,7 +5851,7 @@ func layerPreflightClassEncryptedChat(profile LayerProfile, value EncryptedChatC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EncryptedChat:
 			return layerPreflightWire61f0d4c7Bare(profile, value, state)
@@ -6174,7 +5885,7 @@ func layerEncodeClassEncryptedChatBody(profile LayerProfile, value EncryptedChat
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EncryptedChat:
 			b.PutID(0x61f0d4c7)
@@ -6206,7 +5917,7 @@ func layerDecodeClassEncryptedChat(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1e1c7c45:
 			return layerDecodeWire1e1c7c45(profile, b, state)
@@ -6265,7 +5976,7 @@ func layerPreflightClassEncryptedFile(profile LayerProfile, value EncryptedFileC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EncryptedFile:
 			return layerPreflightWirea8008cd8Bare(profile, value, state)
@@ -6293,7 +6004,7 @@ func layerEncodeClassEncryptedFileBody(profile LayerProfile, value EncryptedFile
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EncryptedFile:
 			b.PutID(0xa8008cd8)
@@ -6316,7 +6027,7 @@ func layerDecodeClassEncryptedFile(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xa8008cd8:
 			return layerDecodeWirea8008cd8(profile, b, state)
@@ -6369,7 +6080,7 @@ func layerPreflightClassEncryptedMessage(profile LayerProfile, value EncryptedMe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EncryptedMessage:
 			return layerPreflightWireed18c118Bare(profile, value, state)
@@ -6397,7 +6108,7 @@ func layerEncodeClassEncryptedMessageBody(profile LayerProfile, value EncryptedM
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *EncryptedMessage:
 			b.PutID(0xed18c118)
@@ -6420,7 +6131,7 @@ func layerDecodeClassEncryptedMessage(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x23734b06:
 			return layerDecodeWire23734b06(profile, b, state)
@@ -6473,7 +6184,7 @@ func layerPreflightClassExportedChatInvite(profile LayerProfile, value ExportedC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatInviteExported:
 			return layerPreflightWirea22cbd96Bare(profile, value, state)
@@ -6501,7 +6212,7 @@ func layerEncodeClassExportedChatInviteBody(profile LayerProfile, value Exported
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatInviteExported:
 			b.PutID(0xa22cbd96)
@@ -6524,7 +6235,7 @@ func layerDecodeClassExportedChatInvite(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xa22cbd96:
 			return layerDecodeWirea22cbd96(profile, b, state)
@@ -6577,17 +6288,7 @@ func layerPreflightClassForumTopic(profile LayerProfile, value ForumTopicClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *ForumTopic:
-			return layerPreflightWirecdff0ecaBare(profile, value, state)
-		case *ForumTopicDeleted:
-			return layerPreflightWire023f109bBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ForumTopic:
 			return layerPreflightWirefcdad815Bare(profile, value, state)
@@ -6615,19 +6316,7 @@ func layerEncodeClassForumTopicBody(profile LayerProfile, value ForumTopicClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *ForumTopic:
-			b.PutID(0xcdff0eca)
-			return layerEncodeWirecdff0ecaBareBody(profile, value, b, state)
-		case *ForumTopicDeleted:
-			b.PutID(0x023f109b)
-			return layerEncodeWire023f109bBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ForumTopic:
 			b.PutID(0xfcdad815)
@@ -6650,16 +6339,7 @@ func layerDecodeClassForumTopic(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x023f109b:
-			return layerDecodeWire023f109b(profile, b, state)
-		case 0xcdff0eca:
-			return layerDecodeWirecdff0eca(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x023f109b:
 			return layerDecodeWire023f109b(profile, b, state)
@@ -6712,7 +6392,7 @@ func layerPreflightClassGeoPoint(profile LayerProfile, value GeoPointClass, stat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *GeoPoint:
 			return layerPreflightWireb2a2f663Bare(profile, value, state)
@@ -6740,7 +6420,7 @@ func layerEncodeClassGeoPointBody(profile LayerProfile, value GeoPointClass, b *
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *GeoPoint:
 			b.PutID(0xb2a2f663)
@@ -6763,7 +6443,7 @@ func layerDecodeClassGeoPoint(profile LayerProfile, b *bin.Buffer, state *layerC
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1117dd5f:
 			return layerDecodeWire1117dd5f(profile, b, state)
@@ -6816,7 +6496,7 @@ func layerPreflightClassGroupCall(profile LayerProfile, value GroupCallClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *GroupCall:
 			return layerPreflightWireefb2b617Bare(profile, value, state)
@@ -6844,7 +6524,7 @@ func layerEncodeClassGroupCallBody(profile LayerProfile, value GroupCallClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *GroupCall:
 			b.PutID(0xefb2b617)
@@ -6867,7 +6547,7 @@ func layerDecodeClassGroupCall(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x7780bcb4:
 			return layerDecodeWire7780bcb4(profile, b, state)
@@ -6960,7 +6640,7 @@ func layerPreflightClassInlineQueryPeerType(profile LayerProfile, value InlineQu
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InlineQueryPeerTypeBotPM:
 			return layerPreflightWire0e3b2d0cBare(profile, value, state)
@@ -6996,7 +6676,7 @@ func layerEncodeClassInlineQueryPeerTypeBody(profile LayerProfile, value InlineQ
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InlineQueryPeerTypeBotPM:
 			b.PutID(0x0e3b2d0c)
@@ -7031,7 +6711,7 @@ func layerDecodeClassInlineQueryPeerType(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0e3b2d0c:
 			return layerDecodeWire0e3b2d0c(profile, b, state)
@@ -7078,6 +6758,16 @@ func layerProjectClassInputAiComposeTone(profile LayerProfile, value InputAiComp
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputAiComposeToneID, Reason: "project hook returned a constructor outside class InputAiComposeTone"}
 		}
 		return result, true, nil
+	case *InputAiComposeToneSingleUse:
+		projected, keep, err := layerProjectFamilyInputAiComposeToneSingleUse(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(InputAiComposeToneClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputAiComposeToneSingleUse, Reason: "project hook returned a constructor outside class InputAiComposeTone"}
+		}
+		return result, true, nil
 	case *InputAiComposeToneSlug:
 		projected, keep, err := layerProjectFamilyInputAiComposeToneSlug(profile, value)
 		if err != nil || !keep {
@@ -7102,18 +6792,26 @@ func layerPreflightClassInputAiComposeTone(profile LayerProfile, value InputAiCo
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
 	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputAiComposeToneDefault:
 			return layerPreflightWire1fe9a9bfBare(profile, value, state)
 		case *InputAiComposeToneID:
 			return layerPreflightWire0773c080Bare(profile, value, state)
+		case *InputAiComposeToneSlug:
+			return layerPreflightWire1fa01357Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *InputAiComposeToneDefault:
+			return layerPreflightWire1fe9a9bfBare(profile, value, state)
+		case *InputAiComposeToneID:
+			return layerPreflightWire0773c080Bare(profile, value, state)
+		case *InputAiComposeToneSingleUse:
+			return layerPreflightWire0e0c35afBare(profile, value, state)
 		case *InputAiComposeToneSlug:
 			return layerPreflightWire1fa01357Bare(profile, value, state)
 		default:
@@ -7138,12 +6836,6 @@ func layerEncodeClassInputAiComposeToneBody(profile LayerProfile, value InputAiC
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
 	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputAiComposeToneDefault:
@@ -7152,6 +6844,24 @@ func layerEncodeClassInputAiComposeToneBody(profile LayerProfile, value InputAiC
 		case *InputAiComposeToneID:
 			b.PutID(0x0773c080)
 			return layerEncodeWire0773c080BareBody(profile, value, b, state)
+		case *InputAiComposeToneSlug:
+			b.PutID(0x1fa01357)
+			return layerEncodeWire1fa01357BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *InputAiComposeToneDefault:
+			b.PutID(0x1fe9a9bf)
+			return layerEncodeWire1fe9a9bfBareBody(profile, value, b, state)
+		case *InputAiComposeToneID:
+			b.PutID(0x0773c080)
+			return layerEncodeWire0773c080BareBody(profile, value, b, state)
+		case *InputAiComposeToneSingleUse:
+			b.PutID(0x0e0c35af)
+			return layerEncodeWire0e0c35afBareBody(profile, value, b, state)
 		case *InputAiComposeToneSlug:
 			b.PutID(0x1fa01357)
 			return layerEncodeWire1fa01357BareBody(profile, value, b, state)
@@ -7170,15 +6880,23 @@ func layerDecodeClassInputAiComposeTone(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch id {
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
 	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x0773c080:
 			return layerDecodeWire0773c080(profile, b, state)
+		case 0x1fa01357:
+			return layerDecodeWire1fa01357(profile, b, state)
+		case 0x1fe9a9bf:
+			return layerDecodeWire1fe9a9bf(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x0773c080:
+			return layerDecodeWire0773c080(profile, b, state)
+		case 0x0e0c35af:
+			return layerDecodeWire0e0c35af(profile, b, state)
 		case 0x1fa01357:
 			return layerDecodeWire1fa01357(profile, b, state)
 		case 0x1fe9a9bf:
@@ -7230,7 +6948,7 @@ func layerPreflightClassInputBotApp(profile LayerProfile, value InputBotAppClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotAppID:
 			return layerPreflightWirea920bd7aBare(profile, value, state)
@@ -7258,7 +6976,7 @@ func layerEncodeClassInputBotAppBody(profile LayerProfile, value InputBotAppClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotAppID:
 			b.PutID(0xa920bd7a)
@@ -7281,7 +6999,7 @@ func layerDecodeClassInputBotApp(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x908c0407:
 			return layerDecodeWire908c0407(profile, b, state)
@@ -7404,7 +7122,7 @@ func layerPreflightClassInputBotInlineMessage(profile LayerProfile, value InputB
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *InputBotInlineMessageGame:
 			return layerPreflightWire4b425864Bare(profile, value, state)
@@ -7426,7 +7144,7 @@ func layerPreflightClassInputBotInlineMessage(profile LayerProfile, value InputB
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotInlineMessageGame:
 			return layerPreflightWire4b425864Bare(profile, value, state)
@@ -7468,7 +7186,7 @@ func layerEncodeClassInputBotInlineMessageBody(profile LayerProfile, value Input
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *InputBotInlineMessageGame:
 			b.PutID(0x4b425864)
@@ -7498,7 +7216,7 @@ func layerEncodeClassInputBotInlineMessageBody(profile LayerProfile, value Input
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotInlineMessageGame:
 			b.PutID(0x4b425864)
@@ -7542,7 +7260,7 @@ func layerDecodeClassInputBotInlineMessage(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x3380c786:
 			return layerDecodeWire3380c786(profile, b, state)
@@ -7563,7 +7281,7 @@ func layerDecodeClassInputBotInlineMessage(profile LayerProfile, b *bin.Buffer, 
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3380c786:
 			return layerDecodeWire3380c786(profile, b, state)
@@ -7630,7 +7348,7 @@ func layerPreflightClassInputBotInlineMessageID(profile LayerProfile, value Inpu
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotInlineMessageID:
 			return layerPreflightWire890c3d89Bare(profile, value, state)
@@ -7658,7 +7376,7 @@ func layerEncodeClassInputBotInlineMessageIDBody(profile LayerProfile, value Inp
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotInlineMessageID:
 			b.PutID(0x890c3d89)
@@ -7681,7 +7399,7 @@ func layerDecodeClassInputBotInlineMessageID(profile LayerProfile, b *bin.Buffer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x890c3d89:
 			return layerDecodeWire890c3d89(profile, b, state)
@@ -7754,7 +7472,7 @@ func layerPreflightClassInputBotInlineResult(profile LayerProfile, value InputBo
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotInlineResult:
 			return layerPreflightWire88bf9319Bare(profile, value, state)
@@ -7786,7 +7504,7 @@ func layerEncodeClassInputBotInlineResultBody(profile LayerProfile, value InputB
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputBotInlineResult:
 			b.PutID(0x88bf9319)
@@ -7815,7 +7533,7 @@ func layerDecodeClassInputBotInlineResult(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4fa417f2:
 			return layerDecodeWire4fa417f2(profile, b, state)
@@ -7882,7 +7600,7 @@ func layerPreflightClassInputChannel(profile LayerProfile, value InputChannelCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputChannel:
 			return layerPreflightWiref35aec28Bare(profile, value, state)
@@ -7912,7 +7630,7 @@ func layerEncodeClassInputChannelBody(profile LayerProfile, value InputChannelCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputChannel:
 			b.PutID(0xf35aec28)
@@ -7938,7 +7656,7 @@ func layerDecodeClassInputChannel(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x5b934f9d:
 			return layerDecodeWire5b934f9d(profile, b, state)
@@ -8003,7 +7721,7 @@ func layerPreflightClassInputChatPhoto(profile LayerProfile, value InputChatPhot
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputChatPhoto:
 			return layerPreflightWire8953ad37Bare(profile, value, state)
@@ -8033,7 +7751,7 @@ func layerEncodeClassInputChatPhotoBody(profile LayerProfile, value InputChatPho
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputChatPhoto:
 			b.PutID(0x8953ad37)
@@ -8059,7 +7777,7 @@ func layerDecodeClassInputChatPhoto(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1ca48f57:
 			return layerDecodeWire1ca48f57(profile, b, state)
@@ -8124,7 +7842,7 @@ func layerPreflightClassInputChatTheme(profile LayerProfile, value InputChatThem
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputChatTheme:
 			return layerPreflightWirec93de95cBare(profile, value, state)
@@ -8154,7 +7872,7 @@ func layerEncodeClassInputChatThemeBody(profile LayerProfile, value InputChatThe
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputChatTheme:
 			b.PutID(0xc93de95c)
@@ -8180,7 +7898,7 @@ func layerDecodeClassInputChatTheme(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x83268483:
 			return layerDecodeWire83268483(profile, b, state)
@@ -8235,7 +7953,7 @@ func layerPreflightClassInputCheckPasswordSRP(profile LayerProfile, value InputC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputCheckPasswordEmpty:
 			return layerPreflightWire9880f658Bare(profile, value, state)
@@ -8263,7 +7981,7 @@ func layerEncodeClassInputCheckPasswordSRPBody(profile LayerProfile, value Input
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputCheckPasswordEmpty:
 			b.PutID(0x9880f658)
@@ -8286,7 +8004,7 @@ func layerDecodeClassInputCheckPasswordSRP(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9880f658:
 			return layerDecodeWire9880f658(profile, b, state)
@@ -8339,7 +8057,7 @@ func layerPreflightClassInputCollectible(profile LayerProfile, value InputCollec
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputCollectiblePhone:
 			return layerPreflightWirea2e214a4Bare(profile, value, state)
@@ -8367,7 +8085,7 @@ func layerEncodeClassInputCollectibleBody(profile LayerProfile, value InputColle
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputCollectiblePhone:
 			b.PutID(0xa2e214a4)
@@ -8390,7 +8108,7 @@ func layerDecodeClassInputCollectible(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xa2e214a4:
 			return layerDecodeWirea2e214a4(profile, b, state)
@@ -8419,6 +8137,16 @@ func layerProjectClassInputDialogPeer(profile LayerProfile, value InputDialogPee
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputDialogPeer, Reason: "project hook returned a constructor outside class InputDialogPeer"}
 		}
 		return result, true, nil
+	case *InputDialogPeerCommunity:
+		projected, keep, err := layerProjectFamilyInputDialogPeerCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(InputDialogPeerClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputDialogPeerCommunity, Reason: "project hook returned a constructor outside class InputDialogPeer"}
+		}
+		return result, true, nil
 	case *InputDialogPeerFolder:
 		projected, keep, err := layerProjectFamilyInputDialogPeerFolder(profile, value)
 		if err != nil || !keep {
@@ -8443,10 +8171,22 @@ func layerPreflightClassInputDialogPeer(profile LayerProfile, value InputDialogP
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputDialogPeer:
 			return layerPreflightWirefcaafeb7Bare(profile, value, state)
+		case *InputDialogPeerFolder:
+			return layerPreflightWire64600527Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *InputDialogPeer:
+			return layerPreflightWirefcaafeb7Bare(profile, value, state)
+		case *InputDialogPeerCommunity:
+			return layerPreflightWire69ef72c4Bare(profile, value, state)
 		case *InputDialogPeerFolder:
 			return layerPreflightWire64600527Bare(profile, value, state)
 		default:
@@ -8471,11 +8211,26 @@ func layerEncodeClassInputDialogPeerBody(profile LayerProfile, value InputDialog
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputDialogPeer:
 			b.PutID(0xfcaafeb7)
 			return layerEncodeWirefcaafeb7BareBody(profile, value, b, state)
+		case *InputDialogPeerFolder:
+			b.PutID(0x64600527)
+			return layerEncodeWire64600527BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *InputDialogPeer:
+			b.PutID(0xfcaafeb7)
+			return layerEncodeWirefcaafeb7BareBody(profile, value, b, state)
+		case *InputDialogPeerCommunity:
+			b.PutID(0x69ef72c4)
+			return layerEncodeWire69ef72c4BareBody(profile, value, b, state)
 		case *InputDialogPeerFolder:
 			b.PutID(0x64600527)
 			return layerEncodeWire64600527BareBody(profile, value, b, state)
@@ -8494,10 +8249,21 @@ func layerDecodeClassInputDialogPeer(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x64600527:
 			return layerDecodeWire64600527(profile, b, state)
+		case 0xfcaafeb7:
+			return layerDecodeWirefcaafeb7(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x64600527:
+			return layerDecodeWire64600527(profile, b, state)
+		case 0x69ef72c4:
+			return layerDecodeWire69ef72c4(profile, b, state)
 		case 0xfcaafeb7:
 			return layerDecodeWirefcaafeb7(profile, b, state)
 		default:
@@ -8547,7 +8313,7 @@ func layerPreflightClassInputDocument(profile LayerProfile, value InputDocumentC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputDocument:
 			return layerPreflightWire1abfb575Bare(profile, value, state)
@@ -8575,7 +8341,7 @@ func layerEncodeClassInputDocumentBody(profile LayerProfile, value InputDocument
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputDocument:
 			b.PutID(0x1abfb575)
@@ -8598,7 +8364,7 @@ func layerDecodeClassInputDocument(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1abfb575:
 			return layerDecodeWire1abfb575(profile, b, state)
@@ -8671,7 +8437,7 @@ func layerPreflightClassInputEncryptedFile(profile LayerProfile, value InputEncr
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputEncryptedFile:
 			return layerPreflightWire5a17b5e5Bare(profile, value, state)
@@ -8703,7 +8469,7 @@ func layerEncodeClassInputEncryptedFileBody(profile LayerProfile, value InputEnc
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputEncryptedFile:
 			b.PutID(0x5a17b5e5)
@@ -8732,7 +8498,7 @@ func layerDecodeClassInputEncryptedFile(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1837c364:
 			return layerDecodeWire1837c364(profile, b, state)
@@ -8799,7 +8565,7 @@ func layerPreflightClassInputFile(profile LayerProfile, value InputFileClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputFile:
 			return layerPreflightWiref52ff27fBare(profile, value, state)
@@ -8829,7 +8595,7 @@ func layerEncodeClassInputFileBody(profile LayerProfile, value InputFileClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputFile:
 			b.PutID(0xf52ff27f)
@@ -8855,7 +8621,7 @@ func layerDecodeClassInputFile(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x62dc8b48:
 			return layerDecodeWire62dc8b48(profile, b, state)
@@ -9010,7 +8776,7 @@ func layerPreflightClassInputFileLocation(profile LayerProfile, value InputFileL
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputDocumentFileLocation:
 			return layerPreflightWirebad07584Bare(profile, value, state)
@@ -9058,7 +8824,7 @@ func layerEncodeClassInputFileLocationBody(profile LayerProfile, value InputFile
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputDocumentFileLocation:
 			b.PutID(0xbad07584)
@@ -9111,7 +8877,7 @@ func layerDecodeClassInputFileLocation(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0598a92a:
 			return layerDecodeWire0598a92a(profile, b, state)
@@ -9184,7 +8950,7 @@ func layerPreflightClassInputGame(profile LayerProfile, value InputGameClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputGameID:
 			return layerPreflightWire032c3e77Bare(profile, value, state)
@@ -9212,7 +8978,7 @@ func layerEncodeClassInputGameBody(profile LayerProfile, value InputGameClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputGameID:
 			b.PutID(0x032c3e77)
@@ -9235,7 +9001,7 @@ func layerDecodeClassInputGame(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x032c3e77:
 			return layerDecodeWire032c3e77(profile, b, state)
@@ -9288,7 +9054,7 @@ func layerPreflightClassInputGeoPoint(profile LayerProfile, value InputGeoPointC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputGeoPoint:
 			return layerPreflightWire48222fafBare(profile, value, state)
@@ -9316,7 +9082,7 @@ func layerEncodeClassInputGeoPointBody(profile LayerProfile, value InputGeoPoint
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputGeoPoint:
 			b.PutID(0x48222faf)
@@ -9339,7 +9105,7 @@ func layerDecodeClassInputGeoPoint(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x48222faf:
 			return layerDecodeWire48222faf(profile, b, state)
@@ -9402,7 +9168,7 @@ func layerPreflightClassInputGroupCall(profile LayerProfile, value InputGroupCal
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputGroupCall:
 			return layerPreflightWired8aa840fBare(profile, value, state)
@@ -9432,7 +9198,7 @@ func layerEncodeClassInputGroupCallBody(profile LayerProfile, value InputGroupCa
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputGroupCall:
 			b.PutID(0xd8aa840f)
@@ -9458,7 +9224,7 @@ func layerDecodeClassInputGroupCall(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x8c10603f:
 			return layerDecodeWire8c10603f(profile, b, state)
@@ -9643,7 +9409,7 @@ func layerPreflightClassInputInvoice(profile LayerProfile, value InputInvoiceCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputInvoiceBusinessBotTransferStars:
 			return layerPreflightWiref4997e42Bare(profile, value, state)
@@ -9697,7 +9463,7 @@ func layerEncodeClassInputInvoiceBody(profile LayerProfile, value InputInvoiceCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputInvoiceBusinessBotTransferStars:
 			b.PutID(0xf4997e42)
@@ -9759,7 +9525,7 @@ func layerDecodeClassInputInvoice(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0923d8d1:
 			return layerDecodeWire0923d8d1(profile, b, state)
@@ -10018,97 +9784,7 @@ func layerPreflightClassInputMedia(profile LayerProfile, value InputMediaClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *InputMediaContact:
-			return layerPreflightWiref8ab7dfbBare(profile, value, state)
-		case *InputMediaDice:
-			return layerPreflightWiree66fbf7bBare(profile, value, state)
-		case *InputMediaDocument:
-			return layerPreflightWirea8763ab5Bare(profile, value, state)
-		case *InputMediaDocumentExternal:
-			return layerPreflightWire779600f9Bare(profile, value, state)
-		case *InputMediaEmpty:
-			return layerPreflightWire9664f57fBare(profile, value, state)
-		case *InputMediaGame:
-			return layerPreflightWired33f43f3Bare(profile, value, state)
-		case *InputMediaGeoLive:
-			return layerPreflightWire971fa843Bare(profile, value, state)
-		case *InputMediaGeoPoint:
-			return layerPreflightWiref9c44144Bare(profile, value, state)
-		case *InputMediaInvoice:
-			return layerPreflightWire405fef0dBare(profile, value, state)
-		case *InputMediaPaidMedia:
-			return layerPreflightWirec4103386Bare(profile, value, state)
-		case *InputMediaPhoto:
-			return layerPreflightWireb3ba0635Bare(profile, value, state)
-		case *InputMediaPhotoExternal:
-			return layerPreflightWiree5bbfe1aBare(profile, value, state)
-		case *InputMediaPoll:
-			return layerPreflightWire0f94e5f1Bare(profile, value, state)
-		case *InputMediaStory:
-			return layerPreflightWire89fdd778Bare(profile, value, state)
-		case *InputMediaTodo:
-			return layerPreflightWire9fc55fdeBare(profile, value, state)
-		case *InputMediaUploadedDocument:
-			return layerPreflightWire037c9330Bare(profile, value, state)
-		case *InputMediaUploadedPhoto:
-			return layerPreflightWire1e287d04Bare(profile, value, state)
-		case *InputMediaVenue:
-			return layerPreflightWirec13d1c11Bare(profile, value, state)
-		case *InputMediaWebPage:
-			return layerPreflightWirec21b8849Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *InputMediaContact:
-			return layerPreflightWiref8ab7dfbBare(profile, value, state)
-		case *InputMediaDice:
-			return layerPreflightWiree66fbf7bBare(profile, value, state)
-		case *InputMediaDocument:
-			return layerPreflightWirea8763ab5Bare(profile, value, state)
-		case *InputMediaDocumentExternal:
-			return layerPreflightWire779600f9Bare(profile, value, state)
-		case *InputMediaEmpty:
-			return layerPreflightWire9664f57fBare(profile, value, state)
-		case *InputMediaGame:
-			return layerPreflightWired33f43f3Bare(profile, value, state)
-		case *InputMediaGeoLive:
-			return layerPreflightWire971fa843Bare(profile, value, state)
-		case *InputMediaGeoPoint:
-			return layerPreflightWiref9c44144Bare(profile, value, state)
-		case *InputMediaInvoice:
-			return layerPreflightWire405fef0dBare(profile, value, state)
-		case *InputMediaPaidMedia:
-			return layerPreflightWirec4103386Bare(profile, value, state)
-		case *InputMediaPhoto:
-			return layerPreflightWireb3ba0635Bare(profile, value, state)
-		case *InputMediaPhotoExternal:
-			return layerPreflightWiree5bbfe1aBare(profile, value, state)
-		case *InputMediaPoll:
-			return layerPreflightWire0f94e5f1Bare(profile, value, state)
-		case *InputMediaStakeDice:
-			return layerPreflightWiref3a9244aBare(profile, value, state)
-		case *InputMediaStory:
-			return layerPreflightWire89fdd778Bare(profile, value, state)
-		case *InputMediaTodo:
-			return layerPreflightWire9fc55fdeBare(profile, value, state)
-		case *InputMediaUploadedDocument:
-			return layerPreflightWire037c9330Bare(profile, value, state)
-		case *InputMediaUploadedPhoto:
-			return layerPreflightWire1e287d04Bare(profile, value, state)
-		case *InputMediaVenue:
-			return layerPreflightWirec13d1c11Bare(profile, value, state)
-		case *InputMediaWebPage:
-			return layerPreflightWirec21b8849Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMediaContact:
 			return layerPreflightWiref8ab7dfbBare(profile, value, state)
@@ -10172,136 +9848,7 @@ func layerEncodeClassInputMediaBody(profile LayerProfile, value InputMediaClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *InputMediaContact:
-			b.PutID(0xf8ab7dfb)
-			return layerEncodeWiref8ab7dfbBareBody(profile, value, b, state)
-		case *InputMediaDice:
-			b.PutID(0xe66fbf7b)
-			return layerEncodeWiree66fbf7bBareBody(profile, value, b, state)
-		case *InputMediaDocument:
-			b.PutID(0xa8763ab5)
-			return layerEncodeWirea8763ab5BareBody(profile, value, b, state)
-		case *InputMediaDocumentExternal:
-			b.PutID(0x779600f9)
-			return layerEncodeWire779600f9BareBody(profile, value, b, state)
-		case *InputMediaEmpty:
-			b.PutID(0x9664f57f)
-			return layerEncodeWire9664f57fBareBody(profile, value, b, state)
-		case *InputMediaGame:
-			b.PutID(0xd33f43f3)
-			return layerEncodeWired33f43f3BareBody(profile, value, b, state)
-		case *InputMediaGeoLive:
-			b.PutID(0x971fa843)
-			return layerEncodeWire971fa843BareBody(profile, value, b, state)
-		case *InputMediaGeoPoint:
-			b.PutID(0xf9c44144)
-			return layerEncodeWiref9c44144BareBody(profile, value, b, state)
-		case *InputMediaInvoice:
-			b.PutID(0x405fef0d)
-			return layerEncodeWire405fef0dBareBody(profile, value, b, state)
-		case *InputMediaPaidMedia:
-			b.PutID(0xc4103386)
-			return layerEncodeWirec4103386BareBody(profile, value, b, state)
-		case *InputMediaPhoto:
-			b.PutID(0xb3ba0635)
-			return layerEncodeWireb3ba0635BareBody(profile, value, b, state)
-		case *InputMediaPhotoExternal:
-			b.PutID(0xe5bbfe1a)
-			return layerEncodeWiree5bbfe1aBareBody(profile, value, b, state)
-		case *InputMediaPoll:
-			b.PutID(0x0f94e5f1)
-			return layerEncodeWire0f94e5f1BareBody(profile, value, b, state)
-		case *InputMediaStory:
-			b.PutID(0x89fdd778)
-			return layerEncodeWire89fdd778BareBody(profile, value, b, state)
-		case *InputMediaTodo:
-			b.PutID(0x9fc55fde)
-			return layerEncodeWire9fc55fdeBareBody(profile, value, b, state)
-		case *InputMediaUploadedDocument:
-			b.PutID(0x037c9330)
-			return layerEncodeWire037c9330BareBody(profile, value, b, state)
-		case *InputMediaUploadedPhoto:
-			b.PutID(0x1e287d04)
-			return layerEncodeWire1e287d04BareBody(profile, value, b, state)
-		case *InputMediaVenue:
-			b.PutID(0xc13d1c11)
-			return layerEncodeWirec13d1c11BareBody(profile, value, b, state)
-		case *InputMediaWebPage:
-			b.PutID(0xc21b8849)
-			return layerEncodeWirec21b8849BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *InputMediaContact:
-			b.PutID(0xf8ab7dfb)
-			return layerEncodeWiref8ab7dfbBareBody(profile, value, b, state)
-		case *InputMediaDice:
-			b.PutID(0xe66fbf7b)
-			return layerEncodeWiree66fbf7bBareBody(profile, value, b, state)
-		case *InputMediaDocument:
-			b.PutID(0xa8763ab5)
-			return layerEncodeWirea8763ab5BareBody(profile, value, b, state)
-		case *InputMediaDocumentExternal:
-			b.PutID(0x779600f9)
-			return layerEncodeWire779600f9BareBody(profile, value, b, state)
-		case *InputMediaEmpty:
-			b.PutID(0x9664f57f)
-			return layerEncodeWire9664f57fBareBody(profile, value, b, state)
-		case *InputMediaGame:
-			b.PutID(0xd33f43f3)
-			return layerEncodeWired33f43f3BareBody(profile, value, b, state)
-		case *InputMediaGeoLive:
-			b.PutID(0x971fa843)
-			return layerEncodeWire971fa843BareBody(profile, value, b, state)
-		case *InputMediaGeoPoint:
-			b.PutID(0xf9c44144)
-			return layerEncodeWiref9c44144BareBody(profile, value, b, state)
-		case *InputMediaInvoice:
-			b.PutID(0x405fef0d)
-			return layerEncodeWire405fef0dBareBody(profile, value, b, state)
-		case *InputMediaPaidMedia:
-			b.PutID(0xc4103386)
-			return layerEncodeWirec4103386BareBody(profile, value, b, state)
-		case *InputMediaPhoto:
-			b.PutID(0xb3ba0635)
-			return layerEncodeWireb3ba0635BareBody(profile, value, b, state)
-		case *InputMediaPhotoExternal:
-			b.PutID(0xe5bbfe1a)
-			return layerEncodeWiree5bbfe1aBareBody(profile, value, b, state)
-		case *InputMediaPoll:
-			b.PutID(0x0f94e5f1)
-			return layerEncodeWire0f94e5f1BareBody(profile, value, b, state)
-		case *InputMediaStakeDice:
-			b.PutID(0xf3a9244a)
-			return layerEncodeWiref3a9244aBareBody(profile, value, b, state)
-		case *InputMediaStory:
-			b.PutID(0x89fdd778)
-			return layerEncodeWire89fdd778BareBody(profile, value, b, state)
-		case *InputMediaTodo:
-			b.PutID(0x9fc55fde)
-			return layerEncodeWire9fc55fdeBareBody(profile, value, b, state)
-		case *InputMediaUploadedDocument:
-			b.PutID(0x037c9330)
-			return layerEncodeWire037c9330BareBody(profile, value, b, state)
-		case *InputMediaUploadedPhoto:
-			b.PutID(0x1e287d04)
-			return layerEncodeWire1e287d04BareBody(profile, value, b, state)
-		case *InputMediaVenue:
-			b.PutID(0xc13d1c11)
-			return layerEncodeWirec13d1c11BareBody(profile, value, b, state)
-		case *InputMediaWebPage:
-			b.PutID(0xc21b8849)
-			return layerEncodeWirec21b8849BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMediaContact:
 			b.PutID(0xf8ab7dfb)
@@ -10378,95 +9925,7 @@ func layerDecodeClassInputMedia(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220:
-		switch id {
-		case 0x037c9330:
-			return layerDecodeWire037c9330(profile, b, state)
-		case 0x0f94e5f1:
-			return layerDecodeWire0f94e5f1(profile, b, state)
-		case 0x1e287d04:
-			return layerDecodeWire1e287d04(profile, b, state)
-		case 0x405fef0d:
-			return layerDecodeWire405fef0d(profile, b, state)
-		case 0x779600f9:
-			return layerDecodeWire779600f9(profile, b, state)
-		case 0x89fdd778:
-			return layerDecodeWire89fdd778(profile, b, state)
-		case 0x9664f57f:
-			return layerDecodeWire9664f57f(profile, b, state)
-		case 0x971fa843:
-			return layerDecodeWire971fa843(profile, b, state)
-		case 0x9fc55fde:
-			return layerDecodeWire9fc55fde(profile, b, state)
-		case 0xa8763ab5:
-			return layerDecodeWirea8763ab5(profile, b, state)
-		case 0xb3ba0635:
-			return layerDecodeWireb3ba0635(profile, b, state)
-		case 0xc13d1c11:
-			return layerDecodeWirec13d1c11(profile, b, state)
-		case 0xc21b8849:
-			return layerDecodeWirec21b8849(profile, b, state)
-		case 0xc4103386:
-			return layerDecodeWirec4103386(profile, b, state)
-		case 0xd33f43f3:
-			return layerDecodeWired33f43f3(profile, b, state)
-		case 0xe5bbfe1a:
-			return layerDecodeWiree5bbfe1a(profile, b, state)
-		case 0xe66fbf7b:
-			return layerDecodeWiree66fbf7b(profile, b, state)
-		case 0xf8ab7dfb:
-			return layerDecodeWiref8ab7dfb(profile, b, state)
-		case 0xf9c44144:
-			return layerDecodeWiref9c44144(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x037c9330:
-			return layerDecodeWire037c9330(profile, b, state)
-		case 0x0f94e5f1:
-			return layerDecodeWire0f94e5f1(profile, b, state)
-		case 0x1e287d04:
-			return layerDecodeWire1e287d04(profile, b, state)
-		case 0x405fef0d:
-			return layerDecodeWire405fef0d(profile, b, state)
-		case 0x779600f9:
-			return layerDecodeWire779600f9(profile, b, state)
-		case 0x89fdd778:
-			return layerDecodeWire89fdd778(profile, b, state)
-		case 0x9664f57f:
-			return layerDecodeWire9664f57f(profile, b, state)
-		case 0x971fa843:
-			return layerDecodeWire971fa843(profile, b, state)
-		case 0x9fc55fde:
-			return layerDecodeWire9fc55fde(profile, b, state)
-		case 0xa8763ab5:
-			return layerDecodeWirea8763ab5(profile, b, state)
-		case 0xb3ba0635:
-			return layerDecodeWireb3ba0635(profile, b, state)
-		case 0xc13d1c11:
-			return layerDecodeWirec13d1c11(profile, b, state)
-		case 0xc21b8849:
-			return layerDecodeWirec21b8849(profile, b, state)
-		case 0xc4103386:
-			return layerDecodeWirec4103386(profile, b, state)
-		case 0xd33f43f3:
-			return layerDecodeWired33f43f3(profile, b, state)
-		case 0xe5bbfe1a:
-			return layerDecodeWiree5bbfe1a(profile, b, state)
-		case 0xe66fbf7b:
-			return layerDecodeWiree66fbf7b(profile, b, state)
-		case 0xf3a9244a:
-			return layerDecodeWiref3a9244a(profile, b, state)
-		case 0xf8ab7dfb:
-			return layerDecodeWiref8ab7dfb(profile, b, state)
-		case 0xf9c44144:
-			return layerDecodeWiref9c44144(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x037c9330:
 			return layerDecodeWire037c9330(profile, b, state)
@@ -10575,7 +10034,7 @@ func layerPreflightClassInputMessage(profile LayerProfile, value InputMessageCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMessageCallbackQuery:
 			return layerPreflightWireacfa1a7eBare(profile, value, state)
@@ -10607,7 +10066,7 @@ func layerEncodeClassInputMessageBody(profile LayerProfile, value InputMessageCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMessageCallbackQuery:
 			b.PutID(0xacfa1a7e)
@@ -10636,7 +10095,7 @@ func layerDecodeClassInputMessage(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x86872538:
 			return layerDecodeWire86872538(profile, b, state)
@@ -10677,6 +10136,16 @@ func layerProjectClassInputNotifyPeer(profile LayerProfile, value InputNotifyPee
 		result, ok := projected.(InputNotifyPeerClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputNotifyChats, Reason: "project hook returned a constructor outside class InputNotifyPeer"}
+		}
+		return result, true, nil
+	case *InputNotifyCommunity:
+		projected, keep, err := layerProjectFamilyInputNotifyCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(InputNotifyPeerClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputNotifyCommunity, Reason: "project hook returned a constructor outside class InputNotifyPeer"}
 		}
 		return result, true, nil
 	case *InputNotifyForumTopic:
@@ -10723,12 +10192,30 @@ func layerPreflightClassInputNotifyPeer(profile LayerProfile, value InputNotifyP
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputNotifyBroadcasts:
 			return layerPreflightWireb1db7c7eBare(profile, value, state)
 		case *InputNotifyChats:
 			return layerPreflightWire4a95e84eBare(profile, value, state)
+		case *InputNotifyForumTopic:
+			return layerPreflightWire5c467992Bare(profile, value, state)
+		case *InputNotifyPeer:
+			return layerPreflightWireb8bc5b0cBare(profile, value, state)
+		case *InputNotifyUsers:
+			return layerPreflightWire193b4417Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *InputNotifyBroadcasts:
+			return layerPreflightWireb1db7c7eBare(profile, value, state)
+		case *InputNotifyChats:
+			return layerPreflightWire4a95e84eBare(profile, value, state)
+		case *InputNotifyCommunity:
+			return layerPreflightWire27bb1adcBare(profile, value, state)
 		case *InputNotifyForumTopic:
 			return layerPreflightWire5c467992Bare(profile, value, state)
 		case *InputNotifyPeer:
@@ -10757,7 +10244,7 @@ func layerEncodeClassInputNotifyPeerBody(profile LayerProfile, value InputNotify
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputNotifyBroadcasts:
 			b.PutID(0xb1db7c7e)
@@ -10765,6 +10252,30 @@ func layerEncodeClassInputNotifyPeerBody(profile LayerProfile, value InputNotify
 		case *InputNotifyChats:
 			b.PutID(0x4a95e84e)
 			return layerEncodeWire4a95e84eBareBody(profile, value, b, state)
+		case *InputNotifyForumTopic:
+			b.PutID(0x5c467992)
+			return layerEncodeWire5c467992BareBody(profile, value, b, state)
+		case *InputNotifyPeer:
+			b.PutID(0xb8bc5b0c)
+			return layerEncodeWireb8bc5b0cBareBody(profile, value, b, state)
+		case *InputNotifyUsers:
+			b.PutID(0x193b4417)
+			return layerEncodeWire193b4417BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *InputNotifyBroadcasts:
+			b.PutID(0xb1db7c7e)
+			return layerEncodeWireb1db7c7eBareBody(profile, value, b, state)
+		case *InputNotifyChats:
+			b.PutID(0x4a95e84e)
+			return layerEncodeWire4a95e84eBareBody(profile, value, b, state)
+		case *InputNotifyCommunity:
+			b.PutID(0x27bb1adc)
+			return layerEncodeWire27bb1adcBareBody(profile, value, b, state)
 		case *InputNotifyForumTopic:
 			b.PutID(0x5c467992)
 			return layerEncodeWire5c467992BareBody(profile, value, b, state)
@@ -10789,10 +10300,27 @@ func layerDecodeClassInputNotifyPeer(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x193b4417:
 			return layerDecodeWire193b4417(profile, b, state)
+		case 0x4a95e84e:
+			return layerDecodeWire4a95e84e(profile, b, state)
+		case 0x5c467992:
+			return layerDecodeWire5c467992(profile, b, state)
+		case 0xb1db7c7e:
+			return layerDecodeWireb1db7c7e(profile, b, state)
+		case 0xb8bc5b0c:
+			return layerDecodeWireb8bc5b0c(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x193b4417:
+			return layerDecodeWire193b4417(profile, b, state)
+		case 0x27bb1adc:
+			return layerDecodeWire27bb1adc(profile, b, state)
 		case 0x4a95e84e:
 			return layerDecodeWire4a95e84e(profile, b, state)
 		case 0x5c467992:
@@ -10848,15 +10376,7 @@ func layerPreflightClassInputPasskeyCredential(profile LayerProfile, value Input
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *InputPasskeyCredentialPublicKey:
-			return layerPreflightWire3c27b78fBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPasskeyCredentialFirebasePNV:
 			return layerPreflightWire5b1ccb28Bare(profile, value, state)
@@ -10884,16 +10404,7 @@ func layerEncodeClassInputPasskeyCredentialBody(profile LayerProfile, value Inpu
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *InputPasskeyCredentialPublicKey:
-			b.PutID(0x3c27b78f)
-			return layerEncodeWire3c27b78fBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPasskeyCredentialFirebasePNV:
 			b.PutID(0x5b1ccb28)
@@ -10916,14 +10427,7 @@ func layerDecodeClassInputPasskeyCredential(profile LayerProfile, b *bin.Buffer,
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220:
-		switch id {
-		case 0x3c27b78f:
-			return layerDecodeWire3c27b78f(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3c27b78f:
 			return layerDecodeWire3c27b78f(profile, b, state)
@@ -10976,7 +10480,7 @@ func layerPreflightClassInputPasskeyResponse(profile LayerProfile, value InputPa
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPasskeyResponseLogin:
 			return layerPreflightWirec31fc14aBare(profile, value, state)
@@ -11004,7 +10508,7 @@ func layerEncodeClassInputPasskeyResponseBody(profile LayerProfile, value InputP
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPasskeyResponseLogin:
 			b.PutID(0xc31fc14a)
@@ -11027,7 +10531,7 @@ func layerDecodeClassInputPasskeyResponse(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3e63935c:
 			return layerDecodeWire3e63935c(profile, b, state)
@@ -11100,7 +10604,7 @@ func layerPreflightClassInputPaymentCredentials(profile LayerProfile, value Inpu
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPaymentCredentials:
 			return layerPreflightWire3417d728Bare(profile, value, state)
@@ -11132,7 +10636,7 @@ func layerEncodeClassInputPaymentCredentialsBody(profile LayerProfile, value Inp
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPaymentCredentials:
 			b.PutID(0x3417d728)
@@ -11161,7 +10665,7 @@ func layerDecodeClassInputPaymentCredentials(profile LayerProfile, b *bin.Buffer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0aa1c39f:
 			return layerDecodeWire0aa1c39f(profile, b, state)
@@ -11268,7 +10772,7 @@ func layerPreflightClassInputPeer(profile LayerProfile, value InputPeerClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPeerChannel:
 			return layerPreflightWire27bcbbfcBare(profile, value, state)
@@ -11306,7 +10810,7 @@ func layerEncodeClassInputPeerBody(profile LayerProfile, value InputPeerClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPeerChannel:
 			b.PutID(0x27bcbbfc)
@@ -11344,7 +10848,7 @@ func layerDecodeClassInputPeer(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x27bcbbfc:
 			return layerDecodeWire27bcbbfc(profile, b, state)
@@ -11407,7 +10911,7 @@ func layerPreflightClassInputPhoto(profile LayerProfile, value InputPhotoClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPhoto:
 			return layerPreflightWire3bb3b94aBare(profile, value, state)
@@ -11435,7 +10939,7 @@ func layerEncodeClassInputPhotoBody(profile LayerProfile, value InputPhotoClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPhoto:
 			b.PutID(0x3bb3b94a)
@@ -11458,7 +10962,7 @@ func layerDecodeClassInputPhoto(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1cd7bf0d:
 			return layerDecodeWire1cd7bf0d(profile, b, state)
@@ -11631,7 +11135,7 @@ func layerPreflightClassInputPrivacyKey(profile LayerProfile, value InputPrivacy
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPrivacyKeyAbout:
 			return layerPreflightWire3823cc40Bare(profile, value, state)
@@ -11683,7 +11187,7 @@ func layerEncodeClassInputPrivacyKeyBody(profile LayerProfile, value InputPrivac
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPrivacyKeyAbout:
 			b.PutID(0x3823cc40)
@@ -11742,7 +11246,7 @@ func layerDecodeClassInputPrivacyKey(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0352dafa:
 			return layerDecodeWire0352dafa(profile, b, state)
@@ -11919,7 +11423,7 @@ func layerPreflightClassInputPrivacyRule(profile LayerProfile, value InputPrivac
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPrivacyValueAllowAll:
 			return layerPreflightWire184b35ceBare(profile, value, state)
@@ -11967,7 +11471,7 @@ func layerEncodeClassInputPrivacyRuleBody(profile LayerProfile, value InputPriva
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPrivacyValueAllowAll:
 			b.PutID(0x184b35ce)
@@ -12020,7 +11524,7 @@ func layerDecodeClassInputPrivacyRule(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0ba52007:
 			return layerDecodeWire0ba52007(profile, b, state)
@@ -12093,7 +11597,7 @@ func layerPreflightClassInputQuickReplyShortcut(profile LayerProfile, value Inpu
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputQuickReplyShortcut:
 			return layerPreflightWire24596d41Bare(profile, value, state)
@@ -12121,7 +11625,7 @@ func layerEncodeClassInputQuickReplyShortcutBody(profile LayerProfile, value Inp
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputQuickReplyShortcut:
 			b.PutID(0x24596d41)
@@ -12144,7 +11648,7 @@ func layerDecodeClassInputQuickReplyShortcut(profile LayerProfile, b *bin.Buffer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x01190cf1:
 			return layerDecodeWire01190cf1(profile, b, state)
@@ -12163,6 +11667,16 @@ func layerProjectClassInputReplyTo(profile LayerProfile, value InputReplyToClass
 		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "nil class value"}
 	}
 	switch value := value.(type) {
+	case *InputReplyToEphemeralMessage:
+		projected, keep, err := layerProjectFamilyInputReplyToEphemeralMessage(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(InputReplyToClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputReplyToEphemeralMessage, Reason: "project hook returned a constructor outside class InputReplyTo"}
+		}
+		return result, true, nil
 	case *InputReplyToMessage:
 		projected, keep, err := layerProjectFamilyInputReplyToMessage(profile, value)
 		if err != nil || !keep {
@@ -12207,10 +11721,10 @@ func layerPreflightClassInputReplyTo(profile LayerProfile, value InputReplyToCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputReplyToMessage:
-			return layerPreflightWire869fbe10Bare(profile, value, state)
+			return layerPreflightWire3bd4b7c2Bare(profile, value, state)
 		case *InputReplyToMonoForum:
 			return layerPreflightWire69d66c45Bare(profile, value, state)
 		case *InputReplyToStory:
@@ -12219,8 +11733,10 @@ func layerPreflightClassInputReplyTo(profile LayerProfile, value InputReplyToCla
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch value := projected.(type) {
+		case *InputReplyToEphemeralMessage:
+			return layerPreflightWire4119b95eBare(profile, value, state)
 		case *InputReplyToMessage:
 			return layerPreflightWire3bd4b7c2Bare(profile, value, state)
 		case *InputReplyToMonoForum:
@@ -12249,11 +11765,11 @@ func layerEncodeClassInputReplyToBody(profile LayerProfile, value InputReplyToCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *InputReplyToMessage:
-			b.PutID(0x869fbe10)
-			return layerEncodeWire869fbe10BareBody(profile, value, b, state)
+			b.PutID(0x3bd4b7c2)
+			return layerEncodeWire3bd4b7c2BareBody(profile, value, b, state)
 		case *InputReplyToMonoForum:
 			b.PutID(0x69d66c45)
 			return layerEncodeWire69d66c45BareBody(profile, value, b, state)
@@ -12264,8 +11780,11 @@ func layerEncodeClassInputReplyToBody(profile LayerProfile, value InputReplyToCl
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch value := projected.(type) {
+		case *InputReplyToEphemeralMessage:
+			b.PutID(0x4119b95e)
+			return layerEncodeWire4119b95eBareBody(profile, value, b, state)
 		case *InputReplyToMessage:
 			b.PutID(0x3bd4b7c2)
 			return layerEncodeWire3bd4b7c2BareBody(profile, value, b, state)
@@ -12290,21 +11809,23 @@ func layerDecodeClassInputReplyTo(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
+		case 0x3bd4b7c2:
+			return layerDecodeWire3bd4b7c2(profile, b, state)
 		case 0x5881323a:
 			return layerDecodeWire5881323a(profile, b, state)
 		case 0x69d66c45:
 			return layerDecodeWire69d66c45(profile, b, state)
-		case 0x869fbe10:
-			return layerDecodeWire869fbe10(profile, b, state)
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch id {
 		case 0x3bd4b7c2:
 			return layerDecodeWire3bd4b7c2(profile, b, state)
+		case 0x4119b95e:
+			return layerDecodeWire4119b95e(profile, b, state)
 		case 0x5881323a:
 			return layerDecodeWire5881323a(profile, b, state)
 		case 0x69d66c45:
@@ -12356,13 +11877,13 @@ func layerPreflightClassInputRichFile(profile LayerProfile, value InputRichFileC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputRichFileDocument:
 			return layerPreflightWire83281dbdBare(profile, value, state)
@@ -12390,13 +11911,13 @@ func layerEncodeClassInputRichFileBody(profile LayerProfile, value InputRichFile
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputRichFileDocument:
 			b.PutID(0x83281dbd)
@@ -12419,12 +11940,12 @@ func layerDecodeClassInputRichFile(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x83281dbd:
 			return layerDecodeWire83281dbd(profile, b, state)
@@ -12487,13 +12008,13 @@ func layerPreflightClassInputRichMessage(profile LayerProfile, value InputRichMe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputRichMessage:
 			return layerPreflightWiree4c449fcBare(profile, value, state)
@@ -12523,13 +12044,13 @@ func layerEncodeClassInputRichMessageBody(profile LayerProfile, value InputRichM
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputRichMessage:
 			b.PutID(0xe4c449fc)
@@ -12555,12 +12076,12 @@ func layerDecodeClassInputRichMessage(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x004b572c:
 			return layerDecodeWire004b572c(profile, b, state)
@@ -12625,7 +12146,7 @@ func layerPreflightClassInputSavedStarGift(profile LayerProfile, value InputSave
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputSavedStarGiftChat:
 			return layerPreflightWiref101aa7fBare(profile, value, state)
@@ -12655,7 +12176,7 @@ func layerEncodeClassInputSavedStarGiftBody(profile LayerProfile, value InputSav
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputSavedStarGiftChat:
 			b.PutID(0xf101aa7f)
@@ -12681,7 +12202,7 @@ func layerDecodeClassInputSavedStarGift(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2085c238:
 			return layerDecodeWire2085c238(profile, b, state)
@@ -12736,7 +12257,7 @@ func layerPreflightClassInputSecureFile(profile LayerProfile, value InputSecureF
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputSecureFile:
 			return layerPreflightWire5367e5beBare(profile, value, state)
@@ -12764,7 +12285,7 @@ func layerEncodeClassInputSecureFileBody(profile LayerProfile, value InputSecure
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputSecureFile:
 			b.PutID(0x5367e5be)
@@ -12787,7 +12308,7 @@ func layerDecodeClassInputSecureFile(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3334b0f0:
 			return layerDecodeWire3334b0f0(profile, b, state)
@@ -12840,7 +12361,7 @@ func layerPreflightClassInputStarGiftAuction(profile LayerProfile, value InputSt
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStarGiftAuction:
 			return layerPreflightWire02e16c98Bare(profile, value, state)
@@ -12868,7 +12389,7 @@ func layerEncodeClassInputStarGiftAuctionBody(profile LayerProfile, value InputS
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStarGiftAuction:
 			b.PutID(0x02e16c98)
@@ -12891,7 +12412,7 @@ func layerDecodeClassInputStarGiftAuction(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x02e16c98:
 			return layerDecodeWire02e16c98(profile, b, state)
@@ -13044,7 +12565,7 @@ func layerPreflightClassInputStickerSet(profile LayerProfile, value InputSticker
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStickerSetAnimatedEmoji:
 			return layerPreflightWire028703c8Bare(profile, value, state)
@@ -13092,7 +12613,7 @@ func layerEncodeClassInputStickerSetBody(profile LayerProfile, value InputSticke
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStickerSetAnimatedEmoji:
 			b.PutID(0x028703c8)
@@ -13145,7 +12666,7 @@ func layerDecodeClassInputStickerSet(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x028703c8:
 			return layerDecodeWire028703c8(profile, b, state)
@@ -13218,7 +12739,7 @@ func layerPreflightClassInputStickeredMedia(profile LayerProfile, value InputSti
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStickeredMediaDocument:
 			return layerPreflightWire0438865bBare(profile, value, state)
@@ -13246,7 +12767,7 @@ func layerEncodeClassInputStickeredMediaBody(profile LayerProfile, value InputSt
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStickeredMediaDocument:
 			b.PutID(0x0438865b)
@@ -13269,7 +12790,7 @@ func layerDecodeClassInputStickeredMedia(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0438865b:
 			return layerDecodeWire0438865b(profile, b, state)
@@ -13382,7 +12903,7 @@ func layerPreflightClassInputStorePaymentPurpose(profile LayerProfile, value Inp
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *InputStorePaymentAuthCode:
 			return layerPreflightWire9bb2636dBare(profile, value, state)
@@ -13404,7 +12925,7 @@ func layerPreflightClassInputStorePaymentPurpose(profile LayerProfile, value Inp
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStorePaymentAuthCode:
 			return layerPreflightWire3fc18057Bare(profile, value, state)
@@ -13444,7 +12965,7 @@ func layerEncodeClassInputStorePaymentPurposeBody(profile LayerProfile, value In
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *InputStorePaymentAuthCode:
 			b.PutID(0x9bb2636d)
@@ -13474,7 +12995,7 @@ func layerEncodeClassInputStorePaymentPurposeBody(profile LayerProfile, value In
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputStorePaymentAuthCode:
 			b.PutID(0x3fc18057)
@@ -13515,7 +13036,7 @@ func layerDecodeClassInputStorePaymentPurpose(profile LayerProfile, b *bin.Buffe
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		case 0x160544ca:
 			return layerDecodeWire160544ca(profile, b, state)
@@ -13536,7 +13057,7 @@ func layerDecodeClassInputStorePaymentPurpose(profile LayerProfile, b *bin.Buffe
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x160544ca:
 			return layerDecodeWire160544ca(profile, b, state)
@@ -13601,7 +13122,7 @@ func layerPreflightClassInputTheme(profile LayerProfile, value InputThemeClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputTheme:
 			return layerPreflightWire3c5693e9Bare(profile, value, state)
@@ -13629,7 +13150,7 @@ func layerEncodeClassInputThemeBody(profile LayerProfile, value InputThemeClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputTheme:
 			b.PutID(0x3c5693e9)
@@ -13652,7 +13173,7 @@ func layerDecodeClassInputTheme(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3c5693e9:
 			return layerDecodeWire3c5693e9(profile, b, state)
@@ -13725,7 +13246,7 @@ func layerPreflightClassInputUser(profile LayerProfile, value InputUserClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputUser:
 			return layerPreflightWiref21158c6Bare(profile, value, state)
@@ -13757,7 +13278,7 @@ func layerEncodeClassInputUserBody(profile LayerProfile, value InputUserClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputUser:
 			b.PutID(0xf21158c6)
@@ -13786,7 +13307,7 @@ func layerDecodeClassInputUser(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1da448e2:
 			return layerDecodeWire1da448e2(profile, b, state)
@@ -13853,7 +13374,7 @@ func layerPreflightClassInputWallPaper(profile LayerProfile, value InputWallPape
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputWallPaper:
 			return layerPreflightWiree630b979Bare(profile, value, state)
@@ -13883,7 +13404,7 @@ func layerEncodeClassInputWallPaperBody(profile LayerProfile, value InputWallPap
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputWallPaper:
 			b.PutID(0xe630b979)
@@ -13909,7 +13430,7 @@ func layerDecodeClassInputWallPaper(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x72091c80:
 			return layerDecodeWire72091c80(profile, b, state)
@@ -13974,7 +13495,7 @@ func layerPreflightClassInputWebFileLocation(profile LayerProfile, value InputWe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputWebFileAudioAlbumThumbLocation:
 			return layerPreflightWiref46fe924Bare(profile, value, state)
@@ -14004,7 +13525,7 @@ func layerEncodeClassInputWebFileLocationBody(profile LayerProfile, value InputW
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputWebFileAudioAlbumThumbLocation:
 			b.PutID(0xf46fe924)
@@ -14030,7 +13551,7 @@ func layerDecodeClassInputWebFileLocation(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9f2221c9:
 			return layerDecodeWire9f2221c9(profile, b, state)
@@ -14085,7 +13606,7 @@ func layerPreflightClassIPPort(profile LayerProfile, value IPPortClass, state *l
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *IPPort:
 			return layerPreflightWired433ad73Bare(profile, value, state)
@@ -14113,7 +13634,7 @@ func layerEncodeClassIPPortBody(profile LayerProfile, value IPPortClass, b *bin.
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *IPPort:
 			b.PutID(0xd433ad73)
@@ -14136,7 +13657,7 @@ func layerDecodeClassIPPort(profile LayerProfile, b *bin.Buffer, state *layerCod
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x37982646:
 			return layerDecodeWire37982646(profile, b, state)
@@ -14229,7 +13750,7 @@ func layerPreflightClassJSONValue(profile LayerProfile, value JSONValueClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *JSONArray:
 			return layerPreflightWiref7444763Bare(profile, value, state)
@@ -14265,7 +13786,7 @@ func layerEncodeClassJSONValueBody(profile LayerProfile, value JSONValueClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *JSONArray:
 			b.PutID(0xf7444763)
@@ -14300,7 +13821,7 @@ func layerDecodeClassJSONValue(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2be0dfa4:
 			return layerDecodeWire2be0dfa4(profile, b, state)
@@ -14381,13 +13902,13 @@ func layerPreflightClassJoinChatBotResult(profile LayerProfile, value JoinChatBo
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *JoinChatBotResultApproved:
 			return layerPreflightWireae152a69Bare(profile, value, state)
@@ -14419,13 +13940,13 @@ func layerEncodeClassJoinChatBotResultBody(profile LayerProfile, value JoinChatB
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *JoinChatBotResultApproved:
 			b.PutID(0xae152a69)
@@ -14454,12 +13975,12 @@ func layerDecodeClassJoinChatBotResult(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0efa0194:
 			return layerDecodeWire0efa0194(profile, b, state)
@@ -14676,49 +14197,7 @@ func layerPreflightClassKeyboardButton(profile LayerProfile, value KeyboardButto
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *InputKeyboardButtonRequestPeer:
-			return layerPreflightWirec9662d05Bare(profile, value, state)
-		case *InputKeyboardButtonURLAuth:
-			return layerPreflightWired02e7fd4Bare(profile, value, state)
-		case *InputKeyboardButtonUserProfile:
-			return layerPreflightWiree988037bBare(profile, value, state)
-		case *KeyboardButton:
-			return layerPreflightWirea2fa4880Bare(profile, value, state)
-		case *KeyboardButtonBuy:
-			return layerPreflightWireafd93fbbBare(profile, value, state)
-		case *KeyboardButtonCallback:
-			return layerPreflightWire35bbdb6bBare(profile, value, state)
-		case *KeyboardButtonCopy:
-			return layerPreflightWire75d2698eBare(profile, value, state)
-		case *KeyboardButtonGame:
-			return layerPreflightWire50f41ccfBare(profile, value, state)
-		case *KeyboardButtonRequestGeoLocation:
-			return layerPreflightWirefc796b3fBare(profile, value, state)
-		case *KeyboardButtonRequestPeer:
-			return layerPreflightWire53d7bfd8Bare(profile, value, state)
-		case *KeyboardButtonRequestPhone:
-			return layerPreflightWireb16a6c29Bare(profile, value, state)
-		case *KeyboardButtonRequestPoll:
-			return layerPreflightWirebbc7515dBare(profile, value, state)
-		case *KeyboardButtonSimpleWebView:
-			return layerPreflightWirea0c0505cBare(profile, value, state)
-		case *KeyboardButtonSwitchInline:
-			return layerPreflightWire93b9fbb5Bare(profile, value, state)
-		case *KeyboardButtonURL:
-			return layerPreflightWire258aff05Bare(profile, value, state)
-		case *KeyboardButtonURLAuth:
-			return layerPreflightWire10b78d29Bare(profile, value, state)
-		case *KeyboardButtonUserProfile:
-			return layerPreflightWire308660c1Bare(profile, value, state)
-		case *KeyboardButtonWebView:
-			return layerPreflightWire13767230Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputKeyboardButtonRequestPeer:
 			return layerPreflightWire02b78156Bare(profile, value, state)
@@ -14778,67 +14257,7 @@ func layerEncodeClassKeyboardButtonBody(profile LayerProfile, value KeyboardButt
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *InputKeyboardButtonRequestPeer:
-			b.PutID(0xc9662d05)
-			return layerEncodeWirec9662d05BareBody(profile, value, b, state)
-		case *InputKeyboardButtonURLAuth:
-			b.PutID(0xd02e7fd4)
-			return layerEncodeWired02e7fd4BareBody(profile, value, b, state)
-		case *InputKeyboardButtonUserProfile:
-			b.PutID(0xe988037b)
-			return layerEncodeWiree988037bBareBody(profile, value, b, state)
-		case *KeyboardButton:
-			b.PutID(0xa2fa4880)
-			return layerEncodeWirea2fa4880BareBody(profile, value, b, state)
-		case *KeyboardButtonBuy:
-			b.PutID(0xafd93fbb)
-			return layerEncodeWireafd93fbbBareBody(profile, value, b, state)
-		case *KeyboardButtonCallback:
-			b.PutID(0x35bbdb6b)
-			return layerEncodeWire35bbdb6bBareBody(profile, value, b, state)
-		case *KeyboardButtonCopy:
-			b.PutID(0x75d2698e)
-			return layerEncodeWire75d2698eBareBody(profile, value, b, state)
-		case *KeyboardButtonGame:
-			b.PutID(0x50f41ccf)
-			return layerEncodeWire50f41ccfBareBody(profile, value, b, state)
-		case *KeyboardButtonRequestGeoLocation:
-			b.PutID(0xfc796b3f)
-			return layerEncodeWirefc796b3fBareBody(profile, value, b, state)
-		case *KeyboardButtonRequestPeer:
-			b.PutID(0x53d7bfd8)
-			return layerEncodeWire53d7bfd8BareBody(profile, value, b, state)
-		case *KeyboardButtonRequestPhone:
-			b.PutID(0xb16a6c29)
-			return layerEncodeWireb16a6c29BareBody(profile, value, b, state)
-		case *KeyboardButtonRequestPoll:
-			b.PutID(0xbbc7515d)
-			return layerEncodeWirebbc7515dBareBody(profile, value, b, state)
-		case *KeyboardButtonSimpleWebView:
-			b.PutID(0xa0c0505c)
-			return layerEncodeWirea0c0505cBareBody(profile, value, b, state)
-		case *KeyboardButtonSwitchInline:
-			b.PutID(0x93b9fbb5)
-			return layerEncodeWire93b9fbb5BareBody(profile, value, b, state)
-		case *KeyboardButtonURL:
-			b.PutID(0x258aff05)
-			return layerEncodeWire258aff05BareBody(profile, value, b, state)
-		case *KeyboardButtonURLAuth:
-			b.PutID(0x10b78d29)
-			return layerEncodeWire10b78d29BareBody(profile, value, b, state)
-		case *KeyboardButtonUserProfile:
-			b.PutID(0x308660c1)
-			return layerEncodeWire308660c1BareBody(profile, value, b, state)
-		case *KeyboardButtonWebView:
-			b.PutID(0x13767230)
-			return layerEncodeWire13767230BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputKeyboardButtonRequestPeer:
 			b.PutID(0x02b78156)
@@ -14909,48 +14328,7 @@ func layerDecodeClassKeyboardButton(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch id {
-		case 0x10b78d29:
-			return layerDecodeWire10b78d29(profile, b, state)
-		case 0x13767230:
-			return layerDecodeWire13767230(profile, b, state)
-		case 0x258aff05:
-			return layerDecodeWire258aff05(profile, b, state)
-		case 0x308660c1:
-			return layerDecodeWire308660c1(profile, b, state)
-		case 0x35bbdb6b:
-			return layerDecodeWire35bbdb6b(profile, b, state)
-		case 0x50f41ccf:
-			return layerDecodeWire50f41ccf(profile, b, state)
-		case 0x53d7bfd8:
-			return layerDecodeWire53d7bfd8(profile, b, state)
-		case 0x75d2698e:
-			return layerDecodeWire75d2698e(profile, b, state)
-		case 0x93b9fbb5:
-			return layerDecodeWire93b9fbb5(profile, b, state)
-		case 0xa0c0505c:
-			return layerDecodeWirea0c0505c(profile, b, state)
-		case 0xa2fa4880:
-			return layerDecodeWirea2fa4880(profile, b, state)
-		case 0xafd93fbb:
-			return layerDecodeWireafd93fbb(profile, b, state)
-		case 0xb16a6c29:
-			return layerDecodeWireb16a6c29(profile, b, state)
-		case 0xbbc7515d:
-			return layerDecodeWirebbc7515d(profile, b, state)
-		case 0xc9662d05:
-			return layerDecodeWirec9662d05(profile, b, state)
-		case 0xd02e7fd4:
-			return layerDecodeWired02e7fd4(profile, b, state)
-		case 0xe988037b:
-			return layerDecodeWiree988037b(profile, b, state)
-		case 0xfc796b3f:
-			return layerDecodeWirefc796b3f(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x02b78156:
 			return layerDecodeWire02b78156(profile, b, state)
@@ -15045,7 +14423,7 @@ func layerPreflightClassLangPackString(profile LayerProfile, value LangPackStrin
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *LangPackString:
 			return layerPreflightWirecad181f6Bare(profile, value, state)
@@ -15075,7 +14453,7 @@ func layerEncodeClassLangPackStringBody(profile LayerProfile, value LangPackStri
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *LangPackString:
 			b.PutID(0xcad181f6)
@@ -15101,7 +14479,7 @@ func layerDecodeClassLangPackString(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2979eeb2:
 			return layerDecodeWire2979eeb2(profile, b, state)
@@ -15226,7 +14604,7 @@ func layerPreflightClassMediaArea(profile LayerProfile, value MediaAreaClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMediaAreaChannelPost:
 			return layerPreflightWire2271f2bfBare(profile, value, state)
@@ -15268,7 +14646,7 @@ func layerEncodeClassMediaAreaBody(profile LayerProfile, value MediaAreaClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMediaAreaChannelPost:
 			b.PutID(0x2271f2bf)
@@ -15312,7 +14690,7 @@ func layerDecodeClassMediaArea(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x14455871:
 			return layerDecodeWire14455871(profile, b, state)
@@ -15389,42 +14767,6 @@ func layerPreflightClassMessage(profile LayerProfile, value MessageClass, state 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *Message:
-			return layerPreflightWireb92f76cfBare(profile, value, state)
-		case *MessageEmpty:
-			return layerPreflightWire90a6ca84Bare(profile, value, state)
-		case *MessageService:
-			return layerPreflightWire7a800e0aBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *Message:
-			return layerPreflightWire9cb490e9Bare(profile, value, state)
-		case *MessageEmpty:
-			return layerPreflightWire90a6ca84Bare(profile, value, state)
-		case *MessageService:
-			return layerPreflightWire7a800e0aBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		case *Message:
-			return layerPreflightWire3ae56482Bare(profile, value, state)
-		case *MessageEmpty:
-			return layerPreflightWire90a6ca84Bare(profile, value, state)
-		case *MessageService:
-			return layerPreflightWire7a800e0aBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
 	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *Message:
@@ -15437,7 +14779,7 @@ func layerPreflightClassMessage(profile LayerProfile, value MessageClass, state 
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *Message:
 			return layerPreflightWire7600b9d3Bare(profile, value, state)
@@ -15467,51 +14809,6 @@ func layerEncodeClassMessageBody(profile LayerProfile, value MessageClass, b *bi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *Message:
-			b.PutID(0xb92f76cf)
-			return layerEncodeWireb92f76cfBareBody(profile, value, b, state)
-		case *MessageEmpty:
-			b.PutID(0x90a6ca84)
-			return layerEncodeWire90a6ca84BareBody(profile, value, b, state)
-		case *MessageService:
-			b.PutID(0x7a800e0a)
-			return layerEncodeWire7a800e0aBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *Message:
-			b.PutID(0x9cb490e9)
-			return layerEncodeWire9cb490e9BareBody(profile, value, b, state)
-		case *MessageEmpty:
-			b.PutID(0x90a6ca84)
-			return layerEncodeWire90a6ca84BareBody(profile, value, b, state)
-		case *MessageService:
-			b.PutID(0x7a800e0a)
-			return layerEncodeWire7a800e0aBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		case *Message:
-			b.PutID(0x3ae56482)
-			return layerEncodeWire3ae56482BareBody(profile, value, b, state)
-		case *MessageEmpty:
-			b.PutID(0x90a6ca84)
-			return layerEncodeWire90a6ca84BareBody(profile, value, b, state)
-		case *MessageService:
-			b.PutID(0x7a800e0a)
-			return layerEncodeWire7a800e0aBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
 	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *Message:
@@ -15527,7 +14824,7 @@ func layerEncodeClassMessageBody(profile LayerProfile, value MessageClass, b *bi
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *Message:
 			b.PutID(0x7600b9d3)
@@ -15553,39 +14850,6 @@ func layerDecodeClassMessage(profile LayerProfile, b *bin.Buffer, state *layerCo
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220:
-		switch id {
-		case 0x7a800e0a:
-			return layerDecodeWire7a800e0a(profile, b, state)
-		case 0x90a6ca84:
-			return layerDecodeWire90a6ca84(profile, b, state)
-		case 0xb92f76cf:
-			return layerDecodeWireb92f76cf(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222:
-		switch id {
-		case 0x7a800e0a:
-			return layerDecodeWire7a800e0a(profile, b, state)
-		case 0x90a6ca84:
-			return layerDecodeWire90a6ca84(profile, b, state)
-		case 0x9cb490e9:
-			return layerDecodeWire9cb490e9(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223, LayerProfile224:
-		switch id {
-		case 0x3ae56482:
-			return layerDecodeWire3ae56482(profile, b, state)
-		case 0x7a800e0a:
-			return layerDecodeWire7a800e0a(profile, b, state)
-		case 0x90a6ca84:
-			return layerDecodeWire90a6ca84(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
 	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x7a800e0a:
@@ -15597,7 +14861,7 @@ func layerDecodeClassMessage(profile LayerProfile, b *bin.Buffer, state *layerCo
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x7600b9d3:
 			return layerDecodeWire7600b9d3(profile, b, state)
@@ -15636,6 +14900,16 @@ func layerProjectClassMessageAction(profile LayerProfile, value MessageActionCla
 		result, ok := projected.(MessageActionClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeMessageActionBotAllowed, Reason: "project hook returned a constructor outside class MessageAction"}
+		}
+		return result, true, nil
+	case *MessageActionChangeCommunity:
+		projected, keep, err := layerProjectFamilyMessageActionChangeCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(MessageActionClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeMessageActionChangeCommunity, Reason: "project hook returned a constructor outside class MessageAction"}
 		}
 		return result, true, nil
 	case *MessageActionChangeCreator:
@@ -16302,133 +15576,7 @@ func layerPreflightClassMessageAction(profile LayerProfile, value MessageActionC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *MessageActionBoostApply:
-			return layerPreflightWirecc02aa6dBare(profile, value, state)
-		case *MessageActionBotAllowed:
-			return layerPreflightWirec516d679Bare(profile, value, state)
-		case *MessageActionChannelCreate:
-			return layerPreflightWire95d2ac92Bare(profile, value, state)
-		case *MessageActionChannelMigrateFrom:
-			return layerPreflightWireea3948e9Bare(profile, value, state)
-		case *MessageActionChatAddUser:
-			return layerPreflightWire15cefd00Bare(profile, value, state)
-		case *MessageActionChatCreate:
-			return layerPreflightWirebd47cbadBare(profile, value, state)
-		case *MessageActionChatDeletePhoto:
-			return layerPreflightWire95e3fbefBare(profile, value, state)
-		case *MessageActionChatDeleteUser:
-			return layerPreflightWirea43f30ccBare(profile, value, state)
-		case *MessageActionChatEditPhoto:
-			return layerPreflightWire7fcb13a8Bare(profile, value, state)
-		case *MessageActionChatEditTitle:
-			return layerPreflightWireb5a1ce5aBare(profile, value, state)
-		case *MessageActionChatJoinedByLink:
-			return layerPreflightWire031224c3Bare(profile, value, state)
-		case *MessageActionChatJoinedByRequest:
-			return layerPreflightWireebbca3cbBare(profile, value, state)
-		case *MessageActionChatMigrateTo:
-			return layerPreflightWiree1037f92Bare(profile, value, state)
-		case *MessageActionConferenceCall:
-			return layerPreflightWire2ffe2f7aBare(profile, value, state)
-		case *MessageActionContactSignUp:
-			return layerPreflightWiref3f25f76Bare(profile, value, state)
-		case *MessageActionCustomAction:
-			return layerPreflightWirefae69f56Bare(profile, value, state)
-		case *MessageActionEmpty:
-			return layerPreflightWireb6aef7b0Bare(profile, value, state)
-		case *MessageActionGameScore:
-			return layerPreflightWire92a72876Bare(profile, value, state)
-		case *MessageActionGeoProximityReached:
-			return layerPreflightWire98e0d697Bare(profile, value, state)
-		case *MessageActionGiftCode:
-			return layerPreflightWire31c48347Bare(profile, value, state)
-		case *MessageActionGiftPremium:
-			return layerPreflightWire48e91302Bare(profile, value, state)
-		case *MessageActionGiftStars:
-			return layerPreflightWire45d5b021Bare(profile, value, state)
-		case *MessageActionGiftTon:
-			return layerPreflightWirea8a3c699Bare(profile, value, state)
-		case *MessageActionGiveawayLaunch:
-			return layerPreflightWirea80f51e4Bare(profile, value, state)
-		case *MessageActionGiveawayResults:
-			return layerPreflightWire87e2f155Bare(profile, value, state)
-		case *MessageActionGroupCall:
-			return layerPreflightWire7a0d7f42Bare(profile, value, state)
-		case *MessageActionGroupCallScheduled:
-			return layerPreflightWireb3a07661Bare(profile, value, state)
-		case *MessageActionHistoryClear:
-			return layerPreflightWire9fbab604Bare(profile, value, state)
-		case *MessageActionInviteToGroupCall:
-			return layerPreflightWire502f92f7Bare(profile, value, state)
-		case *MessageActionPaidMessagesPrice:
-			return layerPreflightWire84b88578Bare(profile, value, state)
-		case *MessageActionPaidMessagesRefunded:
-			return layerPreflightWireac1f1fcdBare(profile, value, state)
-		case *MessageActionPaymentRefunded:
-			return layerPreflightWire41b3e202Bare(profile, value, state)
-		case *MessageActionPaymentSent:
-			return layerPreflightWirec624b16eBare(profile, value, state)
-		case *MessageActionPaymentSentMe:
-			return layerPreflightWireffa00cccBare(profile, value, state)
-		case *MessageActionPhoneCall:
-			return layerPreflightWire80e11a7fBare(profile, value, state)
-		case *MessageActionPinMessage:
-			return layerPreflightWire94bd38edBare(profile, value, state)
-		case *MessageActionPrizeStars:
-			return layerPreflightWireb00c47a2Bare(profile, value, state)
-		case *MessageActionRequestedPeer:
-			return layerPreflightWire31518e9bBare(profile, value, state)
-		case *MessageActionRequestedPeerSentMe:
-			return layerPreflightWire93b31848Bare(profile, value, state)
-		case *MessageActionScreenshotTaken:
-			return layerPreflightWire4792929bBare(profile, value, state)
-		case *MessageActionSecureValuesSent:
-			return layerPreflightWired95c6154Bare(profile, value, state)
-		case *MessageActionSecureValuesSentMe:
-			return layerPreflightWire1b287353Bare(profile, value, state)
-		case *MessageActionSetChatTheme:
-			return layerPreflightWireb91bbd3aBare(profile, value, state)
-		case *MessageActionSetChatWallPaper:
-			return layerPreflightWire5060a3f4Bare(profile, value, state)
-		case *MessageActionSetMessagesTTL:
-			return layerPreflightWire3c134d7bBare(profile, value, state)
-		case *MessageActionStarGift:
-			return layerPreflightWireea2c31d3Bare(profile, value, state)
-		case *MessageActionStarGiftPurchaseOffer:
-			return layerPreflightWire774278d4Bare(profile, value, state)
-		case *MessageActionStarGiftPurchaseOfferDeclined:
-			return layerPreflightWire73ada76bBare(profile, value, state)
-		case *MessageActionStarGiftUnique:
-			return layerPreflightWire95728543Bare(profile, value, state)
-		case *MessageActionSuggestBirthday:
-			return layerPreflightWire2c8f2a25Bare(profile, value, state)
-		case *MessageActionSuggestProfilePhoto:
-			return layerPreflightWire57de635eBare(profile, value, state)
-		case *MessageActionSuggestedPostApproval:
-			return layerPreflightWireee7a1596Bare(profile, value, state)
-		case *MessageActionSuggestedPostRefund:
-			return layerPreflightWire69f916f8Bare(profile, value, state)
-		case *MessageActionSuggestedPostSuccess:
-			return layerPreflightWire95ddcf69Bare(profile, value, state)
-		case *MessageActionTodoAppendTasks:
-			return layerPreflightWirec7edbc83Bare(profile, value, state)
-		case *MessageActionTodoCompletions:
-			return layerPreflightWirecc7c5c89Bare(profile, value, state)
-		case *MessageActionTopicCreate:
-			return layerPreflightWire0d999256Bare(profile, value, state)
-		case *MessageActionTopicEdit:
-			return layerPreflightWirec0944820Bare(profile, value, state)
-		case *MessageActionWebViewDataSent:
-			return layerPreflightWireb4c38cb5Bare(profile, value, state)
-		case *MessageActionWebViewDataSentMe:
-			return layerPreflightWire47dd8079Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *MessageActionBoostApply:
 			return layerPreflightWirecc02aa6dBare(profile, value, state)
@@ -16490,136 +15638,8 @@ func layerPreflightClassMessageAction(profile LayerProfile, value MessageActionC
 			return layerPreflightWire9fbab604Bare(profile, value, state)
 		case *MessageActionInviteToGroupCall:
 			return layerPreflightWire502f92f7Bare(profile, value, state)
-		case *MessageActionNewCreatorPending:
-			return layerPreflightWireb07ed085Bare(profile, value, state)
-		case *MessageActionPaidMessagesPrice:
-			return layerPreflightWire84b88578Bare(profile, value, state)
-		case *MessageActionPaidMessagesRefunded:
-			return layerPreflightWireac1f1fcdBare(profile, value, state)
-		case *MessageActionPaymentRefunded:
-			return layerPreflightWire41b3e202Bare(profile, value, state)
-		case *MessageActionPaymentSent:
-			return layerPreflightWirec624b16eBare(profile, value, state)
-		case *MessageActionPaymentSentMe:
-			return layerPreflightWireffa00cccBare(profile, value, state)
-		case *MessageActionPhoneCall:
-			return layerPreflightWire80e11a7fBare(profile, value, state)
-		case *MessageActionPinMessage:
-			return layerPreflightWire94bd38edBare(profile, value, state)
-		case *MessageActionPrizeStars:
-			return layerPreflightWireb00c47a2Bare(profile, value, state)
-		case *MessageActionRequestedPeer:
-			return layerPreflightWire31518e9bBare(profile, value, state)
-		case *MessageActionRequestedPeerSentMe:
-			return layerPreflightWire93b31848Bare(profile, value, state)
-		case *MessageActionScreenshotTaken:
-			return layerPreflightWire4792929bBare(profile, value, state)
-		case *MessageActionSecureValuesSent:
-			return layerPreflightWired95c6154Bare(profile, value, state)
-		case *MessageActionSecureValuesSentMe:
-			return layerPreflightWire1b287353Bare(profile, value, state)
-		case *MessageActionSetChatTheme:
-			return layerPreflightWireb91bbd3aBare(profile, value, state)
-		case *MessageActionSetChatWallPaper:
-			return layerPreflightWire5060a3f4Bare(profile, value, state)
-		case *MessageActionSetMessagesTTL:
-			return layerPreflightWire3c134d7bBare(profile, value, state)
-		case *MessageActionStarGift:
-			return layerPreflightWireea2c31d3Bare(profile, value, state)
-		case *MessageActionStarGiftPurchaseOffer:
-			return layerPreflightWire774278d4Bare(profile, value, state)
-		case *MessageActionStarGiftPurchaseOfferDeclined:
-			return layerPreflightWire73ada76bBare(profile, value, state)
-		case *MessageActionStarGiftUnique:
-			return layerPreflightWiree6c31522Bare(profile, value, state)
-		case *MessageActionSuggestBirthday:
-			return layerPreflightWire2c8f2a25Bare(profile, value, state)
-		case *MessageActionSuggestProfilePhoto:
-			return layerPreflightWire57de635eBare(profile, value, state)
-		case *MessageActionSuggestedPostApproval:
-			return layerPreflightWireee7a1596Bare(profile, value, state)
-		case *MessageActionSuggestedPostRefund:
-			return layerPreflightWire69f916f8Bare(profile, value, state)
-		case *MessageActionSuggestedPostSuccess:
-			return layerPreflightWire95ddcf69Bare(profile, value, state)
-		case *MessageActionTodoAppendTasks:
-			return layerPreflightWirec7edbc83Bare(profile, value, state)
-		case *MessageActionTodoCompletions:
-			return layerPreflightWirecc7c5c89Bare(profile, value, state)
-		case *MessageActionTopicCreate:
-			return layerPreflightWire0d999256Bare(profile, value, state)
-		case *MessageActionTopicEdit:
-			return layerPreflightWirec0944820Bare(profile, value, state)
-		case *MessageActionWebViewDataSent:
-			return layerPreflightWireb4c38cb5Bare(profile, value, state)
-		case *MessageActionWebViewDataSentMe:
-			return layerPreflightWire47dd8079Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *MessageActionBoostApply:
-			return layerPreflightWirecc02aa6dBare(profile, value, state)
-		case *MessageActionBotAllowed:
-			return layerPreflightWirec516d679Bare(profile, value, state)
-		case *MessageActionChangeCreator:
-			return layerPreflightWiree188503bBare(profile, value, state)
-		case *MessageActionChannelCreate:
-			return layerPreflightWire95d2ac92Bare(profile, value, state)
-		case *MessageActionChannelMigrateFrom:
-			return layerPreflightWireea3948e9Bare(profile, value, state)
-		case *MessageActionChatAddUser:
-			return layerPreflightWire15cefd00Bare(profile, value, state)
-		case *MessageActionChatCreate:
-			return layerPreflightWirebd47cbadBare(profile, value, state)
-		case *MessageActionChatDeletePhoto:
-			return layerPreflightWire95e3fbefBare(profile, value, state)
-		case *MessageActionChatDeleteUser:
-			return layerPreflightWirea43f30ccBare(profile, value, state)
-		case *MessageActionChatEditPhoto:
-			return layerPreflightWire7fcb13a8Bare(profile, value, state)
-		case *MessageActionChatEditTitle:
-			return layerPreflightWireb5a1ce5aBare(profile, value, state)
-		case *MessageActionChatJoinedByLink:
-			return layerPreflightWire031224c3Bare(profile, value, state)
-		case *MessageActionChatJoinedByRequest:
-			return layerPreflightWireebbca3cbBare(profile, value, state)
-		case *MessageActionChatMigrateTo:
-			return layerPreflightWiree1037f92Bare(profile, value, state)
-		case *MessageActionConferenceCall:
-			return layerPreflightWire2ffe2f7aBare(profile, value, state)
-		case *MessageActionContactSignUp:
-			return layerPreflightWiref3f25f76Bare(profile, value, state)
-		case *MessageActionCustomAction:
-			return layerPreflightWirefae69f56Bare(profile, value, state)
-		case *MessageActionEmpty:
-			return layerPreflightWireb6aef7b0Bare(profile, value, state)
-		case *MessageActionGameScore:
-			return layerPreflightWire92a72876Bare(profile, value, state)
-		case *MessageActionGeoProximityReached:
-			return layerPreflightWire98e0d697Bare(profile, value, state)
-		case *MessageActionGiftCode:
-			return layerPreflightWire31c48347Bare(profile, value, state)
-		case *MessageActionGiftPremium:
-			return layerPreflightWire48e91302Bare(profile, value, state)
-		case *MessageActionGiftStars:
-			return layerPreflightWire45d5b021Bare(profile, value, state)
-		case *MessageActionGiftTon:
-			return layerPreflightWirea8a3c699Bare(profile, value, state)
-		case *MessageActionGiveawayLaunch:
-			return layerPreflightWirea80f51e4Bare(profile, value, state)
-		case *MessageActionGiveawayResults:
-			return layerPreflightWire87e2f155Bare(profile, value, state)
-		case *MessageActionGroupCall:
-			return layerPreflightWire7a0d7f42Bare(profile, value, state)
-		case *MessageActionGroupCallScheduled:
-			return layerPreflightWireb3a07661Bare(profile, value, state)
-		case *MessageActionHistoryClear:
-			return layerPreflightWire9fbab604Bare(profile, value, state)
-		case *MessageActionInviteToGroupCall:
-			return layerPreflightWire502f92f7Bare(profile, value, state)
+		case *MessageActionManagedBotCreated:
+			return layerPreflightWire16605e3eBare(profile, value, state)
 		case *MessageActionNewCreatorPending:
 			return layerPreflightWireb07ed085Bare(profile, value, state)
 		case *MessageActionNoForwardsRequest:
@@ -16640,6 +15660,10 @@ func layerPreflightClassMessageAction(profile LayerProfile, value MessageActionC
 			return layerPreflightWire80e11a7fBare(profile, value, state)
 		case *MessageActionPinMessage:
 			return layerPreflightWire94bd38edBare(profile, value, state)
+		case *MessageActionPollAppendAnswer:
+			return layerPreflightWire9da1cd6cBare(profile, value, state)
+		case *MessageActionPollDeleteAnswer:
+			return layerPreflightWire399674dcBare(profile, value, state)
 		case *MessageActionPrizeStars:
 			return layerPreflightWireb00c47a2Bare(profile, value, state)
 		case *MessageActionRequestedPeer:
@@ -16692,12 +15716,14 @@ func layerPreflightClassMessageAction(profile LayerProfile, value MessageActionC
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageActionBoostApply:
 			return layerPreflightWirecc02aa6dBare(profile, value, state)
 		case *MessageActionBotAllowed:
 			return layerPreflightWirec516d679Bare(profile, value, state)
+		case *MessageActionChangeCommunity:
+			return layerPreflightWire5d20bae8Bare(profile, value, state)
 		case *MessageActionChangeCreator:
 			return layerPreflightWiree188503bBare(profile, value, state)
 		case *MessageActionChannelCreate:
@@ -16850,193 +15876,7 @@ func layerEncodeClassMessageActionBody(profile LayerProfile, value MessageAction
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *MessageActionBoostApply:
-			b.PutID(0xcc02aa6d)
-			return layerEncodeWirecc02aa6dBareBody(profile, value, b, state)
-		case *MessageActionBotAllowed:
-			b.PutID(0xc516d679)
-			return layerEncodeWirec516d679BareBody(profile, value, b, state)
-		case *MessageActionChannelCreate:
-			b.PutID(0x95d2ac92)
-			return layerEncodeWire95d2ac92BareBody(profile, value, b, state)
-		case *MessageActionChannelMigrateFrom:
-			b.PutID(0xea3948e9)
-			return layerEncodeWireea3948e9BareBody(profile, value, b, state)
-		case *MessageActionChatAddUser:
-			b.PutID(0x15cefd00)
-			return layerEncodeWire15cefd00BareBody(profile, value, b, state)
-		case *MessageActionChatCreate:
-			b.PutID(0xbd47cbad)
-			return layerEncodeWirebd47cbadBareBody(profile, value, b, state)
-		case *MessageActionChatDeletePhoto:
-			b.PutID(0x95e3fbef)
-			return layerEncodeWire95e3fbefBareBody(profile, value, b, state)
-		case *MessageActionChatDeleteUser:
-			b.PutID(0xa43f30cc)
-			return layerEncodeWirea43f30ccBareBody(profile, value, b, state)
-		case *MessageActionChatEditPhoto:
-			b.PutID(0x7fcb13a8)
-			return layerEncodeWire7fcb13a8BareBody(profile, value, b, state)
-		case *MessageActionChatEditTitle:
-			b.PutID(0xb5a1ce5a)
-			return layerEncodeWireb5a1ce5aBareBody(profile, value, b, state)
-		case *MessageActionChatJoinedByLink:
-			b.PutID(0x031224c3)
-			return layerEncodeWire031224c3BareBody(profile, value, b, state)
-		case *MessageActionChatJoinedByRequest:
-			b.PutID(0xebbca3cb)
-			return layerEncodeWireebbca3cbBareBody(profile, value, b, state)
-		case *MessageActionChatMigrateTo:
-			b.PutID(0xe1037f92)
-			return layerEncodeWiree1037f92BareBody(profile, value, b, state)
-		case *MessageActionConferenceCall:
-			b.PutID(0x2ffe2f7a)
-			return layerEncodeWire2ffe2f7aBareBody(profile, value, b, state)
-		case *MessageActionContactSignUp:
-			b.PutID(0xf3f25f76)
-			return layerEncodeWiref3f25f76BareBody(profile, value, b, state)
-		case *MessageActionCustomAction:
-			b.PutID(0xfae69f56)
-			return layerEncodeWirefae69f56BareBody(profile, value, b, state)
-		case *MessageActionEmpty:
-			b.PutID(0xb6aef7b0)
-			return layerEncodeWireb6aef7b0BareBody(profile, value, b, state)
-		case *MessageActionGameScore:
-			b.PutID(0x92a72876)
-			return layerEncodeWire92a72876BareBody(profile, value, b, state)
-		case *MessageActionGeoProximityReached:
-			b.PutID(0x98e0d697)
-			return layerEncodeWire98e0d697BareBody(profile, value, b, state)
-		case *MessageActionGiftCode:
-			b.PutID(0x31c48347)
-			return layerEncodeWire31c48347BareBody(profile, value, b, state)
-		case *MessageActionGiftPremium:
-			b.PutID(0x48e91302)
-			return layerEncodeWire48e91302BareBody(profile, value, b, state)
-		case *MessageActionGiftStars:
-			b.PutID(0x45d5b021)
-			return layerEncodeWire45d5b021BareBody(profile, value, b, state)
-		case *MessageActionGiftTon:
-			b.PutID(0xa8a3c699)
-			return layerEncodeWirea8a3c699BareBody(profile, value, b, state)
-		case *MessageActionGiveawayLaunch:
-			b.PutID(0xa80f51e4)
-			return layerEncodeWirea80f51e4BareBody(profile, value, b, state)
-		case *MessageActionGiveawayResults:
-			b.PutID(0x87e2f155)
-			return layerEncodeWire87e2f155BareBody(profile, value, b, state)
-		case *MessageActionGroupCall:
-			b.PutID(0x7a0d7f42)
-			return layerEncodeWire7a0d7f42BareBody(profile, value, b, state)
-		case *MessageActionGroupCallScheduled:
-			b.PutID(0xb3a07661)
-			return layerEncodeWireb3a07661BareBody(profile, value, b, state)
-		case *MessageActionHistoryClear:
-			b.PutID(0x9fbab604)
-			return layerEncodeWire9fbab604BareBody(profile, value, b, state)
-		case *MessageActionInviteToGroupCall:
-			b.PutID(0x502f92f7)
-			return layerEncodeWire502f92f7BareBody(profile, value, b, state)
-		case *MessageActionPaidMessagesPrice:
-			b.PutID(0x84b88578)
-			return layerEncodeWire84b88578BareBody(profile, value, b, state)
-		case *MessageActionPaidMessagesRefunded:
-			b.PutID(0xac1f1fcd)
-			return layerEncodeWireac1f1fcdBareBody(profile, value, b, state)
-		case *MessageActionPaymentRefunded:
-			b.PutID(0x41b3e202)
-			return layerEncodeWire41b3e202BareBody(profile, value, b, state)
-		case *MessageActionPaymentSent:
-			b.PutID(0xc624b16e)
-			return layerEncodeWirec624b16eBareBody(profile, value, b, state)
-		case *MessageActionPaymentSentMe:
-			b.PutID(0xffa00ccc)
-			return layerEncodeWireffa00cccBareBody(profile, value, b, state)
-		case *MessageActionPhoneCall:
-			b.PutID(0x80e11a7f)
-			return layerEncodeWire80e11a7fBareBody(profile, value, b, state)
-		case *MessageActionPinMessage:
-			b.PutID(0x94bd38ed)
-			return layerEncodeWire94bd38edBareBody(profile, value, b, state)
-		case *MessageActionPrizeStars:
-			b.PutID(0xb00c47a2)
-			return layerEncodeWireb00c47a2BareBody(profile, value, b, state)
-		case *MessageActionRequestedPeer:
-			b.PutID(0x31518e9b)
-			return layerEncodeWire31518e9bBareBody(profile, value, b, state)
-		case *MessageActionRequestedPeerSentMe:
-			b.PutID(0x93b31848)
-			return layerEncodeWire93b31848BareBody(profile, value, b, state)
-		case *MessageActionScreenshotTaken:
-			b.PutID(0x4792929b)
-			return layerEncodeWire4792929bBareBody(profile, value, b, state)
-		case *MessageActionSecureValuesSent:
-			b.PutID(0xd95c6154)
-			return layerEncodeWired95c6154BareBody(profile, value, b, state)
-		case *MessageActionSecureValuesSentMe:
-			b.PutID(0x1b287353)
-			return layerEncodeWire1b287353BareBody(profile, value, b, state)
-		case *MessageActionSetChatTheme:
-			b.PutID(0xb91bbd3a)
-			return layerEncodeWireb91bbd3aBareBody(profile, value, b, state)
-		case *MessageActionSetChatWallPaper:
-			b.PutID(0x5060a3f4)
-			return layerEncodeWire5060a3f4BareBody(profile, value, b, state)
-		case *MessageActionSetMessagesTTL:
-			b.PutID(0x3c134d7b)
-			return layerEncodeWire3c134d7bBareBody(profile, value, b, state)
-		case *MessageActionStarGift:
-			b.PutID(0xea2c31d3)
-			return layerEncodeWireea2c31d3BareBody(profile, value, b, state)
-		case *MessageActionStarGiftPurchaseOffer:
-			b.PutID(0x774278d4)
-			return layerEncodeWire774278d4BareBody(profile, value, b, state)
-		case *MessageActionStarGiftPurchaseOfferDeclined:
-			b.PutID(0x73ada76b)
-			return layerEncodeWire73ada76bBareBody(profile, value, b, state)
-		case *MessageActionStarGiftUnique:
-			b.PutID(0x95728543)
-			return layerEncodeWire95728543BareBody(profile, value, b, state)
-		case *MessageActionSuggestBirthday:
-			b.PutID(0x2c8f2a25)
-			return layerEncodeWire2c8f2a25BareBody(profile, value, b, state)
-		case *MessageActionSuggestProfilePhoto:
-			b.PutID(0x57de635e)
-			return layerEncodeWire57de635eBareBody(profile, value, b, state)
-		case *MessageActionSuggestedPostApproval:
-			b.PutID(0xee7a1596)
-			return layerEncodeWireee7a1596BareBody(profile, value, b, state)
-		case *MessageActionSuggestedPostRefund:
-			b.PutID(0x69f916f8)
-			return layerEncodeWire69f916f8BareBody(profile, value, b, state)
-		case *MessageActionSuggestedPostSuccess:
-			b.PutID(0x95ddcf69)
-			return layerEncodeWire95ddcf69BareBody(profile, value, b, state)
-		case *MessageActionTodoAppendTasks:
-			b.PutID(0xc7edbc83)
-			return layerEncodeWirec7edbc83BareBody(profile, value, b, state)
-		case *MessageActionTodoCompletions:
-			b.PutID(0xcc7c5c89)
-			return layerEncodeWirecc7c5c89BareBody(profile, value, b, state)
-		case *MessageActionTopicCreate:
-			b.PutID(0x0d999256)
-			return layerEncodeWire0d999256BareBody(profile, value, b, state)
-		case *MessageActionTopicEdit:
-			b.PutID(0xc0944820)
-			return layerEncodeWirec0944820BareBody(profile, value, b, state)
-		case *MessageActionWebViewDataSent:
-			b.PutID(0xb4c38cb5)
-			return layerEncodeWireb4c38cb5BareBody(profile, value, b, state)
-		case *MessageActionWebViewDataSentMe:
-			b.PutID(0x47dd8079)
-			return layerEncodeWire47dd8079BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *MessageActionBoostApply:
 			b.PutID(0xcc02aa6d)
@@ -17128,198 +15968,9 @@ func layerEncodeClassMessageActionBody(profile LayerProfile, value MessageAction
 		case *MessageActionInviteToGroupCall:
 			b.PutID(0x502f92f7)
 			return layerEncodeWire502f92f7BareBody(profile, value, b, state)
-		case *MessageActionNewCreatorPending:
-			b.PutID(0xb07ed085)
-			return layerEncodeWireb07ed085BareBody(profile, value, b, state)
-		case *MessageActionPaidMessagesPrice:
-			b.PutID(0x84b88578)
-			return layerEncodeWire84b88578BareBody(profile, value, b, state)
-		case *MessageActionPaidMessagesRefunded:
-			b.PutID(0xac1f1fcd)
-			return layerEncodeWireac1f1fcdBareBody(profile, value, b, state)
-		case *MessageActionPaymentRefunded:
-			b.PutID(0x41b3e202)
-			return layerEncodeWire41b3e202BareBody(profile, value, b, state)
-		case *MessageActionPaymentSent:
-			b.PutID(0xc624b16e)
-			return layerEncodeWirec624b16eBareBody(profile, value, b, state)
-		case *MessageActionPaymentSentMe:
-			b.PutID(0xffa00ccc)
-			return layerEncodeWireffa00cccBareBody(profile, value, b, state)
-		case *MessageActionPhoneCall:
-			b.PutID(0x80e11a7f)
-			return layerEncodeWire80e11a7fBareBody(profile, value, b, state)
-		case *MessageActionPinMessage:
-			b.PutID(0x94bd38ed)
-			return layerEncodeWire94bd38edBareBody(profile, value, b, state)
-		case *MessageActionPrizeStars:
-			b.PutID(0xb00c47a2)
-			return layerEncodeWireb00c47a2BareBody(profile, value, b, state)
-		case *MessageActionRequestedPeer:
-			b.PutID(0x31518e9b)
-			return layerEncodeWire31518e9bBareBody(profile, value, b, state)
-		case *MessageActionRequestedPeerSentMe:
-			b.PutID(0x93b31848)
-			return layerEncodeWire93b31848BareBody(profile, value, b, state)
-		case *MessageActionScreenshotTaken:
-			b.PutID(0x4792929b)
-			return layerEncodeWire4792929bBareBody(profile, value, b, state)
-		case *MessageActionSecureValuesSent:
-			b.PutID(0xd95c6154)
-			return layerEncodeWired95c6154BareBody(profile, value, b, state)
-		case *MessageActionSecureValuesSentMe:
-			b.PutID(0x1b287353)
-			return layerEncodeWire1b287353BareBody(profile, value, b, state)
-		case *MessageActionSetChatTheme:
-			b.PutID(0xb91bbd3a)
-			return layerEncodeWireb91bbd3aBareBody(profile, value, b, state)
-		case *MessageActionSetChatWallPaper:
-			b.PutID(0x5060a3f4)
-			return layerEncodeWire5060a3f4BareBody(profile, value, b, state)
-		case *MessageActionSetMessagesTTL:
-			b.PutID(0x3c134d7b)
-			return layerEncodeWire3c134d7bBareBody(profile, value, b, state)
-		case *MessageActionStarGift:
-			b.PutID(0xea2c31d3)
-			return layerEncodeWireea2c31d3BareBody(profile, value, b, state)
-		case *MessageActionStarGiftPurchaseOffer:
-			b.PutID(0x774278d4)
-			return layerEncodeWire774278d4BareBody(profile, value, b, state)
-		case *MessageActionStarGiftPurchaseOfferDeclined:
-			b.PutID(0x73ada76b)
-			return layerEncodeWire73ada76bBareBody(profile, value, b, state)
-		case *MessageActionStarGiftUnique:
-			b.PutID(0xe6c31522)
-			return layerEncodeWiree6c31522BareBody(profile, value, b, state)
-		case *MessageActionSuggestBirthday:
-			b.PutID(0x2c8f2a25)
-			return layerEncodeWire2c8f2a25BareBody(profile, value, b, state)
-		case *MessageActionSuggestProfilePhoto:
-			b.PutID(0x57de635e)
-			return layerEncodeWire57de635eBareBody(profile, value, b, state)
-		case *MessageActionSuggestedPostApproval:
-			b.PutID(0xee7a1596)
-			return layerEncodeWireee7a1596BareBody(profile, value, b, state)
-		case *MessageActionSuggestedPostRefund:
-			b.PutID(0x69f916f8)
-			return layerEncodeWire69f916f8BareBody(profile, value, b, state)
-		case *MessageActionSuggestedPostSuccess:
-			b.PutID(0x95ddcf69)
-			return layerEncodeWire95ddcf69BareBody(profile, value, b, state)
-		case *MessageActionTodoAppendTasks:
-			b.PutID(0xc7edbc83)
-			return layerEncodeWirec7edbc83BareBody(profile, value, b, state)
-		case *MessageActionTodoCompletions:
-			b.PutID(0xcc7c5c89)
-			return layerEncodeWirecc7c5c89BareBody(profile, value, b, state)
-		case *MessageActionTopicCreate:
-			b.PutID(0x0d999256)
-			return layerEncodeWire0d999256BareBody(profile, value, b, state)
-		case *MessageActionTopicEdit:
-			b.PutID(0xc0944820)
-			return layerEncodeWirec0944820BareBody(profile, value, b, state)
-		case *MessageActionWebViewDataSent:
-			b.PutID(0xb4c38cb5)
-			return layerEncodeWireb4c38cb5BareBody(profile, value, b, state)
-		case *MessageActionWebViewDataSentMe:
-			b.PutID(0x47dd8079)
-			return layerEncodeWire47dd8079BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *MessageActionBoostApply:
-			b.PutID(0xcc02aa6d)
-			return layerEncodeWirecc02aa6dBareBody(profile, value, b, state)
-		case *MessageActionBotAllowed:
-			b.PutID(0xc516d679)
-			return layerEncodeWirec516d679BareBody(profile, value, b, state)
-		case *MessageActionChangeCreator:
-			b.PutID(0xe188503b)
-			return layerEncodeWiree188503bBareBody(profile, value, b, state)
-		case *MessageActionChannelCreate:
-			b.PutID(0x95d2ac92)
-			return layerEncodeWire95d2ac92BareBody(profile, value, b, state)
-		case *MessageActionChannelMigrateFrom:
-			b.PutID(0xea3948e9)
-			return layerEncodeWireea3948e9BareBody(profile, value, b, state)
-		case *MessageActionChatAddUser:
-			b.PutID(0x15cefd00)
-			return layerEncodeWire15cefd00BareBody(profile, value, b, state)
-		case *MessageActionChatCreate:
-			b.PutID(0xbd47cbad)
-			return layerEncodeWirebd47cbadBareBody(profile, value, b, state)
-		case *MessageActionChatDeletePhoto:
-			b.PutID(0x95e3fbef)
-			return layerEncodeWire95e3fbefBareBody(profile, value, b, state)
-		case *MessageActionChatDeleteUser:
-			b.PutID(0xa43f30cc)
-			return layerEncodeWirea43f30ccBareBody(profile, value, b, state)
-		case *MessageActionChatEditPhoto:
-			b.PutID(0x7fcb13a8)
-			return layerEncodeWire7fcb13a8BareBody(profile, value, b, state)
-		case *MessageActionChatEditTitle:
-			b.PutID(0xb5a1ce5a)
-			return layerEncodeWireb5a1ce5aBareBody(profile, value, b, state)
-		case *MessageActionChatJoinedByLink:
-			b.PutID(0x031224c3)
-			return layerEncodeWire031224c3BareBody(profile, value, b, state)
-		case *MessageActionChatJoinedByRequest:
-			b.PutID(0xebbca3cb)
-			return layerEncodeWireebbca3cbBareBody(profile, value, b, state)
-		case *MessageActionChatMigrateTo:
-			b.PutID(0xe1037f92)
-			return layerEncodeWiree1037f92BareBody(profile, value, b, state)
-		case *MessageActionConferenceCall:
-			b.PutID(0x2ffe2f7a)
-			return layerEncodeWire2ffe2f7aBareBody(profile, value, b, state)
-		case *MessageActionContactSignUp:
-			b.PutID(0xf3f25f76)
-			return layerEncodeWiref3f25f76BareBody(profile, value, b, state)
-		case *MessageActionCustomAction:
-			b.PutID(0xfae69f56)
-			return layerEncodeWirefae69f56BareBody(profile, value, b, state)
-		case *MessageActionEmpty:
-			b.PutID(0xb6aef7b0)
-			return layerEncodeWireb6aef7b0BareBody(profile, value, b, state)
-		case *MessageActionGameScore:
-			b.PutID(0x92a72876)
-			return layerEncodeWire92a72876BareBody(profile, value, b, state)
-		case *MessageActionGeoProximityReached:
-			b.PutID(0x98e0d697)
-			return layerEncodeWire98e0d697BareBody(profile, value, b, state)
-		case *MessageActionGiftCode:
-			b.PutID(0x31c48347)
-			return layerEncodeWire31c48347BareBody(profile, value, b, state)
-		case *MessageActionGiftPremium:
-			b.PutID(0x48e91302)
-			return layerEncodeWire48e91302BareBody(profile, value, b, state)
-		case *MessageActionGiftStars:
-			b.PutID(0x45d5b021)
-			return layerEncodeWire45d5b021BareBody(profile, value, b, state)
-		case *MessageActionGiftTon:
-			b.PutID(0xa8a3c699)
-			return layerEncodeWirea8a3c699BareBody(profile, value, b, state)
-		case *MessageActionGiveawayLaunch:
-			b.PutID(0xa80f51e4)
-			return layerEncodeWirea80f51e4BareBody(profile, value, b, state)
-		case *MessageActionGiveawayResults:
-			b.PutID(0x87e2f155)
-			return layerEncodeWire87e2f155BareBody(profile, value, b, state)
-		case *MessageActionGroupCall:
-			b.PutID(0x7a0d7f42)
-			return layerEncodeWire7a0d7f42BareBody(profile, value, b, state)
-		case *MessageActionGroupCallScheduled:
-			b.PutID(0xb3a07661)
-			return layerEncodeWireb3a07661BareBody(profile, value, b, state)
-		case *MessageActionHistoryClear:
-			b.PutID(0x9fbab604)
-			return layerEncodeWire9fbab604BareBody(profile, value, b, state)
-		case *MessageActionInviteToGroupCall:
-			b.PutID(0x502f92f7)
-			return layerEncodeWire502f92f7BareBody(profile, value, b, state)
+		case *MessageActionManagedBotCreated:
+			b.PutID(0x16605e3e)
+			return layerEncodeWire16605e3eBareBody(profile, value, b, state)
 		case *MessageActionNewCreatorPending:
 			b.PutID(0xb07ed085)
 			return layerEncodeWireb07ed085BareBody(profile, value, b, state)
@@ -17350,6 +16001,12 @@ func layerEncodeClassMessageActionBody(profile LayerProfile, value MessageAction
 		case *MessageActionPinMessage:
 			b.PutID(0x94bd38ed)
 			return layerEncodeWire94bd38edBareBody(profile, value, b, state)
+		case *MessageActionPollAppendAnswer:
+			b.PutID(0x9da1cd6c)
+			return layerEncodeWire9da1cd6cBareBody(profile, value, b, state)
+		case *MessageActionPollDeleteAnswer:
+			b.PutID(0x399674dc)
+			return layerEncodeWire399674dcBareBody(profile, value, b, state)
 		case *MessageActionPrizeStars:
 			b.PutID(0xb00c47a2)
 			return layerEncodeWireb00c47a2BareBody(profile, value, b, state)
@@ -17426,7 +16083,7 @@ func layerEncodeClassMessageActionBody(profile LayerProfile, value MessageAction
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageActionBoostApply:
 			b.PutID(0xcc02aa6d)
@@ -17434,6 +16091,9 @@ func layerEncodeClassMessageActionBody(profile LayerProfile, value MessageAction
 		case *MessageActionBotAllowed:
 			b.PutID(0xc516d679)
 			return layerEncodeWirec516d679BareBody(profile, value, b, state)
+		case *MessageActionChangeCommunity:
+			b.PutID(0x5d20bae8)
+			return layerEncodeWire5d20bae8BareBody(profile, value, b, state)
 		case *MessageActionChangeCreator:
 			b.PutID(0xe188503b)
 			return layerEncodeWiree188503bBareBody(profile, value, b, state)
@@ -17644,7 +16304,7 @@ func layerDecodeClassMessageAction(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x031224c3:
 			return layerDecodeWire031224c3(profile, b, state)
@@ -17652,6 +16312,8 @@ func layerDecodeClassMessageAction(profile LayerProfile, b *bin.Buffer, state *l
 			return layerDecodeWire0d999256(profile, b, state)
 		case 0x15cefd00:
 			return layerDecodeWire15cefd00(profile, b, state)
+		case 0x16605e3e:
+			return layerDecodeWire16605e3e(profile, b, state)
 		case 0x1b287353:
 			return layerDecodeWire1b287353(profile, b, state)
 		case 0x2c8f2a25:
@@ -17662,260 +16324,8 @@ func layerDecodeClassMessageAction(profile LayerProfile, b *bin.Buffer, state *l
 			return layerDecodeWire31518e9b(profile, b, state)
 		case 0x31c48347:
 			return layerDecodeWire31c48347(profile, b, state)
-		case 0x3c134d7b:
-			return layerDecodeWire3c134d7b(profile, b, state)
-		case 0x41b3e202:
-			return layerDecodeWire41b3e202(profile, b, state)
-		case 0x45d5b021:
-			return layerDecodeWire45d5b021(profile, b, state)
-		case 0x4792929b:
-			return layerDecodeWire4792929b(profile, b, state)
-		case 0x47dd8079:
-			return layerDecodeWire47dd8079(profile, b, state)
-		case 0x48e91302:
-			return layerDecodeWire48e91302(profile, b, state)
-		case 0x502f92f7:
-			return layerDecodeWire502f92f7(profile, b, state)
-		case 0x5060a3f4:
-			return layerDecodeWire5060a3f4(profile, b, state)
-		case 0x57de635e:
-			return layerDecodeWire57de635e(profile, b, state)
-		case 0x69f916f8:
-			return layerDecodeWire69f916f8(profile, b, state)
-		case 0x73ada76b:
-			return layerDecodeWire73ada76b(profile, b, state)
-		case 0x774278d4:
-			return layerDecodeWire774278d4(profile, b, state)
-		case 0x7a0d7f42:
-			return layerDecodeWire7a0d7f42(profile, b, state)
-		case 0x7fcb13a8:
-			return layerDecodeWire7fcb13a8(profile, b, state)
-		case 0x80e11a7f:
-			return layerDecodeWire80e11a7f(profile, b, state)
-		case 0x84b88578:
-			return layerDecodeWire84b88578(profile, b, state)
-		case 0x87e2f155:
-			return layerDecodeWire87e2f155(profile, b, state)
-		case 0x92a72876:
-			return layerDecodeWire92a72876(profile, b, state)
-		case 0x93b31848:
-			return layerDecodeWire93b31848(profile, b, state)
-		case 0x94bd38ed:
-			return layerDecodeWire94bd38ed(profile, b, state)
-		case 0x95728543:
-			return layerDecodeWire95728543(profile, b, state)
-		case 0x95d2ac92:
-			return layerDecodeWire95d2ac92(profile, b, state)
-		case 0x95ddcf69:
-			return layerDecodeWire95ddcf69(profile, b, state)
-		case 0x95e3fbef:
-			return layerDecodeWire95e3fbef(profile, b, state)
-		case 0x98e0d697:
-			return layerDecodeWire98e0d697(profile, b, state)
-		case 0x9fbab604:
-			return layerDecodeWire9fbab604(profile, b, state)
-		case 0xa43f30cc:
-			return layerDecodeWirea43f30cc(profile, b, state)
-		case 0xa80f51e4:
-			return layerDecodeWirea80f51e4(profile, b, state)
-		case 0xa8a3c699:
-			return layerDecodeWirea8a3c699(profile, b, state)
-		case 0xac1f1fcd:
-			return layerDecodeWireac1f1fcd(profile, b, state)
-		case 0xb00c47a2:
-			return layerDecodeWireb00c47a2(profile, b, state)
-		case 0xb3a07661:
-			return layerDecodeWireb3a07661(profile, b, state)
-		case 0xb4c38cb5:
-			return layerDecodeWireb4c38cb5(profile, b, state)
-		case 0xb5a1ce5a:
-			return layerDecodeWireb5a1ce5a(profile, b, state)
-		case 0xb6aef7b0:
-			return layerDecodeWireb6aef7b0(profile, b, state)
-		case 0xb91bbd3a:
-			return layerDecodeWireb91bbd3a(profile, b, state)
-		case 0xbd47cbad:
-			return layerDecodeWirebd47cbad(profile, b, state)
-		case 0xc0944820:
-			return layerDecodeWirec0944820(profile, b, state)
-		case 0xc516d679:
-			return layerDecodeWirec516d679(profile, b, state)
-		case 0xc624b16e:
-			return layerDecodeWirec624b16e(profile, b, state)
-		case 0xc7edbc83:
-			return layerDecodeWirec7edbc83(profile, b, state)
-		case 0xcc02aa6d:
-			return layerDecodeWirecc02aa6d(profile, b, state)
-		case 0xcc7c5c89:
-			return layerDecodeWirecc7c5c89(profile, b, state)
-		case 0xd95c6154:
-			return layerDecodeWired95c6154(profile, b, state)
-		case 0xe1037f92:
-			return layerDecodeWiree1037f92(profile, b, state)
-		case 0xea2c31d3:
-			return layerDecodeWireea2c31d3(profile, b, state)
-		case 0xea3948e9:
-			return layerDecodeWireea3948e9(profile, b, state)
-		case 0xebbca3cb:
-			return layerDecodeWireebbca3cb(profile, b, state)
-		case 0xee7a1596:
-			return layerDecodeWireee7a1596(profile, b, state)
-		case 0xf3f25f76:
-			return layerDecodeWiref3f25f76(profile, b, state)
-		case 0xfae69f56:
-			return layerDecodeWirefae69f56(profile, b, state)
-		case 0xffa00ccc:
-			return layerDecodeWireffa00ccc(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222:
-		switch id {
-		case 0x031224c3:
-			return layerDecodeWire031224c3(profile, b, state)
-		case 0x0d999256:
-			return layerDecodeWire0d999256(profile, b, state)
-		case 0x15cefd00:
-			return layerDecodeWire15cefd00(profile, b, state)
-		case 0x1b287353:
-			return layerDecodeWire1b287353(profile, b, state)
-		case 0x2c8f2a25:
-			return layerDecodeWire2c8f2a25(profile, b, state)
-		case 0x2ffe2f7a:
-			return layerDecodeWire2ffe2f7a(profile, b, state)
-		case 0x31518e9b:
-			return layerDecodeWire31518e9b(profile, b, state)
-		case 0x31c48347:
-			return layerDecodeWire31c48347(profile, b, state)
-		case 0x3c134d7b:
-			return layerDecodeWire3c134d7b(profile, b, state)
-		case 0x41b3e202:
-			return layerDecodeWire41b3e202(profile, b, state)
-		case 0x45d5b021:
-			return layerDecodeWire45d5b021(profile, b, state)
-		case 0x4792929b:
-			return layerDecodeWire4792929b(profile, b, state)
-		case 0x47dd8079:
-			return layerDecodeWire47dd8079(profile, b, state)
-		case 0x48e91302:
-			return layerDecodeWire48e91302(profile, b, state)
-		case 0x502f92f7:
-			return layerDecodeWire502f92f7(profile, b, state)
-		case 0x5060a3f4:
-			return layerDecodeWire5060a3f4(profile, b, state)
-		case 0x57de635e:
-			return layerDecodeWire57de635e(profile, b, state)
-		case 0x69f916f8:
-			return layerDecodeWire69f916f8(profile, b, state)
-		case 0x73ada76b:
-			return layerDecodeWire73ada76b(profile, b, state)
-		case 0x774278d4:
-			return layerDecodeWire774278d4(profile, b, state)
-		case 0x7a0d7f42:
-			return layerDecodeWire7a0d7f42(profile, b, state)
-		case 0x7fcb13a8:
-			return layerDecodeWire7fcb13a8(profile, b, state)
-		case 0x80e11a7f:
-			return layerDecodeWire80e11a7f(profile, b, state)
-		case 0x84b88578:
-			return layerDecodeWire84b88578(profile, b, state)
-		case 0x87e2f155:
-			return layerDecodeWire87e2f155(profile, b, state)
-		case 0x92a72876:
-			return layerDecodeWire92a72876(profile, b, state)
-		case 0x93b31848:
-			return layerDecodeWire93b31848(profile, b, state)
-		case 0x94bd38ed:
-			return layerDecodeWire94bd38ed(profile, b, state)
-		case 0x95d2ac92:
-			return layerDecodeWire95d2ac92(profile, b, state)
-		case 0x95ddcf69:
-			return layerDecodeWire95ddcf69(profile, b, state)
-		case 0x95e3fbef:
-			return layerDecodeWire95e3fbef(profile, b, state)
-		case 0x98e0d697:
-			return layerDecodeWire98e0d697(profile, b, state)
-		case 0x9fbab604:
-			return layerDecodeWire9fbab604(profile, b, state)
-		case 0xa43f30cc:
-			return layerDecodeWirea43f30cc(profile, b, state)
-		case 0xa80f51e4:
-			return layerDecodeWirea80f51e4(profile, b, state)
-		case 0xa8a3c699:
-			return layerDecodeWirea8a3c699(profile, b, state)
-		case 0xac1f1fcd:
-			return layerDecodeWireac1f1fcd(profile, b, state)
-		case 0xb00c47a2:
-			return layerDecodeWireb00c47a2(profile, b, state)
-		case 0xb07ed085:
-			return layerDecodeWireb07ed085(profile, b, state)
-		case 0xb3a07661:
-			return layerDecodeWireb3a07661(profile, b, state)
-		case 0xb4c38cb5:
-			return layerDecodeWireb4c38cb5(profile, b, state)
-		case 0xb5a1ce5a:
-			return layerDecodeWireb5a1ce5a(profile, b, state)
-		case 0xb6aef7b0:
-			return layerDecodeWireb6aef7b0(profile, b, state)
-		case 0xb91bbd3a:
-			return layerDecodeWireb91bbd3a(profile, b, state)
-		case 0xbd47cbad:
-			return layerDecodeWirebd47cbad(profile, b, state)
-		case 0xc0944820:
-			return layerDecodeWirec0944820(profile, b, state)
-		case 0xc516d679:
-			return layerDecodeWirec516d679(profile, b, state)
-		case 0xc624b16e:
-			return layerDecodeWirec624b16e(profile, b, state)
-		case 0xc7edbc83:
-			return layerDecodeWirec7edbc83(profile, b, state)
-		case 0xcc02aa6d:
-			return layerDecodeWirecc02aa6d(profile, b, state)
-		case 0xcc7c5c89:
-			return layerDecodeWirecc7c5c89(profile, b, state)
-		case 0xd95c6154:
-			return layerDecodeWired95c6154(profile, b, state)
-		case 0xe1037f92:
-			return layerDecodeWiree1037f92(profile, b, state)
-		case 0xe188503b:
-			return layerDecodeWiree188503b(profile, b, state)
-		case 0xe6c31522:
-			return layerDecodeWiree6c31522(profile, b, state)
-		case 0xea2c31d3:
-			return layerDecodeWireea2c31d3(profile, b, state)
-		case 0xea3948e9:
-			return layerDecodeWireea3948e9(profile, b, state)
-		case 0xebbca3cb:
-			return layerDecodeWireebbca3cb(profile, b, state)
-		case 0xee7a1596:
-			return layerDecodeWireee7a1596(profile, b, state)
-		case 0xf3f25f76:
-			return layerDecodeWiref3f25f76(profile, b, state)
-		case 0xfae69f56:
-			return layerDecodeWirefae69f56(profile, b, state)
-		case 0xffa00ccc:
-			return layerDecodeWireffa00ccc(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223:
-		switch id {
-		case 0x031224c3:
-			return layerDecodeWire031224c3(profile, b, state)
-		case 0x0d999256:
-			return layerDecodeWire0d999256(profile, b, state)
-		case 0x15cefd00:
-			return layerDecodeWire15cefd00(profile, b, state)
-		case 0x1b287353:
-			return layerDecodeWire1b287353(profile, b, state)
-		case 0x2c8f2a25:
-			return layerDecodeWire2c8f2a25(profile, b, state)
-		case 0x2ffe2f7a:
-			return layerDecodeWire2ffe2f7a(profile, b, state)
-		case 0x31518e9b:
-			return layerDecodeWire31518e9b(profile, b, state)
-		case 0x31c48347:
-			return layerDecodeWire31c48347(profile, b, state)
+		case 0x399674dc:
+			return layerDecodeWire399674dc(profile, b, state)
 		case 0x3c134d7b:
 			return layerDecodeWire3c134d7b(profile, b, state)
 		case 0x3e2793ba:
@@ -17966,6 +16376,8 @@ func layerDecodeClassMessageAction(profile LayerProfile, b *bin.Buffer, state *l
 			return layerDecodeWire95e3fbef(profile, b, state)
 		case 0x98e0d697:
 			return layerDecodeWire98e0d697(profile, b, state)
+		case 0x9da1cd6c:
+			return layerDecodeWire9da1cd6c(profile, b, state)
 		case 0x9fbab604:
 			return layerDecodeWire9fbab604(profile, b, state)
 		case 0xa43f30cc:
@@ -18031,7 +16443,7 @@ func layerDecodeClassMessageAction(profile LayerProfile, b *bin.Buffer, state *l
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile228:
 		switch id {
 		case 0x031224c3:
 			return layerDecodeWire031224c3(profile, b, state)
@@ -18073,6 +16485,8 @@ func layerDecodeClassMessageAction(profile LayerProfile, b *bin.Buffer, state *l
 			return layerDecodeWire5060a3f4(profile, b, state)
 		case 0x57de635e:
 			return layerDecodeWire57de635e(profile, b, state)
+		case 0x5d20bae8:
+			return layerDecodeWire5d20bae8(profile, b, state)
 		case 0x69f916f8:
 			return layerDecodeWire69f916f8(profile, b, state)
 		case 0x73ada76b:
@@ -18444,105 +16858,7 @@ func layerPreflightClassMessageEntity(profile LayerProfile, value MessageEntityC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *InputMessageEntityMentionName:
-			return layerPreflightWire208e68c9Bare(profile, value, state)
-		case *MessageEntityBankCard:
-			return layerPreflightWire761e6af4Bare(profile, value, state)
-		case *MessageEntityBlockquote:
-			return layerPreflightWiref1ccaaacBare(profile, value, state)
-		case *MessageEntityBold:
-			return layerPreflightWirebd610bc9Bare(profile, value, state)
-		case *MessageEntityBotCommand:
-			return layerPreflightWire6cef8ac7Bare(profile, value, state)
-		case *MessageEntityCashtag:
-			return layerPreflightWire4c4e743fBare(profile, value, state)
-		case *MessageEntityCode:
-			return layerPreflightWire28a20571Bare(profile, value, state)
-		case *MessageEntityCustomEmoji:
-			return layerPreflightWirec8cf05f8Bare(profile, value, state)
-		case *MessageEntityEmail:
-			return layerPreflightWire64e475c2Bare(profile, value, state)
-		case *MessageEntityHashtag:
-			return layerPreflightWire6f635b0dBare(profile, value, state)
-		case *MessageEntityItalic:
-			return layerPreflightWire826f8b60Bare(profile, value, state)
-		case *MessageEntityMention:
-			return layerPreflightWirefa04579dBare(profile, value, state)
-		case *MessageEntityMentionName:
-			return layerPreflightWiredc7b1140Bare(profile, value, state)
-		case *MessageEntityPhone:
-			return layerPreflightWire9b69e34bBare(profile, value, state)
-		case *MessageEntityPre:
-			return layerPreflightWire73924be0Bare(profile, value, state)
-		case *MessageEntitySpoiler:
-			return layerPreflightWire32ca960fBare(profile, value, state)
-		case *MessageEntityStrike:
-			return layerPreflightWirebf0693d4Bare(profile, value, state)
-		case *MessageEntityTextURL:
-			return layerPreflightWire76a6d327Bare(profile, value, state)
-		case *MessageEntityURL:
-			return layerPreflightWire6ed02538Bare(profile, value, state)
-		case *MessageEntityUnderline:
-			return layerPreflightWire9c4e7e8bBare(profile, value, state)
-		case *MessageEntityUnknown:
-			return layerPreflightWirebb92ba95Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *InputMessageEntityMentionName:
-			return layerPreflightWire208e68c9Bare(profile, value, state)
-		case *MessageEntityBankCard:
-			return layerPreflightWire761e6af4Bare(profile, value, state)
-		case *MessageEntityBlockquote:
-			return layerPreflightWiref1ccaaacBare(profile, value, state)
-		case *MessageEntityBold:
-			return layerPreflightWirebd610bc9Bare(profile, value, state)
-		case *MessageEntityBotCommand:
-			return layerPreflightWire6cef8ac7Bare(profile, value, state)
-		case *MessageEntityCashtag:
-			return layerPreflightWire4c4e743fBare(profile, value, state)
-		case *MessageEntityCode:
-			return layerPreflightWire28a20571Bare(profile, value, state)
-		case *MessageEntityCustomEmoji:
-			return layerPreflightWirec8cf05f8Bare(profile, value, state)
-		case *MessageEntityEmail:
-			return layerPreflightWire64e475c2Bare(profile, value, state)
-		case *MessageEntityFormattedDate:
-			return layerPreflightWire904ac7c7Bare(profile, value, state)
-		case *MessageEntityHashtag:
-			return layerPreflightWire6f635b0dBare(profile, value, state)
-		case *MessageEntityItalic:
-			return layerPreflightWire826f8b60Bare(profile, value, state)
-		case *MessageEntityMention:
-			return layerPreflightWirefa04579dBare(profile, value, state)
-		case *MessageEntityMentionName:
-			return layerPreflightWiredc7b1140Bare(profile, value, state)
-		case *MessageEntityPhone:
-			return layerPreflightWire9b69e34bBare(profile, value, state)
-		case *MessageEntityPre:
-			return layerPreflightWire73924be0Bare(profile, value, state)
-		case *MessageEntitySpoiler:
-			return layerPreflightWire32ca960fBare(profile, value, state)
-		case *MessageEntityStrike:
-			return layerPreflightWirebf0693d4Bare(profile, value, state)
-		case *MessageEntityTextURL:
-			return layerPreflightWire76a6d327Bare(profile, value, state)
-		case *MessageEntityURL:
-			return layerPreflightWire6ed02538Bare(profile, value, state)
-		case *MessageEntityUnderline:
-			return layerPreflightWire9c4e7e8bBare(profile, value, state)
-		case *MessageEntityUnknown:
-			return layerPreflightWirebb92ba95Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMessageEntityMentionName:
 			return layerPreflightWire208e68c9Bare(profile, value, state)
@@ -18616,148 +16932,7 @@ func layerEncodeClassMessageEntityBody(profile LayerProfile, value MessageEntity
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch value := projected.(type) {
-		case *InputMessageEntityMentionName:
-			b.PutID(0x208e68c9)
-			return layerEncodeWire208e68c9BareBody(profile, value, b, state)
-		case *MessageEntityBankCard:
-			b.PutID(0x761e6af4)
-			return layerEncodeWire761e6af4BareBody(profile, value, b, state)
-		case *MessageEntityBlockquote:
-			b.PutID(0xf1ccaaac)
-			return layerEncodeWiref1ccaaacBareBody(profile, value, b, state)
-		case *MessageEntityBold:
-			b.PutID(0xbd610bc9)
-			return layerEncodeWirebd610bc9BareBody(profile, value, b, state)
-		case *MessageEntityBotCommand:
-			b.PutID(0x6cef8ac7)
-			return layerEncodeWire6cef8ac7BareBody(profile, value, b, state)
-		case *MessageEntityCashtag:
-			b.PutID(0x4c4e743f)
-			return layerEncodeWire4c4e743fBareBody(profile, value, b, state)
-		case *MessageEntityCode:
-			b.PutID(0x28a20571)
-			return layerEncodeWire28a20571BareBody(profile, value, b, state)
-		case *MessageEntityCustomEmoji:
-			b.PutID(0xc8cf05f8)
-			return layerEncodeWirec8cf05f8BareBody(profile, value, b, state)
-		case *MessageEntityEmail:
-			b.PutID(0x64e475c2)
-			return layerEncodeWire64e475c2BareBody(profile, value, b, state)
-		case *MessageEntityHashtag:
-			b.PutID(0x6f635b0d)
-			return layerEncodeWire6f635b0dBareBody(profile, value, b, state)
-		case *MessageEntityItalic:
-			b.PutID(0x826f8b60)
-			return layerEncodeWire826f8b60BareBody(profile, value, b, state)
-		case *MessageEntityMention:
-			b.PutID(0xfa04579d)
-			return layerEncodeWirefa04579dBareBody(profile, value, b, state)
-		case *MessageEntityMentionName:
-			b.PutID(0xdc7b1140)
-			return layerEncodeWiredc7b1140BareBody(profile, value, b, state)
-		case *MessageEntityPhone:
-			b.PutID(0x9b69e34b)
-			return layerEncodeWire9b69e34bBareBody(profile, value, b, state)
-		case *MessageEntityPre:
-			b.PutID(0x73924be0)
-			return layerEncodeWire73924be0BareBody(profile, value, b, state)
-		case *MessageEntitySpoiler:
-			b.PutID(0x32ca960f)
-			return layerEncodeWire32ca960fBareBody(profile, value, b, state)
-		case *MessageEntityStrike:
-			b.PutID(0xbf0693d4)
-			return layerEncodeWirebf0693d4BareBody(profile, value, b, state)
-		case *MessageEntityTextURL:
-			b.PutID(0x76a6d327)
-			return layerEncodeWire76a6d327BareBody(profile, value, b, state)
-		case *MessageEntityURL:
-			b.PutID(0x6ed02538)
-			return layerEncodeWire6ed02538BareBody(profile, value, b, state)
-		case *MessageEntityUnderline:
-			b.PutID(0x9c4e7e8b)
-			return layerEncodeWire9c4e7e8bBareBody(profile, value, b, state)
-		case *MessageEntityUnknown:
-			b.PutID(0xbb92ba95)
-			return layerEncodeWirebb92ba95BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *InputMessageEntityMentionName:
-			b.PutID(0x208e68c9)
-			return layerEncodeWire208e68c9BareBody(profile, value, b, state)
-		case *MessageEntityBankCard:
-			b.PutID(0x761e6af4)
-			return layerEncodeWire761e6af4BareBody(profile, value, b, state)
-		case *MessageEntityBlockquote:
-			b.PutID(0xf1ccaaac)
-			return layerEncodeWiref1ccaaacBareBody(profile, value, b, state)
-		case *MessageEntityBold:
-			b.PutID(0xbd610bc9)
-			return layerEncodeWirebd610bc9BareBody(profile, value, b, state)
-		case *MessageEntityBotCommand:
-			b.PutID(0x6cef8ac7)
-			return layerEncodeWire6cef8ac7BareBody(profile, value, b, state)
-		case *MessageEntityCashtag:
-			b.PutID(0x4c4e743f)
-			return layerEncodeWire4c4e743fBareBody(profile, value, b, state)
-		case *MessageEntityCode:
-			b.PutID(0x28a20571)
-			return layerEncodeWire28a20571BareBody(profile, value, b, state)
-		case *MessageEntityCustomEmoji:
-			b.PutID(0xc8cf05f8)
-			return layerEncodeWirec8cf05f8BareBody(profile, value, b, state)
-		case *MessageEntityEmail:
-			b.PutID(0x64e475c2)
-			return layerEncodeWire64e475c2BareBody(profile, value, b, state)
-		case *MessageEntityFormattedDate:
-			b.PutID(0x904ac7c7)
-			return layerEncodeWire904ac7c7BareBody(profile, value, b, state)
-		case *MessageEntityHashtag:
-			b.PutID(0x6f635b0d)
-			return layerEncodeWire6f635b0dBareBody(profile, value, b, state)
-		case *MessageEntityItalic:
-			b.PutID(0x826f8b60)
-			return layerEncodeWire826f8b60BareBody(profile, value, b, state)
-		case *MessageEntityMention:
-			b.PutID(0xfa04579d)
-			return layerEncodeWirefa04579dBareBody(profile, value, b, state)
-		case *MessageEntityMentionName:
-			b.PutID(0xdc7b1140)
-			return layerEncodeWiredc7b1140BareBody(profile, value, b, state)
-		case *MessageEntityPhone:
-			b.PutID(0x9b69e34b)
-			return layerEncodeWire9b69e34bBareBody(profile, value, b, state)
-		case *MessageEntityPre:
-			b.PutID(0x73924be0)
-			return layerEncodeWire73924be0BareBody(profile, value, b, state)
-		case *MessageEntitySpoiler:
-			b.PutID(0x32ca960f)
-			return layerEncodeWire32ca960fBareBody(profile, value, b, state)
-		case *MessageEntityStrike:
-			b.PutID(0xbf0693d4)
-			return layerEncodeWirebf0693d4BareBody(profile, value, b, state)
-		case *MessageEntityTextURL:
-			b.PutID(0x76a6d327)
-			return layerEncodeWire76a6d327BareBody(profile, value, b, state)
-		case *MessageEntityURL:
-			b.PutID(0x6ed02538)
-			return layerEncodeWire6ed02538BareBody(profile, value, b, state)
-		case *MessageEntityUnderline:
-			b.PutID(0x9c4e7e8b)
-			return layerEncodeWire9c4e7e8bBareBody(profile, value, b, state)
-		case *MessageEntityUnknown:
-			b.PutID(0xbb92ba95)
-			return layerEncodeWirebb92ba95BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMessageEntityMentionName:
 			b.PutID(0x208e68c9)
@@ -18849,103 +17024,7 @@ func layerDecodeClassMessageEntity(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222:
-		switch id {
-		case 0x208e68c9:
-			return layerDecodeWire208e68c9(profile, b, state)
-		case 0x28a20571:
-			return layerDecodeWire28a20571(profile, b, state)
-		case 0x32ca960f:
-			return layerDecodeWire32ca960f(profile, b, state)
-		case 0x4c4e743f:
-			return layerDecodeWire4c4e743f(profile, b, state)
-		case 0x64e475c2:
-			return layerDecodeWire64e475c2(profile, b, state)
-		case 0x6cef8ac7:
-			return layerDecodeWire6cef8ac7(profile, b, state)
-		case 0x6ed02538:
-			return layerDecodeWire6ed02538(profile, b, state)
-		case 0x6f635b0d:
-			return layerDecodeWire6f635b0d(profile, b, state)
-		case 0x73924be0:
-			return layerDecodeWire73924be0(profile, b, state)
-		case 0x761e6af4:
-			return layerDecodeWire761e6af4(profile, b, state)
-		case 0x76a6d327:
-			return layerDecodeWire76a6d327(profile, b, state)
-		case 0x826f8b60:
-			return layerDecodeWire826f8b60(profile, b, state)
-		case 0x9b69e34b:
-			return layerDecodeWire9b69e34b(profile, b, state)
-		case 0x9c4e7e8b:
-			return layerDecodeWire9c4e7e8b(profile, b, state)
-		case 0xbb92ba95:
-			return layerDecodeWirebb92ba95(profile, b, state)
-		case 0xbd610bc9:
-			return layerDecodeWirebd610bc9(profile, b, state)
-		case 0xbf0693d4:
-			return layerDecodeWirebf0693d4(profile, b, state)
-		case 0xc8cf05f8:
-			return layerDecodeWirec8cf05f8(profile, b, state)
-		case 0xdc7b1140:
-			return layerDecodeWiredc7b1140(profile, b, state)
-		case 0xf1ccaaac:
-			return layerDecodeWiref1ccaaac(profile, b, state)
-		case 0xfa04579d:
-			return layerDecodeWirefa04579d(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223:
-		switch id {
-		case 0x208e68c9:
-			return layerDecodeWire208e68c9(profile, b, state)
-		case 0x28a20571:
-			return layerDecodeWire28a20571(profile, b, state)
-		case 0x32ca960f:
-			return layerDecodeWire32ca960f(profile, b, state)
-		case 0x4c4e743f:
-			return layerDecodeWire4c4e743f(profile, b, state)
-		case 0x64e475c2:
-			return layerDecodeWire64e475c2(profile, b, state)
-		case 0x6cef8ac7:
-			return layerDecodeWire6cef8ac7(profile, b, state)
-		case 0x6ed02538:
-			return layerDecodeWire6ed02538(profile, b, state)
-		case 0x6f635b0d:
-			return layerDecodeWire6f635b0d(profile, b, state)
-		case 0x73924be0:
-			return layerDecodeWire73924be0(profile, b, state)
-		case 0x761e6af4:
-			return layerDecodeWire761e6af4(profile, b, state)
-		case 0x76a6d327:
-			return layerDecodeWire76a6d327(profile, b, state)
-		case 0x826f8b60:
-			return layerDecodeWire826f8b60(profile, b, state)
-		case 0x904ac7c7:
-			return layerDecodeWire904ac7c7(profile, b, state)
-		case 0x9b69e34b:
-			return layerDecodeWire9b69e34b(profile, b, state)
-		case 0x9c4e7e8b:
-			return layerDecodeWire9c4e7e8b(profile, b, state)
-		case 0xbb92ba95:
-			return layerDecodeWirebb92ba95(profile, b, state)
-		case 0xbd610bc9:
-			return layerDecodeWirebd610bc9(profile, b, state)
-		case 0xbf0693d4:
-			return layerDecodeWirebf0693d4(profile, b, state)
-		case 0xc8cf05f8:
-			return layerDecodeWirec8cf05f8(profile, b, state)
-		case 0xdc7b1140:
-			return layerDecodeWiredc7b1140(profile, b, state)
-		case 0xf1ccaaac:
-			return layerDecodeWiref1ccaaac(profile, b, state)
-		case 0xfa04579d:
-			return layerDecodeWirefa04579d(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0652c1c5:
 			return layerDecodeWire0652c1c5(profile, b, state)
@@ -19044,7 +17123,7 @@ func layerPreflightClassMessageExtendedMedia(profile LayerProfile, value Message
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageExtendedMedia:
 			return layerPreflightWireee479c64Bare(profile, value, state)
@@ -19072,7 +17151,7 @@ func layerEncodeClassMessageExtendedMediaBody(profile LayerProfile, value Messag
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageExtendedMedia:
 			b.PutID(0xee479c64)
@@ -19095,7 +17174,7 @@ func layerDecodeClassMessageExtendedMedia(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xad628cc8:
 			return layerDecodeWiread628cc8(profile, b, state)
@@ -19318,95 +17397,7 @@ func layerPreflightClassMessageMedia(profile LayerProfile, value MessageMediaCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *MessageMediaContact:
-			return layerPreflightWire70322949Bare(profile, value, state)
-		case *MessageMediaDice:
-			return layerPreflightWire3f7ee58bBare(profile, value, state)
-		case *MessageMediaDocument:
-			return layerPreflightWire52d8ccd9Bare(profile, value, state)
-		case *MessageMediaEmpty:
-			return layerPreflightWire3ded6320Bare(profile, value, state)
-		case *MessageMediaGame:
-			return layerPreflightWirefdb19008Bare(profile, value, state)
-		case *MessageMediaGeo:
-			return layerPreflightWire56e0d474Bare(profile, value, state)
-		case *MessageMediaGeoLive:
-			return layerPreflightWireb940c666Bare(profile, value, state)
-		case *MessageMediaGiveaway:
-			return layerPreflightWireaa073bebBare(profile, value, state)
-		case *MessageMediaGiveawayResults:
-			return layerPreflightWireceaa3ea1Bare(profile, value, state)
-		case *MessageMediaInvoice:
-			return layerPreflightWiref6a548d3Bare(profile, value, state)
-		case *MessageMediaPaidMedia:
-			return layerPreflightWirea8852491Bare(profile, value, state)
-		case *MessageMediaPhoto:
-			return layerPreflightWire695150d7Bare(profile, value, state)
-		case *MessageMediaPoll:
-			return layerPreflightWire4bd6e798Bare(profile, value, state)
-		case *MessageMediaStory:
-			return layerPreflightWire68cb6283Bare(profile, value, state)
-		case *MessageMediaToDo:
-			return layerPreflightWire8a53b014Bare(profile, value, state)
-		case *MessageMediaUnsupported:
-			return layerPreflightWire9f84f49eBare(profile, value, state)
-		case *MessageMediaVenue:
-			return layerPreflightWire2ec0533fBare(profile, value, state)
-		case *MessageMediaVideoStream:
-			return layerPreflightWireca5cab89Bare(profile, value, state)
-		case *MessageMediaWebPage:
-			return layerPreflightWireddf10c3bBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *MessageMediaContact:
-			return layerPreflightWire70322949Bare(profile, value, state)
-		case *MessageMediaDice:
-			return layerPreflightWire08cbec07Bare(profile, value, state)
-		case *MessageMediaDocument:
-			return layerPreflightWire52d8ccd9Bare(profile, value, state)
-		case *MessageMediaEmpty:
-			return layerPreflightWire3ded6320Bare(profile, value, state)
-		case *MessageMediaGame:
-			return layerPreflightWirefdb19008Bare(profile, value, state)
-		case *MessageMediaGeo:
-			return layerPreflightWire56e0d474Bare(profile, value, state)
-		case *MessageMediaGeoLive:
-			return layerPreflightWireb940c666Bare(profile, value, state)
-		case *MessageMediaGiveaway:
-			return layerPreflightWireaa073bebBare(profile, value, state)
-		case *MessageMediaGiveawayResults:
-			return layerPreflightWireceaa3ea1Bare(profile, value, state)
-		case *MessageMediaInvoice:
-			return layerPreflightWiref6a548d3Bare(profile, value, state)
-		case *MessageMediaPaidMedia:
-			return layerPreflightWirea8852491Bare(profile, value, state)
-		case *MessageMediaPhoto:
-			return layerPreflightWire695150d7Bare(profile, value, state)
-		case *MessageMediaPoll:
-			return layerPreflightWire4bd6e798Bare(profile, value, state)
-		case *MessageMediaStory:
-			return layerPreflightWire68cb6283Bare(profile, value, state)
-		case *MessageMediaToDo:
-			return layerPreflightWire8a53b014Bare(profile, value, state)
-		case *MessageMediaUnsupported:
-			return layerPreflightWire9f84f49eBare(profile, value, state)
-		case *MessageMediaVenue:
-			return layerPreflightWire2ec0533fBare(profile, value, state)
-		case *MessageMediaVideoStream:
-			return layerPreflightWireca5cab89Bare(profile, value, state)
-		case *MessageMediaWebPage:
-			return layerPreflightWireddf10c3bBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageMediaContact:
 			return layerPreflightWire70322949Bare(profile, value, state)
@@ -19468,133 +17459,7 @@ func layerEncodeClassMessageMediaBody(profile LayerProfile, value MessageMediaCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *MessageMediaContact:
-			b.PutID(0x70322949)
-			return layerEncodeWire70322949BareBody(profile, value, b, state)
-		case *MessageMediaDice:
-			b.PutID(0x3f7ee58b)
-			return layerEncodeWire3f7ee58bBareBody(profile, value, b, state)
-		case *MessageMediaDocument:
-			b.PutID(0x52d8ccd9)
-			return layerEncodeWire52d8ccd9BareBody(profile, value, b, state)
-		case *MessageMediaEmpty:
-			b.PutID(0x3ded6320)
-			return layerEncodeWire3ded6320BareBody(profile, value, b, state)
-		case *MessageMediaGame:
-			b.PutID(0xfdb19008)
-			return layerEncodeWirefdb19008BareBody(profile, value, b, state)
-		case *MessageMediaGeo:
-			b.PutID(0x56e0d474)
-			return layerEncodeWire56e0d474BareBody(profile, value, b, state)
-		case *MessageMediaGeoLive:
-			b.PutID(0xb940c666)
-			return layerEncodeWireb940c666BareBody(profile, value, b, state)
-		case *MessageMediaGiveaway:
-			b.PutID(0xaa073beb)
-			return layerEncodeWireaa073bebBareBody(profile, value, b, state)
-		case *MessageMediaGiveawayResults:
-			b.PutID(0xceaa3ea1)
-			return layerEncodeWireceaa3ea1BareBody(profile, value, b, state)
-		case *MessageMediaInvoice:
-			b.PutID(0xf6a548d3)
-			return layerEncodeWiref6a548d3BareBody(profile, value, b, state)
-		case *MessageMediaPaidMedia:
-			b.PutID(0xa8852491)
-			return layerEncodeWirea8852491BareBody(profile, value, b, state)
-		case *MessageMediaPhoto:
-			b.PutID(0x695150d7)
-			return layerEncodeWire695150d7BareBody(profile, value, b, state)
-		case *MessageMediaPoll:
-			b.PutID(0x4bd6e798)
-			return layerEncodeWire4bd6e798BareBody(profile, value, b, state)
-		case *MessageMediaStory:
-			b.PutID(0x68cb6283)
-			return layerEncodeWire68cb6283BareBody(profile, value, b, state)
-		case *MessageMediaToDo:
-			b.PutID(0x8a53b014)
-			return layerEncodeWire8a53b014BareBody(profile, value, b, state)
-		case *MessageMediaUnsupported:
-			b.PutID(0x9f84f49e)
-			return layerEncodeWire9f84f49eBareBody(profile, value, b, state)
-		case *MessageMediaVenue:
-			b.PutID(0x2ec0533f)
-			return layerEncodeWire2ec0533fBareBody(profile, value, b, state)
-		case *MessageMediaVideoStream:
-			b.PutID(0xca5cab89)
-			return layerEncodeWireca5cab89BareBody(profile, value, b, state)
-		case *MessageMediaWebPage:
-			b.PutID(0xddf10c3b)
-			return layerEncodeWireddf10c3bBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *MessageMediaContact:
-			b.PutID(0x70322949)
-			return layerEncodeWire70322949BareBody(profile, value, b, state)
-		case *MessageMediaDice:
-			b.PutID(0x08cbec07)
-			return layerEncodeWire08cbec07BareBody(profile, value, b, state)
-		case *MessageMediaDocument:
-			b.PutID(0x52d8ccd9)
-			return layerEncodeWire52d8ccd9BareBody(profile, value, b, state)
-		case *MessageMediaEmpty:
-			b.PutID(0x3ded6320)
-			return layerEncodeWire3ded6320BareBody(profile, value, b, state)
-		case *MessageMediaGame:
-			b.PutID(0xfdb19008)
-			return layerEncodeWirefdb19008BareBody(profile, value, b, state)
-		case *MessageMediaGeo:
-			b.PutID(0x56e0d474)
-			return layerEncodeWire56e0d474BareBody(profile, value, b, state)
-		case *MessageMediaGeoLive:
-			b.PutID(0xb940c666)
-			return layerEncodeWireb940c666BareBody(profile, value, b, state)
-		case *MessageMediaGiveaway:
-			b.PutID(0xaa073beb)
-			return layerEncodeWireaa073bebBareBody(profile, value, b, state)
-		case *MessageMediaGiveawayResults:
-			b.PutID(0xceaa3ea1)
-			return layerEncodeWireceaa3ea1BareBody(profile, value, b, state)
-		case *MessageMediaInvoice:
-			b.PutID(0xf6a548d3)
-			return layerEncodeWiref6a548d3BareBody(profile, value, b, state)
-		case *MessageMediaPaidMedia:
-			b.PutID(0xa8852491)
-			return layerEncodeWirea8852491BareBody(profile, value, b, state)
-		case *MessageMediaPhoto:
-			b.PutID(0x695150d7)
-			return layerEncodeWire695150d7BareBody(profile, value, b, state)
-		case *MessageMediaPoll:
-			b.PutID(0x4bd6e798)
-			return layerEncodeWire4bd6e798BareBody(profile, value, b, state)
-		case *MessageMediaStory:
-			b.PutID(0x68cb6283)
-			return layerEncodeWire68cb6283BareBody(profile, value, b, state)
-		case *MessageMediaToDo:
-			b.PutID(0x8a53b014)
-			return layerEncodeWire8a53b014BareBody(profile, value, b, state)
-		case *MessageMediaUnsupported:
-			b.PutID(0x9f84f49e)
-			return layerEncodeWire9f84f49eBareBody(profile, value, b, state)
-		case *MessageMediaVenue:
-			b.PutID(0x2ec0533f)
-			return layerEncodeWire2ec0533fBareBody(profile, value, b, state)
-		case *MessageMediaVideoStream:
-			b.PutID(0xca5cab89)
-			return layerEncodeWireca5cab89BareBody(profile, value, b, state)
-		case *MessageMediaWebPage:
-			b.PutID(0xddf10c3b)
-			return layerEncodeWireddf10c3bBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageMediaContact:
 			b.PutID(0x70322949)
@@ -19668,93 +17533,7 @@ func layerDecodeClassMessageMedia(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220:
-		switch id {
-		case 0x2ec0533f:
-			return layerDecodeWire2ec0533f(profile, b, state)
-		case 0x3ded6320:
-			return layerDecodeWire3ded6320(profile, b, state)
-		case 0x3f7ee58b:
-			return layerDecodeWire3f7ee58b(profile, b, state)
-		case 0x4bd6e798:
-			return layerDecodeWire4bd6e798(profile, b, state)
-		case 0x52d8ccd9:
-			return layerDecodeWire52d8ccd9(profile, b, state)
-		case 0x56e0d474:
-			return layerDecodeWire56e0d474(profile, b, state)
-		case 0x68cb6283:
-			return layerDecodeWire68cb6283(profile, b, state)
-		case 0x695150d7:
-			return layerDecodeWire695150d7(profile, b, state)
-		case 0x70322949:
-			return layerDecodeWire70322949(profile, b, state)
-		case 0x8a53b014:
-			return layerDecodeWire8a53b014(profile, b, state)
-		case 0x9f84f49e:
-			return layerDecodeWire9f84f49e(profile, b, state)
-		case 0xa8852491:
-			return layerDecodeWirea8852491(profile, b, state)
-		case 0xaa073beb:
-			return layerDecodeWireaa073beb(profile, b, state)
-		case 0xb940c666:
-			return layerDecodeWireb940c666(profile, b, state)
-		case 0xca5cab89:
-			return layerDecodeWireca5cab89(profile, b, state)
-		case 0xceaa3ea1:
-			return layerDecodeWireceaa3ea1(profile, b, state)
-		case 0xddf10c3b:
-			return layerDecodeWireddf10c3b(profile, b, state)
-		case 0xf6a548d3:
-			return layerDecodeWiref6a548d3(profile, b, state)
-		case 0xfdb19008:
-			return layerDecodeWirefdb19008(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x08cbec07:
-			return layerDecodeWire08cbec07(profile, b, state)
-		case 0x2ec0533f:
-			return layerDecodeWire2ec0533f(profile, b, state)
-		case 0x3ded6320:
-			return layerDecodeWire3ded6320(profile, b, state)
-		case 0x4bd6e798:
-			return layerDecodeWire4bd6e798(profile, b, state)
-		case 0x52d8ccd9:
-			return layerDecodeWire52d8ccd9(profile, b, state)
-		case 0x56e0d474:
-			return layerDecodeWire56e0d474(profile, b, state)
-		case 0x68cb6283:
-			return layerDecodeWire68cb6283(profile, b, state)
-		case 0x695150d7:
-			return layerDecodeWire695150d7(profile, b, state)
-		case 0x70322949:
-			return layerDecodeWire70322949(profile, b, state)
-		case 0x8a53b014:
-			return layerDecodeWire8a53b014(profile, b, state)
-		case 0x9f84f49e:
-			return layerDecodeWire9f84f49e(profile, b, state)
-		case 0xa8852491:
-			return layerDecodeWirea8852491(profile, b, state)
-		case 0xaa073beb:
-			return layerDecodeWireaa073beb(profile, b, state)
-		case 0xb940c666:
-			return layerDecodeWireb940c666(profile, b, state)
-		case 0xca5cab89:
-			return layerDecodeWireca5cab89(profile, b, state)
-		case 0xceaa3ea1:
-			return layerDecodeWireceaa3ea1(profile, b, state)
-		case 0xddf10c3b:
-			return layerDecodeWireddf10c3b(profile, b, state)
-		case 0xf6a548d3:
-			return layerDecodeWiref6a548d3(profile, b, state)
-		case 0xfdb19008:
-			return layerDecodeWirefdb19008(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x08cbec07:
 			return layerDecodeWire08cbec07(profile, b, state)
@@ -19851,7 +17630,7 @@ func layerPreflightClassMessagePeerVote(profile LayerProfile, value MessagePeerV
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagePeerVote:
 			return layerPreflightWireb6cc2d5cBare(profile, value, state)
@@ -19881,7 +17660,7 @@ func layerEncodeClassMessagePeerVoteBody(profile LayerProfile, value MessagePeer
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagePeerVote:
 			b.PutID(0xb6cc2d5c)
@@ -19907,7 +17686,7 @@ func layerDecodeClassMessagePeerVote(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4628f6e6:
 			return layerDecodeWire4628f6e6(profile, b, state)
@@ -19962,17 +17741,7 @@ func layerPreflightClassMessageReplyHeader(profile LayerProfile, value MessageRe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *MessageReplyHeader:
-			return layerPreflightWire6917560bBare(profile, value, state)
-		case *MessageReplyStoryHeader:
-			return layerPreflightWire0e5af939Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageReplyHeader:
 			return layerPreflightWire1b97dd66Bare(profile, value, state)
@@ -20000,19 +17769,7 @@ func layerEncodeClassMessageReplyHeaderBody(profile LayerProfile, value MessageR
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *MessageReplyHeader:
-			b.PutID(0x6917560b)
-			return layerEncodeWire6917560bBareBody(profile, value, b, state)
-		case *MessageReplyStoryHeader:
-			b.PutID(0x0e5af939)
-			return layerEncodeWire0e5af939BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessageReplyHeader:
 			b.PutID(0x1b97dd66)
@@ -20035,16 +17792,7 @@ func layerDecodeClassMessageReplyHeader(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x0e5af939:
-			return layerDecodeWire0e5af939(profile, b, state)
-		case 0x6917560b:
-			return layerDecodeWire6917560b(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0e5af939:
 			return layerDecodeWire0e5af939(profile, b, state)
@@ -20257,47 +18005,7 @@ func layerPreflightClassMessagesFilter(profile LayerProfile, value MessagesFilte
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *InputMessagesFilterChatPhotos:
-			return layerPreflightWire3a20ecb8Bare(profile, value, state)
-		case *InputMessagesFilterContacts:
-			return layerPreflightWiree062db83Bare(profile, value, state)
-		case *InputMessagesFilterDocument:
-			return layerPreflightWire9eddf188Bare(profile, value, state)
-		case *InputMessagesFilterEmpty:
-			return layerPreflightWire57e2f66cBare(profile, value, state)
-		case *InputMessagesFilterGeo:
-			return layerPreflightWiree7026d0dBare(profile, value, state)
-		case *InputMessagesFilterGif:
-			return layerPreflightWireffc86587Bare(profile, value, state)
-		case *InputMessagesFilterMusic:
-			return layerPreflightWire3751b49eBare(profile, value, state)
-		case *InputMessagesFilterMyMentions:
-			return layerPreflightWirec1f8e69aBare(profile, value, state)
-		case *InputMessagesFilterPhoneCalls:
-			return layerPreflightWire80c99768Bare(profile, value, state)
-		case *InputMessagesFilterPhotoVideo:
-			return layerPreflightWire56e9f0e4Bare(profile, value, state)
-		case *InputMessagesFilterPhotos:
-			return layerPreflightWire9609a51cBare(profile, value, state)
-		case *InputMessagesFilterPinned:
-			return layerPreflightWire1bb00451Bare(profile, value, state)
-		case *InputMessagesFilterRoundVideo:
-			return layerPreflightWireb549da53Bare(profile, value, state)
-		case *InputMessagesFilterRoundVoice:
-			return layerPreflightWire7a7c17a4Bare(profile, value, state)
-		case *InputMessagesFilterURL:
-			return layerPreflightWire7ef0dd87Bare(profile, value, state)
-		case *InputMessagesFilterVideo:
-			return layerPreflightWire9fc00e65Bare(profile, value, state)
-		case *InputMessagesFilterVoice:
-			return layerPreflightWire50f5c392Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMessagesFilterChatPhotos:
 			return layerPreflightWire3a20ecb8Bare(profile, value, state)
@@ -20357,64 +18065,7 @@ func layerEncodeClassMessagesFilterBody(profile LayerProfile, value MessagesFilt
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *InputMessagesFilterChatPhotos:
-			b.PutID(0x3a20ecb8)
-			return layerEncodeWire3a20ecb8BareBody(profile, value, b, state)
-		case *InputMessagesFilterContacts:
-			b.PutID(0xe062db83)
-			return layerEncodeWiree062db83BareBody(profile, value, b, state)
-		case *InputMessagesFilterDocument:
-			b.PutID(0x9eddf188)
-			return layerEncodeWire9eddf188BareBody(profile, value, b, state)
-		case *InputMessagesFilterEmpty:
-			b.PutID(0x57e2f66c)
-			return layerEncodeWire57e2f66cBareBody(profile, value, b, state)
-		case *InputMessagesFilterGeo:
-			b.PutID(0xe7026d0d)
-			return layerEncodeWiree7026d0dBareBody(profile, value, b, state)
-		case *InputMessagesFilterGif:
-			b.PutID(0xffc86587)
-			return layerEncodeWireffc86587BareBody(profile, value, b, state)
-		case *InputMessagesFilterMusic:
-			b.PutID(0x3751b49e)
-			return layerEncodeWire3751b49eBareBody(profile, value, b, state)
-		case *InputMessagesFilterMyMentions:
-			b.PutID(0xc1f8e69a)
-			return layerEncodeWirec1f8e69aBareBody(profile, value, b, state)
-		case *InputMessagesFilterPhoneCalls:
-			b.PutID(0x80c99768)
-			return layerEncodeWire80c99768BareBody(profile, value, b, state)
-		case *InputMessagesFilterPhotoVideo:
-			b.PutID(0x56e9f0e4)
-			return layerEncodeWire56e9f0e4BareBody(profile, value, b, state)
-		case *InputMessagesFilterPhotos:
-			b.PutID(0x9609a51c)
-			return layerEncodeWire9609a51cBareBody(profile, value, b, state)
-		case *InputMessagesFilterPinned:
-			b.PutID(0x1bb00451)
-			return layerEncodeWire1bb00451BareBody(profile, value, b, state)
-		case *InputMessagesFilterRoundVideo:
-			b.PutID(0xb549da53)
-			return layerEncodeWireb549da53BareBody(profile, value, b, state)
-		case *InputMessagesFilterRoundVoice:
-			b.PutID(0x7a7c17a4)
-			return layerEncodeWire7a7c17a4BareBody(profile, value, b, state)
-		case *InputMessagesFilterURL:
-			b.PutID(0x7ef0dd87)
-			return layerEncodeWire7ef0dd87BareBody(profile, value, b, state)
-		case *InputMessagesFilterVideo:
-			b.PutID(0x9fc00e65)
-			return layerEncodeWire9fc00e65BareBody(profile, value, b, state)
-		case *InputMessagesFilterVoice:
-			b.PutID(0x50f5c392)
-			return layerEncodeWire50f5c392BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputMessagesFilterChatPhotos:
 			b.PutID(0x3a20ecb8)
@@ -20485,46 +18136,7 @@ func layerDecodeClassMessagesFilter(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x1bb00451:
-			return layerDecodeWire1bb00451(profile, b, state)
-		case 0x3751b49e:
-			return layerDecodeWire3751b49e(profile, b, state)
-		case 0x3a20ecb8:
-			return layerDecodeWire3a20ecb8(profile, b, state)
-		case 0x50f5c392:
-			return layerDecodeWire50f5c392(profile, b, state)
-		case 0x56e9f0e4:
-			return layerDecodeWire56e9f0e4(profile, b, state)
-		case 0x57e2f66c:
-			return layerDecodeWire57e2f66c(profile, b, state)
-		case 0x7a7c17a4:
-			return layerDecodeWire7a7c17a4(profile, b, state)
-		case 0x7ef0dd87:
-			return layerDecodeWire7ef0dd87(profile, b, state)
-		case 0x80c99768:
-			return layerDecodeWire80c99768(profile, b, state)
-		case 0x9609a51c:
-			return layerDecodeWire9609a51c(profile, b, state)
-		case 0x9eddf188:
-			return layerDecodeWire9eddf188(profile, b, state)
-		case 0x9fc00e65:
-			return layerDecodeWire9fc00e65(profile, b, state)
-		case 0xb549da53:
-			return layerDecodeWireb549da53(profile, b, state)
-		case 0xc1f8e69a:
-			return layerDecodeWirec1f8e69a(profile, b, state)
-		case 0xe062db83:
-			return layerDecodeWiree062db83(profile, b, state)
-		case 0xe7026d0d:
-			return layerDecodeWiree7026d0d(profile, b, state)
-		case 0xffc86587:
-			return layerDecodeWireffc86587(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1bb00451:
 			return layerDecodeWire1bb00451(profile, b, state)
@@ -20629,7 +18241,7 @@ func layerPreflightClassNotificationSound(profile LayerProfile, value Notificati
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *NotificationSoundDefault:
 			return layerPreflightWire97e8bebeBare(profile, value, state)
@@ -20661,7 +18273,7 @@ func layerEncodeClassNotificationSoundBody(profile LayerProfile, value Notificat
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *NotificationSoundDefault:
 			b.PutID(0x97e8bebe)
@@ -20690,7 +18302,7 @@ func layerDecodeClassNotificationSound(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6f0c34df:
 			return layerDecodeWire6f0c34df(profile, b, state)
@@ -20731,6 +18343,16 @@ func layerProjectClassNotifyPeer(profile LayerProfile, value NotifyPeerClass) (N
 		result, ok := projected.(NotifyPeerClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeNotifyChats, Reason: "project hook returned a constructor outside class NotifyPeer"}
+		}
+		return result, true, nil
+	case *NotifyCommunity:
+		projected, keep, err := layerProjectFamilyNotifyCommunity(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(NotifyPeerClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeNotifyCommunity, Reason: "project hook returned a constructor outside class NotifyPeer"}
 		}
 		return result, true, nil
 	case *NotifyForumTopic:
@@ -20777,12 +18399,30 @@ func layerPreflightClassNotifyPeer(profile LayerProfile, value NotifyPeerClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *NotifyBroadcasts:
 			return layerPreflightWired612e8efBare(profile, value, state)
 		case *NotifyChats:
 			return layerPreflightWirec007cec3Bare(profile, value, state)
+		case *NotifyForumTopic:
+			return layerPreflightWire226e6308Bare(profile, value, state)
+		case *NotifyPeer:
+			return layerPreflightWire9fd40bd8Bare(profile, value, state)
+		case *NotifyUsers:
+			return layerPreflightWireb4c83b4cBare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *NotifyBroadcasts:
+			return layerPreflightWired612e8efBare(profile, value, state)
+		case *NotifyChats:
+			return layerPreflightWirec007cec3Bare(profile, value, state)
+		case *NotifyCommunity:
+			return layerPreflightWirebe376999Bare(profile, value, state)
 		case *NotifyForumTopic:
 			return layerPreflightWire226e6308Bare(profile, value, state)
 		case *NotifyPeer:
@@ -20811,7 +18451,7 @@ func layerEncodeClassNotifyPeerBody(profile LayerProfile, value NotifyPeerClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *NotifyBroadcasts:
 			b.PutID(0xd612e8ef)
@@ -20819,6 +18459,30 @@ func layerEncodeClassNotifyPeerBody(profile LayerProfile, value NotifyPeerClass,
 		case *NotifyChats:
 			b.PutID(0xc007cec3)
 			return layerEncodeWirec007cec3BareBody(profile, value, b, state)
+		case *NotifyForumTopic:
+			b.PutID(0x226e6308)
+			return layerEncodeWire226e6308BareBody(profile, value, b, state)
+		case *NotifyPeer:
+			b.PutID(0x9fd40bd8)
+			return layerEncodeWire9fd40bd8BareBody(profile, value, b, state)
+		case *NotifyUsers:
+			b.PutID(0xb4c83b4c)
+			return layerEncodeWireb4c83b4cBareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *NotifyBroadcasts:
+			b.PutID(0xd612e8ef)
+			return layerEncodeWired612e8efBareBody(profile, value, b, state)
+		case *NotifyChats:
+			b.PutID(0xc007cec3)
+			return layerEncodeWirec007cec3BareBody(profile, value, b, state)
+		case *NotifyCommunity:
+			b.PutID(0xbe376999)
+			return layerEncodeWirebe376999BareBody(profile, value, b, state)
 		case *NotifyForumTopic:
 			b.PutID(0x226e6308)
 			return layerEncodeWire226e6308BareBody(profile, value, b, state)
@@ -20843,7 +18507,7 @@ func layerDecodeClassNotifyPeer(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x226e6308:
 			return layerDecodeWire226e6308(profile, b, state)
@@ -20851,6 +18515,23 @@ func layerDecodeClassNotifyPeer(profile LayerProfile, b *bin.Buffer, state *laye
 			return layerDecodeWire9fd40bd8(profile, b, state)
 		case 0xb4c83b4c:
 			return layerDecodeWireb4c83b4c(profile, b, state)
+		case 0xc007cec3:
+			return layerDecodeWirec007cec3(profile, b, state)
+		case 0xd612e8ef:
+			return layerDecodeWired612e8ef(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x226e6308:
+			return layerDecodeWire226e6308(profile, b, state)
+		case 0x9fd40bd8:
+			return layerDecodeWire9fd40bd8(profile, b, state)
+		case 0xb4c83b4c:
+			return layerDecodeWireb4c83b4c(profile, b, state)
+		case 0xbe376999:
+			return layerDecodeWirebe376999(profile, b, state)
 		case 0xc007cec3:
 			return layerDecodeWirec007cec3(profile, b, state)
 		case 0xd612e8ef:
@@ -21272,7 +18953,7 @@ func layerPreflightClassPageBlock(profile LayerProfile, value PageBlockClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *PageBlockAnchor:
 			return layerPreflightWirece0d37b0Bare(profile, value, state)
@@ -21336,7 +19017,7 @@ func layerPreflightClassPageBlock(profile LayerProfile, value PageBlockClass, st
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPageBlockMap:
 			return layerPreflightWire574b617fBare(profile, value, state)
@@ -21438,7 +19119,7 @@ func layerEncodeClassPageBlockBody(profile LayerProfile, value PageBlockClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *PageBlockAnchor:
 			b.PutID(0xce0d37b0)
@@ -21531,7 +19212,7 @@ func layerEncodeClassPageBlockBody(profile LayerProfile, value PageBlockClass, b
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPageBlockMap:
 			b.PutID(0x574b617f)
@@ -21665,7 +19346,7 @@ func layerDecodeClassPageBlock(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x031f9590:
 			return layerDecodeWire031f9590(profile, b, state)
@@ -21728,7 +19409,7 @@ func layerDecodeClassPageBlock(profile LayerProfile, b *bin.Buffer, state *layer
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x031f9590:
 			return layerDecodeWire031f9590(profile, b, state)
@@ -21855,7 +19536,7 @@ func layerPreflightClassPageListItem(profile LayerProfile, value PageListItemCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *PageListItemBlocks:
 			return layerPreflightWire25e073fcBare(profile, value, state)
@@ -21865,7 +19546,7 @@ func layerPreflightClassPageListItem(profile LayerProfile, value PageListItemCla
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PageListItemBlocks:
 			return layerPreflightWire63ca67aaBare(profile, value, state)
@@ -21893,7 +19574,7 @@ func layerEncodeClassPageListItemBody(profile LayerProfile, value PageListItemCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *PageListItemBlocks:
 			b.PutID(0x25e073fc)
@@ -21905,7 +19586,7 @@ func layerEncodeClassPageListItemBody(profile LayerProfile, value PageListItemCl
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PageListItemBlocks:
 			b.PutID(0x63ca67aa)
@@ -21928,7 +19609,7 @@ func layerDecodeClassPageListItem(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x25e073fc:
 			return layerDecodeWire25e073fc(profile, b, state)
@@ -21937,7 +19618,7 @@ func layerDecodeClassPageListItem(profile LayerProfile, b *bin.Buffer, state *la
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2f58683c:
 			return layerDecodeWire2f58683c(profile, b, state)
@@ -21990,7 +19671,7 @@ func layerPreflightClassPageListOrderedItem(profile LayerProfile, value PageList
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *PageListOrderedItemBlocks:
 			return layerPreflightWire98dd8936Bare(profile, value, state)
@@ -22000,7 +19681,7 @@ func layerPreflightClassPageListOrderedItem(profile LayerProfile, value PageList
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PageListOrderedItemBlocks:
 			return layerPreflightWire8ff2d5f0Bare(profile, value, state)
@@ -22028,7 +19709,7 @@ func layerEncodeClassPageListOrderedItemBody(profile LayerProfile, value PageLis
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *PageListOrderedItemBlocks:
 			b.PutID(0x98dd8936)
@@ -22040,7 +19721,7 @@ func layerEncodeClassPageListOrderedItemBody(profile LayerProfile, value PageLis
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PageListOrderedItemBlocks:
 			b.PutID(0x8ff2d5f0)
@@ -22063,7 +19744,7 @@ func layerDecodeClassPageListOrderedItem(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x5e068047:
 			return layerDecodeWire5e068047(profile, b, state)
@@ -22072,7 +19753,7 @@ func layerDecodeClassPageListOrderedItem(profile LayerProfile, b *bin.Buffer, st
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x15031189:
 			return layerDecodeWire15031189(profile, b, state)
@@ -22135,7 +19816,7 @@ func layerPreflightClassPaidReactionPrivacy(profile LayerProfile, value PaidReac
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaidReactionPrivacyAnonymous:
 			return layerPreflightWire1f0c1ad9Bare(profile, value, state)
@@ -22165,7 +19846,7 @@ func layerEncodeClassPaidReactionPrivacyBody(profile LayerProfile, value PaidRea
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaidReactionPrivacyAnonymous:
 			b.PutID(0x1f0c1ad9)
@@ -22191,7 +19872,7 @@ func layerDecodeClassPaidReactionPrivacy(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1f0c1ad9:
 			return layerDecodeWire1f0c1ad9(profile, b, state)
@@ -22246,7 +19927,7 @@ func layerPreflightClassPasswordKdfAlgo(profile LayerProfile, value PasswordKdfA
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PasswordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow:
 			return layerPreflightWire3a912d4aBare(profile, value, state)
@@ -22274,7 +19955,7 @@ func layerEncodeClassPasswordKdfAlgoBody(profile LayerProfile, value PasswordKdf
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PasswordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow:
 			b.PutID(0x3a912d4a)
@@ -22297,7 +19978,7 @@ func layerDecodeClassPasswordKdfAlgo(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3a912d4a:
 			return layerDecodeWire3a912d4a(profile, b, state)
@@ -22360,7 +20041,7 @@ func layerPreflightClassPeer(profile LayerProfile, value PeerClass, state *layer
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PeerChannel:
 			return layerPreflightWirea2a5371eBare(profile, value, state)
@@ -22390,7 +20071,7 @@ func layerEncodeClassPeerBody(profile LayerProfile, value PeerClass, b *bin.Buff
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PeerChannel:
 			b.PutID(0xa2a5371e)
@@ -22416,7 +20097,7 @@ func layerDecodeClassPeer(profile LayerProfile, b *bin.Buffer, state *layerCodec
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x36c6019a:
 			return layerDecodeWire36c6019a(profile, b, state)
@@ -22481,7 +20162,7 @@ func layerPreflightClassPeerColor(profile LayerProfile, value PeerColorClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPeerColorCollectible:
 			return layerPreflightWireb8ea86a9Bare(profile, value, state)
@@ -22511,7 +20192,7 @@ func layerEncodeClassPeerColorBody(profile LayerProfile, value PeerColorClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPeerColorCollectible:
 			b.PutID(0xb8ea86a9)
@@ -22537,7 +20218,7 @@ func layerDecodeClassPeerColor(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xb54b5acf:
 			return layerDecodeWireb54b5acf(profile, b, state)
@@ -22592,7 +20273,7 @@ func layerPreflightClassPeerLocated(profile LayerProfile, value PeerLocatedClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PeerLocated:
 			return layerPreflightWireca461b5dBare(profile, value, state)
@@ -22620,7 +20301,7 @@ func layerEncodeClassPeerLocatedBody(profile LayerProfile, value PeerLocatedClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PeerLocated:
 			b.PutID(0xca461b5d)
@@ -22643,7 +20324,7 @@ func layerDecodeClassPeerLocated(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xca461b5d:
 			return layerDecodeWireca461b5d(profile, b, state)
@@ -22736,7 +20417,7 @@ func layerPreflightClassPhoneCall(profile LayerProfile, value PhoneCallClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhoneCall:
 			return layerPreflightWire30535af5Bare(profile, value, state)
@@ -22772,7 +20453,7 @@ func layerEncodeClassPhoneCallBody(profile LayerProfile, value PhoneCallClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhoneCall:
 			b.PutID(0x30535af5)
@@ -22807,7 +20488,7 @@ func layerDecodeClassPhoneCall(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x14b0ed0c:
 			return layerDecodeWire14b0ed0c(profile, b, state)
@@ -22898,7 +20579,7 @@ func layerPreflightClassPhoneCallDiscardReason(profile LayerProfile, value Phone
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhoneCallDiscardReasonBusy:
 			return layerPreflightWirefaf7e8c9Bare(profile, value, state)
@@ -22932,7 +20613,7 @@ func layerEncodeClassPhoneCallDiscardReasonBody(profile LayerProfile, value Phon
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhoneCallDiscardReasonBusy:
 			b.PutID(0xfaf7e8c9)
@@ -22964,7 +20645,7 @@ func layerDecodeClassPhoneCallDiscardReason(profile LayerProfile, b *bin.Buffer,
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x57adc690:
 			return layerDecodeWire57adc690(profile, b, state)
@@ -23023,7 +20704,7 @@ func layerPreflightClassPhoneConnection(profile LayerProfile, value PhoneConnect
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhoneConnection:
 			return layerPreflightWire9cc123c7Bare(profile, value, state)
@@ -23051,7 +20732,7 @@ func layerEncodeClassPhoneConnectionBody(profile LayerProfile, value PhoneConnec
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhoneConnection:
 			b.PutID(0x9cc123c7)
@@ -23074,7 +20755,7 @@ func layerDecodeClassPhoneConnection(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x635fe375:
 			return layerDecodeWire635fe375(profile, b, state)
@@ -23127,7 +20808,7 @@ func layerPreflightClassPhoto(profile LayerProfile, value PhotoClass, state *lay
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *Photo:
 			return layerPreflightWirefb197a65Bare(profile, value, state)
@@ -23155,7 +20836,7 @@ func layerEncodeClassPhotoBody(profile LayerProfile, value PhotoClass, b *bin.Bu
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *Photo:
 			b.PutID(0xfb197a65)
@@ -23178,7 +20859,7 @@ func layerDecodeClassPhoto(profile LayerProfile, b *bin.Buffer, state *layerCode
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2331b22d:
 			return layerDecodeWire2331b22d(profile, b, state)
@@ -23271,7 +20952,7 @@ func layerPreflightClassPhotoSize(profile LayerProfile, value PhotoSizeClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhotoCachedSize:
 			return layerPreflightWire021e1ad6Bare(profile, value, state)
@@ -23307,7 +20988,7 @@ func layerEncodeClassPhotoSizeBody(profile LayerProfile, value PhotoSizeClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhotoCachedSize:
 			b.PutID(0x021e1ad6)
@@ -23342,7 +21023,7 @@ func layerDecodeClassPhotoSize(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x021e1ad6:
 			return layerDecodeWire021e1ad6(profile, b, state)
@@ -23403,15 +21084,7 @@ func layerPreflightClassPollAnswer(profile LayerProfile, value PollAnswerClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *PollAnswer:
-			return layerPreflightWireff16e2caBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPollAnswer:
 			return layerPreflightWire199fed96Bare(profile, value, state)
@@ -23439,16 +21112,7 @@ func layerEncodeClassPollAnswerBody(profile LayerProfile, value PollAnswerClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *PollAnswer:
-			b.PutID(0xff16e2ca)
-			return layerEncodeWireff16e2caBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputPollAnswer:
 			b.PutID(0x199fed96)
@@ -23471,14 +21135,7 @@ func layerDecodeClassPollAnswer(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0xff16e2ca:
-			return layerDecodeWireff16e2ca(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x199fed96:
 			return layerDecodeWire199fed96(profile, b, state)
@@ -23531,7 +21188,7 @@ func layerPreflightClassPostInteractionCounters(profile LayerProfile, value Post
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PostInteractionCountersMessage:
 			return layerPreflightWiree7058e7fBare(profile, value, state)
@@ -23559,7 +21216,7 @@ func layerEncodeClassPostInteractionCountersBody(profile LayerProfile, value Pos
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PostInteractionCountersMessage:
 			b.PutID(0xe7058e7f)
@@ -23582,7 +21239,7 @@ func layerDecodeClassPostInteractionCounters(profile LayerProfile, b *bin.Buffer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x8a480e27:
 			return layerDecodeWire8a480e27(profile, b, state)
@@ -23635,7 +21292,7 @@ func layerPreflightClassPrepaidGiveaway(profile LayerProfile, value PrepaidGivea
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PrepaidGiveaway:
 			return layerPreflightWireb2539d54Bare(profile, value, state)
@@ -23663,7 +21320,7 @@ func layerEncodeClassPrepaidGiveawayBody(profile LayerProfile, value PrepaidGive
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PrepaidGiveaway:
 			b.PutID(0xb2539d54)
@@ -23686,7 +21343,7 @@ func layerDecodeClassPrepaidGiveaway(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9a9d77e0:
 			return layerDecodeWire9a9d77e0(profile, b, state)
@@ -23859,7 +21516,7 @@ func layerPreflightClassPrivacyKey(profile LayerProfile, value PrivacyKeyClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PrivacyKeyAbout:
 			return layerPreflightWirea486b761Bare(profile, value, state)
@@ -23911,7 +21568,7 @@ func layerEncodeClassPrivacyKeyBody(profile LayerProfile, value PrivacyKeyClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PrivacyKeyAbout:
 			b.PutID(0xa486b761)
@@ -23970,7 +21627,7 @@ func layerDecodeClassPrivacyKey(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0697f414:
 			return layerDecodeWire0697f414(profile, b, state)
@@ -24147,7 +21804,7 @@ func layerPreflightClassPrivacyRule(profile LayerProfile, value PrivacyRuleClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PrivacyValueAllowAll:
 			return layerPreflightWire65427b82Bare(profile, value, state)
@@ -24195,7 +21852,7 @@ func layerEncodeClassPrivacyRuleBody(profile LayerProfile, value PrivacyRuleClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PrivacyValueAllowAll:
 			b.PutID(0x65427b82)
@@ -24248,7 +21905,7 @@ func layerDecodeClassPrivacyRule(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x21461b5d:
 			return layerDecodeWire21461b5d(profile, b, state)
@@ -24381,7 +22038,7 @@ func layerPreflightClassProfileTab(profile LayerProfile, value ProfileTabClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ProfileTabFiles:
 			return layerPreflightWireab339c00Bare(profile, value, state)
@@ -24421,7 +22078,7 @@ func layerEncodeClassProfileTabBody(profile LayerProfile, value ProfileTabClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ProfileTabFiles:
 			b.PutID(0xab339c00)
@@ -24462,7 +22119,7 @@ func layerDecodeClassProfileTab(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4d4bd46a:
 			return layerDecodeWire4d4bd46a(profile, b, state)
@@ -24527,7 +22184,7 @@ func layerPreflightClassPublicForward(profile LayerProfile, value PublicForwardC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PublicForwardMessage:
 			return layerPreflightWire01f2bf4aBare(profile, value, state)
@@ -24555,7 +22212,7 @@ func layerEncodeClassPublicForwardBody(profile LayerProfile, value PublicForward
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PublicForwardMessage:
 			b.PutID(0x01f2bf4a)
@@ -24578,7 +22235,7 @@ func layerDecodeClassPublicForward(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x01f2bf4a:
 			return layerDecodeWire01f2bf4a(profile, b, state)
@@ -24651,7 +22308,7 @@ func layerPreflightClassReaction(profile LayerProfile, value ReactionClass, stat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReactionCustomEmoji:
 			return layerPreflightWire8935fc73Bare(profile, value, state)
@@ -24683,7 +22340,7 @@ func layerEncodeClassReactionBody(profile LayerProfile, value ReactionClass, b *
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReactionCustomEmoji:
 			b.PutID(0x8935fc73)
@@ -24712,7 +22369,7 @@ func layerDecodeClassReaction(profile LayerProfile, b *bin.Buffer, state *layerC
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1b2286b8:
 			return layerDecodeWire1b2286b8(profile, b, state)
@@ -24769,7 +22426,7 @@ func layerPreflightClassReactionNotificationsFrom(profile LayerProfile, value Re
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReactionNotificationsFromAll:
 			return layerPreflightWire4b9e22a0Bare(profile, value, state)
@@ -24797,7 +22454,7 @@ func layerEncodeClassReactionNotificationsFromBody(profile LayerProfile, value R
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReactionNotificationsFromAll:
 			b.PutID(0x4b9e22a0)
@@ -24820,7 +22477,7 @@ func layerDecodeClassReactionNotificationsFrom(profile LayerProfile, b *bin.Buff
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4b9e22a0:
 			return layerDecodeWire4b9e22a0(profile, b, state)
@@ -24903,7 +22560,7 @@ func layerPreflightClassRecentMeURL(profile LayerProfile, value RecentMeURLClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RecentMeURLChat:
 			return layerPreflightWireb2da71d2Bare(profile, value, state)
@@ -24937,7 +22594,7 @@ func layerEncodeClassRecentMeURLBody(profile LayerProfile, value RecentMeURLClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RecentMeURLChat:
 			b.PutID(0xb2da71d2)
@@ -24969,7 +22626,7 @@ func layerDecodeClassRecentMeURL(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x46e1d13d:
 			return layerDecodeWire46e1d13d(profile, b, state)
@@ -25048,7 +22705,7 @@ func layerPreflightClassReplyMarkup(profile LayerProfile, value ReplyMarkupClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReplyInlineMarkup:
 			return layerPreflightWire48a30254Bare(profile, value, state)
@@ -25080,7 +22737,7 @@ func layerEncodeClassReplyMarkupBody(profile LayerProfile, value ReplyMarkupClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReplyInlineMarkup:
 			b.PutID(0x48a30254)
@@ -25109,7 +22766,7 @@ func layerDecodeClassReplyMarkup(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x48a30254:
 			return layerDecodeWire48a30254(profile, b, state)
@@ -25246,7 +22903,7 @@ func layerPreflightClassReportReason(profile LayerProfile, value ReportReasonCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputReportReasonChildAbuse:
 			return layerPreflightWireadf44ee3Bare(profile, value, state)
@@ -25290,7 +22947,7 @@ func layerEncodeClassReportReasonBody(profile LayerProfile, value ReportReasonCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputReportReasonChildAbuse:
 			b.PutID(0xadf44ee3)
@@ -25337,7 +22994,7 @@ func layerDecodeClassReportReason(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0a8eb2be:
 			return layerDecodeWire0a8eb2be(profile, b, state)
@@ -25416,7 +23073,7 @@ func layerPreflightClassReportResult(profile LayerProfile, value ReportResultCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReportResultAddComment:
 			return layerPreflightWire6f09ac31Bare(profile, value, state)
@@ -25446,7 +23103,7 @@ func layerEncodeClassReportResultBody(profile LayerProfile, value ReportResultCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ReportResultAddComment:
 			b.PutID(0x6f09ac31)
@@ -25472,7 +23129,7 @@ func layerDecodeClassReportResult(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6f09ac31:
 			return layerDecodeWire6f09ac31(profile, b, state)
@@ -25547,19 +23204,7 @@ func layerPreflightClassRequestPeerType(profile LayerProfile, value RequestPeerT
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *RequestPeerTypeBroadcast:
-			return layerPreflightWire339bef6cBare(profile, value, state)
-		case *RequestPeerTypeChat:
-			return layerPreflightWirec9f06e1bBare(profile, value, state)
-		case *RequestPeerTypeUser:
-			return layerPreflightWire5f3b8a00Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RequestPeerTypeBroadcast:
 			return layerPreflightWire339bef6cBare(profile, value, state)
@@ -25591,22 +23236,7 @@ func layerEncodeClassRequestPeerTypeBody(profile LayerProfile, value RequestPeer
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *RequestPeerTypeBroadcast:
-			b.PutID(0x339bef6c)
-			return layerEncodeWire339bef6cBareBody(profile, value, b, state)
-		case *RequestPeerTypeChat:
-			b.PutID(0xc9f06e1b)
-			return layerEncodeWirec9f06e1bBareBody(profile, value, b, state)
-		case *RequestPeerTypeUser:
-			b.PutID(0x5f3b8a00)
-			return layerEncodeWire5f3b8a00BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RequestPeerTypeBroadcast:
 			b.PutID(0x339bef6c)
@@ -25635,18 +23265,7 @@ func layerDecodeClassRequestPeerType(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x339bef6c:
-			return layerDecodeWire339bef6c(profile, b, state)
-		case 0x5f3b8a00:
-			return layerDecodeWire5f3b8a00(profile, b, state)
-		case 0xc9f06e1b:
-			return layerDecodeWirec9f06e1b(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x339bef6c:
 			return layerDecodeWire339bef6c(profile, b, state)
@@ -25713,7 +23332,7 @@ func layerPreflightClassRequestedPeer(profile LayerProfile, value RequestedPeerC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RequestedPeerChannel:
 			return layerPreflightWire8ba403e4Bare(profile, value, state)
@@ -25743,7 +23362,7 @@ func layerEncodeClassRequestedPeerBody(profile LayerProfile, value RequestedPeer
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RequestedPeerChannel:
 			b.PutID(0x8ba403e4)
@@ -25769,7 +23388,7 @@ func layerDecodeClassRequestedPeer(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x7307544f:
 			return layerDecodeWire7307544f(profile, b, state)
@@ -25834,7 +23453,7 @@ func layerPreflightClassRequirementToContact(profile LayerProfile, value Require
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RequirementToContactEmpty:
 			return layerPreflightWire050a9839Bare(profile, value, state)
@@ -25864,7 +23483,7 @@ func layerEncodeClassRequirementToContactBody(profile LayerProfile, value Requir
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *RequirementToContactEmpty:
 			b.PutID(0x050a9839)
@@ -25890,7 +23509,7 @@ func layerDecodeClassRequirementToContact(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x050a9839:
 			return layerDecodeWire050a9839(profile, b, state)
@@ -26019,6 +23638,16 @@ func layerProjectClassRichText(profile LayerProfile, value RichTextClass) (RichT
 		result, ok := projected.(RichTextClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextDate, Reason: "project hook returned a constructor outside class RichText"}
+		}
+		return result, true, nil
+	case *TextDiff:
+		projected, keep, err := layerProjectFamilyTextDiff(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(RichTextClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextDiff, Reason: "project hook returned a constructor outside class RichText"}
 		}
 		return result, true, nil
 	case *TextEmail:
@@ -26215,7 +23844,7 @@ func layerPreflightClassRichText(profile LayerProfile, value RichTextClass, stat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *TextAnchor:
 			return layerPreflightWire35553762Bare(profile, value, state)
@@ -26317,6 +23946,72 @@ func layerPreflightClassRichText(profile LayerProfile, value RichTextClass, stat
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *TextAnchor:
+			return layerPreflightWire35553762Bare(profile, value, state)
+		case *TextAutoEmail:
+			return layerPreflightWirec556a45dBare(profile, value, state)
+		case *TextAutoPhone:
+			return layerPreflightWire24c26789Bare(profile, value, state)
+		case *TextAutoURL:
+			return layerPreflightWireac6a83aaBare(profile, value, state)
+		case *TextBankCard:
+			return layerPreflightWireb956812dBare(profile, value, state)
+		case *TextBold:
+			return layerPreflightWire6724abc4Bare(profile, value, state)
+		case *TextBotCommand:
+			return layerPreflightWire02ff29d3Bare(profile, value, state)
+		case *TextCashtag:
+			return layerPreflightWire7b9e1801Bare(profile, value, state)
+		case *TextConcat:
+			return layerPreflightWire7e6260d7Bare(profile, value, state)
+		case *TextCustomEmoji:
+			return layerPreflightWirea26156c0Bare(profile, value, state)
+		case *TextDate:
+			return layerPreflightWirea5b45e2bBare(profile, value, state)
+		case *TextDiff:
+			return layerPreflightWire9686cb50Bare(profile, value, state)
+		case *TextEmail:
+			return layerPreflightWirede5a0dd6Bare(profile, value, state)
+		case *TextEmpty:
+			return layerPreflightWiredc3d824fBare(profile, value, state)
+		case *TextFixed:
+			return layerPreflightWire6c3f19b9Bare(profile, value, state)
+		case *TextHashtag:
+			return layerPreflightWire519524eaBare(profile, value, state)
+		case *TextImage:
+			return layerPreflightWire081ccf4fBare(profile, value, state)
+		case *TextItalic:
+			return layerPreflightWired912a59cBare(profile, value, state)
+		case *TextMarked:
+			return layerPreflightWire034b8621Bare(profile, value, state)
+		case *TextMath:
+			return layerPreflightWire9d2eac97Bare(profile, value, state)
+		case *TextMention:
+			return layerPreflightWirecd24cf44Bare(profile, value, state)
+		case *TextMentionName:
+			return layerPreflightWire01a9fbfcBare(profile, value, state)
+		case *TextPhone:
+			return layerPreflightWire1ccb966aBare(profile, value, state)
+		case *TextPlain:
+			return layerPreflightWire744694e0Bare(profile, value, state)
+		case *TextSpoiler:
+			return layerPreflightWire4c2a5d62Bare(profile, value, state)
+		case *TextStrike:
+			return layerPreflightWire9bf8bb95Bare(profile, value, state)
+		case *TextSubscript:
+			return layerPreflightWireed6a8504Bare(profile, value, state)
+		case *TextSuperscript:
+			return layerPreflightWirec7fb5e01Bare(profile, value, state)
+		case *TextURL:
+			return layerPreflightWire3c2884c1Bare(profile, value, state)
+		case *TextUnderline:
+			return layerPreflightWirec12622c4Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -26335,7 +24030,7 @@ func layerEncodeClassRichTextBody(profile LayerProfile, value RichTextClass, b *
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *TextAnchor:
 			b.PutID(0x35553762)
@@ -26482,6 +24177,102 @@ func layerEncodeClassRichTextBody(profile LayerProfile, value RichTextClass, b *
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *TextAnchor:
+			b.PutID(0x35553762)
+			return layerEncodeWire35553762BareBody(profile, value, b, state)
+		case *TextAutoEmail:
+			b.PutID(0xc556a45d)
+			return layerEncodeWirec556a45dBareBody(profile, value, b, state)
+		case *TextAutoPhone:
+			b.PutID(0x24c26789)
+			return layerEncodeWire24c26789BareBody(profile, value, b, state)
+		case *TextAutoURL:
+			b.PutID(0xac6a83aa)
+			return layerEncodeWireac6a83aaBareBody(profile, value, b, state)
+		case *TextBankCard:
+			b.PutID(0xb956812d)
+			return layerEncodeWireb956812dBareBody(profile, value, b, state)
+		case *TextBold:
+			b.PutID(0x6724abc4)
+			return layerEncodeWire6724abc4BareBody(profile, value, b, state)
+		case *TextBotCommand:
+			b.PutID(0x02ff29d3)
+			return layerEncodeWire02ff29d3BareBody(profile, value, b, state)
+		case *TextCashtag:
+			b.PutID(0x7b9e1801)
+			return layerEncodeWire7b9e1801BareBody(profile, value, b, state)
+		case *TextConcat:
+			b.PutID(0x7e6260d7)
+			return layerEncodeWire7e6260d7BareBody(profile, value, b, state)
+		case *TextCustomEmoji:
+			b.PutID(0xa26156c0)
+			return layerEncodeWirea26156c0BareBody(profile, value, b, state)
+		case *TextDate:
+			b.PutID(0xa5b45e2b)
+			return layerEncodeWirea5b45e2bBareBody(profile, value, b, state)
+		case *TextDiff:
+			b.PutID(0x9686cb50)
+			return layerEncodeWire9686cb50BareBody(profile, value, b, state)
+		case *TextEmail:
+			b.PutID(0xde5a0dd6)
+			return layerEncodeWirede5a0dd6BareBody(profile, value, b, state)
+		case *TextEmpty:
+			b.PutID(0xdc3d824f)
+			return layerEncodeWiredc3d824fBareBody(profile, value, b, state)
+		case *TextFixed:
+			b.PutID(0x6c3f19b9)
+			return layerEncodeWire6c3f19b9BareBody(profile, value, b, state)
+		case *TextHashtag:
+			b.PutID(0x519524ea)
+			return layerEncodeWire519524eaBareBody(profile, value, b, state)
+		case *TextImage:
+			b.PutID(0x081ccf4f)
+			return layerEncodeWire081ccf4fBareBody(profile, value, b, state)
+		case *TextItalic:
+			b.PutID(0xd912a59c)
+			return layerEncodeWired912a59cBareBody(profile, value, b, state)
+		case *TextMarked:
+			b.PutID(0x034b8621)
+			return layerEncodeWire034b8621BareBody(profile, value, b, state)
+		case *TextMath:
+			b.PutID(0x9d2eac97)
+			return layerEncodeWire9d2eac97BareBody(profile, value, b, state)
+		case *TextMention:
+			b.PutID(0xcd24cf44)
+			return layerEncodeWirecd24cf44BareBody(profile, value, b, state)
+		case *TextMentionName:
+			b.PutID(0x01a9fbfc)
+			return layerEncodeWire01a9fbfcBareBody(profile, value, b, state)
+		case *TextPhone:
+			b.PutID(0x1ccb966a)
+			return layerEncodeWire1ccb966aBareBody(profile, value, b, state)
+		case *TextPlain:
+			b.PutID(0x744694e0)
+			return layerEncodeWire744694e0BareBody(profile, value, b, state)
+		case *TextSpoiler:
+			b.PutID(0x4c2a5d62)
+			return layerEncodeWire4c2a5d62BareBody(profile, value, b, state)
+		case *TextStrike:
+			b.PutID(0x9bf8bb95)
+			return layerEncodeWire9bf8bb95BareBody(profile, value, b, state)
+		case *TextSubscript:
+			b.PutID(0xed6a8504)
+			return layerEncodeWireed6a8504BareBody(profile, value, b, state)
+		case *TextSuperscript:
+			b.PutID(0xc7fb5e01)
+			return layerEncodeWirec7fb5e01BareBody(profile, value, b, state)
+		case *TextURL:
+			b.PutID(0x3c2884c1)
+			return layerEncodeWire3c2884c1BareBody(profile, value, b, state)
+		case *TextUnderline:
+			b.PutID(0xc12622c4)
+			return layerEncodeWirec12622c4BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -26493,7 +24284,7 @@ func layerDecodeClassRichText(profile LayerProfile, b *bin.Buffer, state *layerC
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x034b8621:
 			return layerDecodeWire034b8621(profile, b, state)
@@ -26593,6 +24384,71 @@ func layerDecodeClassRichText(profile LayerProfile, b *bin.Buffer, state *layerC
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
+	case LayerProfile228:
+		switch id {
+		case 0x01a9fbfc:
+			return layerDecodeWire01a9fbfc(profile, b, state)
+		case 0x02ff29d3:
+			return layerDecodeWire02ff29d3(profile, b, state)
+		case 0x034b8621:
+			return layerDecodeWire034b8621(profile, b, state)
+		case 0x081ccf4f:
+			return layerDecodeWire081ccf4f(profile, b, state)
+		case 0x1ccb966a:
+			return layerDecodeWire1ccb966a(profile, b, state)
+		case 0x24c26789:
+			return layerDecodeWire24c26789(profile, b, state)
+		case 0x35553762:
+			return layerDecodeWire35553762(profile, b, state)
+		case 0x3c2884c1:
+			return layerDecodeWire3c2884c1(profile, b, state)
+		case 0x4c2a5d62:
+			return layerDecodeWire4c2a5d62(profile, b, state)
+		case 0x519524ea:
+			return layerDecodeWire519524ea(profile, b, state)
+		case 0x6724abc4:
+			return layerDecodeWire6724abc4(profile, b, state)
+		case 0x6c3f19b9:
+			return layerDecodeWire6c3f19b9(profile, b, state)
+		case 0x744694e0:
+			return layerDecodeWire744694e0(profile, b, state)
+		case 0x7b9e1801:
+			return layerDecodeWire7b9e1801(profile, b, state)
+		case 0x7e6260d7:
+			return layerDecodeWire7e6260d7(profile, b, state)
+		case 0x9686cb50:
+			return layerDecodeWire9686cb50(profile, b, state)
+		case 0x9bf8bb95:
+			return layerDecodeWire9bf8bb95(profile, b, state)
+		case 0x9d2eac97:
+			return layerDecodeWire9d2eac97(profile, b, state)
+		case 0xa26156c0:
+			return layerDecodeWirea26156c0(profile, b, state)
+		case 0xa5b45e2b:
+			return layerDecodeWirea5b45e2b(profile, b, state)
+		case 0xac6a83aa:
+			return layerDecodeWireac6a83aa(profile, b, state)
+		case 0xb956812d:
+			return layerDecodeWireb956812d(profile, b, state)
+		case 0xc12622c4:
+			return layerDecodeWirec12622c4(profile, b, state)
+		case 0xc556a45d:
+			return layerDecodeWirec556a45d(profile, b, state)
+		case 0xc7fb5e01:
+			return layerDecodeWirec7fb5e01(profile, b, state)
+		case 0xcd24cf44:
+			return layerDecodeWirecd24cf44(profile, b, state)
+		case 0xd912a59c:
+			return layerDecodeWired912a59c(profile, b, state)
+		case 0xdc3d824f:
+			return layerDecodeWiredc3d824f(profile, b, state)
+		case 0xde5a0dd6:
+			return layerDecodeWirede5a0dd6(profile, b, state)
+		case 0xed6a8504:
+			return layerDecodeWireed6a8504(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
 	}
@@ -26637,7 +24493,7 @@ func layerPreflightClassSavedDialog(profile LayerProfile, value SavedDialogClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MonoForumDialog:
 			return layerPreflightWire64407ea7Bare(profile, value, state)
@@ -26665,7 +24521,7 @@ func layerEncodeClassSavedDialogBody(profile LayerProfile, value SavedDialogClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MonoForumDialog:
 			b.PutID(0x64407ea7)
@@ -26688,7 +24544,7 @@ func layerDecodeClassSavedDialog(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x64407ea7:
 			return layerDecodeWire64407ea7(profile, b, state)
@@ -26741,7 +24597,7 @@ func layerPreflightClassSecureFile(profile LayerProfile, value SecureFileClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureFile:
 			return layerPreflightWire7d09c27eBare(profile, value, state)
@@ -26769,7 +24625,7 @@ func layerEncodeClassSecureFileBody(profile LayerProfile, value SecureFileClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureFile:
 			b.PutID(0x7d09c27e)
@@ -26792,7 +24648,7 @@ func layerDecodeClassSecureFile(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x64199744:
 			return layerDecodeWire64199744(profile, b, state)
@@ -26855,7 +24711,7 @@ func layerPreflightClassSecurePasswordKdfAlgo(profile LayerProfile, value Secure
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecurePasswordKdfAlgoPBKDF2HMACSHA512iter100000:
 			return layerPreflightWirebbf2dda0Bare(profile, value, state)
@@ -26885,7 +24741,7 @@ func layerEncodeClassSecurePasswordKdfAlgoBody(profile LayerProfile, value Secur
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecurePasswordKdfAlgoPBKDF2HMACSHA512iter100000:
 			b.PutID(0xbbf2dda0)
@@ -26911,7 +24767,7 @@ func layerDecodeClassSecurePasswordKdfAlgo(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x004a8537:
 			return layerDecodeWire004a8537(profile, b, state)
@@ -26966,7 +24822,7 @@ func layerPreflightClassSecurePlainData(profile LayerProfile, value SecurePlainD
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecurePlainEmail:
 			return layerPreflightWire21ec5a5fBare(profile, value, state)
@@ -26994,7 +24850,7 @@ func layerEncodeClassSecurePlainDataBody(profile LayerProfile, value SecurePlain
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecurePlainEmail:
 			b.PutID(0x21ec5a5f)
@@ -27017,7 +24873,7 @@ func layerDecodeClassSecurePlainData(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x21ec5a5f:
 			return layerDecodeWire21ec5a5f(profile, b, state)
@@ -27070,7 +24926,7 @@ func layerPreflightClassSecureRequiredType(profile LayerProfile, value SecureReq
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureRequiredType:
 			return layerPreflightWire829d99daBare(profile, value, state)
@@ -27098,7 +24954,7 @@ func layerEncodeClassSecureRequiredTypeBody(profile LayerProfile, value SecureRe
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureRequiredType:
 			b.PutID(0x829d99da)
@@ -27121,7 +24977,7 @@ func layerDecodeClassSecureRequiredType(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x027477b4:
 			return layerDecodeWire027477b4(profile, b, state)
@@ -27244,7 +25100,7 @@ func layerPreflightClassSecureValueError(profile LayerProfile, value SecureValue
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureValueError:
 			return layerPreflightWire869d758fBare(profile, value, state)
@@ -27286,7 +25142,7 @@ func layerEncodeClassSecureValueErrorBody(profile LayerProfile, value SecureValu
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureValueError:
 			b.PutID(0x869d758f)
@@ -27330,7 +25186,7 @@ func layerDecodeClassSecureValueError(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x00be3dfa:
 			return layerDecodeWire00be3dfa(profile, b, state)
@@ -27507,7 +25363,7 @@ func layerPreflightClassSecureValueType(profile LayerProfile, value SecureValueT
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureValueTypeAddress:
 			return layerPreflightWirecbe31e26Bare(profile, value, state)
@@ -27557,7 +25413,7 @@ func layerEncodeClassSecureValueTypeBody(profile LayerProfile, value SecureValue
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *SecureValueTypeAddress:
 			b.PutID(0xcbe31e26)
@@ -27613,7 +25469,7 @@ func layerDecodeClassSecureValueType(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x06e425c4:
 			return layerDecodeWire06e425c4(profile, b, state)
@@ -27878,7 +25734,7 @@ func layerPreflightClassSendMessageAction(profile LayerProfile, value SendMessag
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *SendMessageCancelAction:
 			return layerPreflightWirefd5ec8f5Bare(profile, value, state)
@@ -27922,7 +25778,7 @@ func layerPreflightClassSendMessageAction(profile LayerProfile, value SendMessag
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputSendMessageRichMessageDraftAction:
 			return layerPreflightWiree2b23b51Bare(profile, value, state)
@@ -27988,7 +25844,7 @@ func layerEncodeClassSendMessageActionBody(profile LayerProfile, value SendMessa
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch value := projected.(type) {
 		case *SendMessageCancelAction:
 			b.PutID(0xfd5ec8f5)
@@ -28051,7 +25907,7 @@ func layerEncodeClassSendMessageActionBody(profile LayerProfile, value SendMessa
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *InputSendMessageRichMessageDraftAction:
 			b.PutID(0xe2b23b51)
@@ -28131,7 +25987,7 @@ func layerDecodeClassSendMessageAction(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226:
+	case LayerProfile225, LayerProfile226:
 		switch id {
 		case 0x16bf744e:
 			return layerDecodeWire16bf744e(profile, b, state)
@@ -28174,7 +26030,7 @@ func layerDecodeClassSendMessageAction(profile LayerProfile, b *bin.Buffer, stat
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile227:
+	case LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x16bf744e:
 			return layerDecodeWire16bf744e(profile, b, state)
@@ -28265,17 +26121,7 @@ func layerPreflightClassStarGift(profile LayerProfile, value StarGiftClass, stat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *StarGift:
-			return layerPreflightWire313a9547Bare(profile, value, state)
-		case *StarGiftUnique:
-			return layerPreflightWire569d64c9Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGift:
 			return layerPreflightWire313a9547Bare(profile, value, state)
@@ -28303,19 +26149,7 @@ func layerEncodeClassStarGiftBody(profile LayerProfile, value StarGiftClass, b *
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *StarGift:
-			b.PutID(0x313a9547)
-			return layerEncodeWire313a9547BareBody(profile, value, b, state)
-		case *StarGiftUnique:
-			b.PutID(0x569d64c9)
-			return layerEncodeWire569d64c9BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGift:
 			b.PutID(0x313a9547)
@@ -28338,16 +26172,7 @@ func layerDecodeClassStarGift(profile LayerProfile, b *bin.Buffer, state *layerC
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch id {
-		case 0x313a9547:
-			return layerDecodeWire313a9547(profile, b, state)
-		case 0x569d64c9:
-			return layerDecodeWire569d64c9(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x313a9547:
 			return layerDecodeWire313a9547(profile, b, state)
@@ -28420,21 +26245,7 @@ func layerPreflightClassStarGiftAttribute(profile LayerProfile, value StarGiftAt
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *StarGiftAttributeBackdrop:
-			return layerPreflightWired93d859cBare(profile, value, state)
-		case *StarGiftAttributeModel:
-			return layerPreflightWire39d99013Bare(profile, value, state)
-		case *StarGiftAttributeOriginalDetails:
-			return layerPreflightWiree0bff26cBare(profile, value, state)
-		case *StarGiftAttributePattern:
-			return layerPreflightWire13acff19Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAttributeBackdrop:
 			return layerPreflightWire9f2504e4Bare(profile, value, state)
@@ -28466,25 +26277,7 @@ func layerEncodeClassStarGiftAttributeBody(profile LayerProfile, value StarGiftA
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *StarGiftAttributeBackdrop:
-			b.PutID(0xd93d859c)
-			return layerEncodeWired93d859cBareBody(profile, value, b, state)
-		case *StarGiftAttributeModel:
-			b.PutID(0x39d99013)
-			return layerEncodeWire39d99013BareBody(profile, value, b, state)
-		case *StarGiftAttributeOriginalDetails:
-			b.PutID(0xe0bff26c)
-			return layerEncodeWiree0bff26cBareBody(profile, value, b, state)
-		case *StarGiftAttributePattern:
-			b.PutID(0x13acff19)
-			return layerEncodeWire13acff19BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAttributeBackdrop:
 			b.PutID(0x9f2504e4)
@@ -28513,20 +26306,7 @@ func layerDecodeClassStarGiftAttribute(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch id {
-		case 0x13acff19:
-			return layerDecodeWire13acff19(profile, b, state)
-		case 0x39d99013:
-			return layerDecodeWire39d99013(profile, b, state)
-		case 0xd93d859c:
-			return layerDecodeWired93d859c(profile, b, state)
-		case 0xe0bff26c:
-			return layerDecodeWiree0bff26c(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4e7085ea:
 			return layerDecodeWire4e7085ea(profile, b, state)
@@ -28593,7 +26373,7 @@ func layerPreflightClassStarGiftAttributeID(profile LayerProfile, value StarGift
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAttributeIDBackdrop:
 			return layerPreflightWire1f01c757Bare(profile, value, state)
@@ -28623,7 +26403,7 @@ func layerEncodeClassStarGiftAttributeIDBody(profile LayerProfile, value StarGif
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAttributeIDBackdrop:
 			b.PutID(0x1f01c757)
@@ -28649,7 +26429,7 @@ func layerDecodeClassStarGiftAttributeID(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1f01c757:
 			return layerDecodeWire1f01c757(profile, b, state)
@@ -28734,13 +26514,7 @@ func layerPreflightClassStarGiftAttributeRarity(profile LayerProfile, value Star
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAttributeRarity:
 			return layerPreflightWire36437737Bare(profile, value, state)
@@ -28774,13 +26548,7 @@ func layerEncodeClassStarGiftAttributeRarityBody(profile LayerProfile, value Sta
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAttributeRarity:
 			b.PutID(0x36437737)
@@ -28812,12 +26580,7 @@ func layerDecodeClassStarGiftAttributeRarity(profile LayerProfile, b *bin.Buffer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch id {
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x36437737:
 			return layerDecodeWire36437737(profile, b, state)
@@ -28876,7 +26639,7 @@ func layerPreflightClassStarGiftAuctionRound(profile LayerProfile, value StarGif
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAuctionRound:
 			return layerPreflightWire3aae0528Bare(profile, value, state)
@@ -28904,7 +26667,7 @@ func layerEncodeClassStarGiftAuctionRoundBody(profile LayerProfile, value StarGi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAuctionRound:
 			b.PutID(0x3aae0528)
@@ -28927,7 +26690,7 @@ func layerDecodeClassStarGiftAuctionRound(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0aa021e5:
 			return layerDecodeWire0aa021e5(profile, b, state)
@@ -28990,7 +26753,7 @@ func layerPreflightClassStarGiftAuctionState(profile LayerProfile, value StarGif
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAuctionState:
 			return layerPreflightWire771a4e66Bare(profile, value, state)
@@ -29020,7 +26783,7 @@ func layerEncodeClassStarGiftAuctionStateBody(profile LayerProfile, value StarGi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarGiftAuctionState:
 			b.PutID(0x771a4e66)
@@ -29046,7 +26809,7 @@ func layerDecodeClassStarGiftAuctionState(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x771a4e66:
 			return layerDecodeWire771a4e66(profile, b, state)
@@ -29101,7 +26864,7 @@ func layerPreflightClassStarsAmount(profile LayerProfile, value StarsAmountClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarsAmount:
 			return layerPreflightWirebbb6b4a3Bare(profile, value, state)
@@ -29129,7 +26892,7 @@ func layerEncodeClassStarsAmountBody(profile LayerProfile, value StarsAmountClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarsAmount:
 			b.PutID(0xbbb6b4a3)
@@ -29152,7 +26915,7 @@ func layerDecodeClassStarsAmount(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x74aee3e0:
 			return layerDecodeWire74aee3e0(profile, b, state)
@@ -29265,7 +27028,7 @@ func layerPreflightClassStarsTransactionPeer(profile LayerProfile, value StarsTr
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarsTransactionPeer:
 			return layerPreflightWired80da15dBare(profile, value, state)
@@ -29305,7 +27068,7 @@ func layerEncodeClassStarsTransactionPeerBody(profile LayerProfile, value StarsT
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StarsTransactionPeer:
 			b.PutID(0xd80da15d)
@@ -29346,7 +27109,7 @@ func layerDecodeClassStarsTransactionPeer(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x250dbaf8:
 			return layerDecodeWire250dbaf8(profile, b, state)
@@ -29421,7 +27184,7 @@ func layerPreflightClassStatsGraph(profile LayerProfile, value StatsGraphClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StatsGraph:
 			return layerPreflightWire8ea464b6Bare(profile, value, state)
@@ -29451,7 +27214,7 @@ func layerEncodeClassStatsGraphBody(profile LayerProfile, value StatsGraphClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StatsGraph:
 			b.PutID(0x8ea464b6)
@@ -29477,7 +27240,7 @@ func layerDecodeClassStatsGraph(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4a27eb2d:
 			return layerDecodeWire4a27eb2d(profile, b, state)
@@ -29552,7 +27315,7 @@ func layerPreflightClassStickerSetCovered(profile LayerProfile, value StickerSet
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StickerSetCovered:
 			return layerPreflightWire6410a5d2Bare(profile, value, state)
@@ -29584,7 +27347,7 @@ func layerEncodeClassStickerSetCoveredBody(profile LayerProfile, value StickerSe
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StickerSetCovered:
 			b.PutID(0x6410a5d2)
@@ -29613,7 +27376,7 @@ func layerDecodeClassStickerSetCovered(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3407e51b:
 			return layerDecodeWire3407e51b(profile, b, state)
@@ -29680,19 +27443,7 @@ func layerPreflightClassStoryItem(profile LayerProfile, value StoryItemClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *StoryItem:
-			return layerPreflightWireedf164f1Bare(profile, value, state)
-		case *StoryItemDeleted:
-			return layerPreflightWire51e6ee4fBare(profile, value, state)
-		case *StoryItemSkipped:
-			return layerPreflightWireffadc913Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoryItem:
 			return layerPreflightWire16a4b93cBare(profile, value, state)
@@ -29722,22 +27473,7 @@ func layerEncodeClassStoryItemBody(profile LayerProfile, value StoryItemClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch value := projected.(type) {
-		case *StoryItem:
-			b.PutID(0xedf164f1)
-			return layerEncodeWireedf164f1BareBody(profile, value, b, state)
-		case *StoryItemDeleted:
-			b.PutID(0x51e6ee4f)
-			return layerEncodeWire51e6ee4fBareBody(profile, value, b, state)
-		case *StoryItemSkipped:
-			b.PutID(0xffadc913)
-			return layerEncodeWireffadc913BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoryItem:
 			b.PutID(0x16a4b93c)
@@ -29763,18 +27499,7 @@ func layerDecodeClassStoryItem(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223:
-		switch id {
-		case 0x51e6ee4f:
-			return layerDecodeWire51e6ee4f(profile, b, state)
-		case 0xedf164f1:
-			return layerDecodeWireedf164f1(profile, b, state)
-		case 0xffadc913:
-			return layerDecodeWireffadc913(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x16a4b93c:
 			return layerDecodeWire16a4b93c(profile, b, state)
@@ -29839,7 +27564,7 @@ func layerPreflightClassStoryReaction(profile LayerProfile, value StoryReactionC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoryReaction:
 			return layerPreflightWire6090d6d5Bare(profile, value, state)
@@ -29869,7 +27594,7 @@ func layerEncodeClassStoryReactionBody(profile LayerProfile, value StoryReaction
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoryReaction:
 			b.PutID(0x6090d6d5)
@@ -29895,7 +27620,7 @@ func layerDecodeClassStoryReaction(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6090d6d5:
 			return layerDecodeWire6090d6d5(profile, b, state)
@@ -29960,7 +27685,7 @@ func layerPreflightClassStoryView(profile LayerProfile, value StoryViewClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoryView:
 			return layerPreflightWireb0bdeac5Bare(profile, value, state)
@@ -29990,7 +27715,7 @@ func layerEncodeClassStoryViewBody(profile LayerProfile, value StoryViewClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoryView:
 			b.PutID(0xb0bdeac5)
@@ -30016,7 +27741,7 @@ func layerDecodeClassStoryView(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9083670b:
 			return layerDecodeWire9083670b(profile, b, state)
@@ -30151,7 +27876,7 @@ func layerPreflightClassTopPeerCategory(profile LayerProfile, value TopPeerCateg
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *TopPeerCategoryBotsApp:
 			return layerPreflightWirefd9e7becBare(profile, value, state)
@@ -30175,7 +27900,7 @@ func layerPreflightClassTopPeerCategory(profile LayerProfile, value TopPeerCateg
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *TopPeerCategoryBotsApp:
 			return layerPreflightWirefd9e7becBare(profile, value, state)
@@ -30219,7 +27944,7 @@ func layerEncodeClassTopPeerCategoryBody(profile LayerProfile, value TopPeerCate
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *TopPeerCategoryBotsApp:
 			b.PutID(0xfd9e7bec)
@@ -30252,7 +27977,7 @@ func layerEncodeClassTopPeerCategoryBody(profile LayerProfile, value TopPeerCate
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *TopPeerCategoryBotsApp:
 			b.PutID(0xfd9e7bec)
@@ -30299,7 +28024,7 @@ func layerDecodeClassTopPeerCategory(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		case 0x0637b7ed:
 			return layerDecodeWire0637b7ed(profile, b, state)
@@ -30322,7 +28047,7 @@ func layerDecodeClassTopPeerCategory(profile LayerProfile, b *bin.Buffer, state 
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0637b7ed:
 			return layerDecodeWire0637b7ed(profile, b, state)
@@ -30555,6 +28280,16 @@ func layerProjectClassUpdate(profile LayerProfile, value UpdateClass) (UpdateCla
 		result, ok := projected.(UpdateClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateBotShippingQuery, Reason: "project hook returned a constructor outside class Update"}
+		}
+		return result, true, nil
+	case *UpdateBotStarsSubscription:
+		projected, keep, err := layerProjectFamilyUpdateBotStarsSubscription(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(UpdateClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateBotStarsSubscription, Reason: "project hook returned a constructor outside class Update"}
 		}
 		return result, true, nil
 	case *UpdateBotStopped:
@@ -30827,6 +28562,16 @@ func layerProjectClassUpdate(profile LayerProfile, value UpdateClass) (UpdateCla
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateDeleteChannelMessages, Reason: "project hook returned a constructor outside class Update"}
 		}
 		return result, true, nil
+	case *UpdateDeleteEphemeralMessages:
+		projected, keep, err := layerProjectFamilyUpdateDeleteEphemeralMessages(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(UpdateClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateDeleteEphemeralMessages, Reason: "project hook returned a constructor outside class Update"}
+		}
+		return result, true, nil
 	case *UpdateDeleteGroupCallMessages:
 		projected, keep, err := layerProjectFamilyUpdateDeleteGroupCallMessages(profile, value)
 		if err != nil || !keep {
@@ -30945,6 +28690,16 @@ func layerProjectClassUpdate(profile LayerProfile, value UpdateClass) (UpdateCla
 		result, ok := projected.(UpdateClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateEditChannelMessage, Reason: "project hook returned a constructor outside class Update"}
+		}
+		return result, true, nil
+	case *UpdateEditEphemeralMessage:
+		projected, keep, err := layerProjectFamilyUpdateEditEphemeralMessage(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(UpdateClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateEditEphemeralMessage, Reason: "project hook returned a constructor outside class Update"}
 		}
 		return result, true, nil
 	case *UpdateEditMessage:
@@ -31255,6 +29010,16 @@ func layerProjectClassUpdate(profile LayerProfile, value UpdateClass) (UpdateCla
 		result, ok := projected.(UpdateClass)
 		if !ok {
 			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateNewEncryptedMessage, Reason: "project hook returned a constructor outside class Update"}
+		}
+		return result, true, nil
+	case *UpdateNewEphemeralMessage:
+		projected, keep, err := layerProjectFamilyUpdateNewEphemeralMessage(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(UpdateClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeUpdateNewEphemeralMessage, Reason: "project hook returned a constructor outside class Update"}
 		}
 		return result, true, nil
 	case *UpdateNewMessage:
@@ -31971,1556 +29736,6 @@ func layerPreflightClassUpdate(profile LayerProfile, value UpdateClass, state *l
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			return layerPreflightWire17b7a20bBare(profile, value, state)
-		case *UpdateAutoSaveSettings:
-			return layerPreflightWireec05b097Bare(profile, value, state)
-		case *UpdateBotBusinessConnect:
-			return layerPreflightWire8ae5c97aBare(profile, value, state)
-		case *UpdateBotCallbackQuery:
-			return layerPreflightWireb9cfc48dBare(profile, value, state)
-		case *UpdateBotChatBoost:
-			return layerPreflightWire904dd49cBare(profile, value, state)
-		case *UpdateBotChatInviteRequester:
-			return layerPreflightWire11dfa986Bare(profile, value, state)
-		case *UpdateBotCommands:
-			return layerPreflightWire4d712f2eBare(profile, value, state)
-		case *UpdateBotDeleteBusinessMessage:
-			return layerPreflightWirea02a982eBare(profile, value, state)
-		case *UpdateBotEditBusinessMessage:
-			return layerPreflightWire07df587cBare(profile, value, state)
-		case *UpdateBotInlineQuery:
-			return layerPreflightWire496f379cBare(profile, value, state)
-		case *UpdateBotInlineSend:
-			return layerPreflightWire12f12a07Bare(profile, value, state)
-		case *UpdateBotMenuButton:
-			return layerPreflightWire14b85813Bare(profile, value, state)
-		case *UpdateBotMessageReaction:
-			return layerPreflightWireac21d3ceBare(profile, value, state)
-		case *UpdateBotMessageReactions:
-			return layerPreflightWire09cb7759Bare(profile, value, state)
-		case *UpdateBotNewBusinessMessage:
-			return layerPreflightWire9ddb347cBare(profile, value, state)
-		case *UpdateBotPrecheckoutQuery:
-			return layerPreflightWire8caa9a96Bare(profile, value, state)
-		case *UpdateBotPurchasedPaidMedia:
-			return layerPreflightWire283bd312Bare(profile, value, state)
-		case *UpdateBotShippingQuery:
-			return layerPreflightWireb5aefd7dBare(profile, value, state)
-		case *UpdateBotStopped:
-			return layerPreflightWirec4870a49Bare(profile, value, state)
-		case *UpdateBotWebhookJSON:
-			return layerPreflightWire8317c0c3Bare(profile, value, state)
-		case *UpdateBotWebhookJSONQuery:
-			return layerPreflightWire9b9240a6Bare(profile, value, state)
-		case *UpdateBusinessBotCallbackQuery:
-			return layerPreflightWire1ea2fda7Bare(profile, value, state)
-		case *UpdateChannel:
-			return layerPreflightWire635b4c09Bare(profile, value, state)
-		case *UpdateChannelAvailableMessages:
-			return layerPreflightWireb23fc698Bare(profile, value, state)
-		case *UpdateChannelMessageForwards:
-			return layerPreflightWired29a27f4Bare(profile, value, state)
-		case *UpdateChannelMessageViews:
-			return layerPreflightWiref226ac08Bare(profile, value, state)
-		case *UpdateChannelParticipant:
-			return layerPreflightWire985d3abbBare(profile, value, state)
-		case *UpdateChannelReadMessagesContents:
-			return layerPreflightWire25f324f7Bare(profile, value, state)
-		case *UpdateChannelTooLong:
-			return layerPreflightWire108d941fBare(profile, value, state)
-		case *UpdateChannelUserTyping:
-			return layerPreflightWire8c88c923Bare(profile, value, state)
-		case *UpdateChannelViewForumAsMessages:
-			return layerPreflightWire07b68920Bare(profile, value, state)
-		case *UpdateChannelWebPage:
-			return layerPreflightWire2f2ba99fBare(profile, value, state)
-		case *UpdateChat:
-			return layerPreflightWiref89a6a4eBare(profile, value, state)
-		case *UpdateChatDefaultBannedRights:
-			return layerPreflightWire54c01850Bare(profile, value, state)
-		case *UpdateChatParticipant:
-			return layerPreflightWired087663aBare(profile, value, state)
-		case *UpdateChatParticipantAdd:
-			return layerPreflightWire3dda5451Bare(profile, value, state)
-		case *UpdateChatParticipantAdmin:
-			return layerPreflightWired7ca61a2Bare(profile, value, state)
-		case *UpdateChatParticipantDelete:
-			return layerPreflightWiree32f3d77Bare(profile, value, state)
-		case *UpdateChatParticipants:
-			return layerPreflightWire07761198Bare(profile, value, state)
-		case *UpdateChatUserTyping:
-			return layerPreflightWire83487af0Bare(profile, value, state)
-		case *UpdateConfig:
-			return layerPreflightWirea229dd06Bare(profile, value, state)
-		case *UpdateContactsReset:
-			return layerPreflightWire7084a7beBare(profile, value, state)
-		case *UpdateDCOptions:
-			return layerPreflightWire8e5e9873Bare(profile, value, state)
-		case *UpdateDeleteChannelMessages:
-			return layerPreflightWirec32d5b12Bare(profile, value, state)
-		case *UpdateDeleteGroupCallMessages:
-			return layerPreflightWire3e85e92cBare(profile, value, state)
-		case *UpdateDeleteMessages:
-			return layerPreflightWirea20db0e5Bare(profile, value, state)
-		case *UpdateDeleteQuickReply:
-			return layerPreflightWire53e6f1ecBare(profile, value, state)
-		case *UpdateDeleteQuickReplyMessages:
-			return layerPreflightWire566fe7cdBare(profile, value, state)
-		case *UpdateDeleteScheduledMessages:
-			return layerPreflightWiref2a71983Bare(profile, value, state)
-		case *UpdateDialogFilter:
-			return layerPreflightWire26ffde7dBare(profile, value, state)
-		case *UpdateDialogFilterOrder:
-			return layerPreflightWirea5d72105Bare(profile, value, state)
-		case *UpdateDialogFilters:
-			return layerPreflightWire3504914fBare(profile, value, state)
-		case *UpdateDialogPinned:
-			return layerPreflightWire6e6fe51cBare(profile, value, state)
-		case *UpdateDialogUnreadMark:
-			return layerPreflightWireb658f23eBare(profile, value, state)
-		case *UpdateDraftMessage:
-			return layerPreflightWireedfc111eBare(profile, value, state)
-		case *UpdateEditChannelMessage:
-			return layerPreflightWire1b3f4df7Bare(profile, value, state)
-		case *UpdateEditMessage:
-			return layerPreflightWiree40370a3Bare(profile, value, state)
-		case *UpdateEncryptedChatTyping:
-			return layerPreflightWire1710f156Bare(profile, value, state)
-		case *UpdateEncryptedMessagesRead:
-			return layerPreflightWire38fe25b7Bare(profile, value, state)
-		case *UpdateEncryption:
-			return layerPreflightWireb4a2e88dBare(profile, value, state)
-		case *UpdateFavedStickers:
-			return layerPreflightWiree511996dBare(profile, value, state)
-		case *UpdateFolderPeers:
-			return layerPreflightWire19360dc0Bare(profile, value, state)
-		case *UpdateGeoLiveViewed:
-			return layerPreflightWire871fb939Bare(profile, value, state)
-		case *UpdateGroupCall:
-			return layerPreflightWire9d2216e0Bare(profile, value, state)
-		case *UpdateGroupCallChainBlocks:
-			return layerPreflightWirea477288fBare(profile, value, state)
-		case *UpdateGroupCallConnection:
-			return layerPreflightWire0b783982Bare(profile, value, state)
-		case *UpdateGroupCallEncryptedMessage:
-			return layerPreflightWirec957a766Bare(profile, value, state)
-		case *UpdateGroupCallMessage:
-			return layerPreflightWired8326f0dBare(profile, value, state)
-		case *UpdateGroupCallParticipants:
-			return layerPreflightWiref2ebdb4eBare(profile, value, state)
-		case *UpdateInlineBotCallbackQuery:
-			return layerPreflightWire691e9052Bare(profile, value, state)
-		case *UpdateLangPack:
-			return layerPreflightWire56022f4dBare(profile, value, state)
-		case *UpdateLangPackTooLong:
-			return layerPreflightWire46560264Bare(profile, value, state)
-		case *UpdateLoginToken:
-			return layerPreflightWire564fe691Bare(profile, value, state)
-		case *UpdateMessageExtendedMedia:
-			return layerPreflightWired5a41724Bare(profile, value, state)
-		case *UpdateMessageID:
-			return layerPreflightWire4e90bfd6Bare(profile, value, state)
-		case *UpdateMessagePoll:
-			return layerPreflightWireaca1657bBare(profile, value, state)
-		case *UpdateMessagePollVote:
-			return layerPreflightWire24f40e77Bare(profile, value, state)
-		case *UpdateMessageReactions:
-			return layerPreflightWire1e297bfaBare(profile, value, state)
-		case *UpdateMonoForumNoPaidException:
-			return layerPreflightWire9f812b08Bare(profile, value, state)
-		case *UpdateMoveStickerSetToTop:
-			return layerPreflightWire86fccf85Bare(profile, value, state)
-		case *UpdateNewAuthorization:
-			return layerPreflightWire8951abefBare(profile, value, state)
-		case *UpdateNewChannelMessage:
-			return layerPreflightWire62ba04d9Bare(profile, value, state)
-		case *UpdateNewEncryptedMessage:
-			return layerPreflightWire12bcbd9aBare(profile, value, state)
-		case *UpdateNewMessage:
-			return layerPreflightWire1f2b0afdBare(profile, value, state)
-		case *UpdateNewQuickReply:
-			return layerPreflightWiref53da717Bare(profile, value, state)
-		case *UpdateNewScheduledMessage:
-			return layerPreflightWire39a51dfbBare(profile, value, state)
-		case *UpdateNewStickerSet:
-			return layerPreflightWire688a30aaBare(profile, value, state)
-		case *UpdateNewStoryReaction:
-			return layerPreflightWire1824e40bBare(profile, value, state)
-		case *UpdateNotifySettings:
-			return layerPreflightWirebec268efBare(profile, value, state)
-		case *UpdatePaidReactionPrivacy:
-			return layerPreflightWire8b725fceBare(profile, value, state)
-		case *UpdatePeerBlocked:
-			return layerPreflightWireebe07752Bare(profile, value, state)
-		case *UpdatePeerHistoryTTL:
-			return layerPreflightWirebb9bb9a5Bare(profile, value, state)
-		case *UpdatePeerLocated:
-			return layerPreflightWireb4afcfb0Bare(profile, value, state)
-		case *UpdatePeerSettings:
-			return layerPreflightWire6a7e7366Bare(profile, value, state)
-		case *UpdatePeerWallpaper:
-			return layerPreflightWireae3f101dBare(profile, value, state)
-		case *UpdatePendingJoinRequests:
-			return layerPreflightWire7063c3dbBare(profile, value, state)
-		case *UpdatePhoneCall:
-			return layerPreflightWireab0f6b1eBare(profile, value, state)
-		case *UpdatePhoneCallSignalingData:
-			return layerPreflightWire2661bf09Bare(profile, value, state)
-		case *UpdatePinnedChannelMessages:
-			return layerPreflightWire5bb98608Bare(profile, value, state)
-		case *UpdatePinnedDialogs:
-			return layerPreflightWirefa0f3ca2Bare(profile, value, state)
-		case *UpdatePinnedForumTopic:
-			return layerPreflightWire683b2c52Bare(profile, value, state)
-		case *UpdatePinnedForumTopics:
-			return layerPreflightWiredef143d0Bare(profile, value, state)
-		case *UpdatePinnedMessages:
-			return layerPreflightWireed85eab5Bare(profile, value, state)
-		case *UpdatePinnedSavedDialogs:
-			return layerPreflightWire686c85a6Bare(profile, value, state)
-		case *UpdatePrivacy:
-			return layerPreflightWireee3b272aBare(profile, value, state)
-		case *UpdatePtsChanged:
-			return layerPreflightWire3354678fBare(profile, value, state)
-		case *UpdateQuickReplies:
-			return layerPreflightWiref9470ab2Bare(profile, value, state)
-		case *UpdateQuickReplyMessage:
-			return layerPreflightWire3e050d0fBare(profile, value, state)
-		case *UpdateReadChannelDiscussionInbox:
-			return layerPreflightWired6b19546Bare(profile, value, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			return layerPreflightWire695c9e7cBare(profile, value, state)
-		case *UpdateReadChannelInbox:
-			return layerPreflightWire922e6e10Bare(profile, value, state)
-		case *UpdateReadChannelOutbox:
-			return layerPreflightWireb75f99a9Bare(profile, value, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			return layerPreflightWirefb4c496cBare(profile, value, state)
-		case *UpdateReadFeaturedStickers:
-			return layerPreflightWire571d2742Bare(profile, value, state)
-		case *UpdateReadHistoryInbox:
-			return layerPreflightWire9e84bc99Bare(profile, value, state)
-		case *UpdateReadHistoryOutbox:
-			return layerPreflightWire2f2f21bfBare(profile, value, state)
-		case *UpdateReadMessagesContents:
-			return layerPreflightWiref8227181Bare(profile, value, state)
-		case *UpdateReadMonoForumInbox:
-			return layerPreflightWire77b0e372Bare(profile, value, state)
-		case *UpdateReadMonoForumOutbox:
-			return layerPreflightWirea4a79376Bare(profile, value, state)
-		case *UpdateReadStories:
-			return layerPreflightWiref74e932bBare(profile, value, state)
-		case *UpdateRecentEmojiStatuses:
-			return layerPreflightWire30f443dbBare(profile, value, state)
-		case *UpdateRecentReactions:
-			return layerPreflightWire6f7863f4Bare(profile, value, state)
-		case *UpdateRecentStickers:
-			return layerPreflightWire9a422c20Bare(profile, value, state)
-		case *UpdateSMSJob:
-			return layerPreflightWiref16269d4Bare(profile, value, state)
-		case *UpdateSavedDialogPinned:
-			return layerPreflightWireaeaf9e74Bare(profile, value, state)
-		case *UpdateSavedGifs:
-			return layerPreflightWire9375341eBare(profile, value, state)
-		case *UpdateSavedReactionTags:
-			return layerPreflightWire39c67432Bare(profile, value, state)
-		case *UpdateSavedRingtones:
-			return layerPreflightWire74d8be99Bare(profile, value, state)
-		case *UpdateSentPhoneCode:
-			return layerPreflightWire504aa18fBare(profile, value, state)
-		case *UpdateSentStoryReaction:
-			return layerPreflightWire7d627683Bare(profile, value, state)
-		case *UpdateServiceNotification:
-			return layerPreflightWireebe46819Bare(profile, value, state)
-		case *UpdateStarGiftAuctionState:
-			return layerPreflightWire48e246c2Bare(profile, value, state)
-		case *UpdateStarGiftAuctionUserState:
-			return layerPreflightWiredc58f31eBare(profile, value, state)
-		case *UpdateStarsBalance:
-			return layerPreflightWire4e80a379Bare(profile, value, state)
-		case *UpdateStarsRevenueStatus:
-			return layerPreflightWirea584b019Bare(profile, value, state)
-		case *UpdateStickerSets:
-			return layerPreflightWire31c24808Bare(profile, value, state)
-		case *UpdateStickerSetsOrder:
-			return layerPreflightWire0bb2d201Bare(profile, value, state)
-		case *UpdateStoriesStealthMode:
-			return layerPreflightWire2c084dc1Bare(profile, value, state)
-		case *UpdateStory:
-			return layerPreflightWire75b3b798Bare(profile, value, state)
-		case *UpdateStoryID:
-			return layerPreflightWire1bf335b9Bare(profile, value, state)
-		case *UpdateTheme:
-			return layerPreflightWire8216fba3Bare(profile, value, state)
-		case *UpdateTranscribedAudio:
-			return layerPreflightWire0084cd5aBare(profile, value, state)
-		case *UpdateUser:
-			return layerPreflightWire20529438Bare(profile, value, state)
-		case *UpdateUserEmojiStatus:
-			return layerPreflightWire28373599Bare(profile, value, state)
-		case *UpdateUserName:
-			return layerPreflightWirea7848924Bare(profile, value, state)
-		case *UpdateUserPhone:
-			return layerPreflightWire05492a13Bare(profile, value, state)
-		case *UpdateUserStatus:
-			return layerPreflightWiree5bdf8deBare(profile, value, state)
-		case *UpdateUserTyping:
-			return layerPreflightWire2a17bf5cBare(profile, value, state)
-		case *UpdateWebPage:
-			return layerPreflightWire7f891213Bare(profile, value, state)
-		case *UpdateWebViewResultSent:
-			return layerPreflightWire1592b79dBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			return layerPreflightWire17b7a20bBare(profile, value, state)
-		case *UpdateAutoSaveSettings:
-			return layerPreflightWireec05b097Bare(profile, value, state)
-		case *UpdateBotBusinessConnect:
-			return layerPreflightWire8ae5c97aBare(profile, value, state)
-		case *UpdateBotCallbackQuery:
-			return layerPreflightWireb9cfc48dBare(profile, value, state)
-		case *UpdateBotChatBoost:
-			return layerPreflightWire904dd49cBare(profile, value, state)
-		case *UpdateBotChatInviteRequester:
-			return layerPreflightWire11dfa986Bare(profile, value, state)
-		case *UpdateBotCommands:
-			return layerPreflightWire4d712f2eBare(profile, value, state)
-		case *UpdateBotDeleteBusinessMessage:
-			return layerPreflightWirea02a982eBare(profile, value, state)
-		case *UpdateBotEditBusinessMessage:
-			return layerPreflightWire07df587cBare(profile, value, state)
-		case *UpdateBotInlineQuery:
-			return layerPreflightWire496f379cBare(profile, value, state)
-		case *UpdateBotInlineSend:
-			return layerPreflightWire12f12a07Bare(profile, value, state)
-		case *UpdateBotMenuButton:
-			return layerPreflightWire14b85813Bare(profile, value, state)
-		case *UpdateBotMessageReaction:
-			return layerPreflightWireac21d3ceBare(profile, value, state)
-		case *UpdateBotMessageReactions:
-			return layerPreflightWire09cb7759Bare(profile, value, state)
-		case *UpdateBotNewBusinessMessage:
-			return layerPreflightWire9ddb347cBare(profile, value, state)
-		case *UpdateBotPrecheckoutQuery:
-			return layerPreflightWire8caa9a96Bare(profile, value, state)
-		case *UpdateBotPurchasedPaidMedia:
-			return layerPreflightWire283bd312Bare(profile, value, state)
-		case *UpdateBotShippingQuery:
-			return layerPreflightWireb5aefd7dBare(profile, value, state)
-		case *UpdateBotStopped:
-			return layerPreflightWirec4870a49Bare(profile, value, state)
-		case *UpdateBotWebhookJSON:
-			return layerPreflightWire8317c0c3Bare(profile, value, state)
-		case *UpdateBotWebhookJSONQuery:
-			return layerPreflightWire9b9240a6Bare(profile, value, state)
-		case *UpdateBusinessBotCallbackQuery:
-			return layerPreflightWire1ea2fda7Bare(profile, value, state)
-		case *UpdateChannel:
-			return layerPreflightWire635b4c09Bare(profile, value, state)
-		case *UpdateChannelAvailableMessages:
-			return layerPreflightWireb23fc698Bare(profile, value, state)
-		case *UpdateChannelMessageForwards:
-			return layerPreflightWired29a27f4Bare(profile, value, state)
-		case *UpdateChannelMessageViews:
-			return layerPreflightWiref226ac08Bare(profile, value, state)
-		case *UpdateChannelParticipant:
-			return layerPreflightWire985d3abbBare(profile, value, state)
-		case *UpdateChannelReadMessagesContents:
-			return layerPreflightWire25f324f7Bare(profile, value, state)
-		case *UpdateChannelTooLong:
-			return layerPreflightWire108d941fBare(profile, value, state)
-		case *UpdateChannelUserTyping:
-			return layerPreflightWire8c88c923Bare(profile, value, state)
-		case *UpdateChannelViewForumAsMessages:
-			return layerPreflightWire07b68920Bare(profile, value, state)
-		case *UpdateChannelWebPage:
-			return layerPreflightWire2f2ba99fBare(profile, value, state)
-		case *UpdateChat:
-			return layerPreflightWiref89a6a4eBare(profile, value, state)
-		case *UpdateChatDefaultBannedRights:
-			return layerPreflightWire54c01850Bare(profile, value, state)
-		case *UpdateChatParticipant:
-			return layerPreflightWired087663aBare(profile, value, state)
-		case *UpdateChatParticipantAdd:
-			return layerPreflightWire3dda5451Bare(profile, value, state)
-		case *UpdateChatParticipantAdmin:
-			return layerPreflightWired7ca61a2Bare(profile, value, state)
-		case *UpdateChatParticipantDelete:
-			return layerPreflightWiree32f3d77Bare(profile, value, state)
-		case *UpdateChatParticipants:
-			return layerPreflightWire07761198Bare(profile, value, state)
-		case *UpdateChatUserTyping:
-			return layerPreflightWire83487af0Bare(profile, value, state)
-		case *UpdateConfig:
-			return layerPreflightWirea229dd06Bare(profile, value, state)
-		case *UpdateContactsReset:
-			return layerPreflightWire7084a7beBare(profile, value, state)
-		case *UpdateDCOptions:
-			return layerPreflightWire8e5e9873Bare(profile, value, state)
-		case *UpdateDeleteChannelMessages:
-			return layerPreflightWirec32d5b12Bare(profile, value, state)
-		case *UpdateDeleteGroupCallMessages:
-			return layerPreflightWire3e85e92cBare(profile, value, state)
-		case *UpdateDeleteMessages:
-			return layerPreflightWirea20db0e5Bare(profile, value, state)
-		case *UpdateDeleteQuickReply:
-			return layerPreflightWire53e6f1ecBare(profile, value, state)
-		case *UpdateDeleteQuickReplyMessages:
-			return layerPreflightWire566fe7cdBare(profile, value, state)
-		case *UpdateDeleteScheduledMessages:
-			return layerPreflightWiref2a71983Bare(profile, value, state)
-		case *UpdateDialogFilter:
-			return layerPreflightWire26ffde7dBare(profile, value, state)
-		case *UpdateDialogFilterOrder:
-			return layerPreflightWirea5d72105Bare(profile, value, state)
-		case *UpdateDialogFilters:
-			return layerPreflightWire3504914fBare(profile, value, state)
-		case *UpdateDialogPinned:
-			return layerPreflightWire6e6fe51cBare(profile, value, state)
-		case *UpdateDialogUnreadMark:
-			return layerPreflightWireb658f23eBare(profile, value, state)
-		case *UpdateDraftMessage:
-			return layerPreflightWireedfc111eBare(profile, value, state)
-		case *UpdateEditChannelMessage:
-			return layerPreflightWire1b3f4df7Bare(profile, value, state)
-		case *UpdateEditMessage:
-			return layerPreflightWiree40370a3Bare(profile, value, state)
-		case *UpdateEmojiGameInfo:
-			return layerPreflightWirefb9c547aBare(profile, value, state)
-		case *UpdateEncryptedChatTyping:
-			return layerPreflightWire1710f156Bare(profile, value, state)
-		case *UpdateEncryptedMessagesRead:
-			return layerPreflightWire38fe25b7Bare(profile, value, state)
-		case *UpdateEncryption:
-			return layerPreflightWireb4a2e88dBare(profile, value, state)
-		case *UpdateFavedStickers:
-			return layerPreflightWiree511996dBare(profile, value, state)
-		case *UpdateFolderPeers:
-			return layerPreflightWire19360dc0Bare(profile, value, state)
-		case *UpdateGeoLiveViewed:
-			return layerPreflightWire871fb939Bare(profile, value, state)
-		case *UpdateGroupCall:
-			return layerPreflightWire9d2216e0Bare(profile, value, state)
-		case *UpdateGroupCallChainBlocks:
-			return layerPreflightWirea477288fBare(profile, value, state)
-		case *UpdateGroupCallConnection:
-			return layerPreflightWire0b783982Bare(profile, value, state)
-		case *UpdateGroupCallEncryptedMessage:
-			return layerPreflightWirec957a766Bare(profile, value, state)
-		case *UpdateGroupCallMessage:
-			return layerPreflightWired8326f0dBare(profile, value, state)
-		case *UpdateGroupCallParticipants:
-			return layerPreflightWiref2ebdb4eBare(profile, value, state)
-		case *UpdateInlineBotCallbackQuery:
-			return layerPreflightWire691e9052Bare(profile, value, state)
-		case *UpdateLangPack:
-			return layerPreflightWire56022f4dBare(profile, value, state)
-		case *UpdateLangPackTooLong:
-			return layerPreflightWire46560264Bare(profile, value, state)
-		case *UpdateLoginToken:
-			return layerPreflightWire564fe691Bare(profile, value, state)
-		case *UpdateMessageExtendedMedia:
-			return layerPreflightWired5a41724Bare(profile, value, state)
-		case *UpdateMessageID:
-			return layerPreflightWire4e90bfd6Bare(profile, value, state)
-		case *UpdateMessagePoll:
-			return layerPreflightWireaca1657bBare(profile, value, state)
-		case *UpdateMessagePollVote:
-			return layerPreflightWire24f40e77Bare(profile, value, state)
-		case *UpdateMessageReactions:
-			return layerPreflightWire1e297bfaBare(profile, value, state)
-		case *UpdateMonoForumNoPaidException:
-			return layerPreflightWire9f812b08Bare(profile, value, state)
-		case *UpdateMoveStickerSetToTop:
-			return layerPreflightWire86fccf85Bare(profile, value, state)
-		case *UpdateNewAuthorization:
-			return layerPreflightWire8951abefBare(profile, value, state)
-		case *UpdateNewChannelMessage:
-			return layerPreflightWire62ba04d9Bare(profile, value, state)
-		case *UpdateNewEncryptedMessage:
-			return layerPreflightWire12bcbd9aBare(profile, value, state)
-		case *UpdateNewMessage:
-			return layerPreflightWire1f2b0afdBare(profile, value, state)
-		case *UpdateNewQuickReply:
-			return layerPreflightWiref53da717Bare(profile, value, state)
-		case *UpdateNewScheduledMessage:
-			return layerPreflightWire39a51dfbBare(profile, value, state)
-		case *UpdateNewStickerSet:
-			return layerPreflightWire688a30aaBare(profile, value, state)
-		case *UpdateNewStoryReaction:
-			return layerPreflightWire1824e40bBare(profile, value, state)
-		case *UpdateNotifySettings:
-			return layerPreflightWirebec268efBare(profile, value, state)
-		case *UpdatePaidReactionPrivacy:
-			return layerPreflightWire8b725fceBare(profile, value, state)
-		case *UpdatePeerBlocked:
-			return layerPreflightWireebe07752Bare(profile, value, state)
-		case *UpdatePeerHistoryTTL:
-			return layerPreflightWirebb9bb9a5Bare(profile, value, state)
-		case *UpdatePeerLocated:
-			return layerPreflightWireb4afcfb0Bare(profile, value, state)
-		case *UpdatePeerSettings:
-			return layerPreflightWire6a7e7366Bare(profile, value, state)
-		case *UpdatePeerWallpaper:
-			return layerPreflightWireae3f101dBare(profile, value, state)
-		case *UpdatePendingJoinRequests:
-			return layerPreflightWire7063c3dbBare(profile, value, state)
-		case *UpdatePhoneCall:
-			return layerPreflightWireab0f6b1eBare(profile, value, state)
-		case *UpdatePhoneCallSignalingData:
-			return layerPreflightWire2661bf09Bare(profile, value, state)
-		case *UpdatePinnedChannelMessages:
-			return layerPreflightWire5bb98608Bare(profile, value, state)
-		case *UpdatePinnedDialogs:
-			return layerPreflightWirefa0f3ca2Bare(profile, value, state)
-		case *UpdatePinnedForumTopic:
-			return layerPreflightWire683b2c52Bare(profile, value, state)
-		case *UpdatePinnedForumTopics:
-			return layerPreflightWiredef143d0Bare(profile, value, state)
-		case *UpdatePinnedMessages:
-			return layerPreflightWireed85eab5Bare(profile, value, state)
-		case *UpdatePinnedSavedDialogs:
-			return layerPreflightWire686c85a6Bare(profile, value, state)
-		case *UpdatePrivacy:
-			return layerPreflightWireee3b272aBare(profile, value, state)
-		case *UpdatePtsChanged:
-			return layerPreflightWire3354678fBare(profile, value, state)
-		case *UpdateQuickReplies:
-			return layerPreflightWiref9470ab2Bare(profile, value, state)
-		case *UpdateQuickReplyMessage:
-			return layerPreflightWire3e050d0fBare(profile, value, state)
-		case *UpdateReadChannelDiscussionInbox:
-			return layerPreflightWired6b19546Bare(profile, value, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			return layerPreflightWire695c9e7cBare(profile, value, state)
-		case *UpdateReadChannelInbox:
-			return layerPreflightWire922e6e10Bare(profile, value, state)
-		case *UpdateReadChannelOutbox:
-			return layerPreflightWireb75f99a9Bare(profile, value, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			return layerPreflightWirefb4c496cBare(profile, value, state)
-		case *UpdateReadFeaturedStickers:
-			return layerPreflightWire571d2742Bare(profile, value, state)
-		case *UpdateReadHistoryInbox:
-			return layerPreflightWire9e84bc99Bare(profile, value, state)
-		case *UpdateReadHistoryOutbox:
-			return layerPreflightWire2f2f21bfBare(profile, value, state)
-		case *UpdateReadMessagesContents:
-			return layerPreflightWiref8227181Bare(profile, value, state)
-		case *UpdateReadMonoForumInbox:
-			return layerPreflightWire77b0e372Bare(profile, value, state)
-		case *UpdateReadMonoForumOutbox:
-			return layerPreflightWirea4a79376Bare(profile, value, state)
-		case *UpdateReadStories:
-			return layerPreflightWiref74e932bBare(profile, value, state)
-		case *UpdateRecentEmojiStatuses:
-			return layerPreflightWire30f443dbBare(profile, value, state)
-		case *UpdateRecentReactions:
-			return layerPreflightWire6f7863f4Bare(profile, value, state)
-		case *UpdateRecentStickers:
-			return layerPreflightWire9a422c20Bare(profile, value, state)
-		case *UpdateSMSJob:
-			return layerPreflightWiref16269d4Bare(profile, value, state)
-		case *UpdateSavedDialogPinned:
-			return layerPreflightWireaeaf9e74Bare(profile, value, state)
-		case *UpdateSavedGifs:
-			return layerPreflightWire9375341eBare(profile, value, state)
-		case *UpdateSavedReactionTags:
-			return layerPreflightWire39c67432Bare(profile, value, state)
-		case *UpdateSavedRingtones:
-			return layerPreflightWire74d8be99Bare(profile, value, state)
-		case *UpdateSentPhoneCode:
-			return layerPreflightWire504aa18fBare(profile, value, state)
-		case *UpdateSentStoryReaction:
-			return layerPreflightWire7d627683Bare(profile, value, state)
-		case *UpdateServiceNotification:
-			return layerPreflightWireebe46819Bare(profile, value, state)
-		case *UpdateStarGiftAuctionState:
-			return layerPreflightWire48e246c2Bare(profile, value, state)
-		case *UpdateStarGiftAuctionUserState:
-			return layerPreflightWiredc58f31eBare(profile, value, state)
-		case *UpdateStarsBalance:
-			return layerPreflightWire4e80a379Bare(profile, value, state)
-		case *UpdateStarsRevenueStatus:
-			return layerPreflightWirea584b019Bare(profile, value, state)
-		case *UpdateStickerSets:
-			return layerPreflightWire31c24808Bare(profile, value, state)
-		case *UpdateStickerSetsOrder:
-			return layerPreflightWire0bb2d201Bare(profile, value, state)
-		case *UpdateStoriesStealthMode:
-			return layerPreflightWire2c084dc1Bare(profile, value, state)
-		case *UpdateStory:
-			return layerPreflightWire75b3b798Bare(profile, value, state)
-		case *UpdateStoryID:
-			return layerPreflightWire1bf335b9Bare(profile, value, state)
-		case *UpdateTheme:
-			return layerPreflightWire8216fba3Bare(profile, value, state)
-		case *UpdateTranscribedAudio:
-			return layerPreflightWire0084cd5aBare(profile, value, state)
-		case *UpdateUser:
-			return layerPreflightWire20529438Bare(profile, value, state)
-		case *UpdateUserEmojiStatus:
-			return layerPreflightWire28373599Bare(profile, value, state)
-		case *UpdateUserName:
-			return layerPreflightWirea7848924Bare(profile, value, state)
-		case *UpdateUserPhone:
-			return layerPreflightWire05492a13Bare(profile, value, state)
-		case *UpdateUserStatus:
-			return layerPreflightWiree5bdf8deBare(profile, value, state)
-		case *UpdateUserTyping:
-			return layerPreflightWire2a17bf5cBare(profile, value, state)
-		case *UpdateWebPage:
-			return layerPreflightWire7f891213Bare(profile, value, state)
-		case *UpdateWebViewResultSent:
-			return layerPreflightWire1592b79dBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			return layerPreflightWire17b7a20bBare(profile, value, state)
-		case *UpdateAutoSaveSettings:
-			return layerPreflightWireec05b097Bare(profile, value, state)
-		case *UpdateBotBusinessConnect:
-			return layerPreflightWire8ae5c97aBare(profile, value, state)
-		case *UpdateBotCallbackQuery:
-			return layerPreflightWireb9cfc48dBare(profile, value, state)
-		case *UpdateBotChatBoost:
-			return layerPreflightWire904dd49cBare(profile, value, state)
-		case *UpdateBotChatInviteRequester:
-			return layerPreflightWire11dfa986Bare(profile, value, state)
-		case *UpdateBotCommands:
-			return layerPreflightWire4d712f2eBare(profile, value, state)
-		case *UpdateBotDeleteBusinessMessage:
-			return layerPreflightWirea02a982eBare(profile, value, state)
-		case *UpdateBotEditBusinessMessage:
-			return layerPreflightWire07df587cBare(profile, value, state)
-		case *UpdateBotInlineQuery:
-			return layerPreflightWire496f379cBare(profile, value, state)
-		case *UpdateBotInlineSend:
-			return layerPreflightWire12f12a07Bare(profile, value, state)
-		case *UpdateBotMenuButton:
-			return layerPreflightWire14b85813Bare(profile, value, state)
-		case *UpdateBotMessageReaction:
-			return layerPreflightWireac21d3ceBare(profile, value, state)
-		case *UpdateBotMessageReactions:
-			return layerPreflightWire09cb7759Bare(profile, value, state)
-		case *UpdateBotNewBusinessMessage:
-			return layerPreflightWire9ddb347cBare(profile, value, state)
-		case *UpdateBotPrecheckoutQuery:
-			return layerPreflightWire8caa9a96Bare(profile, value, state)
-		case *UpdateBotPurchasedPaidMedia:
-			return layerPreflightWire283bd312Bare(profile, value, state)
-		case *UpdateBotShippingQuery:
-			return layerPreflightWireb5aefd7dBare(profile, value, state)
-		case *UpdateBotStopped:
-			return layerPreflightWirec4870a49Bare(profile, value, state)
-		case *UpdateBotWebhookJSON:
-			return layerPreflightWire8317c0c3Bare(profile, value, state)
-		case *UpdateBotWebhookJSONQuery:
-			return layerPreflightWire9b9240a6Bare(profile, value, state)
-		case *UpdateBusinessBotCallbackQuery:
-			return layerPreflightWire1ea2fda7Bare(profile, value, state)
-		case *UpdateChannel:
-			return layerPreflightWire635b4c09Bare(profile, value, state)
-		case *UpdateChannelAvailableMessages:
-			return layerPreflightWireb23fc698Bare(profile, value, state)
-		case *UpdateChannelMessageForwards:
-			return layerPreflightWired29a27f4Bare(profile, value, state)
-		case *UpdateChannelMessageViews:
-			return layerPreflightWiref226ac08Bare(profile, value, state)
-		case *UpdateChannelParticipant:
-			return layerPreflightWire985d3abbBare(profile, value, state)
-		case *UpdateChannelReadMessagesContents:
-			return layerPreflightWire25f324f7Bare(profile, value, state)
-		case *UpdateChannelTooLong:
-			return layerPreflightWire108d941fBare(profile, value, state)
-		case *UpdateChannelUserTyping:
-			return layerPreflightWire8c88c923Bare(profile, value, state)
-		case *UpdateChannelViewForumAsMessages:
-			return layerPreflightWire07b68920Bare(profile, value, state)
-		case *UpdateChannelWebPage:
-			return layerPreflightWire2f2ba99fBare(profile, value, state)
-		case *UpdateChat:
-			return layerPreflightWiref89a6a4eBare(profile, value, state)
-		case *UpdateChatDefaultBannedRights:
-			return layerPreflightWire54c01850Bare(profile, value, state)
-		case *UpdateChatParticipant:
-			return layerPreflightWired087663aBare(profile, value, state)
-		case *UpdateChatParticipantAdd:
-			return layerPreflightWire3dda5451Bare(profile, value, state)
-		case *UpdateChatParticipantAdmin:
-			return layerPreflightWired7ca61a2Bare(profile, value, state)
-		case *UpdateChatParticipantDelete:
-			return layerPreflightWiree32f3d77Bare(profile, value, state)
-		case *UpdateChatParticipants:
-			return layerPreflightWire07761198Bare(profile, value, state)
-		case *UpdateChatUserTyping:
-			return layerPreflightWire83487af0Bare(profile, value, state)
-		case *UpdateConfig:
-			return layerPreflightWirea229dd06Bare(profile, value, state)
-		case *UpdateContactsReset:
-			return layerPreflightWire7084a7beBare(profile, value, state)
-		case *UpdateDCOptions:
-			return layerPreflightWire8e5e9873Bare(profile, value, state)
-		case *UpdateDeleteChannelMessages:
-			return layerPreflightWirec32d5b12Bare(profile, value, state)
-		case *UpdateDeleteGroupCallMessages:
-			return layerPreflightWire3e85e92cBare(profile, value, state)
-		case *UpdateDeleteMessages:
-			return layerPreflightWirea20db0e5Bare(profile, value, state)
-		case *UpdateDeleteQuickReply:
-			return layerPreflightWire53e6f1ecBare(profile, value, state)
-		case *UpdateDeleteQuickReplyMessages:
-			return layerPreflightWire566fe7cdBare(profile, value, state)
-		case *UpdateDeleteScheduledMessages:
-			return layerPreflightWiref2a71983Bare(profile, value, state)
-		case *UpdateDialogFilter:
-			return layerPreflightWire26ffde7dBare(profile, value, state)
-		case *UpdateDialogFilterOrder:
-			return layerPreflightWirea5d72105Bare(profile, value, state)
-		case *UpdateDialogFilters:
-			return layerPreflightWire3504914fBare(profile, value, state)
-		case *UpdateDialogPinned:
-			return layerPreflightWire6e6fe51cBare(profile, value, state)
-		case *UpdateDialogUnreadMark:
-			return layerPreflightWireb658f23eBare(profile, value, state)
-		case *UpdateDraftMessage:
-			return layerPreflightWireedfc111eBare(profile, value, state)
-		case *UpdateEditChannelMessage:
-			return layerPreflightWire1b3f4df7Bare(profile, value, state)
-		case *UpdateEditMessage:
-			return layerPreflightWiree40370a3Bare(profile, value, state)
-		case *UpdateEmojiGameInfo:
-			return layerPreflightWirefb9c547aBare(profile, value, state)
-		case *UpdateEncryptedChatTyping:
-			return layerPreflightWire1710f156Bare(profile, value, state)
-		case *UpdateEncryptedMessagesRead:
-			return layerPreflightWire38fe25b7Bare(profile, value, state)
-		case *UpdateEncryption:
-			return layerPreflightWireb4a2e88dBare(profile, value, state)
-		case *UpdateFavedStickers:
-			return layerPreflightWiree511996dBare(profile, value, state)
-		case *UpdateFolderPeers:
-			return layerPreflightWire19360dc0Bare(profile, value, state)
-		case *UpdateGeoLiveViewed:
-			return layerPreflightWire871fb939Bare(profile, value, state)
-		case *UpdateGroupCall:
-			return layerPreflightWire9d2216e0Bare(profile, value, state)
-		case *UpdateGroupCallChainBlocks:
-			return layerPreflightWirea477288fBare(profile, value, state)
-		case *UpdateGroupCallConnection:
-			return layerPreflightWire0b783982Bare(profile, value, state)
-		case *UpdateGroupCallEncryptedMessage:
-			return layerPreflightWirec957a766Bare(profile, value, state)
-		case *UpdateGroupCallMessage:
-			return layerPreflightWired8326f0dBare(profile, value, state)
-		case *UpdateGroupCallParticipants:
-			return layerPreflightWiref2ebdb4eBare(profile, value, state)
-		case *UpdateInlineBotCallbackQuery:
-			return layerPreflightWire691e9052Bare(profile, value, state)
-		case *UpdateLangPack:
-			return layerPreflightWire56022f4dBare(profile, value, state)
-		case *UpdateLangPackTooLong:
-			return layerPreflightWire46560264Bare(profile, value, state)
-		case *UpdateLoginToken:
-			return layerPreflightWire564fe691Bare(profile, value, state)
-		case *UpdateMessageExtendedMedia:
-			return layerPreflightWired5a41724Bare(profile, value, state)
-		case *UpdateMessageID:
-			return layerPreflightWire4e90bfd6Bare(profile, value, state)
-		case *UpdateMessagePoll:
-			return layerPreflightWireaca1657bBare(profile, value, state)
-		case *UpdateMessagePollVote:
-			return layerPreflightWire24f40e77Bare(profile, value, state)
-		case *UpdateMessageReactions:
-			return layerPreflightWire1e297bfaBare(profile, value, state)
-		case *UpdateMonoForumNoPaidException:
-			return layerPreflightWire9f812b08Bare(profile, value, state)
-		case *UpdateMoveStickerSetToTop:
-			return layerPreflightWire86fccf85Bare(profile, value, state)
-		case *UpdateNewAuthorization:
-			return layerPreflightWire8951abefBare(profile, value, state)
-		case *UpdateNewChannelMessage:
-			return layerPreflightWire62ba04d9Bare(profile, value, state)
-		case *UpdateNewEncryptedMessage:
-			return layerPreflightWire12bcbd9aBare(profile, value, state)
-		case *UpdateNewMessage:
-			return layerPreflightWire1f2b0afdBare(profile, value, state)
-		case *UpdateNewQuickReply:
-			return layerPreflightWiref53da717Bare(profile, value, state)
-		case *UpdateNewScheduledMessage:
-			return layerPreflightWire39a51dfbBare(profile, value, state)
-		case *UpdateNewStickerSet:
-			return layerPreflightWire688a30aaBare(profile, value, state)
-		case *UpdateNewStoryReaction:
-			return layerPreflightWire1824e40bBare(profile, value, state)
-		case *UpdateNotifySettings:
-			return layerPreflightWirebec268efBare(profile, value, state)
-		case *UpdatePaidReactionPrivacy:
-			return layerPreflightWire8b725fceBare(profile, value, state)
-		case *UpdatePeerBlocked:
-			return layerPreflightWireebe07752Bare(profile, value, state)
-		case *UpdatePeerHistoryTTL:
-			return layerPreflightWirebb9bb9a5Bare(profile, value, state)
-		case *UpdatePeerLocated:
-			return layerPreflightWireb4afcfb0Bare(profile, value, state)
-		case *UpdatePeerSettings:
-			return layerPreflightWire6a7e7366Bare(profile, value, state)
-		case *UpdatePeerWallpaper:
-			return layerPreflightWireae3f101dBare(profile, value, state)
-		case *UpdatePendingJoinRequests:
-			return layerPreflightWire7063c3dbBare(profile, value, state)
-		case *UpdatePhoneCall:
-			return layerPreflightWireab0f6b1eBare(profile, value, state)
-		case *UpdatePhoneCallSignalingData:
-			return layerPreflightWire2661bf09Bare(profile, value, state)
-		case *UpdatePinnedChannelMessages:
-			return layerPreflightWire5bb98608Bare(profile, value, state)
-		case *UpdatePinnedDialogs:
-			return layerPreflightWirefa0f3ca2Bare(profile, value, state)
-		case *UpdatePinnedForumTopic:
-			return layerPreflightWire683b2c52Bare(profile, value, state)
-		case *UpdatePinnedForumTopics:
-			return layerPreflightWiredef143d0Bare(profile, value, state)
-		case *UpdatePinnedMessages:
-			return layerPreflightWireed85eab5Bare(profile, value, state)
-		case *UpdatePinnedSavedDialogs:
-			return layerPreflightWire686c85a6Bare(profile, value, state)
-		case *UpdatePrivacy:
-			return layerPreflightWireee3b272aBare(profile, value, state)
-		case *UpdatePtsChanged:
-			return layerPreflightWire3354678fBare(profile, value, state)
-		case *UpdateQuickReplies:
-			return layerPreflightWiref9470ab2Bare(profile, value, state)
-		case *UpdateQuickReplyMessage:
-			return layerPreflightWire3e050d0fBare(profile, value, state)
-		case *UpdateReadChannelDiscussionInbox:
-			return layerPreflightWired6b19546Bare(profile, value, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			return layerPreflightWire695c9e7cBare(profile, value, state)
-		case *UpdateReadChannelInbox:
-			return layerPreflightWire922e6e10Bare(profile, value, state)
-		case *UpdateReadChannelOutbox:
-			return layerPreflightWireb75f99a9Bare(profile, value, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			return layerPreflightWirefb4c496cBare(profile, value, state)
-		case *UpdateReadFeaturedStickers:
-			return layerPreflightWire571d2742Bare(profile, value, state)
-		case *UpdateReadHistoryInbox:
-			return layerPreflightWire9e84bc99Bare(profile, value, state)
-		case *UpdateReadHistoryOutbox:
-			return layerPreflightWire2f2f21bfBare(profile, value, state)
-		case *UpdateReadMessagesContents:
-			return layerPreflightWiref8227181Bare(profile, value, state)
-		case *UpdateReadMonoForumInbox:
-			return layerPreflightWire77b0e372Bare(profile, value, state)
-		case *UpdateReadMonoForumOutbox:
-			return layerPreflightWirea4a79376Bare(profile, value, state)
-		case *UpdateReadStories:
-			return layerPreflightWiref74e932bBare(profile, value, state)
-		case *UpdateRecentEmojiStatuses:
-			return layerPreflightWire30f443dbBare(profile, value, state)
-		case *UpdateRecentReactions:
-			return layerPreflightWire6f7863f4Bare(profile, value, state)
-		case *UpdateRecentStickers:
-			return layerPreflightWire9a422c20Bare(profile, value, state)
-		case *UpdateSMSJob:
-			return layerPreflightWiref16269d4Bare(profile, value, state)
-		case *UpdateSavedDialogPinned:
-			return layerPreflightWireaeaf9e74Bare(profile, value, state)
-		case *UpdateSavedGifs:
-			return layerPreflightWire9375341eBare(profile, value, state)
-		case *UpdateSavedReactionTags:
-			return layerPreflightWire39c67432Bare(profile, value, state)
-		case *UpdateSavedRingtones:
-			return layerPreflightWire74d8be99Bare(profile, value, state)
-		case *UpdateSentPhoneCode:
-			return layerPreflightWire504aa18fBare(profile, value, state)
-		case *UpdateSentStoryReaction:
-			return layerPreflightWire7d627683Bare(profile, value, state)
-		case *UpdateServiceNotification:
-			return layerPreflightWireebe46819Bare(profile, value, state)
-		case *UpdateStarGiftAuctionState:
-			return layerPreflightWire48e246c2Bare(profile, value, state)
-		case *UpdateStarGiftAuctionUserState:
-			return layerPreflightWiredc58f31eBare(profile, value, state)
-		case *UpdateStarGiftCraftFail:
-			return layerPreflightWireac072444Bare(profile, value, state)
-		case *UpdateStarsBalance:
-			return layerPreflightWire4e80a379Bare(profile, value, state)
-		case *UpdateStarsRevenueStatus:
-			return layerPreflightWirea584b019Bare(profile, value, state)
-		case *UpdateStickerSets:
-			return layerPreflightWire31c24808Bare(profile, value, state)
-		case *UpdateStickerSetsOrder:
-			return layerPreflightWire0bb2d201Bare(profile, value, state)
-		case *UpdateStoriesStealthMode:
-			return layerPreflightWire2c084dc1Bare(profile, value, state)
-		case *UpdateStory:
-			return layerPreflightWire75b3b798Bare(profile, value, state)
-		case *UpdateStoryID:
-			return layerPreflightWire1bf335b9Bare(profile, value, state)
-		case *UpdateTheme:
-			return layerPreflightWire8216fba3Bare(profile, value, state)
-		case *UpdateTranscribedAudio:
-			return layerPreflightWire0084cd5aBare(profile, value, state)
-		case *UpdateUser:
-			return layerPreflightWire20529438Bare(profile, value, state)
-		case *UpdateUserEmojiStatus:
-			return layerPreflightWire28373599Bare(profile, value, state)
-		case *UpdateUserName:
-			return layerPreflightWirea7848924Bare(profile, value, state)
-		case *UpdateUserPhone:
-			return layerPreflightWire05492a13Bare(profile, value, state)
-		case *UpdateUserStatus:
-			return layerPreflightWiree5bdf8deBare(profile, value, state)
-		case *UpdateUserTyping:
-			return layerPreflightWire2a17bf5cBare(profile, value, state)
-		case *UpdateWebPage:
-			return layerPreflightWire7f891213Bare(profile, value, state)
-		case *UpdateWebViewResultSent:
-			return layerPreflightWire1592b79dBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			return layerPreflightWire17b7a20bBare(profile, value, state)
-		case *UpdateAutoSaveSettings:
-			return layerPreflightWireec05b097Bare(profile, value, state)
-		case *UpdateBotBusinessConnect:
-			return layerPreflightWire8ae5c97aBare(profile, value, state)
-		case *UpdateBotCallbackQuery:
-			return layerPreflightWireb9cfc48dBare(profile, value, state)
-		case *UpdateBotChatBoost:
-			return layerPreflightWire904dd49cBare(profile, value, state)
-		case *UpdateBotChatInviteRequester:
-			return layerPreflightWire11dfa986Bare(profile, value, state)
-		case *UpdateBotCommands:
-			return layerPreflightWire4d712f2eBare(profile, value, state)
-		case *UpdateBotDeleteBusinessMessage:
-			return layerPreflightWirea02a982eBare(profile, value, state)
-		case *UpdateBotEditBusinessMessage:
-			return layerPreflightWire07df587cBare(profile, value, state)
-		case *UpdateBotInlineQuery:
-			return layerPreflightWire496f379cBare(profile, value, state)
-		case *UpdateBotInlineSend:
-			return layerPreflightWire12f12a07Bare(profile, value, state)
-		case *UpdateBotMenuButton:
-			return layerPreflightWire14b85813Bare(profile, value, state)
-		case *UpdateBotMessageReaction:
-			return layerPreflightWireac21d3ceBare(profile, value, state)
-		case *UpdateBotMessageReactions:
-			return layerPreflightWire09cb7759Bare(profile, value, state)
-		case *UpdateBotNewBusinessMessage:
-			return layerPreflightWire9ddb347cBare(profile, value, state)
-		case *UpdateBotPrecheckoutQuery:
-			return layerPreflightWire8caa9a96Bare(profile, value, state)
-		case *UpdateBotPurchasedPaidMedia:
-			return layerPreflightWire283bd312Bare(profile, value, state)
-		case *UpdateBotShippingQuery:
-			return layerPreflightWireb5aefd7dBare(profile, value, state)
-		case *UpdateBotStopped:
-			return layerPreflightWirec4870a49Bare(profile, value, state)
-		case *UpdateBotWebhookJSON:
-			return layerPreflightWire8317c0c3Bare(profile, value, state)
-		case *UpdateBotWebhookJSONQuery:
-			return layerPreflightWire9b9240a6Bare(profile, value, state)
-		case *UpdateBusinessBotCallbackQuery:
-			return layerPreflightWire1ea2fda7Bare(profile, value, state)
-		case *UpdateChannel:
-			return layerPreflightWire635b4c09Bare(profile, value, state)
-		case *UpdateChannelAvailableMessages:
-			return layerPreflightWireb23fc698Bare(profile, value, state)
-		case *UpdateChannelMessageForwards:
-			return layerPreflightWired29a27f4Bare(profile, value, state)
-		case *UpdateChannelMessageViews:
-			return layerPreflightWiref226ac08Bare(profile, value, state)
-		case *UpdateChannelParticipant:
-			return layerPreflightWire985d3abbBare(profile, value, state)
-		case *UpdateChannelReadMessagesContents:
-			return layerPreflightWire25f324f7Bare(profile, value, state)
-		case *UpdateChannelTooLong:
-			return layerPreflightWire108d941fBare(profile, value, state)
-		case *UpdateChannelUserTyping:
-			return layerPreflightWire8c88c923Bare(profile, value, state)
-		case *UpdateChannelViewForumAsMessages:
-			return layerPreflightWire07b68920Bare(profile, value, state)
-		case *UpdateChannelWebPage:
-			return layerPreflightWire2f2ba99fBare(profile, value, state)
-		case *UpdateChat:
-			return layerPreflightWiref89a6a4eBare(profile, value, state)
-		case *UpdateChatDefaultBannedRights:
-			return layerPreflightWire54c01850Bare(profile, value, state)
-		case *UpdateChatParticipant:
-			return layerPreflightWired087663aBare(profile, value, state)
-		case *UpdateChatParticipantAdd:
-			return layerPreflightWire3dda5451Bare(profile, value, state)
-		case *UpdateChatParticipantAdmin:
-			return layerPreflightWired7ca61a2Bare(profile, value, state)
-		case *UpdateChatParticipantDelete:
-			return layerPreflightWiree32f3d77Bare(profile, value, state)
-		case *UpdateChatParticipantRank:
-			return layerPreflightWirebd8367b9Bare(profile, value, state)
-		case *UpdateChatParticipants:
-			return layerPreflightWire07761198Bare(profile, value, state)
-		case *UpdateChatUserTyping:
-			return layerPreflightWire83487af0Bare(profile, value, state)
-		case *UpdateConfig:
-			return layerPreflightWirea229dd06Bare(profile, value, state)
-		case *UpdateContactsReset:
-			return layerPreflightWire7084a7beBare(profile, value, state)
-		case *UpdateDCOptions:
-			return layerPreflightWire8e5e9873Bare(profile, value, state)
-		case *UpdateDeleteChannelMessages:
-			return layerPreflightWirec32d5b12Bare(profile, value, state)
-		case *UpdateDeleteGroupCallMessages:
-			return layerPreflightWire3e85e92cBare(profile, value, state)
-		case *UpdateDeleteMessages:
-			return layerPreflightWirea20db0e5Bare(profile, value, state)
-		case *UpdateDeleteQuickReply:
-			return layerPreflightWire53e6f1ecBare(profile, value, state)
-		case *UpdateDeleteQuickReplyMessages:
-			return layerPreflightWire566fe7cdBare(profile, value, state)
-		case *UpdateDeleteScheduledMessages:
-			return layerPreflightWiref2a71983Bare(profile, value, state)
-		case *UpdateDialogFilter:
-			return layerPreflightWire26ffde7dBare(profile, value, state)
-		case *UpdateDialogFilterOrder:
-			return layerPreflightWirea5d72105Bare(profile, value, state)
-		case *UpdateDialogFilters:
-			return layerPreflightWire3504914fBare(profile, value, state)
-		case *UpdateDialogPinned:
-			return layerPreflightWire6e6fe51cBare(profile, value, state)
-		case *UpdateDialogUnreadMark:
-			return layerPreflightWireb658f23eBare(profile, value, state)
-		case *UpdateDraftMessage:
-			return layerPreflightWireedfc111eBare(profile, value, state)
-		case *UpdateEditChannelMessage:
-			return layerPreflightWire1b3f4df7Bare(profile, value, state)
-		case *UpdateEditMessage:
-			return layerPreflightWiree40370a3Bare(profile, value, state)
-		case *UpdateEmojiGameInfo:
-			return layerPreflightWirefb9c547aBare(profile, value, state)
-		case *UpdateEncryptedChatTyping:
-			return layerPreflightWire1710f156Bare(profile, value, state)
-		case *UpdateEncryptedMessagesRead:
-			return layerPreflightWire38fe25b7Bare(profile, value, state)
-		case *UpdateEncryption:
-			return layerPreflightWireb4a2e88dBare(profile, value, state)
-		case *UpdateFavedStickers:
-			return layerPreflightWiree511996dBare(profile, value, state)
-		case *UpdateFolderPeers:
-			return layerPreflightWire19360dc0Bare(profile, value, state)
-		case *UpdateGeoLiveViewed:
-			return layerPreflightWire871fb939Bare(profile, value, state)
-		case *UpdateGroupCall:
-			return layerPreflightWire9d2216e0Bare(profile, value, state)
-		case *UpdateGroupCallChainBlocks:
-			return layerPreflightWirea477288fBare(profile, value, state)
-		case *UpdateGroupCallConnection:
-			return layerPreflightWire0b783982Bare(profile, value, state)
-		case *UpdateGroupCallEncryptedMessage:
-			return layerPreflightWirec957a766Bare(profile, value, state)
-		case *UpdateGroupCallMessage:
-			return layerPreflightWired8326f0dBare(profile, value, state)
-		case *UpdateGroupCallParticipants:
-			return layerPreflightWiref2ebdb4eBare(profile, value, state)
-		case *UpdateInlineBotCallbackQuery:
-			return layerPreflightWire691e9052Bare(profile, value, state)
-		case *UpdateLangPack:
-			return layerPreflightWire56022f4dBare(profile, value, state)
-		case *UpdateLangPackTooLong:
-			return layerPreflightWire46560264Bare(profile, value, state)
-		case *UpdateLoginToken:
-			return layerPreflightWire564fe691Bare(profile, value, state)
-		case *UpdateMessageExtendedMedia:
-			return layerPreflightWired5a41724Bare(profile, value, state)
-		case *UpdateMessageID:
-			return layerPreflightWire4e90bfd6Bare(profile, value, state)
-		case *UpdateMessagePoll:
-			return layerPreflightWireaca1657bBare(profile, value, state)
-		case *UpdateMessagePollVote:
-			return layerPreflightWire24f40e77Bare(profile, value, state)
-		case *UpdateMessageReactions:
-			return layerPreflightWire1e297bfaBare(profile, value, state)
-		case *UpdateMonoForumNoPaidException:
-			return layerPreflightWire9f812b08Bare(profile, value, state)
-		case *UpdateMoveStickerSetToTop:
-			return layerPreflightWire86fccf85Bare(profile, value, state)
-		case *UpdateNewAuthorization:
-			return layerPreflightWire8951abefBare(profile, value, state)
-		case *UpdateNewChannelMessage:
-			return layerPreflightWire62ba04d9Bare(profile, value, state)
-		case *UpdateNewEncryptedMessage:
-			return layerPreflightWire12bcbd9aBare(profile, value, state)
-		case *UpdateNewMessage:
-			return layerPreflightWire1f2b0afdBare(profile, value, state)
-		case *UpdateNewQuickReply:
-			return layerPreflightWiref53da717Bare(profile, value, state)
-		case *UpdateNewScheduledMessage:
-			return layerPreflightWire39a51dfbBare(profile, value, state)
-		case *UpdateNewStickerSet:
-			return layerPreflightWire688a30aaBare(profile, value, state)
-		case *UpdateNewStoryReaction:
-			return layerPreflightWire1824e40bBare(profile, value, state)
-		case *UpdateNotifySettings:
-			return layerPreflightWirebec268efBare(profile, value, state)
-		case *UpdatePaidReactionPrivacy:
-			return layerPreflightWire8b725fceBare(profile, value, state)
-		case *UpdatePeerBlocked:
-			return layerPreflightWireebe07752Bare(profile, value, state)
-		case *UpdatePeerHistoryTTL:
-			return layerPreflightWirebb9bb9a5Bare(profile, value, state)
-		case *UpdatePeerLocated:
-			return layerPreflightWireb4afcfb0Bare(profile, value, state)
-		case *UpdatePeerSettings:
-			return layerPreflightWire6a7e7366Bare(profile, value, state)
-		case *UpdatePeerWallpaper:
-			return layerPreflightWireae3f101dBare(profile, value, state)
-		case *UpdatePendingJoinRequests:
-			return layerPreflightWire7063c3dbBare(profile, value, state)
-		case *UpdatePhoneCall:
-			return layerPreflightWireab0f6b1eBare(profile, value, state)
-		case *UpdatePhoneCallSignalingData:
-			return layerPreflightWire2661bf09Bare(profile, value, state)
-		case *UpdatePinnedChannelMessages:
-			return layerPreflightWire5bb98608Bare(profile, value, state)
-		case *UpdatePinnedDialogs:
-			return layerPreflightWirefa0f3ca2Bare(profile, value, state)
-		case *UpdatePinnedForumTopic:
-			return layerPreflightWire683b2c52Bare(profile, value, state)
-		case *UpdatePinnedForumTopics:
-			return layerPreflightWiredef143d0Bare(profile, value, state)
-		case *UpdatePinnedMessages:
-			return layerPreflightWireed85eab5Bare(profile, value, state)
-		case *UpdatePinnedSavedDialogs:
-			return layerPreflightWire686c85a6Bare(profile, value, state)
-		case *UpdatePrivacy:
-			return layerPreflightWireee3b272aBare(profile, value, state)
-		case *UpdatePtsChanged:
-			return layerPreflightWire3354678fBare(profile, value, state)
-		case *UpdateQuickReplies:
-			return layerPreflightWiref9470ab2Bare(profile, value, state)
-		case *UpdateQuickReplyMessage:
-			return layerPreflightWire3e050d0fBare(profile, value, state)
-		case *UpdateReadChannelDiscussionInbox:
-			return layerPreflightWired6b19546Bare(profile, value, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			return layerPreflightWire695c9e7cBare(profile, value, state)
-		case *UpdateReadChannelInbox:
-			return layerPreflightWire922e6e10Bare(profile, value, state)
-		case *UpdateReadChannelOutbox:
-			return layerPreflightWireb75f99a9Bare(profile, value, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			return layerPreflightWirefb4c496cBare(profile, value, state)
-		case *UpdateReadFeaturedStickers:
-			return layerPreflightWire571d2742Bare(profile, value, state)
-		case *UpdateReadHistoryInbox:
-			return layerPreflightWire9e84bc99Bare(profile, value, state)
-		case *UpdateReadHistoryOutbox:
-			return layerPreflightWire2f2f21bfBare(profile, value, state)
-		case *UpdateReadMessagesContents:
-			return layerPreflightWiref8227181Bare(profile, value, state)
-		case *UpdateReadMonoForumInbox:
-			return layerPreflightWire77b0e372Bare(profile, value, state)
-		case *UpdateReadMonoForumOutbox:
-			return layerPreflightWirea4a79376Bare(profile, value, state)
-		case *UpdateReadStories:
-			return layerPreflightWiref74e932bBare(profile, value, state)
-		case *UpdateRecentEmojiStatuses:
-			return layerPreflightWire30f443dbBare(profile, value, state)
-		case *UpdateRecentReactions:
-			return layerPreflightWire6f7863f4Bare(profile, value, state)
-		case *UpdateRecentStickers:
-			return layerPreflightWire9a422c20Bare(profile, value, state)
-		case *UpdateSMSJob:
-			return layerPreflightWiref16269d4Bare(profile, value, state)
-		case *UpdateSavedDialogPinned:
-			return layerPreflightWireaeaf9e74Bare(profile, value, state)
-		case *UpdateSavedGifs:
-			return layerPreflightWire9375341eBare(profile, value, state)
-		case *UpdateSavedReactionTags:
-			return layerPreflightWire39c67432Bare(profile, value, state)
-		case *UpdateSavedRingtones:
-			return layerPreflightWire74d8be99Bare(profile, value, state)
-		case *UpdateSentPhoneCode:
-			return layerPreflightWire504aa18fBare(profile, value, state)
-		case *UpdateSentStoryReaction:
-			return layerPreflightWire7d627683Bare(profile, value, state)
-		case *UpdateServiceNotification:
-			return layerPreflightWireebe46819Bare(profile, value, state)
-		case *UpdateStarGiftAuctionState:
-			return layerPreflightWire48e246c2Bare(profile, value, state)
-		case *UpdateStarGiftAuctionUserState:
-			return layerPreflightWiredc58f31eBare(profile, value, state)
-		case *UpdateStarGiftCraftFail:
-			return layerPreflightWireac072444Bare(profile, value, state)
-		case *UpdateStarsBalance:
-			return layerPreflightWire4e80a379Bare(profile, value, state)
-		case *UpdateStarsRevenueStatus:
-			return layerPreflightWirea584b019Bare(profile, value, state)
-		case *UpdateStickerSets:
-			return layerPreflightWire31c24808Bare(profile, value, state)
-		case *UpdateStickerSetsOrder:
-			return layerPreflightWire0bb2d201Bare(profile, value, state)
-		case *UpdateStoriesStealthMode:
-			return layerPreflightWire2c084dc1Bare(profile, value, state)
-		case *UpdateStory:
-			return layerPreflightWire75b3b798Bare(profile, value, state)
-		case *UpdateStoryID:
-			return layerPreflightWire1bf335b9Bare(profile, value, state)
-		case *UpdateTheme:
-			return layerPreflightWire8216fba3Bare(profile, value, state)
-		case *UpdateTranscribedAudio:
-			return layerPreflightWire0084cd5aBare(profile, value, state)
-		case *UpdateUser:
-			return layerPreflightWire20529438Bare(profile, value, state)
-		case *UpdateUserEmojiStatus:
-			return layerPreflightWire28373599Bare(profile, value, state)
-		case *UpdateUserName:
-			return layerPreflightWirea7848924Bare(profile, value, state)
-		case *UpdateUserPhone:
-			return layerPreflightWire05492a13Bare(profile, value, state)
-		case *UpdateUserStatus:
-			return layerPreflightWiree5bdf8deBare(profile, value, state)
-		case *UpdateUserTyping:
-			return layerPreflightWire2a17bf5cBare(profile, value, state)
-		case *UpdateWebPage:
-			return layerPreflightWire7f891213Bare(profile, value, state)
-		case *UpdateWebViewResultSent:
-			return layerPreflightWire1592b79dBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			return layerPreflightWire17b7a20bBare(profile, value, state)
-		case *UpdateAutoSaveSettings:
-			return layerPreflightWireec05b097Bare(profile, value, state)
-		case *UpdateBotBusinessConnect:
-			return layerPreflightWire8ae5c97aBare(profile, value, state)
-		case *UpdateBotCallbackQuery:
-			return layerPreflightWireb9cfc48dBare(profile, value, state)
-		case *UpdateBotChatBoost:
-			return layerPreflightWire904dd49cBare(profile, value, state)
-		case *UpdateBotChatInviteRequester:
-			return layerPreflightWire11dfa986Bare(profile, value, state)
-		case *UpdateBotCommands:
-			return layerPreflightWire4d712f2eBare(profile, value, state)
-		case *UpdateBotDeleteBusinessMessage:
-			return layerPreflightWirea02a982eBare(profile, value, state)
-		case *UpdateBotEditBusinessMessage:
-			return layerPreflightWire07df587cBare(profile, value, state)
-		case *UpdateBotInlineQuery:
-			return layerPreflightWire496f379cBare(profile, value, state)
-		case *UpdateBotInlineSend:
-			return layerPreflightWire12f12a07Bare(profile, value, state)
-		case *UpdateBotMenuButton:
-			return layerPreflightWire14b85813Bare(profile, value, state)
-		case *UpdateBotMessageReaction:
-			return layerPreflightWireac21d3ceBare(profile, value, state)
-		case *UpdateBotMessageReactions:
-			return layerPreflightWire09cb7759Bare(profile, value, state)
-		case *UpdateBotNewBusinessMessage:
-			return layerPreflightWire9ddb347cBare(profile, value, state)
-		case *UpdateBotPrecheckoutQuery:
-			return layerPreflightWire8caa9a96Bare(profile, value, state)
-		case *UpdateBotPurchasedPaidMedia:
-			return layerPreflightWire283bd312Bare(profile, value, state)
-		case *UpdateBotShippingQuery:
-			return layerPreflightWireb5aefd7dBare(profile, value, state)
-		case *UpdateBotStopped:
-			return layerPreflightWirec4870a49Bare(profile, value, state)
-		case *UpdateBotWebhookJSON:
-			return layerPreflightWire8317c0c3Bare(profile, value, state)
-		case *UpdateBotWebhookJSONQuery:
-			return layerPreflightWire9b9240a6Bare(profile, value, state)
-		case *UpdateBusinessBotCallbackQuery:
-			return layerPreflightWire1ea2fda7Bare(profile, value, state)
-		case *UpdateChannel:
-			return layerPreflightWire635b4c09Bare(profile, value, state)
-		case *UpdateChannelAvailableMessages:
-			return layerPreflightWireb23fc698Bare(profile, value, state)
-		case *UpdateChannelMessageForwards:
-			return layerPreflightWired29a27f4Bare(profile, value, state)
-		case *UpdateChannelMessageViews:
-			return layerPreflightWiref226ac08Bare(profile, value, state)
-		case *UpdateChannelParticipant:
-			return layerPreflightWire985d3abbBare(profile, value, state)
-		case *UpdateChannelReadMessagesContents:
-			return layerPreflightWire25f324f7Bare(profile, value, state)
-		case *UpdateChannelTooLong:
-			return layerPreflightWire108d941fBare(profile, value, state)
-		case *UpdateChannelUserTyping:
-			return layerPreflightWire8c88c923Bare(profile, value, state)
-		case *UpdateChannelViewForumAsMessages:
-			return layerPreflightWire07b68920Bare(profile, value, state)
-		case *UpdateChannelWebPage:
-			return layerPreflightWire2f2ba99fBare(profile, value, state)
-		case *UpdateChat:
-			return layerPreflightWiref89a6a4eBare(profile, value, state)
-		case *UpdateChatDefaultBannedRights:
-			return layerPreflightWire54c01850Bare(profile, value, state)
-		case *UpdateChatParticipant:
-			return layerPreflightWired087663aBare(profile, value, state)
-		case *UpdateChatParticipantAdd:
-			return layerPreflightWire3dda5451Bare(profile, value, state)
-		case *UpdateChatParticipantAdmin:
-			return layerPreflightWired7ca61a2Bare(profile, value, state)
-		case *UpdateChatParticipantDelete:
-			return layerPreflightWiree32f3d77Bare(profile, value, state)
-		case *UpdateChatParticipantRank:
-			return layerPreflightWirebd8367b9Bare(profile, value, state)
-		case *UpdateChatParticipants:
-			return layerPreflightWire07761198Bare(profile, value, state)
-		case *UpdateChatUserTyping:
-			return layerPreflightWire83487af0Bare(profile, value, state)
-		case *UpdateConfig:
-			return layerPreflightWirea229dd06Bare(profile, value, state)
-		case *UpdateContactsReset:
-			return layerPreflightWire7084a7beBare(profile, value, state)
-		case *UpdateDCOptions:
-			return layerPreflightWire8e5e9873Bare(profile, value, state)
-		case *UpdateDeleteChannelMessages:
-			return layerPreflightWirec32d5b12Bare(profile, value, state)
-		case *UpdateDeleteGroupCallMessages:
-			return layerPreflightWire3e85e92cBare(profile, value, state)
-		case *UpdateDeleteMessages:
-			return layerPreflightWirea20db0e5Bare(profile, value, state)
-		case *UpdateDeleteQuickReply:
-			return layerPreflightWire53e6f1ecBare(profile, value, state)
-		case *UpdateDeleteQuickReplyMessages:
-			return layerPreflightWire566fe7cdBare(profile, value, state)
-		case *UpdateDeleteScheduledMessages:
-			return layerPreflightWiref2a71983Bare(profile, value, state)
-		case *UpdateDialogFilter:
-			return layerPreflightWire26ffde7dBare(profile, value, state)
-		case *UpdateDialogFilterOrder:
-			return layerPreflightWirea5d72105Bare(profile, value, state)
-		case *UpdateDialogFilters:
-			return layerPreflightWire3504914fBare(profile, value, state)
-		case *UpdateDialogPinned:
-			return layerPreflightWire6e6fe51cBare(profile, value, state)
-		case *UpdateDialogUnreadMark:
-			return layerPreflightWireb658f23eBare(profile, value, state)
-		case *UpdateDraftMessage:
-			return layerPreflightWireedfc111eBare(profile, value, state)
-		case *UpdateEditChannelMessage:
-			return layerPreflightWire1b3f4df7Bare(profile, value, state)
-		case *UpdateEditMessage:
-			return layerPreflightWiree40370a3Bare(profile, value, state)
-		case *UpdateEmojiGameInfo:
-			return layerPreflightWirefb9c547aBare(profile, value, state)
-		case *UpdateEncryptedChatTyping:
-			return layerPreflightWire1710f156Bare(profile, value, state)
-		case *UpdateEncryptedMessagesRead:
-			return layerPreflightWire38fe25b7Bare(profile, value, state)
-		case *UpdateEncryption:
-			return layerPreflightWireb4a2e88dBare(profile, value, state)
-		case *UpdateFavedStickers:
-			return layerPreflightWiree511996dBare(profile, value, state)
-		case *UpdateFolderPeers:
-			return layerPreflightWire19360dc0Bare(profile, value, state)
-		case *UpdateGeoLiveViewed:
-			return layerPreflightWire871fb939Bare(profile, value, state)
-		case *UpdateGroupCall:
-			return layerPreflightWire9d2216e0Bare(profile, value, state)
-		case *UpdateGroupCallChainBlocks:
-			return layerPreflightWirea477288fBare(profile, value, state)
-		case *UpdateGroupCallConnection:
-			return layerPreflightWire0b783982Bare(profile, value, state)
-		case *UpdateGroupCallEncryptedMessage:
-			return layerPreflightWirec957a766Bare(profile, value, state)
-		case *UpdateGroupCallMessage:
-			return layerPreflightWired8326f0dBare(profile, value, state)
-		case *UpdateGroupCallParticipants:
-			return layerPreflightWiref2ebdb4eBare(profile, value, state)
-		case *UpdateInlineBotCallbackQuery:
-			return layerPreflightWire691e9052Bare(profile, value, state)
-		case *UpdateLangPack:
-			return layerPreflightWire56022f4dBare(profile, value, state)
-		case *UpdateLangPackTooLong:
-			return layerPreflightWire46560264Bare(profile, value, state)
-		case *UpdateLoginToken:
-			return layerPreflightWire564fe691Bare(profile, value, state)
-		case *UpdateManagedBot:
-			return layerPreflightWire4880ed9aBare(profile, value, state)
-		case *UpdateMessageExtendedMedia:
-			return layerPreflightWired5a41724Bare(profile, value, state)
-		case *UpdateMessageID:
-			return layerPreflightWire4e90bfd6Bare(profile, value, state)
-		case *UpdateMessagePoll:
-			return layerPreflightWired64c522bBare(profile, value, state)
-		case *UpdateMessagePollVote:
-			return layerPreflightWire7699f014Bare(profile, value, state)
-		case *UpdateMessageReactions:
-			return layerPreflightWire1e297bfaBare(profile, value, state)
-		case *UpdateMonoForumNoPaidException:
-			return layerPreflightWire9f812b08Bare(profile, value, state)
-		case *UpdateMoveStickerSetToTop:
-			return layerPreflightWire86fccf85Bare(profile, value, state)
-		case *UpdateNewAuthorization:
-			return layerPreflightWire8951abefBare(profile, value, state)
-		case *UpdateNewChannelMessage:
-			return layerPreflightWire62ba04d9Bare(profile, value, state)
-		case *UpdateNewEncryptedMessage:
-			return layerPreflightWire12bcbd9aBare(profile, value, state)
-		case *UpdateNewMessage:
-			return layerPreflightWire1f2b0afdBare(profile, value, state)
-		case *UpdateNewQuickReply:
-			return layerPreflightWiref53da717Bare(profile, value, state)
-		case *UpdateNewScheduledMessage:
-			return layerPreflightWire39a51dfbBare(profile, value, state)
-		case *UpdateNewStickerSet:
-			return layerPreflightWire688a30aaBare(profile, value, state)
-		case *UpdateNewStoryReaction:
-			return layerPreflightWire1824e40bBare(profile, value, state)
-		case *UpdateNotifySettings:
-			return layerPreflightWirebec268efBare(profile, value, state)
-		case *UpdatePaidReactionPrivacy:
-			return layerPreflightWire8b725fceBare(profile, value, state)
-		case *UpdatePeerBlocked:
-			return layerPreflightWireebe07752Bare(profile, value, state)
-		case *UpdatePeerHistoryTTL:
-			return layerPreflightWirebb9bb9a5Bare(profile, value, state)
-		case *UpdatePeerLocated:
-			return layerPreflightWireb4afcfb0Bare(profile, value, state)
-		case *UpdatePeerSettings:
-			return layerPreflightWire6a7e7366Bare(profile, value, state)
-		case *UpdatePeerWallpaper:
-			return layerPreflightWireae3f101dBare(profile, value, state)
-		case *UpdatePendingJoinRequests:
-			return layerPreflightWire7063c3dbBare(profile, value, state)
-		case *UpdatePhoneCall:
-			return layerPreflightWireab0f6b1eBare(profile, value, state)
-		case *UpdatePhoneCallSignalingData:
-			return layerPreflightWire2661bf09Bare(profile, value, state)
-		case *UpdatePinnedChannelMessages:
-			return layerPreflightWire5bb98608Bare(profile, value, state)
-		case *UpdatePinnedDialogs:
-			return layerPreflightWirefa0f3ca2Bare(profile, value, state)
-		case *UpdatePinnedForumTopic:
-			return layerPreflightWire683b2c52Bare(profile, value, state)
-		case *UpdatePinnedForumTopics:
-			return layerPreflightWiredef143d0Bare(profile, value, state)
-		case *UpdatePinnedMessages:
-			return layerPreflightWireed85eab5Bare(profile, value, state)
-		case *UpdatePinnedSavedDialogs:
-			return layerPreflightWire686c85a6Bare(profile, value, state)
-		case *UpdatePrivacy:
-			return layerPreflightWireee3b272aBare(profile, value, state)
-		case *UpdatePtsChanged:
-			return layerPreflightWire3354678fBare(profile, value, state)
-		case *UpdateQuickReplies:
-			return layerPreflightWiref9470ab2Bare(profile, value, state)
-		case *UpdateQuickReplyMessage:
-			return layerPreflightWire3e050d0fBare(profile, value, state)
-		case *UpdateReadChannelDiscussionInbox:
-			return layerPreflightWired6b19546Bare(profile, value, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			return layerPreflightWire695c9e7cBare(profile, value, state)
-		case *UpdateReadChannelInbox:
-			return layerPreflightWire922e6e10Bare(profile, value, state)
-		case *UpdateReadChannelOutbox:
-			return layerPreflightWireb75f99a9Bare(profile, value, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			return layerPreflightWirefb4c496cBare(profile, value, state)
-		case *UpdateReadFeaturedStickers:
-			return layerPreflightWire571d2742Bare(profile, value, state)
-		case *UpdateReadHistoryInbox:
-			return layerPreflightWire9e84bc99Bare(profile, value, state)
-		case *UpdateReadHistoryOutbox:
-			return layerPreflightWire2f2f21bfBare(profile, value, state)
-		case *UpdateReadMessagesContents:
-			return layerPreflightWiref8227181Bare(profile, value, state)
-		case *UpdateReadMonoForumInbox:
-			return layerPreflightWire77b0e372Bare(profile, value, state)
-		case *UpdateReadMonoForumOutbox:
-			return layerPreflightWirea4a79376Bare(profile, value, state)
-		case *UpdateReadStories:
-			return layerPreflightWiref74e932bBare(profile, value, state)
-		case *UpdateRecentEmojiStatuses:
-			return layerPreflightWire30f443dbBare(profile, value, state)
-		case *UpdateRecentReactions:
-			return layerPreflightWire6f7863f4Bare(profile, value, state)
-		case *UpdateRecentStickers:
-			return layerPreflightWire9a422c20Bare(profile, value, state)
-		case *UpdateSMSJob:
-			return layerPreflightWiref16269d4Bare(profile, value, state)
-		case *UpdateSavedDialogPinned:
-			return layerPreflightWireaeaf9e74Bare(profile, value, state)
-		case *UpdateSavedGifs:
-			return layerPreflightWire9375341eBare(profile, value, state)
-		case *UpdateSavedReactionTags:
-			return layerPreflightWire39c67432Bare(profile, value, state)
-		case *UpdateSavedRingtones:
-			return layerPreflightWire74d8be99Bare(profile, value, state)
-		case *UpdateSentPhoneCode:
-			return layerPreflightWire504aa18fBare(profile, value, state)
-		case *UpdateSentStoryReaction:
-			return layerPreflightWire7d627683Bare(profile, value, state)
-		case *UpdateServiceNotification:
-			return layerPreflightWireebe46819Bare(profile, value, state)
-		case *UpdateStarGiftAuctionState:
-			return layerPreflightWire48e246c2Bare(profile, value, state)
-		case *UpdateStarGiftAuctionUserState:
-			return layerPreflightWiredc58f31eBare(profile, value, state)
-		case *UpdateStarGiftCraftFail:
-			return layerPreflightWireac072444Bare(profile, value, state)
-		case *UpdateStarsBalance:
-			return layerPreflightWire4e80a379Bare(profile, value, state)
-		case *UpdateStarsRevenueStatus:
-			return layerPreflightWirea584b019Bare(profile, value, state)
-		case *UpdateStickerSets:
-			return layerPreflightWire31c24808Bare(profile, value, state)
-		case *UpdateStickerSetsOrder:
-			return layerPreflightWire0bb2d201Bare(profile, value, state)
-		case *UpdateStoriesStealthMode:
-			return layerPreflightWire2c084dc1Bare(profile, value, state)
-		case *UpdateStory:
-			return layerPreflightWire75b3b798Bare(profile, value, state)
-		case *UpdateStoryID:
-			return layerPreflightWire1bf335b9Bare(profile, value, state)
-		case *UpdateTheme:
-			return layerPreflightWire8216fba3Bare(profile, value, state)
-		case *UpdateTranscribedAudio:
-			return layerPreflightWire0084cd5aBare(profile, value, state)
-		case *UpdateUser:
-			return layerPreflightWire20529438Bare(profile, value, state)
-		case *UpdateUserEmojiStatus:
-			return layerPreflightWire28373599Bare(profile, value, state)
-		case *UpdateUserName:
-			return layerPreflightWirea7848924Bare(profile, value, state)
-		case *UpdateUserPhone:
-			return layerPreflightWire05492a13Bare(profile, value, state)
-		case *UpdateUserStatus:
-			return layerPreflightWiree5bdf8deBare(profile, value, state)
-		case *UpdateUserTyping:
-			return layerPreflightWire2a17bf5cBare(profile, value, state)
-		case *UpdateWebPage:
-			return layerPreflightWire7f891213Bare(profile, value, state)
-		case *UpdateWebViewResultSent:
-			return layerPreflightWire1592b79dBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
 	case LayerProfile225:
 		switch value := projected.(type) {
 		case *UpdateAiComposeTones:
@@ -34165,6 +30380,340 @@ func layerPreflightClassUpdate(profile LayerProfile, value UpdateClass, state *l
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *UpdateAiComposeTones:
+			return layerPreflightWire8c0f91fbBare(profile, value, state)
+		case *UpdateAttachMenuBots:
+			return layerPreflightWire17b7a20bBare(profile, value, state)
+		case *UpdateAutoSaveSettings:
+			return layerPreflightWireec05b097Bare(profile, value, state)
+		case *UpdateBotBusinessConnect:
+			return layerPreflightWire8ae5c97aBare(profile, value, state)
+		case *UpdateBotCallbackQuery:
+			return layerPreflightWireb9cfc48dBare(profile, value, state)
+		case *UpdateBotChatBoost:
+			return layerPreflightWire904dd49cBare(profile, value, state)
+		case *UpdateBotChatInviteRequester:
+			return layerPreflightWire7cb34d79Bare(profile, value, state)
+		case *UpdateBotCommands:
+			return layerPreflightWire4d712f2eBare(profile, value, state)
+		case *UpdateBotDeleteBusinessMessage:
+			return layerPreflightWirea02a982eBare(profile, value, state)
+		case *UpdateBotEditBusinessMessage:
+			return layerPreflightWire07df587cBare(profile, value, state)
+		case *UpdateBotGuestChatQuery:
+			return layerPreflightWirecdd4093dBare(profile, value, state)
+		case *UpdateBotInlineQuery:
+			return layerPreflightWire496f379cBare(profile, value, state)
+		case *UpdateBotInlineSend:
+			return layerPreflightWire12f12a07Bare(profile, value, state)
+		case *UpdateBotMenuButton:
+			return layerPreflightWire14b85813Bare(profile, value, state)
+		case *UpdateBotMessageReaction:
+			return layerPreflightWireac21d3ceBare(profile, value, state)
+		case *UpdateBotMessageReactions:
+			return layerPreflightWire09cb7759Bare(profile, value, state)
+		case *UpdateBotNewBusinessMessage:
+			return layerPreflightWire9ddb347cBare(profile, value, state)
+		case *UpdateBotPrecheckoutQuery:
+			return layerPreflightWire8caa9a96Bare(profile, value, state)
+		case *UpdateBotPurchasedPaidMedia:
+			return layerPreflightWire283bd312Bare(profile, value, state)
+		case *UpdateBotShippingQuery:
+			return layerPreflightWireb5aefd7dBare(profile, value, state)
+		case *UpdateBotStarsSubscription:
+			return layerPreflightWire6c0d8e23Bare(profile, value, state)
+		case *UpdateBotStopped:
+			return layerPreflightWirec4870a49Bare(profile, value, state)
+		case *UpdateBotWebhookJSON:
+			return layerPreflightWire8317c0c3Bare(profile, value, state)
+		case *UpdateBotWebhookJSONQuery:
+			return layerPreflightWire9b9240a6Bare(profile, value, state)
+		case *UpdateBusinessBotCallbackQuery:
+			return layerPreflightWire1ea2fda7Bare(profile, value, state)
+		case *UpdateChannel:
+			return layerPreflightWire635b4c09Bare(profile, value, state)
+		case *UpdateChannelAvailableMessages:
+			return layerPreflightWireb23fc698Bare(profile, value, state)
+		case *UpdateChannelMessageForwards:
+			return layerPreflightWired29a27f4Bare(profile, value, state)
+		case *UpdateChannelMessageViews:
+			return layerPreflightWiref226ac08Bare(profile, value, state)
+		case *UpdateChannelParticipant:
+			return layerPreflightWire985d3abbBare(profile, value, state)
+		case *UpdateChannelReadMessagesContents:
+			return layerPreflightWire25f324f7Bare(profile, value, state)
+		case *UpdateChannelTooLong:
+			return layerPreflightWire108d941fBare(profile, value, state)
+		case *UpdateChannelUserTyping:
+			return layerPreflightWire8c88c923Bare(profile, value, state)
+		case *UpdateChannelViewForumAsMessages:
+			return layerPreflightWire07b68920Bare(profile, value, state)
+		case *UpdateChannelWebPage:
+			return layerPreflightWire2f2ba99fBare(profile, value, state)
+		case *UpdateChat:
+			return layerPreflightWiref89a6a4eBare(profile, value, state)
+		case *UpdateChatDefaultBannedRights:
+			return layerPreflightWire54c01850Bare(profile, value, state)
+		case *UpdateChatParticipant:
+			return layerPreflightWired087663aBare(profile, value, state)
+		case *UpdateChatParticipantAdd:
+			return layerPreflightWire3dda5451Bare(profile, value, state)
+		case *UpdateChatParticipantAdmin:
+			return layerPreflightWired7ca61a2Bare(profile, value, state)
+		case *UpdateChatParticipantDelete:
+			return layerPreflightWiree32f3d77Bare(profile, value, state)
+		case *UpdateChatParticipantRank:
+			return layerPreflightWirebd8367b9Bare(profile, value, state)
+		case *UpdateChatParticipants:
+			return layerPreflightWire07761198Bare(profile, value, state)
+		case *UpdateChatUserTyping:
+			return layerPreflightWire83487af0Bare(profile, value, state)
+		case *UpdateConfig:
+			return layerPreflightWirea229dd06Bare(profile, value, state)
+		case *UpdateContactsReset:
+			return layerPreflightWire7084a7beBare(profile, value, state)
+		case *UpdateDCOptions:
+			return layerPreflightWire8e5e9873Bare(profile, value, state)
+		case *UpdateDeleteChannelMessages:
+			return layerPreflightWirec32d5b12Bare(profile, value, state)
+		case *UpdateDeleteEphemeralMessages:
+			return layerPreflightWire56dbfcf8Bare(profile, value, state)
+		case *UpdateDeleteGroupCallMessages:
+			return layerPreflightWire3e85e92cBare(profile, value, state)
+		case *UpdateDeleteMessages:
+			return layerPreflightWirea20db0e5Bare(profile, value, state)
+		case *UpdateDeleteQuickReply:
+			return layerPreflightWire53e6f1ecBare(profile, value, state)
+		case *UpdateDeleteQuickReplyMessages:
+			return layerPreflightWire566fe7cdBare(profile, value, state)
+		case *UpdateDeleteScheduledMessages:
+			return layerPreflightWiref2a71983Bare(profile, value, state)
+		case *UpdateDialogFilter:
+			return layerPreflightWire26ffde7dBare(profile, value, state)
+		case *UpdateDialogFilterOrder:
+			return layerPreflightWirea5d72105Bare(profile, value, state)
+		case *UpdateDialogFilters:
+			return layerPreflightWire3504914fBare(profile, value, state)
+		case *UpdateDialogPinned:
+			return layerPreflightWire6e6fe51cBare(profile, value, state)
+		case *UpdateDialogUnreadMark:
+			return layerPreflightWireb658f23eBare(profile, value, state)
+		case *UpdateDraftMessage:
+			return layerPreflightWireedfc111eBare(profile, value, state)
+		case *UpdateEditChannelMessage:
+			return layerPreflightWire1b3f4df7Bare(profile, value, state)
+		case *UpdateEditEphemeralMessage:
+			return layerPreflightWire4bbb8f01Bare(profile, value, state)
+		case *UpdateEditMessage:
+			return layerPreflightWiree40370a3Bare(profile, value, state)
+		case *UpdateEmojiGameInfo:
+			return layerPreflightWirefb9c547aBare(profile, value, state)
+		case *UpdateEncryptedChatTyping:
+			return layerPreflightWire1710f156Bare(profile, value, state)
+		case *UpdateEncryptedMessagesRead:
+			return layerPreflightWire38fe25b7Bare(profile, value, state)
+		case *UpdateEncryption:
+			return layerPreflightWireb4a2e88dBare(profile, value, state)
+		case *UpdateFavedStickers:
+			return layerPreflightWiree511996dBare(profile, value, state)
+		case *UpdateFolderPeers:
+			return layerPreflightWire19360dc0Bare(profile, value, state)
+		case *UpdateGeoLiveViewed:
+			return layerPreflightWire871fb939Bare(profile, value, state)
+		case *UpdateGroupCall:
+			return layerPreflightWire9d2216e0Bare(profile, value, state)
+		case *UpdateGroupCallChainBlocks:
+			return layerPreflightWirea477288fBare(profile, value, state)
+		case *UpdateGroupCallConnection:
+			return layerPreflightWire0b783982Bare(profile, value, state)
+		case *UpdateGroupCallEncryptedMessage:
+			return layerPreflightWirec957a766Bare(profile, value, state)
+		case *UpdateGroupCallMessage:
+			return layerPreflightWired8326f0dBare(profile, value, state)
+		case *UpdateGroupCallParticipants:
+			return layerPreflightWiref2ebdb4eBare(profile, value, state)
+		case *UpdateInlineBotCallbackQuery:
+			return layerPreflightWire691e9052Bare(profile, value, state)
+		case *UpdateJoinChatWebViewDecision:
+			return layerPreflightWirebdac7e70Bare(profile, value, state)
+		case *UpdateLangPack:
+			return layerPreflightWire56022f4dBare(profile, value, state)
+		case *UpdateLangPackTooLong:
+			return layerPreflightWire46560264Bare(profile, value, state)
+		case *UpdateLoginToken:
+			return layerPreflightWire564fe691Bare(profile, value, state)
+		case *UpdateManagedBot:
+			return layerPreflightWire4880ed9aBare(profile, value, state)
+		case *UpdateMessageExtendedMedia:
+			return layerPreflightWired5a41724Bare(profile, value, state)
+		case *UpdateMessageID:
+			return layerPreflightWire4e90bfd6Bare(profile, value, state)
+		case *UpdateMessagePoll:
+			return layerPreflightWired64c522bBare(profile, value, state)
+		case *UpdateMessagePollVote:
+			return layerPreflightWire7699f014Bare(profile, value, state)
+		case *UpdateMessageReactions:
+			return layerPreflightWire1e297bfaBare(profile, value, state)
+		case *UpdateMonoForumNoPaidException:
+			return layerPreflightWire9f812b08Bare(profile, value, state)
+		case *UpdateMoveStickerSetToTop:
+			return layerPreflightWire86fccf85Bare(profile, value, state)
+		case *UpdateNewAuthorization:
+			return layerPreflightWire8951abefBare(profile, value, state)
+		case *UpdateNewBotConnection:
+			return layerPreflightWireb22083a6Bare(profile, value, state)
+		case *UpdateNewChannelMessage:
+			return layerPreflightWire62ba04d9Bare(profile, value, state)
+		case *UpdateNewEncryptedMessage:
+			return layerPreflightWire12bcbd9aBare(profile, value, state)
+		case *UpdateNewEphemeralMessage:
+			return layerPreflightWire20bcbba1Bare(profile, value, state)
+		case *UpdateNewMessage:
+			return layerPreflightWire1f2b0afdBare(profile, value, state)
+		case *UpdateNewQuickReply:
+			return layerPreflightWiref53da717Bare(profile, value, state)
+		case *UpdateNewScheduledMessage:
+			return layerPreflightWire39a51dfbBare(profile, value, state)
+		case *UpdateNewStickerSet:
+			return layerPreflightWire688a30aaBare(profile, value, state)
+		case *UpdateNewStoryReaction:
+			return layerPreflightWire1824e40bBare(profile, value, state)
+		case *UpdateNotifySettings:
+			return layerPreflightWirebec268efBare(profile, value, state)
+		case *UpdatePaidReactionPrivacy:
+			return layerPreflightWire8b725fceBare(profile, value, state)
+		case *UpdatePeerBlocked:
+			return layerPreflightWireebe07752Bare(profile, value, state)
+		case *UpdatePeerHistoryTTL:
+			return layerPreflightWirebb9bb9a5Bare(profile, value, state)
+		case *UpdatePeerLocated:
+			return layerPreflightWireb4afcfb0Bare(profile, value, state)
+		case *UpdatePeerSettings:
+			return layerPreflightWire6a7e7366Bare(profile, value, state)
+		case *UpdatePeerWallpaper:
+			return layerPreflightWireae3f101dBare(profile, value, state)
+		case *UpdatePendingJoinRequests:
+			return layerPreflightWire7063c3dbBare(profile, value, state)
+		case *UpdatePhoneCall:
+			return layerPreflightWireab0f6b1eBare(profile, value, state)
+		case *UpdatePhoneCallSignalingData:
+			return layerPreflightWire2661bf09Bare(profile, value, state)
+		case *UpdatePinnedChannelMessages:
+			return layerPreflightWire5bb98608Bare(profile, value, state)
+		case *UpdatePinnedDialogs:
+			return layerPreflightWirefa0f3ca2Bare(profile, value, state)
+		case *UpdatePinnedForumTopic:
+			return layerPreflightWire683b2c52Bare(profile, value, state)
+		case *UpdatePinnedForumTopics:
+			return layerPreflightWiredef143d0Bare(profile, value, state)
+		case *UpdatePinnedMessages:
+			return layerPreflightWireed85eab5Bare(profile, value, state)
+		case *UpdatePinnedSavedDialogs:
+			return layerPreflightWire686c85a6Bare(profile, value, state)
+		case *UpdatePrivacy:
+			return layerPreflightWireee3b272aBare(profile, value, state)
+		case *UpdatePtsChanged:
+			return layerPreflightWire3354678fBare(profile, value, state)
+		case *UpdateQuickReplies:
+			return layerPreflightWiref9470ab2Bare(profile, value, state)
+		case *UpdateQuickReplyMessage:
+			return layerPreflightWire3e050d0fBare(profile, value, state)
+		case *UpdateReadChannelDiscussionInbox:
+			return layerPreflightWired6b19546Bare(profile, value, state)
+		case *UpdateReadChannelDiscussionOutbox:
+			return layerPreflightWire695c9e7cBare(profile, value, state)
+		case *UpdateReadChannelInbox:
+			return layerPreflightWire922e6e10Bare(profile, value, state)
+		case *UpdateReadChannelOutbox:
+			return layerPreflightWireb75f99a9Bare(profile, value, state)
+		case *UpdateReadFeaturedEmojiStickers:
+			return layerPreflightWirefb4c496cBare(profile, value, state)
+		case *UpdateReadFeaturedStickers:
+			return layerPreflightWire571d2742Bare(profile, value, state)
+		case *UpdateReadHistoryInbox:
+			return layerPreflightWire9e84bc99Bare(profile, value, state)
+		case *UpdateReadHistoryOutbox:
+			return layerPreflightWire2f2f21bfBare(profile, value, state)
+		case *UpdateReadMessagesContents:
+			return layerPreflightWiref8227181Bare(profile, value, state)
+		case *UpdateReadMonoForumInbox:
+			return layerPreflightWire77b0e372Bare(profile, value, state)
+		case *UpdateReadMonoForumOutbox:
+			return layerPreflightWirea4a79376Bare(profile, value, state)
+		case *UpdateReadStories:
+			return layerPreflightWiref74e932bBare(profile, value, state)
+		case *UpdateRecentEmojiStatuses:
+			return layerPreflightWire30f443dbBare(profile, value, state)
+		case *UpdateRecentReactions:
+			return layerPreflightWire6f7863f4Bare(profile, value, state)
+		case *UpdateRecentStickers:
+			return layerPreflightWire9a422c20Bare(profile, value, state)
+		case *UpdateSMSJob:
+			return layerPreflightWiref16269d4Bare(profile, value, state)
+		case *UpdateSavedDialogPinned:
+			return layerPreflightWireaeaf9e74Bare(profile, value, state)
+		case *UpdateSavedGifs:
+			return layerPreflightWire9375341eBare(profile, value, state)
+		case *UpdateSavedReactionTags:
+			return layerPreflightWire39c67432Bare(profile, value, state)
+		case *UpdateSavedRingtones:
+			return layerPreflightWire74d8be99Bare(profile, value, state)
+		case *UpdateSentPhoneCode:
+			return layerPreflightWire504aa18fBare(profile, value, state)
+		case *UpdateSentStoryReaction:
+			return layerPreflightWire7d627683Bare(profile, value, state)
+		case *UpdateServiceNotification:
+			return layerPreflightWireebe46819Bare(profile, value, state)
+		case *UpdateStarGiftAuctionState:
+			return layerPreflightWire48e246c2Bare(profile, value, state)
+		case *UpdateStarGiftAuctionUserState:
+			return layerPreflightWiredc58f31eBare(profile, value, state)
+		case *UpdateStarGiftCraftFail:
+			return layerPreflightWireac072444Bare(profile, value, state)
+		case *UpdateStarsBalance:
+			return layerPreflightWire4e80a379Bare(profile, value, state)
+		case *UpdateStarsRevenueStatus:
+			return layerPreflightWirea584b019Bare(profile, value, state)
+		case *UpdateStickerSets:
+			return layerPreflightWire31c24808Bare(profile, value, state)
+		case *UpdateStickerSetsOrder:
+			return layerPreflightWire0bb2d201Bare(profile, value, state)
+		case *UpdateStoriesStealthMode:
+			return layerPreflightWire2c084dc1Bare(profile, value, state)
+		case *UpdateStory:
+			return layerPreflightWire75b3b798Bare(profile, value, state)
+		case *UpdateStoryID:
+			return layerPreflightWire1bf335b9Bare(profile, value, state)
+		case *UpdateTheme:
+			return layerPreflightWire8216fba3Bare(profile, value, state)
+		case *UpdateTranscribedAudio:
+			return layerPreflightWire0084cd5aBare(profile, value, state)
+		case *UpdateUser:
+			return layerPreflightWire20529438Bare(profile, value, state)
+		case *UpdateUserEmojiStatus:
+			return layerPreflightWire28373599Bare(profile, value, state)
+		case *UpdateUserName:
+			return layerPreflightWirea7848924Bare(profile, value, state)
+		case *UpdateUserPhone:
+			return layerPreflightWire05492a13Bare(profile, value, state)
+		case *UpdateUserStatus:
+			return layerPreflightWiree5bdf8deBare(profile, value, state)
+		case *UpdateUserTyping:
+			return layerPreflightWire2a17bf5cBare(profile, value, state)
+		case *UpdateWebBrowserException:
+			return layerPreflightWire140502d1Bare(profile, value, state)
+		case *UpdateWebBrowserSettings:
+			return layerPreflightWirec39a2adeBare(profile, value, state)
+		case *UpdateWebPage:
+			return layerPreflightWire7f891213Bare(profile, value, state)
+		case *UpdateWebViewResultSent:
+			return layerPreflightWire1592b79dBare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -34183,2316 +30732,6 @@ func layerEncodeClassUpdateBody(profile LayerProfile, value UpdateClass, b *bin.
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			b.PutID(0x17b7a20b)
-			return layerEncodeWire17b7a20bBareBody(profile, value, b, state)
-		case *UpdateAutoSaveSettings:
-			b.PutID(0xec05b097)
-			return layerEncodeWireec05b097BareBody(profile, value, b, state)
-		case *UpdateBotBusinessConnect:
-			b.PutID(0x8ae5c97a)
-			return layerEncodeWire8ae5c97aBareBody(profile, value, b, state)
-		case *UpdateBotCallbackQuery:
-			b.PutID(0xb9cfc48d)
-			return layerEncodeWireb9cfc48dBareBody(profile, value, b, state)
-		case *UpdateBotChatBoost:
-			b.PutID(0x904dd49c)
-			return layerEncodeWire904dd49cBareBody(profile, value, b, state)
-		case *UpdateBotChatInviteRequester:
-			b.PutID(0x11dfa986)
-			return layerEncodeWire11dfa986BareBody(profile, value, b, state)
-		case *UpdateBotCommands:
-			b.PutID(0x4d712f2e)
-			return layerEncodeWire4d712f2eBareBody(profile, value, b, state)
-		case *UpdateBotDeleteBusinessMessage:
-			b.PutID(0xa02a982e)
-			return layerEncodeWirea02a982eBareBody(profile, value, b, state)
-		case *UpdateBotEditBusinessMessage:
-			b.PutID(0x07df587c)
-			return layerEncodeWire07df587cBareBody(profile, value, b, state)
-		case *UpdateBotInlineQuery:
-			b.PutID(0x496f379c)
-			return layerEncodeWire496f379cBareBody(profile, value, b, state)
-		case *UpdateBotInlineSend:
-			b.PutID(0x12f12a07)
-			return layerEncodeWire12f12a07BareBody(profile, value, b, state)
-		case *UpdateBotMenuButton:
-			b.PutID(0x14b85813)
-			return layerEncodeWire14b85813BareBody(profile, value, b, state)
-		case *UpdateBotMessageReaction:
-			b.PutID(0xac21d3ce)
-			return layerEncodeWireac21d3ceBareBody(profile, value, b, state)
-		case *UpdateBotMessageReactions:
-			b.PutID(0x09cb7759)
-			return layerEncodeWire09cb7759BareBody(profile, value, b, state)
-		case *UpdateBotNewBusinessMessage:
-			b.PutID(0x9ddb347c)
-			return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
-		case *UpdateBotPrecheckoutQuery:
-			b.PutID(0x8caa9a96)
-			return layerEncodeWire8caa9a96BareBody(profile, value, b, state)
-		case *UpdateBotPurchasedPaidMedia:
-			b.PutID(0x283bd312)
-			return layerEncodeWire283bd312BareBody(profile, value, b, state)
-		case *UpdateBotShippingQuery:
-			b.PutID(0xb5aefd7d)
-			return layerEncodeWireb5aefd7dBareBody(profile, value, b, state)
-		case *UpdateBotStopped:
-			b.PutID(0xc4870a49)
-			return layerEncodeWirec4870a49BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSON:
-			b.PutID(0x8317c0c3)
-			return layerEncodeWire8317c0c3BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSONQuery:
-			b.PutID(0x9b9240a6)
-			return layerEncodeWire9b9240a6BareBody(profile, value, b, state)
-		case *UpdateBusinessBotCallbackQuery:
-			b.PutID(0x1ea2fda7)
-			return layerEncodeWire1ea2fda7BareBody(profile, value, b, state)
-		case *UpdateChannel:
-			b.PutID(0x635b4c09)
-			return layerEncodeWire635b4c09BareBody(profile, value, b, state)
-		case *UpdateChannelAvailableMessages:
-			b.PutID(0xb23fc698)
-			return layerEncodeWireb23fc698BareBody(profile, value, b, state)
-		case *UpdateChannelMessageForwards:
-			b.PutID(0xd29a27f4)
-			return layerEncodeWired29a27f4BareBody(profile, value, b, state)
-		case *UpdateChannelMessageViews:
-			b.PutID(0xf226ac08)
-			return layerEncodeWiref226ac08BareBody(profile, value, b, state)
-		case *UpdateChannelParticipant:
-			b.PutID(0x985d3abb)
-			return layerEncodeWire985d3abbBareBody(profile, value, b, state)
-		case *UpdateChannelReadMessagesContents:
-			b.PutID(0x25f324f7)
-			return layerEncodeWire25f324f7BareBody(profile, value, b, state)
-		case *UpdateChannelTooLong:
-			b.PutID(0x108d941f)
-			return layerEncodeWire108d941fBareBody(profile, value, b, state)
-		case *UpdateChannelUserTyping:
-			b.PutID(0x8c88c923)
-			return layerEncodeWire8c88c923BareBody(profile, value, b, state)
-		case *UpdateChannelViewForumAsMessages:
-			b.PutID(0x07b68920)
-			return layerEncodeWire07b68920BareBody(profile, value, b, state)
-		case *UpdateChannelWebPage:
-			b.PutID(0x2f2ba99f)
-			return layerEncodeWire2f2ba99fBareBody(profile, value, b, state)
-		case *UpdateChat:
-			b.PutID(0xf89a6a4e)
-			return layerEncodeWiref89a6a4eBareBody(profile, value, b, state)
-		case *UpdateChatDefaultBannedRights:
-			b.PutID(0x54c01850)
-			return layerEncodeWire54c01850BareBody(profile, value, b, state)
-		case *UpdateChatParticipant:
-			b.PutID(0xd087663a)
-			return layerEncodeWired087663aBareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdd:
-			b.PutID(0x3dda5451)
-			return layerEncodeWire3dda5451BareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdmin:
-			b.PutID(0xd7ca61a2)
-			return layerEncodeWired7ca61a2BareBody(profile, value, b, state)
-		case *UpdateChatParticipantDelete:
-			b.PutID(0xe32f3d77)
-			return layerEncodeWiree32f3d77BareBody(profile, value, b, state)
-		case *UpdateChatParticipants:
-			b.PutID(0x07761198)
-			return layerEncodeWire07761198BareBody(profile, value, b, state)
-		case *UpdateChatUserTyping:
-			b.PutID(0x83487af0)
-			return layerEncodeWire83487af0BareBody(profile, value, b, state)
-		case *UpdateConfig:
-			b.PutID(0xa229dd06)
-			return layerEncodeWirea229dd06BareBody(profile, value, b, state)
-		case *UpdateContactsReset:
-			b.PutID(0x7084a7be)
-			return layerEncodeWire7084a7beBareBody(profile, value, b, state)
-		case *UpdateDCOptions:
-			b.PutID(0x8e5e9873)
-			return layerEncodeWire8e5e9873BareBody(profile, value, b, state)
-		case *UpdateDeleteChannelMessages:
-			b.PutID(0xc32d5b12)
-			return layerEncodeWirec32d5b12BareBody(profile, value, b, state)
-		case *UpdateDeleteGroupCallMessages:
-			b.PutID(0x3e85e92c)
-			return layerEncodeWire3e85e92cBareBody(profile, value, b, state)
-		case *UpdateDeleteMessages:
-			b.PutID(0xa20db0e5)
-			return layerEncodeWirea20db0e5BareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReply:
-			b.PutID(0x53e6f1ec)
-			return layerEncodeWire53e6f1ecBareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReplyMessages:
-			b.PutID(0x566fe7cd)
-			return layerEncodeWire566fe7cdBareBody(profile, value, b, state)
-		case *UpdateDeleteScheduledMessages:
-			b.PutID(0xf2a71983)
-			return layerEncodeWiref2a71983BareBody(profile, value, b, state)
-		case *UpdateDialogFilter:
-			b.PutID(0x26ffde7d)
-			return layerEncodeWire26ffde7dBareBody(profile, value, b, state)
-		case *UpdateDialogFilterOrder:
-			b.PutID(0xa5d72105)
-			return layerEncodeWirea5d72105BareBody(profile, value, b, state)
-		case *UpdateDialogFilters:
-			b.PutID(0x3504914f)
-			return layerEncodeWire3504914fBareBody(profile, value, b, state)
-		case *UpdateDialogPinned:
-			b.PutID(0x6e6fe51c)
-			return layerEncodeWire6e6fe51cBareBody(profile, value, b, state)
-		case *UpdateDialogUnreadMark:
-			b.PutID(0xb658f23e)
-			return layerEncodeWireb658f23eBareBody(profile, value, b, state)
-		case *UpdateDraftMessage:
-			b.PutID(0xedfc111e)
-			return layerEncodeWireedfc111eBareBody(profile, value, b, state)
-		case *UpdateEditChannelMessage:
-			b.PutID(0x1b3f4df7)
-			return layerEncodeWire1b3f4df7BareBody(profile, value, b, state)
-		case *UpdateEditMessage:
-			b.PutID(0xe40370a3)
-			return layerEncodeWiree40370a3BareBody(profile, value, b, state)
-		case *UpdateEncryptedChatTyping:
-			b.PutID(0x1710f156)
-			return layerEncodeWire1710f156BareBody(profile, value, b, state)
-		case *UpdateEncryptedMessagesRead:
-			b.PutID(0x38fe25b7)
-			return layerEncodeWire38fe25b7BareBody(profile, value, b, state)
-		case *UpdateEncryption:
-			b.PutID(0xb4a2e88d)
-			return layerEncodeWireb4a2e88dBareBody(profile, value, b, state)
-		case *UpdateFavedStickers:
-			b.PutID(0xe511996d)
-			return layerEncodeWiree511996dBareBody(profile, value, b, state)
-		case *UpdateFolderPeers:
-			b.PutID(0x19360dc0)
-			return layerEncodeWire19360dc0BareBody(profile, value, b, state)
-		case *UpdateGeoLiveViewed:
-			b.PutID(0x871fb939)
-			return layerEncodeWire871fb939BareBody(profile, value, b, state)
-		case *UpdateGroupCall:
-			b.PutID(0x9d2216e0)
-			return layerEncodeWire9d2216e0BareBody(profile, value, b, state)
-		case *UpdateGroupCallChainBlocks:
-			b.PutID(0xa477288f)
-			return layerEncodeWirea477288fBareBody(profile, value, b, state)
-		case *UpdateGroupCallConnection:
-			b.PutID(0x0b783982)
-			return layerEncodeWire0b783982BareBody(profile, value, b, state)
-		case *UpdateGroupCallEncryptedMessage:
-			b.PutID(0xc957a766)
-			return layerEncodeWirec957a766BareBody(profile, value, b, state)
-		case *UpdateGroupCallMessage:
-			b.PutID(0xd8326f0d)
-			return layerEncodeWired8326f0dBareBody(profile, value, b, state)
-		case *UpdateGroupCallParticipants:
-			b.PutID(0xf2ebdb4e)
-			return layerEncodeWiref2ebdb4eBareBody(profile, value, b, state)
-		case *UpdateInlineBotCallbackQuery:
-			b.PutID(0x691e9052)
-			return layerEncodeWire691e9052BareBody(profile, value, b, state)
-		case *UpdateLangPack:
-			b.PutID(0x56022f4d)
-			return layerEncodeWire56022f4dBareBody(profile, value, b, state)
-		case *UpdateLangPackTooLong:
-			b.PutID(0x46560264)
-			return layerEncodeWire46560264BareBody(profile, value, b, state)
-		case *UpdateLoginToken:
-			b.PutID(0x564fe691)
-			return layerEncodeWire564fe691BareBody(profile, value, b, state)
-		case *UpdateMessageExtendedMedia:
-			b.PutID(0xd5a41724)
-			return layerEncodeWired5a41724BareBody(profile, value, b, state)
-		case *UpdateMessageID:
-			b.PutID(0x4e90bfd6)
-			return layerEncodeWire4e90bfd6BareBody(profile, value, b, state)
-		case *UpdateMessagePoll:
-			b.PutID(0xaca1657b)
-			return layerEncodeWireaca1657bBareBody(profile, value, b, state)
-		case *UpdateMessagePollVote:
-			b.PutID(0x24f40e77)
-			return layerEncodeWire24f40e77BareBody(profile, value, b, state)
-		case *UpdateMessageReactions:
-			b.PutID(0x1e297bfa)
-			return layerEncodeWire1e297bfaBareBody(profile, value, b, state)
-		case *UpdateMonoForumNoPaidException:
-			b.PutID(0x9f812b08)
-			return layerEncodeWire9f812b08BareBody(profile, value, b, state)
-		case *UpdateMoveStickerSetToTop:
-			b.PutID(0x86fccf85)
-			return layerEncodeWire86fccf85BareBody(profile, value, b, state)
-		case *UpdateNewAuthorization:
-			b.PutID(0x8951abef)
-			return layerEncodeWire8951abefBareBody(profile, value, b, state)
-		case *UpdateNewChannelMessage:
-			b.PutID(0x62ba04d9)
-			return layerEncodeWire62ba04d9BareBody(profile, value, b, state)
-		case *UpdateNewEncryptedMessage:
-			b.PutID(0x12bcbd9a)
-			return layerEncodeWire12bcbd9aBareBody(profile, value, b, state)
-		case *UpdateNewMessage:
-			b.PutID(0x1f2b0afd)
-			return layerEncodeWire1f2b0afdBareBody(profile, value, b, state)
-		case *UpdateNewQuickReply:
-			b.PutID(0xf53da717)
-			return layerEncodeWiref53da717BareBody(profile, value, b, state)
-		case *UpdateNewScheduledMessage:
-			b.PutID(0x39a51dfb)
-			return layerEncodeWire39a51dfbBareBody(profile, value, b, state)
-		case *UpdateNewStickerSet:
-			b.PutID(0x688a30aa)
-			return layerEncodeWire688a30aaBareBody(profile, value, b, state)
-		case *UpdateNewStoryReaction:
-			b.PutID(0x1824e40b)
-			return layerEncodeWire1824e40bBareBody(profile, value, b, state)
-		case *UpdateNotifySettings:
-			b.PutID(0xbec268ef)
-			return layerEncodeWirebec268efBareBody(profile, value, b, state)
-		case *UpdatePaidReactionPrivacy:
-			b.PutID(0x8b725fce)
-			return layerEncodeWire8b725fceBareBody(profile, value, b, state)
-		case *UpdatePeerBlocked:
-			b.PutID(0xebe07752)
-			return layerEncodeWireebe07752BareBody(profile, value, b, state)
-		case *UpdatePeerHistoryTTL:
-			b.PutID(0xbb9bb9a5)
-			return layerEncodeWirebb9bb9a5BareBody(profile, value, b, state)
-		case *UpdatePeerLocated:
-			b.PutID(0xb4afcfb0)
-			return layerEncodeWireb4afcfb0BareBody(profile, value, b, state)
-		case *UpdatePeerSettings:
-			b.PutID(0x6a7e7366)
-			return layerEncodeWire6a7e7366BareBody(profile, value, b, state)
-		case *UpdatePeerWallpaper:
-			b.PutID(0xae3f101d)
-			return layerEncodeWireae3f101dBareBody(profile, value, b, state)
-		case *UpdatePendingJoinRequests:
-			b.PutID(0x7063c3db)
-			return layerEncodeWire7063c3dbBareBody(profile, value, b, state)
-		case *UpdatePhoneCall:
-			b.PutID(0xab0f6b1e)
-			return layerEncodeWireab0f6b1eBareBody(profile, value, b, state)
-		case *UpdatePhoneCallSignalingData:
-			b.PutID(0x2661bf09)
-			return layerEncodeWire2661bf09BareBody(profile, value, b, state)
-		case *UpdatePinnedChannelMessages:
-			b.PutID(0x5bb98608)
-			return layerEncodeWire5bb98608BareBody(profile, value, b, state)
-		case *UpdatePinnedDialogs:
-			b.PutID(0xfa0f3ca2)
-			return layerEncodeWirefa0f3ca2BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopic:
-			b.PutID(0x683b2c52)
-			return layerEncodeWire683b2c52BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopics:
-			b.PutID(0xdef143d0)
-			return layerEncodeWiredef143d0BareBody(profile, value, b, state)
-		case *UpdatePinnedMessages:
-			b.PutID(0xed85eab5)
-			return layerEncodeWireed85eab5BareBody(profile, value, b, state)
-		case *UpdatePinnedSavedDialogs:
-			b.PutID(0x686c85a6)
-			return layerEncodeWire686c85a6BareBody(profile, value, b, state)
-		case *UpdatePrivacy:
-			b.PutID(0xee3b272a)
-			return layerEncodeWireee3b272aBareBody(profile, value, b, state)
-		case *UpdatePtsChanged:
-			b.PutID(0x3354678f)
-			return layerEncodeWire3354678fBareBody(profile, value, b, state)
-		case *UpdateQuickReplies:
-			b.PutID(0xf9470ab2)
-			return layerEncodeWiref9470ab2BareBody(profile, value, b, state)
-		case *UpdateQuickReplyMessage:
-			b.PutID(0x3e050d0f)
-			return layerEncodeWire3e050d0fBareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionInbox:
-			b.PutID(0xd6b19546)
-			return layerEncodeWired6b19546BareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			b.PutID(0x695c9e7c)
-			return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
-		case *UpdateReadChannelInbox:
-			b.PutID(0x922e6e10)
-			return layerEncodeWire922e6e10BareBody(profile, value, b, state)
-		case *UpdateReadChannelOutbox:
-			b.PutID(0xb75f99a9)
-			return layerEncodeWireb75f99a9BareBody(profile, value, b, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			b.PutID(0xfb4c496c)
-			return layerEncodeWirefb4c496cBareBody(profile, value, b, state)
-		case *UpdateReadFeaturedStickers:
-			b.PutID(0x571d2742)
-			return layerEncodeWire571d2742BareBody(profile, value, b, state)
-		case *UpdateReadHistoryInbox:
-			b.PutID(0x9e84bc99)
-			return layerEncodeWire9e84bc99BareBody(profile, value, b, state)
-		case *UpdateReadHistoryOutbox:
-			b.PutID(0x2f2f21bf)
-			return layerEncodeWire2f2f21bfBareBody(profile, value, b, state)
-		case *UpdateReadMessagesContents:
-			b.PutID(0xf8227181)
-			return layerEncodeWiref8227181BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumInbox:
-			b.PutID(0x77b0e372)
-			return layerEncodeWire77b0e372BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumOutbox:
-			b.PutID(0xa4a79376)
-			return layerEncodeWirea4a79376BareBody(profile, value, b, state)
-		case *UpdateReadStories:
-			b.PutID(0xf74e932b)
-			return layerEncodeWiref74e932bBareBody(profile, value, b, state)
-		case *UpdateRecentEmojiStatuses:
-			b.PutID(0x30f443db)
-			return layerEncodeWire30f443dbBareBody(profile, value, b, state)
-		case *UpdateRecentReactions:
-			b.PutID(0x6f7863f4)
-			return layerEncodeWire6f7863f4BareBody(profile, value, b, state)
-		case *UpdateRecentStickers:
-			b.PutID(0x9a422c20)
-			return layerEncodeWire9a422c20BareBody(profile, value, b, state)
-		case *UpdateSMSJob:
-			b.PutID(0xf16269d4)
-			return layerEncodeWiref16269d4BareBody(profile, value, b, state)
-		case *UpdateSavedDialogPinned:
-			b.PutID(0xaeaf9e74)
-			return layerEncodeWireaeaf9e74BareBody(profile, value, b, state)
-		case *UpdateSavedGifs:
-			b.PutID(0x9375341e)
-			return layerEncodeWire9375341eBareBody(profile, value, b, state)
-		case *UpdateSavedReactionTags:
-			b.PutID(0x39c67432)
-			return layerEncodeWire39c67432BareBody(profile, value, b, state)
-		case *UpdateSavedRingtones:
-			b.PutID(0x74d8be99)
-			return layerEncodeWire74d8be99BareBody(profile, value, b, state)
-		case *UpdateSentPhoneCode:
-			b.PutID(0x504aa18f)
-			return layerEncodeWire504aa18fBareBody(profile, value, b, state)
-		case *UpdateSentStoryReaction:
-			b.PutID(0x7d627683)
-			return layerEncodeWire7d627683BareBody(profile, value, b, state)
-		case *UpdateServiceNotification:
-			b.PutID(0xebe46819)
-			return layerEncodeWireebe46819BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionState:
-			b.PutID(0x48e246c2)
-			return layerEncodeWire48e246c2BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionUserState:
-			b.PutID(0xdc58f31e)
-			return layerEncodeWiredc58f31eBareBody(profile, value, b, state)
-		case *UpdateStarsBalance:
-			b.PutID(0x4e80a379)
-			return layerEncodeWire4e80a379BareBody(profile, value, b, state)
-		case *UpdateStarsRevenueStatus:
-			b.PutID(0xa584b019)
-			return layerEncodeWirea584b019BareBody(profile, value, b, state)
-		case *UpdateStickerSets:
-			b.PutID(0x31c24808)
-			return layerEncodeWire31c24808BareBody(profile, value, b, state)
-		case *UpdateStickerSetsOrder:
-			b.PutID(0x0bb2d201)
-			return layerEncodeWire0bb2d201BareBody(profile, value, b, state)
-		case *UpdateStoriesStealthMode:
-			b.PutID(0x2c084dc1)
-			return layerEncodeWire2c084dc1BareBody(profile, value, b, state)
-		case *UpdateStory:
-			b.PutID(0x75b3b798)
-			return layerEncodeWire75b3b798BareBody(profile, value, b, state)
-		case *UpdateStoryID:
-			b.PutID(0x1bf335b9)
-			return layerEncodeWire1bf335b9BareBody(profile, value, b, state)
-		case *UpdateTheme:
-			b.PutID(0x8216fba3)
-			return layerEncodeWire8216fba3BareBody(profile, value, b, state)
-		case *UpdateTranscribedAudio:
-			b.PutID(0x0084cd5a)
-			return layerEncodeWire0084cd5aBareBody(profile, value, b, state)
-		case *UpdateUser:
-			b.PutID(0x20529438)
-			return layerEncodeWire20529438BareBody(profile, value, b, state)
-		case *UpdateUserEmojiStatus:
-			b.PutID(0x28373599)
-			return layerEncodeWire28373599BareBody(profile, value, b, state)
-		case *UpdateUserName:
-			b.PutID(0xa7848924)
-			return layerEncodeWirea7848924BareBody(profile, value, b, state)
-		case *UpdateUserPhone:
-			b.PutID(0x05492a13)
-			return layerEncodeWire05492a13BareBody(profile, value, b, state)
-		case *UpdateUserStatus:
-			b.PutID(0xe5bdf8de)
-			return layerEncodeWiree5bdf8deBareBody(profile, value, b, state)
-		case *UpdateUserTyping:
-			b.PutID(0x2a17bf5c)
-			return layerEncodeWire2a17bf5cBareBody(profile, value, b, state)
-		case *UpdateWebPage:
-			b.PutID(0x7f891213)
-			return layerEncodeWire7f891213BareBody(profile, value, b, state)
-		case *UpdateWebViewResultSent:
-			b.PutID(0x1592b79d)
-			return layerEncodeWire1592b79dBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			b.PutID(0x17b7a20b)
-			return layerEncodeWire17b7a20bBareBody(profile, value, b, state)
-		case *UpdateAutoSaveSettings:
-			b.PutID(0xec05b097)
-			return layerEncodeWireec05b097BareBody(profile, value, b, state)
-		case *UpdateBotBusinessConnect:
-			b.PutID(0x8ae5c97a)
-			return layerEncodeWire8ae5c97aBareBody(profile, value, b, state)
-		case *UpdateBotCallbackQuery:
-			b.PutID(0xb9cfc48d)
-			return layerEncodeWireb9cfc48dBareBody(profile, value, b, state)
-		case *UpdateBotChatBoost:
-			b.PutID(0x904dd49c)
-			return layerEncodeWire904dd49cBareBody(profile, value, b, state)
-		case *UpdateBotChatInviteRequester:
-			b.PutID(0x11dfa986)
-			return layerEncodeWire11dfa986BareBody(profile, value, b, state)
-		case *UpdateBotCommands:
-			b.PutID(0x4d712f2e)
-			return layerEncodeWire4d712f2eBareBody(profile, value, b, state)
-		case *UpdateBotDeleteBusinessMessage:
-			b.PutID(0xa02a982e)
-			return layerEncodeWirea02a982eBareBody(profile, value, b, state)
-		case *UpdateBotEditBusinessMessage:
-			b.PutID(0x07df587c)
-			return layerEncodeWire07df587cBareBody(profile, value, b, state)
-		case *UpdateBotInlineQuery:
-			b.PutID(0x496f379c)
-			return layerEncodeWire496f379cBareBody(profile, value, b, state)
-		case *UpdateBotInlineSend:
-			b.PutID(0x12f12a07)
-			return layerEncodeWire12f12a07BareBody(profile, value, b, state)
-		case *UpdateBotMenuButton:
-			b.PutID(0x14b85813)
-			return layerEncodeWire14b85813BareBody(profile, value, b, state)
-		case *UpdateBotMessageReaction:
-			b.PutID(0xac21d3ce)
-			return layerEncodeWireac21d3ceBareBody(profile, value, b, state)
-		case *UpdateBotMessageReactions:
-			b.PutID(0x09cb7759)
-			return layerEncodeWire09cb7759BareBody(profile, value, b, state)
-		case *UpdateBotNewBusinessMessage:
-			b.PutID(0x9ddb347c)
-			return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
-		case *UpdateBotPrecheckoutQuery:
-			b.PutID(0x8caa9a96)
-			return layerEncodeWire8caa9a96BareBody(profile, value, b, state)
-		case *UpdateBotPurchasedPaidMedia:
-			b.PutID(0x283bd312)
-			return layerEncodeWire283bd312BareBody(profile, value, b, state)
-		case *UpdateBotShippingQuery:
-			b.PutID(0xb5aefd7d)
-			return layerEncodeWireb5aefd7dBareBody(profile, value, b, state)
-		case *UpdateBotStopped:
-			b.PutID(0xc4870a49)
-			return layerEncodeWirec4870a49BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSON:
-			b.PutID(0x8317c0c3)
-			return layerEncodeWire8317c0c3BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSONQuery:
-			b.PutID(0x9b9240a6)
-			return layerEncodeWire9b9240a6BareBody(profile, value, b, state)
-		case *UpdateBusinessBotCallbackQuery:
-			b.PutID(0x1ea2fda7)
-			return layerEncodeWire1ea2fda7BareBody(profile, value, b, state)
-		case *UpdateChannel:
-			b.PutID(0x635b4c09)
-			return layerEncodeWire635b4c09BareBody(profile, value, b, state)
-		case *UpdateChannelAvailableMessages:
-			b.PutID(0xb23fc698)
-			return layerEncodeWireb23fc698BareBody(profile, value, b, state)
-		case *UpdateChannelMessageForwards:
-			b.PutID(0xd29a27f4)
-			return layerEncodeWired29a27f4BareBody(profile, value, b, state)
-		case *UpdateChannelMessageViews:
-			b.PutID(0xf226ac08)
-			return layerEncodeWiref226ac08BareBody(profile, value, b, state)
-		case *UpdateChannelParticipant:
-			b.PutID(0x985d3abb)
-			return layerEncodeWire985d3abbBareBody(profile, value, b, state)
-		case *UpdateChannelReadMessagesContents:
-			b.PutID(0x25f324f7)
-			return layerEncodeWire25f324f7BareBody(profile, value, b, state)
-		case *UpdateChannelTooLong:
-			b.PutID(0x108d941f)
-			return layerEncodeWire108d941fBareBody(profile, value, b, state)
-		case *UpdateChannelUserTyping:
-			b.PutID(0x8c88c923)
-			return layerEncodeWire8c88c923BareBody(profile, value, b, state)
-		case *UpdateChannelViewForumAsMessages:
-			b.PutID(0x07b68920)
-			return layerEncodeWire07b68920BareBody(profile, value, b, state)
-		case *UpdateChannelWebPage:
-			b.PutID(0x2f2ba99f)
-			return layerEncodeWire2f2ba99fBareBody(profile, value, b, state)
-		case *UpdateChat:
-			b.PutID(0xf89a6a4e)
-			return layerEncodeWiref89a6a4eBareBody(profile, value, b, state)
-		case *UpdateChatDefaultBannedRights:
-			b.PutID(0x54c01850)
-			return layerEncodeWire54c01850BareBody(profile, value, b, state)
-		case *UpdateChatParticipant:
-			b.PutID(0xd087663a)
-			return layerEncodeWired087663aBareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdd:
-			b.PutID(0x3dda5451)
-			return layerEncodeWire3dda5451BareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdmin:
-			b.PutID(0xd7ca61a2)
-			return layerEncodeWired7ca61a2BareBody(profile, value, b, state)
-		case *UpdateChatParticipantDelete:
-			b.PutID(0xe32f3d77)
-			return layerEncodeWiree32f3d77BareBody(profile, value, b, state)
-		case *UpdateChatParticipants:
-			b.PutID(0x07761198)
-			return layerEncodeWire07761198BareBody(profile, value, b, state)
-		case *UpdateChatUserTyping:
-			b.PutID(0x83487af0)
-			return layerEncodeWire83487af0BareBody(profile, value, b, state)
-		case *UpdateConfig:
-			b.PutID(0xa229dd06)
-			return layerEncodeWirea229dd06BareBody(profile, value, b, state)
-		case *UpdateContactsReset:
-			b.PutID(0x7084a7be)
-			return layerEncodeWire7084a7beBareBody(profile, value, b, state)
-		case *UpdateDCOptions:
-			b.PutID(0x8e5e9873)
-			return layerEncodeWire8e5e9873BareBody(profile, value, b, state)
-		case *UpdateDeleteChannelMessages:
-			b.PutID(0xc32d5b12)
-			return layerEncodeWirec32d5b12BareBody(profile, value, b, state)
-		case *UpdateDeleteGroupCallMessages:
-			b.PutID(0x3e85e92c)
-			return layerEncodeWire3e85e92cBareBody(profile, value, b, state)
-		case *UpdateDeleteMessages:
-			b.PutID(0xa20db0e5)
-			return layerEncodeWirea20db0e5BareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReply:
-			b.PutID(0x53e6f1ec)
-			return layerEncodeWire53e6f1ecBareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReplyMessages:
-			b.PutID(0x566fe7cd)
-			return layerEncodeWire566fe7cdBareBody(profile, value, b, state)
-		case *UpdateDeleteScheduledMessages:
-			b.PutID(0xf2a71983)
-			return layerEncodeWiref2a71983BareBody(profile, value, b, state)
-		case *UpdateDialogFilter:
-			b.PutID(0x26ffde7d)
-			return layerEncodeWire26ffde7dBareBody(profile, value, b, state)
-		case *UpdateDialogFilterOrder:
-			b.PutID(0xa5d72105)
-			return layerEncodeWirea5d72105BareBody(profile, value, b, state)
-		case *UpdateDialogFilters:
-			b.PutID(0x3504914f)
-			return layerEncodeWire3504914fBareBody(profile, value, b, state)
-		case *UpdateDialogPinned:
-			b.PutID(0x6e6fe51c)
-			return layerEncodeWire6e6fe51cBareBody(profile, value, b, state)
-		case *UpdateDialogUnreadMark:
-			b.PutID(0xb658f23e)
-			return layerEncodeWireb658f23eBareBody(profile, value, b, state)
-		case *UpdateDraftMessage:
-			b.PutID(0xedfc111e)
-			return layerEncodeWireedfc111eBareBody(profile, value, b, state)
-		case *UpdateEditChannelMessage:
-			b.PutID(0x1b3f4df7)
-			return layerEncodeWire1b3f4df7BareBody(profile, value, b, state)
-		case *UpdateEditMessage:
-			b.PutID(0xe40370a3)
-			return layerEncodeWiree40370a3BareBody(profile, value, b, state)
-		case *UpdateEmojiGameInfo:
-			b.PutID(0xfb9c547a)
-			return layerEncodeWirefb9c547aBareBody(profile, value, b, state)
-		case *UpdateEncryptedChatTyping:
-			b.PutID(0x1710f156)
-			return layerEncodeWire1710f156BareBody(profile, value, b, state)
-		case *UpdateEncryptedMessagesRead:
-			b.PutID(0x38fe25b7)
-			return layerEncodeWire38fe25b7BareBody(profile, value, b, state)
-		case *UpdateEncryption:
-			b.PutID(0xb4a2e88d)
-			return layerEncodeWireb4a2e88dBareBody(profile, value, b, state)
-		case *UpdateFavedStickers:
-			b.PutID(0xe511996d)
-			return layerEncodeWiree511996dBareBody(profile, value, b, state)
-		case *UpdateFolderPeers:
-			b.PutID(0x19360dc0)
-			return layerEncodeWire19360dc0BareBody(profile, value, b, state)
-		case *UpdateGeoLiveViewed:
-			b.PutID(0x871fb939)
-			return layerEncodeWire871fb939BareBody(profile, value, b, state)
-		case *UpdateGroupCall:
-			b.PutID(0x9d2216e0)
-			return layerEncodeWire9d2216e0BareBody(profile, value, b, state)
-		case *UpdateGroupCallChainBlocks:
-			b.PutID(0xa477288f)
-			return layerEncodeWirea477288fBareBody(profile, value, b, state)
-		case *UpdateGroupCallConnection:
-			b.PutID(0x0b783982)
-			return layerEncodeWire0b783982BareBody(profile, value, b, state)
-		case *UpdateGroupCallEncryptedMessage:
-			b.PutID(0xc957a766)
-			return layerEncodeWirec957a766BareBody(profile, value, b, state)
-		case *UpdateGroupCallMessage:
-			b.PutID(0xd8326f0d)
-			return layerEncodeWired8326f0dBareBody(profile, value, b, state)
-		case *UpdateGroupCallParticipants:
-			b.PutID(0xf2ebdb4e)
-			return layerEncodeWiref2ebdb4eBareBody(profile, value, b, state)
-		case *UpdateInlineBotCallbackQuery:
-			b.PutID(0x691e9052)
-			return layerEncodeWire691e9052BareBody(profile, value, b, state)
-		case *UpdateLangPack:
-			b.PutID(0x56022f4d)
-			return layerEncodeWire56022f4dBareBody(profile, value, b, state)
-		case *UpdateLangPackTooLong:
-			b.PutID(0x46560264)
-			return layerEncodeWire46560264BareBody(profile, value, b, state)
-		case *UpdateLoginToken:
-			b.PutID(0x564fe691)
-			return layerEncodeWire564fe691BareBody(profile, value, b, state)
-		case *UpdateMessageExtendedMedia:
-			b.PutID(0xd5a41724)
-			return layerEncodeWired5a41724BareBody(profile, value, b, state)
-		case *UpdateMessageID:
-			b.PutID(0x4e90bfd6)
-			return layerEncodeWire4e90bfd6BareBody(profile, value, b, state)
-		case *UpdateMessagePoll:
-			b.PutID(0xaca1657b)
-			return layerEncodeWireaca1657bBareBody(profile, value, b, state)
-		case *UpdateMessagePollVote:
-			b.PutID(0x24f40e77)
-			return layerEncodeWire24f40e77BareBody(profile, value, b, state)
-		case *UpdateMessageReactions:
-			b.PutID(0x1e297bfa)
-			return layerEncodeWire1e297bfaBareBody(profile, value, b, state)
-		case *UpdateMonoForumNoPaidException:
-			b.PutID(0x9f812b08)
-			return layerEncodeWire9f812b08BareBody(profile, value, b, state)
-		case *UpdateMoveStickerSetToTop:
-			b.PutID(0x86fccf85)
-			return layerEncodeWire86fccf85BareBody(profile, value, b, state)
-		case *UpdateNewAuthorization:
-			b.PutID(0x8951abef)
-			return layerEncodeWire8951abefBareBody(profile, value, b, state)
-		case *UpdateNewChannelMessage:
-			b.PutID(0x62ba04d9)
-			return layerEncodeWire62ba04d9BareBody(profile, value, b, state)
-		case *UpdateNewEncryptedMessage:
-			b.PutID(0x12bcbd9a)
-			return layerEncodeWire12bcbd9aBareBody(profile, value, b, state)
-		case *UpdateNewMessage:
-			b.PutID(0x1f2b0afd)
-			return layerEncodeWire1f2b0afdBareBody(profile, value, b, state)
-		case *UpdateNewQuickReply:
-			b.PutID(0xf53da717)
-			return layerEncodeWiref53da717BareBody(profile, value, b, state)
-		case *UpdateNewScheduledMessage:
-			b.PutID(0x39a51dfb)
-			return layerEncodeWire39a51dfbBareBody(profile, value, b, state)
-		case *UpdateNewStickerSet:
-			b.PutID(0x688a30aa)
-			return layerEncodeWire688a30aaBareBody(profile, value, b, state)
-		case *UpdateNewStoryReaction:
-			b.PutID(0x1824e40b)
-			return layerEncodeWire1824e40bBareBody(profile, value, b, state)
-		case *UpdateNotifySettings:
-			b.PutID(0xbec268ef)
-			return layerEncodeWirebec268efBareBody(profile, value, b, state)
-		case *UpdatePaidReactionPrivacy:
-			b.PutID(0x8b725fce)
-			return layerEncodeWire8b725fceBareBody(profile, value, b, state)
-		case *UpdatePeerBlocked:
-			b.PutID(0xebe07752)
-			return layerEncodeWireebe07752BareBody(profile, value, b, state)
-		case *UpdatePeerHistoryTTL:
-			b.PutID(0xbb9bb9a5)
-			return layerEncodeWirebb9bb9a5BareBody(profile, value, b, state)
-		case *UpdatePeerLocated:
-			b.PutID(0xb4afcfb0)
-			return layerEncodeWireb4afcfb0BareBody(profile, value, b, state)
-		case *UpdatePeerSettings:
-			b.PutID(0x6a7e7366)
-			return layerEncodeWire6a7e7366BareBody(profile, value, b, state)
-		case *UpdatePeerWallpaper:
-			b.PutID(0xae3f101d)
-			return layerEncodeWireae3f101dBareBody(profile, value, b, state)
-		case *UpdatePendingJoinRequests:
-			b.PutID(0x7063c3db)
-			return layerEncodeWire7063c3dbBareBody(profile, value, b, state)
-		case *UpdatePhoneCall:
-			b.PutID(0xab0f6b1e)
-			return layerEncodeWireab0f6b1eBareBody(profile, value, b, state)
-		case *UpdatePhoneCallSignalingData:
-			b.PutID(0x2661bf09)
-			return layerEncodeWire2661bf09BareBody(profile, value, b, state)
-		case *UpdatePinnedChannelMessages:
-			b.PutID(0x5bb98608)
-			return layerEncodeWire5bb98608BareBody(profile, value, b, state)
-		case *UpdatePinnedDialogs:
-			b.PutID(0xfa0f3ca2)
-			return layerEncodeWirefa0f3ca2BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopic:
-			b.PutID(0x683b2c52)
-			return layerEncodeWire683b2c52BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopics:
-			b.PutID(0xdef143d0)
-			return layerEncodeWiredef143d0BareBody(profile, value, b, state)
-		case *UpdatePinnedMessages:
-			b.PutID(0xed85eab5)
-			return layerEncodeWireed85eab5BareBody(profile, value, b, state)
-		case *UpdatePinnedSavedDialogs:
-			b.PutID(0x686c85a6)
-			return layerEncodeWire686c85a6BareBody(profile, value, b, state)
-		case *UpdatePrivacy:
-			b.PutID(0xee3b272a)
-			return layerEncodeWireee3b272aBareBody(profile, value, b, state)
-		case *UpdatePtsChanged:
-			b.PutID(0x3354678f)
-			return layerEncodeWire3354678fBareBody(profile, value, b, state)
-		case *UpdateQuickReplies:
-			b.PutID(0xf9470ab2)
-			return layerEncodeWiref9470ab2BareBody(profile, value, b, state)
-		case *UpdateQuickReplyMessage:
-			b.PutID(0x3e050d0f)
-			return layerEncodeWire3e050d0fBareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionInbox:
-			b.PutID(0xd6b19546)
-			return layerEncodeWired6b19546BareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			b.PutID(0x695c9e7c)
-			return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
-		case *UpdateReadChannelInbox:
-			b.PutID(0x922e6e10)
-			return layerEncodeWire922e6e10BareBody(profile, value, b, state)
-		case *UpdateReadChannelOutbox:
-			b.PutID(0xb75f99a9)
-			return layerEncodeWireb75f99a9BareBody(profile, value, b, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			b.PutID(0xfb4c496c)
-			return layerEncodeWirefb4c496cBareBody(profile, value, b, state)
-		case *UpdateReadFeaturedStickers:
-			b.PutID(0x571d2742)
-			return layerEncodeWire571d2742BareBody(profile, value, b, state)
-		case *UpdateReadHistoryInbox:
-			b.PutID(0x9e84bc99)
-			return layerEncodeWire9e84bc99BareBody(profile, value, b, state)
-		case *UpdateReadHistoryOutbox:
-			b.PutID(0x2f2f21bf)
-			return layerEncodeWire2f2f21bfBareBody(profile, value, b, state)
-		case *UpdateReadMessagesContents:
-			b.PutID(0xf8227181)
-			return layerEncodeWiref8227181BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumInbox:
-			b.PutID(0x77b0e372)
-			return layerEncodeWire77b0e372BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumOutbox:
-			b.PutID(0xa4a79376)
-			return layerEncodeWirea4a79376BareBody(profile, value, b, state)
-		case *UpdateReadStories:
-			b.PutID(0xf74e932b)
-			return layerEncodeWiref74e932bBareBody(profile, value, b, state)
-		case *UpdateRecentEmojiStatuses:
-			b.PutID(0x30f443db)
-			return layerEncodeWire30f443dbBareBody(profile, value, b, state)
-		case *UpdateRecentReactions:
-			b.PutID(0x6f7863f4)
-			return layerEncodeWire6f7863f4BareBody(profile, value, b, state)
-		case *UpdateRecentStickers:
-			b.PutID(0x9a422c20)
-			return layerEncodeWire9a422c20BareBody(profile, value, b, state)
-		case *UpdateSMSJob:
-			b.PutID(0xf16269d4)
-			return layerEncodeWiref16269d4BareBody(profile, value, b, state)
-		case *UpdateSavedDialogPinned:
-			b.PutID(0xaeaf9e74)
-			return layerEncodeWireaeaf9e74BareBody(profile, value, b, state)
-		case *UpdateSavedGifs:
-			b.PutID(0x9375341e)
-			return layerEncodeWire9375341eBareBody(profile, value, b, state)
-		case *UpdateSavedReactionTags:
-			b.PutID(0x39c67432)
-			return layerEncodeWire39c67432BareBody(profile, value, b, state)
-		case *UpdateSavedRingtones:
-			b.PutID(0x74d8be99)
-			return layerEncodeWire74d8be99BareBody(profile, value, b, state)
-		case *UpdateSentPhoneCode:
-			b.PutID(0x504aa18f)
-			return layerEncodeWire504aa18fBareBody(profile, value, b, state)
-		case *UpdateSentStoryReaction:
-			b.PutID(0x7d627683)
-			return layerEncodeWire7d627683BareBody(profile, value, b, state)
-		case *UpdateServiceNotification:
-			b.PutID(0xebe46819)
-			return layerEncodeWireebe46819BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionState:
-			b.PutID(0x48e246c2)
-			return layerEncodeWire48e246c2BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionUserState:
-			b.PutID(0xdc58f31e)
-			return layerEncodeWiredc58f31eBareBody(profile, value, b, state)
-		case *UpdateStarsBalance:
-			b.PutID(0x4e80a379)
-			return layerEncodeWire4e80a379BareBody(profile, value, b, state)
-		case *UpdateStarsRevenueStatus:
-			b.PutID(0xa584b019)
-			return layerEncodeWirea584b019BareBody(profile, value, b, state)
-		case *UpdateStickerSets:
-			b.PutID(0x31c24808)
-			return layerEncodeWire31c24808BareBody(profile, value, b, state)
-		case *UpdateStickerSetsOrder:
-			b.PutID(0x0bb2d201)
-			return layerEncodeWire0bb2d201BareBody(profile, value, b, state)
-		case *UpdateStoriesStealthMode:
-			b.PutID(0x2c084dc1)
-			return layerEncodeWire2c084dc1BareBody(profile, value, b, state)
-		case *UpdateStory:
-			b.PutID(0x75b3b798)
-			return layerEncodeWire75b3b798BareBody(profile, value, b, state)
-		case *UpdateStoryID:
-			b.PutID(0x1bf335b9)
-			return layerEncodeWire1bf335b9BareBody(profile, value, b, state)
-		case *UpdateTheme:
-			b.PutID(0x8216fba3)
-			return layerEncodeWire8216fba3BareBody(profile, value, b, state)
-		case *UpdateTranscribedAudio:
-			b.PutID(0x0084cd5a)
-			return layerEncodeWire0084cd5aBareBody(profile, value, b, state)
-		case *UpdateUser:
-			b.PutID(0x20529438)
-			return layerEncodeWire20529438BareBody(profile, value, b, state)
-		case *UpdateUserEmojiStatus:
-			b.PutID(0x28373599)
-			return layerEncodeWire28373599BareBody(profile, value, b, state)
-		case *UpdateUserName:
-			b.PutID(0xa7848924)
-			return layerEncodeWirea7848924BareBody(profile, value, b, state)
-		case *UpdateUserPhone:
-			b.PutID(0x05492a13)
-			return layerEncodeWire05492a13BareBody(profile, value, b, state)
-		case *UpdateUserStatus:
-			b.PutID(0xe5bdf8de)
-			return layerEncodeWiree5bdf8deBareBody(profile, value, b, state)
-		case *UpdateUserTyping:
-			b.PutID(0x2a17bf5c)
-			return layerEncodeWire2a17bf5cBareBody(profile, value, b, state)
-		case *UpdateWebPage:
-			b.PutID(0x7f891213)
-			return layerEncodeWire7f891213BareBody(profile, value, b, state)
-		case *UpdateWebViewResultSent:
-			b.PutID(0x1592b79d)
-			return layerEncodeWire1592b79dBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			b.PutID(0x17b7a20b)
-			return layerEncodeWire17b7a20bBareBody(profile, value, b, state)
-		case *UpdateAutoSaveSettings:
-			b.PutID(0xec05b097)
-			return layerEncodeWireec05b097BareBody(profile, value, b, state)
-		case *UpdateBotBusinessConnect:
-			b.PutID(0x8ae5c97a)
-			return layerEncodeWire8ae5c97aBareBody(profile, value, b, state)
-		case *UpdateBotCallbackQuery:
-			b.PutID(0xb9cfc48d)
-			return layerEncodeWireb9cfc48dBareBody(profile, value, b, state)
-		case *UpdateBotChatBoost:
-			b.PutID(0x904dd49c)
-			return layerEncodeWire904dd49cBareBody(profile, value, b, state)
-		case *UpdateBotChatInviteRequester:
-			b.PutID(0x11dfa986)
-			return layerEncodeWire11dfa986BareBody(profile, value, b, state)
-		case *UpdateBotCommands:
-			b.PutID(0x4d712f2e)
-			return layerEncodeWire4d712f2eBareBody(profile, value, b, state)
-		case *UpdateBotDeleteBusinessMessage:
-			b.PutID(0xa02a982e)
-			return layerEncodeWirea02a982eBareBody(profile, value, b, state)
-		case *UpdateBotEditBusinessMessage:
-			b.PutID(0x07df587c)
-			return layerEncodeWire07df587cBareBody(profile, value, b, state)
-		case *UpdateBotInlineQuery:
-			b.PutID(0x496f379c)
-			return layerEncodeWire496f379cBareBody(profile, value, b, state)
-		case *UpdateBotInlineSend:
-			b.PutID(0x12f12a07)
-			return layerEncodeWire12f12a07BareBody(profile, value, b, state)
-		case *UpdateBotMenuButton:
-			b.PutID(0x14b85813)
-			return layerEncodeWire14b85813BareBody(profile, value, b, state)
-		case *UpdateBotMessageReaction:
-			b.PutID(0xac21d3ce)
-			return layerEncodeWireac21d3ceBareBody(profile, value, b, state)
-		case *UpdateBotMessageReactions:
-			b.PutID(0x09cb7759)
-			return layerEncodeWire09cb7759BareBody(profile, value, b, state)
-		case *UpdateBotNewBusinessMessage:
-			b.PutID(0x9ddb347c)
-			return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
-		case *UpdateBotPrecheckoutQuery:
-			b.PutID(0x8caa9a96)
-			return layerEncodeWire8caa9a96BareBody(profile, value, b, state)
-		case *UpdateBotPurchasedPaidMedia:
-			b.PutID(0x283bd312)
-			return layerEncodeWire283bd312BareBody(profile, value, b, state)
-		case *UpdateBotShippingQuery:
-			b.PutID(0xb5aefd7d)
-			return layerEncodeWireb5aefd7dBareBody(profile, value, b, state)
-		case *UpdateBotStopped:
-			b.PutID(0xc4870a49)
-			return layerEncodeWirec4870a49BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSON:
-			b.PutID(0x8317c0c3)
-			return layerEncodeWire8317c0c3BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSONQuery:
-			b.PutID(0x9b9240a6)
-			return layerEncodeWire9b9240a6BareBody(profile, value, b, state)
-		case *UpdateBusinessBotCallbackQuery:
-			b.PutID(0x1ea2fda7)
-			return layerEncodeWire1ea2fda7BareBody(profile, value, b, state)
-		case *UpdateChannel:
-			b.PutID(0x635b4c09)
-			return layerEncodeWire635b4c09BareBody(profile, value, b, state)
-		case *UpdateChannelAvailableMessages:
-			b.PutID(0xb23fc698)
-			return layerEncodeWireb23fc698BareBody(profile, value, b, state)
-		case *UpdateChannelMessageForwards:
-			b.PutID(0xd29a27f4)
-			return layerEncodeWired29a27f4BareBody(profile, value, b, state)
-		case *UpdateChannelMessageViews:
-			b.PutID(0xf226ac08)
-			return layerEncodeWiref226ac08BareBody(profile, value, b, state)
-		case *UpdateChannelParticipant:
-			b.PutID(0x985d3abb)
-			return layerEncodeWire985d3abbBareBody(profile, value, b, state)
-		case *UpdateChannelReadMessagesContents:
-			b.PutID(0x25f324f7)
-			return layerEncodeWire25f324f7BareBody(profile, value, b, state)
-		case *UpdateChannelTooLong:
-			b.PutID(0x108d941f)
-			return layerEncodeWire108d941fBareBody(profile, value, b, state)
-		case *UpdateChannelUserTyping:
-			b.PutID(0x8c88c923)
-			return layerEncodeWire8c88c923BareBody(profile, value, b, state)
-		case *UpdateChannelViewForumAsMessages:
-			b.PutID(0x07b68920)
-			return layerEncodeWire07b68920BareBody(profile, value, b, state)
-		case *UpdateChannelWebPage:
-			b.PutID(0x2f2ba99f)
-			return layerEncodeWire2f2ba99fBareBody(profile, value, b, state)
-		case *UpdateChat:
-			b.PutID(0xf89a6a4e)
-			return layerEncodeWiref89a6a4eBareBody(profile, value, b, state)
-		case *UpdateChatDefaultBannedRights:
-			b.PutID(0x54c01850)
-			return layerEncodeWire54c01850BareBody(profile, value, b, state)
-		case *UpdateChatParticipant:
-			b.PutID(0xd087663a)
-			return layerEncodeWired087663aBareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdd:
-			b.PutID(0x3dda5451)
-			return layerEncodeWire3dda5451BareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdmin:
-			b.PutID(0xd7ca61a2)
-			return layerEncodeWired7ca61a2BareBody(profile, value, b, state)
-		case *UpdateChatParticipantDelete:
-			b.PutID(0xe32f3d77)
-			return layerEncodeWiree32f3d77BareBody(profile, value, b, state)
-		case *UpdateChatParticipants:
-			b.PutID(0x07761198)
-			return layerEncodeWire07761198BareBody(profile, value, b, state)
-		case *UpdateChatUserTyping:
-			b.PutID(0x83487af0)
-			return layerEncodeWire83487af0BareBody(profile, value, b, state)
-		case *UpdateConfig:
-			b.PutID(0xa229dd06)
-			return layerEncodeWirea229dd06BareBody(profile, value, b, state)
-		case *UpdateContactsReset:
-			b.PutID(0x7084a7be)
-			return layerEncodeWire7084a7beBareBody(profile, value, b, state)
-		case *UpdateDCOptions:
-			b.PutID(0x8e5e9873)
-			return layerEncodeWire8e5e9873BareBody(profile, value, b, state)
-		case *UpdateDeleteChannelMessages:
-			b.PutID(0xc32d5b12)
-			return layerEncodeWirec32d5b12BareBody(profile, value, b, state)
-		case *UpdateDeleteGroupCallMessages:
-			b.PutID(0x3e85e92c)
-			return layerEncodeWire3e85e92cBareBody(profile, value, b, state)
-		case *UpdateDeleteMessages:
-			b.PutID(0xa20db0e5)
-			return layerEncodeWirea20db0e5BareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReply:
-			b.PutID(0x53e6f1ec)
-			return layerEncodeWire53e6f1ecBareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReplyMessages:
-			b.PutID(0x566fe7cd)
-			return layerEncodeWire566fe7cdBareBody(profile, value, b, state)
-		case *UpdateDeleteScheduledMessages:
-			b.PutID(0xf2a71983)
-			return layerEncodeWiref2a71983BareBody(profile, value, b, state)
-		case *UpdateDialogFilter:
-			b.PutID(0x26ffde7d)
-			return layerEncodeWire26ffde7dBareBody(profile, value, b, state)
-		case *UpdateDialogFilterOrder:
-			b.PutID(0xa5d72105)
-			return layerEncodeWirea5d72105BareBody(profile, value, b, state)
-		case *UpdateDialogFilters:
-			b.PutID(0x3504914f)
-			return layerEncodeWire3504914fBareBody(profile, value, b, state)
-		case *UpdateDialogPinned:
-			b.PutID(0x6e6fe51c)
-			return layerEncodeWire6e6fe51cBareBody(profile, value, b, state)
-		case *UpdateDialogUnreadMark:
-			b.PutID(0xb658f23e)
-			return layerEncodeWireb658f23eBareBody(profile, value, b, state)
-		case *UpdateDraftMessage:
-			b.PutID(0xedfc111e)
-			return layerEncodeWireedfc111eBareBody(profile, value, b, state)
-		case *UpdateEditChannelMessage:
-			b.PutID(0x1b3f4df7)
-			return layerEncodeWire1b3f4df7BareBody(profile, value, b, state)
-		case *UpdateEditMessage:
-			b.PutID(0xe40370a3)
-			return layerEncodeWiree40370a3BareBody(profile, value, b, state)
-		case *UpdateEmojiGameInfo:
-			b.PutID(0xfb9c547a)
-			return layerEncodeWirefb9c547aBareBody(profile, value, b, state)
-		case *UpdateEncryptedChatTyping:
-			b.PutID(0x1710f156)
-			return layerEncodeWire1710f156BareBody(profile, value, b, state)
-		case *UpdateEncryptedMessagesRead:
-			b.PutID(0x38fe25b7)
-			return layerEncodeWire38fe25b7BareBody(profile, value, b, state)
-		case *UpdateEncryption:
-			b.PutID(0xb4a2e88d)
-			return layerEncodeWireb4a2e88dBareBody(profile, value, b, state)
-		case *UpdateFavedStickers:
-			b.PutID(0xe511996d)
-			return layerEncodeWiree511996dBareBody(profile, value, b, state)
-		case *UpdateFolderPeers:
-			b.PutID(0x19360dc0)
-			return layerEncodeWire19360dc0BareBody(profile, value, b, state)
-		case *UpdateGeoLiveViewed:
-			b.PutID(0x871fb939)
-			return layerEncodeWire871fb939BareBody(profile, value, b, state)
-		case *UpdateGroupCall:
-			b.PutID(0x9d2216e0)
-			return layerEncodeWire9d2216e0BareBody(profile, value, b, state)
-		case *UpdateGroupCallChainBlocks:
-			b.PutID(0xa477288f)
-			return layerEncodeWirea477288fBareBody(profile, value, b, state)
-		case *UpdateGroupCallConnection:
-			b.PutID(0x0b783982)
-			return layerEncodeWire0b783982BareBody(profile, value, b, state)
-		case *UpdateGroupCallEncryptedMessage:
-			b.PutID(0xc957a766)
-			return layerEncodeWirec957a766BareBody(profile, value, b, state)
-		case *UpdateGroupCallMessage:
-			b.PutID(0xd8326f0d)
-			return layerEncodeWired8326f0dBareBody(profile, value, b, state)
-		case *UpdateGroupCallParticipants:
-			b.PutID(0xf2ebdb4e)
-			return layerEncodeWiref2ebdb4eBareBody(profile, value, b, state)
-		case *UpdateInlineBotCallbackQuery:
-			b.PutID(0x691e9052)
-			return layerEncodeWire691e9052BareBody(profile, value, b, state)
-		case *UpdateLangPack:
-			b.PutID(0x56022f4d)
-			return layerEncodeWire56022f4dBareBody(profile, value, b, state)
-		case *UpdateLangPackTooLong:
-			b.PutID(0x46560264)
-			return layerEncodeWire46560264BareBody(profile, value, b, state)
-		case *UpdateLoginToken:
-			b.PutID(0x564fe691)
-			return layerEncodeWire564fe691BareBody(profile, value, b, state)
-		case *UpdateMessageExtendedMedia:
-			b.PutID(0xd5a41724)
-			return layerEncodeWired5a41724BareBody(profile, value, b, state)
-		case *UpdateMessageID:
-			b.PutID(0x4e90bfd6)
-			return layerEncodeWire4e90bfd6BareBody(profile, value, b, state)
-		case *UpdateMessagePoll:
-			b.PutID(0xaca1657b)
-			return layerEncodeWireaca1657bBareBody(profile, value, b, state)
-		case *UpdateMessagePollVote:
-			b.PutID(0x24f40e77)
-			return layerEncodeWire24f40e77BareBody(profile, value, b, state)
-		case *UpdateMessageReactions:
-			b.PutID(0x1e297bfa)
-			return layerEncodeWire1e297bfaBareBody(profile, value, b, state)
-		case *UpdateMonoForumNoPaidException:
-			b.PutID(0x9f812b08)
-			return layerEncodeWire9f812b08BareBody(profile, value, b, state)
-		case *UpdateMoveStickerSetToTop:
-			b.PutID(0x86fccf85)
-			return layerEncodeWire86fccf85BareBody(profile, value, b, state)
-		case *UpdateNewAuthorization:
-			b.PutID(0x8951abef)
-			return layerEncodeWire8951abefBareBody(profile, value, b, state)
-		case *UpdateNewChannelMessage:
-			b.PutID(0x62ba04d9)
-			return layerEncodeWire62ba04d9BareBody(profile, value, b, state)
-		case *UpdateNewEncryptedMessage:
-			b.PutID(0x12bcbd9a)
-			return layerEncodeWire12bcbd9aBareBody(profile, value, b, state)
-		case *UpdateNewMessage:
-			b.PutID(0x1f2b0afd)
-			return layerEncodeWire1f2b0afdBareBody(profile, value, b, state)
-		case *UpdateNewQuickReply:
-			b.PutID(0xf53da717)
-			return layerEncodeWiref53da717BareBody(profile, value, b, state)
-		case *UpdateNewScheduledMessage:
-			b.PutID(0x39a51dfb)
-			return layerEncodeWire39a51dfbBareBody(profile, value, b, state)
-		case *UpdateNewStickerSet:
-			b.PutID(0x688a30aa)
-			return layerEncodeWire688a30aaBareBody(profile, value, b, state)
-		case *UpdateNewStoryReaction:
-			b.PutID(0x1824e40b)
-			return layerEncodeWire1824e40bBareBody(profile, value, b, state)
-		case *UpdateNotifySettings:
-			b.PutID(0xbec268ef)
-			return layerEncodeWirebec268efBareBody(profile, value, b, state)
-		case *UpdatePaidReactionPrivacy:
-			b.PutID(0x8b725fce)
-			return layerEncodeWire8b725fceBareBody(profile, value, b, state)
-		case *UpdatePeerBlocked:
-			b.PutID(0xebe07752)
-			return layerEncodeWireebe07752BareBody(profile, value, b, state)
-		case *UpdatePeerHistoryTTL:
-			b.PutID(0xbb9bb9a5)
-			return layerEncodeWirebb9bb9a5BareBody(profile, value, b, state)
-		case *UpdatePeerLocated:
-			b.PutID(0xb4afcfb0)
-			return layerEncodeWireb4afcfb0BareBody(profile, value, b, state)
-		case *UpdatePeerSettings:
-			b.PutID(0x6a7e7366)
-			return layerEncodeWire6a7e7366BareBody(profile, value, b, state)
-		case *UpdatePeerWallpaper:
-			b.PutID(0xae3f101d)
-			return layerEncodeWireae3f101dBareBody(profile, value, b, state)
-		case *UpdatePendingJoinRequests:
-			b.PutID(0x7063c3db)
-			return layerEncodeWire7063c3dbBareBody(profile, value, b, state)
-		case *UpdatePhoneCall:
-			b.PutID(0xab0f6b1e)
-			return layerEncodeWireab0f6b1eBareBody(profile, value, b, state)
-		case *UpdatePhoneCallSignalingData:
-			b.PutID(0x2661bf09)
-			return layerEncodeWire2661bf09BareBody(profile, value, b, state)
-		case *UpdatePinnedChannelMessages:
-			b.PutID(0x5bb98608)
-			return layerEncodeWire5bb98608BareBody(profile, value, b, state)
-		case *UpdatePinnedDialogs:
-			b.PutID(0xfa0f3ca2)
-			return layerEncodeWirefa0f3ca2BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopic:
-			b.PutID(0x683b2c52)
-			return layerEncodeWire683b2c52BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopics:
-			b.PutID(0xdef143d0)
-			return layerEncodeWiredef143d0BareBody(profile, value, b, state)
-		case *UpdatePinnedMessages:
-			b.PutID(0xed85eab5)
-			return layerEncodeWireed85eab5BareBody(profile, value, b, state)
-		case *UpdatePinnedSavedDialogs:
-			b.PutID(0x686c85a6)
-			return layerEncodeWire686c85a6BareBody(profile, value, b, state)
-		case *UpdatePrivacy:
-			b.PutID(0xee3b272a)
-			return layerEncodeWireee3b272aBareBody(profile, value, b, state)
-		case *UpdatePtsChanged:
-			b.PutID(0x3354678f)
-			return layerEncodeWire3354678fBareBody(profile, value, b, state)
-		case *UpdateQuickReplies:
-			b.PutID(0xf9470ab2)
-			return layerEncodeWiref9470ab2BareBody(profile, value, b, state)
-		case *UpdateQuickReplyMessage:
-			b.PutID(0x3e050d0f)
-			return layerEncodeWire3e050d0fBareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionInbox:
-			b.PutID(0xd6b19546)
-			return layerEncodeWired6b19546BareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			b.PutID(0x695c9e7c)
-			return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
-		case *UpdateReadChannelInbox:
-			b.PutID(0x922e6e10)
-			return layerEncodeWire922e6e10BareBody(profile, value, b, state)
-		case *UpdateReadChannelOutbox:
-			b.PutID(0xb75f99a9)
-			return layerEncodeWireb75f99a9BareBody(profile, value, b, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			b.PutID(0xfb4c496c)
-			return layerEncodeWirefb4c496cBareBody(profile, value, b, state)
-		case *UpdateReadFeaturedStickers:
-			b.PutID(0x571d2742)
-			return layerEncodeWire571d2742BareBody(profile, value, b, state)
-		case *UpdateReadHistoryInbox:
-			b.PutID(0x9e84bc99)
-			return layerEncodeWire9e84bc99BareBody(profile, value, b, state)
-		case *UpdateReadHistoryOutbox:
-			b.PutID(0x2f2f21bf)
-			return layerEncodeWire2f2f21bfBareBody(profile, value, b, state)
-		case *UpdateReadMessagesContents:
-			b.PutID(0xf8227181)
-			return layerEncodeWiref8227181BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumInbox:
-			b.PutID(0x77b0e372)
-			return layerEncodeWire77b0e372BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumOutbox:
-			b.PutID(0xa4a79376)
-			return layerEncodeWirea4a79376BareBody(profile, value, b, state)
-		case *UpdateReadStories:
-			b.PutID(0xf74e932b)
-			return layerEncodeWiref74e932bBareBody(profile, value, b, state)
-		case *UpdateRecentEmojiStatuses:
-			b.PutID(0x30f443db)
-			return layerEncodeWire30f443dbBareBody(profile, value, b, state)
-		case *UpdateRecentReactions:
-			b.PutID(0x6f7863f4)
-			return layerEncodeWire6f7863f4BareBody(profile, value, b, state)
-		case *UpdateRecentStickers:
-			b.PutID(0x9a422c20)
-			return layerEncodeWire9a422c20BareBody(profile, value, b, state)
-		case *UpdateSMSJob:
-			b.PutID(0xf16269d4)
-			return layerEncodeWiref16269d4BareBody(profile, value, b, state)
-		case *UpdateSavedDialogPinned:
-			b.PutID(0xaeaf9e74)
-			return layerEncodeWireaeaf9e74BareBody(profile, value, b, state)
-		case *UpdateSavedGifs:
-			b.PutID(0x9375341e)
-			return layerEncodeWire9375341eBareBody(profile, value, b, state)
-		case *UpdateSavedReactionTags:
-			b.PutID(0x39c67432)
-			return layerEncodeWire39c67432BareBody(profile, value, b, state)
-		case *UpdateSavedRingtones:
-			b.PutID(0x74d8be99)
-			return layerEncodeWire74d8be99BareBody(profile, value, b, state)
-		case *UpdateSentPhoneCode:
-			b.PutID(0x504aa18f)
-			return layerEncodeWire504aa18fBareBody(profile, value, b, state)
-		case *UpdateSentStoryReaction:
-			b.PutID(0x7d627683)
-			return layerEncodeWire7d627683BareBody(profile, value, b, state)
-		case *UpdateServiceNotification:
-			b.PutID(0xebe46819)
-			return layerEncodeWireebe46819BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionState:
-			b.PutID(0x48e246c2)
-			return layerEncodeWire48e246c2BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionUserState:
-			b.PutID(0xdc58f31e)
-			return layerEncodeWiredc58f31eBareBody(profile, value, b, state)
-		case *UpdateStarGiftCraftFail:
-			b.PutID(0xac072444)
-			return layerEncodeWireac072444BareBody(profile, value, b, state)
-		case *UpdateStarsBalance:
-			b.PutID(0x4e80a379)
-			return layerEncodeWire4e80a379BareBody(profile, value, b, state)
-		case *UpdateStarsRevenueStatus:
-			b.PutID(0xa584b019)
-			return layerEncodeWirea584b019BareBody(profile, value, b, state)
-		case *UpdateStickerSets:
-			b.PutID(0x31c24808)
-			return layerEncodeWire31c24808BareBody(profile, value, b, state)
-		case *UpdateStickerSetsOrder:
-			b.PutID(0x0bb2d201)
-			return layerEncodeWire0bb2d201BareBody(profile, value, b, state)
-		case *UpdateStoriesStealthMode:
-			b.PutID(0x2c084dc1)
-			return layerEncodeWire2c084dc1BareBody(profile, value, b, state)
-		case *UpdateStory:
-			b.PutID(0x75b3b798)
-			return layerEncodeWire75b3b798BareBody(profile, value, b, state)
-		case *UpdateStoryID:
-			b.PutID(0x1bf335b9)
-			return layerEncodeWire1bf335b9BareBody(profile, value, b, state)
-		case *UpdateTheme:
-			b.PutID(0x8216fba3)
-			return layerEncodeWire8216fba3BareBody(profile, value, b, state)
-		case *UpdateTranscribedAudio:
-			b.PutID(0x0084cd5a)
-			return layerEncodeWire0084cd5aBareBody(profile, value, b, state)
-		case *UpdateUser:
-			b.PutID(0x20529438)
-			return layerEncodeWire20529438BareBody(profile, value, b, state)
-		case *UpdateUserEmojiStatus:
-			b.PutID(0x28373599)
-			return layerEncodeWire28373599BareBody(profile, value, b, state)
-		case *UpdateUserName:
-			b.PutID(0xa7848924)
-			return layerEncodeWirea7848924BareBody(profile, value, b, state)
-		case *UpdateUserPhone:
-			b.PutID(0x05492a13)
-			return layerEncodeWire05492a13BareBody(profile, value, b, state)
-		case *UpdateUserStatus:
-			b.PutID(0xe5bdf8de)
-			return layerEncodeWiree5bdf8deBareBody(profile, value, b, state)
-		case *UpdateUserTyping:
-			b.PutID(0x2a17bf5c)
-			return layerEncodeWire2a17bf5cBareBody(profile, value, b, state)
-		case *UpdateWebPage:
-			b.PutID(0x7f891213)
-			return layerEncodeWire7f891213BareBody(profile, value, b, state)
-		case *UpdateWebViewResultSent:
-			b.PutID(0x1592b79d)
-			return layerEncodeWire1592b79dBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			b.PutID(0x17b7a20b)
-			return layerEncodeWire17b7a20bBareBody(profile, value, b, state)
-		case *UpdateAutoSaveSettings:
-			b.PutID(0xec05b097)
-			return layerEncodeWireec05b097BareBody(profile, value, b, state)
-		case *UpdateBotBusinessConnect:
-			b.PutID(0x8ae5c97a)
-			return layerEncodeWire8ae5c97aBareBody(profile, value, b, state)
-		case *UpdateBotCallbackQuery:
-			b.PutID(0xb9cfc48d)
-			return layerEncodeWireb9cfc48dBareBody(profile, value, b, state)
-		case *UpdateBotChatBoost:
-			b.PutID(0x904dd49c)
-			return layerEncodeWire904dd49cBareBody(profile, value, b, state)
-		case *UpdateBotChatInviteRequester:
-			b.PutID(0x11dfa986)
-			return layerEncodeWire11dfa986BareBody(profile, value, b, state)
-		case *UpdateBotCommands:
-			b.PutID(0x4d712f2e)
-			return layerEncodeWire4d712f2eBareBody(profile, value, b, state)
-		case *UpdateBotDeleteBusinessMessage:
-			b.PutID(0xa02a982e)
-			return layerEncodeWirea02a982eBareBody(profile, value, b, state)
-		case *UpdateBotEditBusinessMessage:
-			b.PutID(0x07df587c)
-			return layerEncodeWire07df587cBareBody(profile, value, b, state)
-		case *UpdateBotInlineQuery:
-			b.PutID(0x496f379c)
-			return layerEncodeWire496f379cBareBody(profile, value, b, state)
-		case *UpdateBotInlineSend:
-			b.PutID(0x12f12a07)
-			return layerEncodeWire12f12a07BareBody(profile, value, b, state)
-		case *UpdateBotMenuButton:
-			b.PutID(0x14b85813)
-			return layerEncodeWire14b85813BareBody(profile, value, b, state)
-		case *UpdateBotMessageReaction:
-			b.PutID(0xac21d3ce)
-			return layerEncodeWireac21d3ceBareBody(profile, value, b, state)
-		case *UpdateBotMessageReactions:
-			b.PutID(0x09cb7759)
-			return layerEncodeWire09cb7759BareBody(profile, value, b, state)
-		case *UpdateBotNewBusinessMessage:
-			b.PutID(0x9ddb347c)
-			return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
-		case *UpdateBotPrecheckoutQuery:
-			b.PutID(0x8caa9a96)
-			return layerEncodeWire8caa9a96BareBody(profile, value, b, state)
-		case *UpdateBotPurchasedPaidMedia:
-			b.PutID(0x283bd312)
-			return layerEncodeWire283bd312BareBody(profile, value, b, state)
-		case *UpdateBotShippingQuery:
-			b.PutID(0xb5aefd7d)
-			return layerEncodeWireb5aefd7dBareBody(profile, value, b, state)
-		case *UpdateBotStopped:
-			b.PutID(0xc4870a49)
-			return layerEncodeWirec4870a49BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSON:
-			b.PutID(0x8317c0c3)
-			return layerEncodeWire8317c0c3BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSONQuery:
-			b.PutID(0x9b9240a6)
-			return layerEncodeWire9b9240a6BareBody(profile, value, b, state)
-		case *UpdateBusinessBotCallbackQuery:
-			b.PutID(0x1ea2fda7)
-			return layerEncodeWire1ea2fda7BareBody(profile, value, b, state)
-		case *UpdateChannel:
-			b.PutID(0x635b4c09)
-			return layerEncodeWire635b4c09BareBody(profile, value, b, state)
-		case *UpdateChannelAvailableMessages:
-			b.PutID(0xb23fc698)
-			return layerEncodeWireb23fc698BareBody(profile, value, b, state)
-		case *UpdateChannelMessageForwards:
-			b.PutID(0xd29a27f4)
-			return layerEncodeWired29a27f4BareBody(profile, value, b, state)
-		case *UpdateChannelMessageViews:
-			b.PutID(0xf226ac08)
-			return layerEncodeWiref226ac08BareBody(profile, value, b, state)
-		case *UpdateChannelParticipant:
-			b.PutID(0x985d3abb)
-			return layerEncodeWire985d3abbBareBody(profile, value, b, state)
-		case *UpdateChannelReadMessagesContents:
-			b.PutID(0x25f324f7)
-			return layerEncodeWire25f324f7BareBody(profile, value, b, state)
-		case *UpdateChannelTooLong:
-			b.PutID(0x108d941f)
-			return layerEncodeWire108d941fBareBody(profile, value, b, state)
-		case *UpdateChannelUserTyping:
-			b.PutID(0x8c88c923)
-			return layerEncodeWire8c88c923BareBody(profile, value, b, state)
-		case *UpdateChannelViewForumAsMessages:
-			b.PutID(0x07b68920)
-			return layerEncodeWire07b68920BareBody(profile, value, b, state)
-		case *UpdateChannelWebPage:
-			b.PutID(0x2f2ba99f)
-			return layerEncodeWire2f2ba99fBareBody(profile, value, b, state)
-		case *UpdateChat:
-			b.PutID(0xf89a6a4e)
-			return layerEncodeWiref89a6a4eBareBody(profile, value, b, state)
-		case *UpdateChatDefaultBannedRights:
-			b.PutID(0x54c01850)
-			return layerEncodeWire54c01850BareBody(profile, value, b, state)
-		case *UpdateChatParticipant:
-			b.PutID(0xd087663a)
-			return layerEncodeWired087663aBareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdd:
-			b.PutID(0x3dda5451)
-			return layerEncodeWire3dda5451BareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdmin:
-			b.PutID(0xd7ca61a2)
-			return layerEncodeWired7ca61a2BareBody(profile, value, b, state)
-		case *UpdateChatParticipantDelete:
-			b.PutID(0xe32f3d77)
-			return layerEncodeWiree32f3d77BareBody(profile, value, b, state)
-		case *UpdateChatParticipantRank:
-			b.PutID(0xbd8367b9)
-			return layerEncodeWirebd8367b9BareBody(profile, value, b, state)
-		case *UpdateChatParticipants:
-			b.PutID(0x07761198)
-			return layerEncodeWire07761198BareBody(profile, value, b, state)
-		case *UpdateChatUserTyping:
-			b.PutID(0x83487af0)
-			return layerEncodeWire83487af0BareBody(profile, value, b, state)
-		case *UpdateConfig:
-			b.PutID(0xa229dd06)
-			return layerEncodeWirea229dd06BareBody(profile, value, b, state)
-		case *UpdateContactsReset:
-			b.PutID(0x7084a7be)
-			return layerEncodeWire7084a7beBareBody(profile, value, b, state)
-		case *UpdateDCOptions:
-			b.PutID(0x8e5e9873)
-			return layerEncodeWire8e5e9873BareBody(profile, value, b, state)
-		case *UpdateDeleteChannelMessages:
-			b.PutID(0xc32d5b12)
-			return layerEncodeWirec32d5b12BareBody(profile, value, b, state)
-		case *UpdateDeleteGroupCallMessages:
-			b.PutID(0x3e85e92c)
-			return layerEncodeWire3e85e92cBareBody(profile, value, b, state)
-		case *UpdateDeleteMessages:
-			b.PutID(0xa20db0e5)
-			return layerEncodeWirea20db0e5BareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReply:
-			b.PutID(0x53e6f1ec)
-			return layerEncodeWire53e6f1ecBareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReplyMessages:
-			b.PutID(0x566fe7cd)
-			return layerEncodeWire566fe7cdBareBody(profile, value, b, state)
-		case *UpdateDeleteScheduledMessages:
-			b.PutID(0xf2a71983)
-			return layerEncodeWiref2a71983BareBody(profile, value, b, state)
-		case *UpdateDialogFilter:
-			b.PutID(0x26ffde7d)
-			return layerEncodeWire26ffde7dBareBody(profile, value, b, state)
-		case *UpdateDialogFilterOrder:
-			b.PutID(0xa5d72105)
-			return layerEncodeWirea5d72105BareBody(profile, value, b, state)
-		case *UpdateDialogFilters:
-			b.PutID(0x3504914f)
-			return layerEncodeWire3504914fBareBody(profile, value, b, state)
-		case *UpdateDialogPinned:
-			b.PutID(0x6e6fe51c)
-			return layerEncodeWire6e6fe51cBareBody(profile, value, b, state)
-		case *UpdateDialogUnreadMark:
-			b.PutID(0xb658f23e)
-			return layerEncodeWireb658f23eBareBody(profile, value, b, state)
-		case *UpdateDraftMessage:
-			b.PutID(0xedfc111e)
-			return layerEncodeWireedfc111eBareBody(profile, value, b, state)
-		case *UpdateEditChannelMessage:
-			b.PutID(0x1b3f4df7)
-			return layerEncodeWire1b3f4df7BareBody(profile, value, b, state)
-		case *UpdateEditMessage:
-			b.PutID(0xe40370a3)
-			return layerEncodeWiree40370a3BareBody(profile, value, b, state)
-		case *UpdateEmojiGameInfo:
-			b.PutID(0xfb9c547a)
-			return layerEncodeWirefb9c547aBareBody(profile, value, b, state)
-		case *UpdateEncryptedChatTyping:
-			b.PutID(0x1710f156)
-			return layerEncodeWire1710f156BareBody(profile, value, b, state)
-		case *UpdateEncryptedMessagesRead:
-			b.PutID(0x38fe25b7)
-			return layerEncodeWire38fe25b7BareBody(profile, value, b, state)
-		case *UpdateEncryption:
-			b.PutID(0xb4a2e88d)
-			return layerEncodeWireb4a2e88dBareBody(profile, value, b, state)
-		case *UpdateFavedStickers:
-			b.PutID(0xe511996d)
-			return layerEncodeWiree511996dBareBody(profile, value, b, state)
-		case *UpdateFolderPeers:
-			b.PutID(0x19360dc0)
-			return layerEncodeWire19360dc0BareBody(profile, value, b, state)
-		case *UpdateGeoLiveViewed:
-			b.PutID(0x871fb939)
-			return layerEncodeWire871fb939BareBody(profile, value, b, state)
-		case *UpdateGroupCall:
-			b.PutID(0x9d2216e0)
-			return layerEncodeWire9d2216e0BareBody(profile, value, b, state)
-		case *UpdateGroupCallChainBlocks:
-			b.PutID(0xa477288f)
-			return layerEncodeWirea477288fBareBody(profile, value, b, state)
-		case *UpdateGroupCallConnection:
-			b.PutID(0x0b783982)
-			return layerEncodeWire0b783982BareBody(profile, value, b, state)
-		case *UpdateGroupCallEncryptedMessage:
-			b.PutID(0xc957a766)
-			return layerEncodeWirec957a766BareBody(profile, value, b, state)
-		case *UpdateGroupCallMessage:
-			b.PutID(0xd8326f0d)
-			return layerEncodeWired8326f0dBareBody(profile, value, b, state)
-		case *UpdateGroupCallParticipants:
-			b.PutID(0xf2ebdb4e)
-			return layerEncodeWiref2ebdb4eBareBody(profile, value, b, state)
-		case *UpdateInlineBotCallbackQuery:
-			b.PutID(0x691e9052)
-			return layerEncodeWire691e9052BareBody(profile, value, b, state)
-		case *UpdateLangPack:
-			b.PutID(0x56022f4d)
-			return layerEncodeWire56022f4dBareBody(profile, value, b, state)
-		case *UpdateLangPackTooLong:
-			b.PutID(0x46560264)
-			return layerEncodeWire46560264BareBody(profile, value, b, state)
-		case *UpdateLoginToken:
-			b.PutID(0x564fe691)
-			return layerEncodeWire564fe691BareBody(profile, value, b, state)
-		case *UpdateMessageExtendedMedia:
-			b.PutID(0xd5a41724)
-			return layerEncodeWired5a41724BareBody(profile, value, b, state)
-		case *UpdateMessageID:
-			b.PutID(0x4e90bfd6)
-			return layerEncodeWire4e90bfd6BareBody(profile, value, b, state)
-		case *UpdateMessagePoll:
-			b.PutID(0xaca1657b)
-			return layerEncodeWireaca1657bBareBody(profile, value, b, state)
-		case *UpdateMessagePollVote:
-			b.PutID(0x24f40e77)
-			return layerEncodeWire24f40e77BareBody(profile, value, b, state)
-		case *UpdateMessageReactions:
-			b.PutID(0x1e297bfa)
-			return layerEncodeWire1e297bfaBareBody(profile, value, b, state)
-		case *UpdateMonoForumNoPaidException:
-			b.PutID(0x9f812b08)
-			return layerEncodeWire9f812b08BareBody(profile, value, b, state)
-		case *UpdateMoveStickerSetToTop:
-			b.PutID(0x86fccf85)
-			return layerEncodeWire86fccf85BareBody(profile, value, b, state)
-		case *UpdateNewAuthorization:
-			b.PutID(0x8951abef)
-			return layerEncodeWire8951abefBareBody(profile, value, b, state)
-		case *UpdateNewChannelMessage:
-			b.PutID(0x62ba04d9)
-			return layerEncodeWire62ba04d9BareBody(profile, value, b, state)
-		case *UpdateNewEncryptedMessage:
-			b.PutID(0x12bcbd9a)
-			return layerEncodeWire12bcbd9aBareBody(profile, value, b, state)
-		case *UpdateNewMessage:
-			b.PutID(0x1f2b0afd)
-			return layerEncodeWire1f2b0afdBareBody(profile, value, b, state)
-		case *UpdateNewQuickReply:
-			b.PutID(0xf53da717)
-			return layerEncodeWiref53da717BareBody(profile, value, b, state)
-		case *UpdateNewScheduledMessage:
-			b.PutID(0x39a51dfb)
-			return layerEncodeWire39a51dfbBareBody(profile, value, b, state)
-		case *UpdateNewStickerSet:
-			b.PutID(0x688a30aa)
-			return layerEncodeWire688a30aaBareBody(profile, value, b, state)
-		case *UpdateNewStoryReaction:
-			b.PutID(0x1824e40b)
-			return layerEncodeWire1824e40bBareBody(profile, value, b, state)
-		case *UpdateNotifySettings:
-			b.PutID(0xbec268ef)
-			return layerEncodeWirebec268efBareBody(profile, value, b, state)
-		case *UpdatePaidReactionPrivacy:
-			b.PutID(0x8b725fce)
-			return layerEncodeWire8b725fceBareBody(profile, value, b, state)
-		case *UpdatePeerBlocked:
-			b.PutID(0xebe07752)
-			return layerEncodeWireebe07752BareBody(profile, value, b, state)
-		case *UpdatePeerHistoryTTL:
-			b.PutID(0xbb9bb9a5)
-			return layerEncodeWirebb9bb9a5BareBody(profile, value, b, state)
-		case *UpdatePeerLocated:
-			b.PutID(0xb4afcfb0)
-			return layerEncodeWireb4afcfb0BareBody(profile, value, b, state)
-		case *UpdatePeerSettings:
-			b.PutID(0x6a7e7366)
-			return layerEncodeWire6a7e7366BareBody(profile, value, b, state)
-		case *UpdatePeerWallpaper:
-			b.PutID(0xae3f101d)
-			return layerEncodeWireae3f101dBareBody(profile, value, b, state)
-		case *UpdatePendingJoinRequests:
-			b.PutID(0x7063c3db)
-			return layerEncodeWire7063c3dbBareBody(profile, value, b, state)
-		case *UpdatePhoneCall:
-			b.PutID(0xab0f6b1e)
-			return layerEncodeWireab0f6b1eBareBody(profile, value, b, state)
-		case *UpdatePhoneCallSignalingData:
-			b.PutID(0x2661bf09)
-			return layerEncodeWire2661bf09BareBody(profile, value, b, state)
-		case *UpdatePinnedChannelMessages:
-			b.PutID(0x5bb98608)
-			return layerEncodeWire5bb98608BareBody(profile, value, b, state)
-		case *UpdatePinnedDialogs:
-			b.PutID(0xfa0f3ca2)
-			return layerEncodeWirefa0f3ca2BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopic:
-			b.PutID(0x683b2c52)
-			return layerEncodeWire683b2c52BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopics:
-			b.PutID(0xdef143d0)
-			return layerEncodeWiredef143d0BareBody(profile, value, b, state)
-		case *UpdatePinnedMessages:
-			b.PutID(0xed85eab5)
-			return layerEncodeWireed85eab5BareBody(profile, value, b, state)
-		case *UpdatePinnedSavedDialogs:
-			b.PutID(0x686c85a6)
-			return layerEncodeWire686c85a6BareBody(profile, value, b, state)
-		case *UpdatePrivacy:
-			b.PutID(0xee3b272a)
-			return layerEncodeWireee3b272aBareBody(profile, value, b, state)
-		case *UpdatePtsChanged:
-			b.PutID(0x3354678f)
-			return layerEncodeWire3354678fBareBody(profile, value, b, state)
-		case *UpdateQuickReplies:
-			b.PutID(0xf9470ab2)
-			return layerEncodeWiref9470ab2BareBody(profile, value, b, state)
-		case *UpdateQuickReplyMessage:
-			b.PutID(0x3e050d0f)
-			return layerEncodeWire3e050d0fBareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionInbox:
-			b.PutID(0xd6b19546)
-			return layerEncodeWired6b19546BareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			b.PutID(0x695c9e7c)
-			return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
-		case *UpdateReadChannelInbox:
-			b.PutID(0x922e6e10)
-			return layerEncodeWire922e6e10BareBody(profile, value, b, state)
-		case *UpdateReadChannelOutbox:
-			b.PutID(0xb75f99a9)
-			return layerEncodeWireb75f99a9BareBody(profile, value, b, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			b.PutID(0xfb4c496c)
-			return layerEncodeWirefb4c496cBareBody(profile, value, b, state)
-		case *UpdateReadFeaturedStickers:
-			b.PutID(0x571d2742)
-			return layerEncodeWire571d2742BareBody(profile, value, b, state)
-		case *UpdateReadHistoryInbox:
-			b.PutID(0x9e84bc99)
-			return layerEncodeWire9e84bc99BareBody(profile, value, b, state)
-		case *UpdateReadHistoryOutbox:
-			b.PutID(0x2f2f21bf)
-			return layerEncodeWire2f2f21bfBareBody(profile, value, b, state)
-		case *UpdateReadMessagesContents:
-			b.PutID(0xf8227181)
-			return layerEncodeWiref8227181BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumInbox:
-			b.PutID(0x77b0e372)
-			return layerEncodeWire77b0e372BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumOutbox:
-			b.PutID(0xa4a79376)
-			return layerEncodeWirea4a79376BareBody(profile, value, b, state)
-		case *UpdateReadStories:
-			b.PutID(0xf74e932b)
-			return layerEncodeWiref74e932bBareBody(profile, value, b, state)
-		case *UpdateRecentEmojiStatuses:
-			b.PutID(0x30f443db)
-			return layerEncodeWire30f443dbBareBody(profile, value, b, state)
-		case *UpdateRecentReactions:
-			b.PutID(0x6f7863f4)
-			return layerEncodeWire6f7863f4BareBody(profile, value, b, state)
-		case *UpdateRecentStickers:
-			b.PutID(0x9a422c20)
-			return layerEncodeWire9a422c20BareBody(profile, value, b, state)
-		case *UpdateSMSJob:
-			b.PutID(0xf16269d4)
-			return layerEncodeWiref16269d4BareBody(profile, value, b, state)
-		case *UpdateSavedDialogPinned:
-			b.PutID(0xaeaf9e74)
-			return layerEncodeWireaeaf9e74BareBody(profile, value, b, state)
-		case *UpdateSavedGifs:
-			b.PutID(0x9375341e)
-			return layerEncodeWire9375341eBareBody(profile, value, b, state)
-		case *UpdateSavedReactionTags:
-			b.PutID(0x39c67432)
-			return layerEncodeWire39c67432BareBody(profile, value, b, state)
-		case *UpdateSavedRingtones:
-			b.PutID(0x74d8be99)
-			return layerEncodeWire74d8be99BareBody(profile, value, b, state)
-		case *UpdateSentPhoneCode:
-			b.PutID(0x504aa18f)
-			return layerEncodeWire504aa18fBareBody(profile, value, b, state)
-		case *UpdateSentStoryReaction:
-			b.PutID(0x7d627683)
-			return layerEncodeWire7d627683BareBody(profile, value, b, state)
-		case *UpdateServiceNotification:
-			b.PutID(0xebe46819)
-			return layerEncodeWireebe46819BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionState:
-			b.PutID(0x48e246c2)
-			return layerEncodeWire48e246c2BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionUserState:
-			b.PutID(0xdc58f31e)
-			return layerEncodeWiredc58f31eBareBody(profile, value, b, state)
-		case *UpdateStarGiftCraftFail:
-			b.PutID(0xac072444)
-			return layerEncodeWireac072444BareBody(profile, value, b, state)
-		case *UpdateStarsBalance:
-			b.PutID(0x4e80a379)
-			return layerEncodeWire4e80a379BareBody(profile, value, b, state)
-		case *UpdateStarsRevenueStatus:
-			b.PutID(0xa584b019)
-			return layerEncodeWirea584b019BareBody(profile, value, b, state)
-		case *UpdateStickerSets:
-			b.PutID(0x31c24808)
-			return layerEncodeWire31c24808BareBody(profile, value, b, state)
-		case *UpdateStickerSetsOrder:
-			b.PutID(0x0bb2d201)
-			return layerEncodeWire0bb2d201BareBody(profile, value, b, state)
-		case *UpdateStoriesStealthMode:
-			b.PutID(0x2c084dc1)
-			return layerEncodeWire2c084dc1BareBody(profile, value, b, state)
-		case *UpdateStory:
-			b.PutID(0x75b3b798)
-			return layerEncodeWire75b3b798BareBody(profile, value, b, state)
-		case *UpdateStoryID:
-			b.PutID(0x1bf335b9)
-			return layerEncodeWire1bf335b9BareBody(profile, value, b, state)
-		case *UpdateTheme:
-			b.PutID(0x8216fba3)
-			return layerEncodeWire8216fba3BareBody(profile, value, b, state)
-		case *UpdateTranscribedAudio:
-			b.PutID(0x0084cd5a)
-			return layerEncodeWire0084cd5aBareBody(profile, value, b, state)
-		case *UpdateUser:
-			b.PutID(0x20529438)
-			return layerEncodeWire20529438BareBody(profile, value, b, state)
-		case *UpdateUserEmojiStatus:
-			b.PutID(0x28373599)
-			return layerEncodeWire28373599BareBody(profile, value, b, state)
-		case *UpdateUserName:
-			b.PutID(0xa7848924)
-			return layerEncodeWirea7848924BareBody(profile, value, b, state)
-		case *UpdateUserPhone:
-			b.PutID(0x05492a13)
-			return layerEncodeWire05492a13BareBody(profile, value, b, state)
-		case *UpdateUserStatus:
-			b.PutID(0xe5bdf8de)
-			return layerEncodeWiree5bdf8deBareBody(profile, value, b, state)
-		case *UpdateUserTyping:
-			b.PutID(0x2a17bf5c)
-			return layerEncodeWire2a17bf5cBareBody(profile, value, b, state)
-		case *UpdateWebPage:
-			b.PutID(0x7f891213)
-			return layerEncodeWire7f891213BareBody(profile, value, b, state)
-		case *UpdateWebViewResultSent:
-			b.PutID(0x1592b79d)
-			return layerEncodeWire1592b79dBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224:
-		switch value := projected.(type) {
-		case *UpdateAttachMenuBots:
-			b.PutID(0x17b7a20b)
-			return layerEncodeWire17b7a20bBareBody(profile, value, b, state)
-		case *UpdateAutoSaveSettings:
-			b.PutID(0xec05b097)
-			return layerEncodeWireec05b097BareBody(profile, value, b, state)
-		case *UpdateBotBusinessConnect:
-			b.PutID(0x8ae5c97a)
-			return layerEncodeWire8ae5c97aBareBody(profile, value, b, state)
-		case *UpdateBotCallbackQuery:
-			b.PutID(0xb9cfc48d)
-			return layerEncodeWireb9cfc48dBareBody(profile, value, b, state)
-		case *UpdateBotChatBoost:
-			b.PutID(0x904dd49c)
-			return layerEncodeWire904dd49cBareBody(profile, value, b, state)
-		case *UpdateBotChatInviteRequester:
-			b.PutID(0x11dfa986)
-			return layerEncodeWire11dfa986BareBody(profile, value, b, state)
-		case *UpdateBotCommands:
-			b.PutID(0x4d712f2e)
-			return layerEncodeWire4d712f2eBareBody(profile, value, b, state)
-		case *UpdateBotDeleteBusinessMessage:
-			b.PutID(0xa02a982e)
-			return layerEncodeWirea02a982eBareBody(profile, value, b, state)
-		case *UpdateBotEditBusinessMessage:
-			b.PutID(0x07df587c)
-			return layerEncodeWire07df587cBareBody(profile, value, b, state)
-		case *UpdateBotInlineQuery:
-			b.PutID(0x496f379c)
-			return layerEncodeWire496f379cBareBody(profile, value, b, state)
-		case *UpdateBotInlineSend:
-			b.PutID(0x12f12a07)
-			return layerEncodeWire12f12a07BareBody(profile, value, b, state)
-		case *UpdateBotMenuButton:
-			b.PutID(0x14b85813)
-			return layerEncodeWire14b85813BareBody(profile, value, b, state)
-		case *UpdateBotMessageReaction:
-			b.PutID(0xac21d3ce)
-			return layerEncodeWireac21d3ceBareBody(profile, value, b, state)
-		case *UpdateBotMessageReactions:
-			b.PutID(0x09cb7759)
-			return layerEncodeWire09cb7759BareBody(profile, value, b, state)
-		case *UpdateBotNewBusinessMessage:
-			b.PutID(0x9ddb347c)
-			return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
-		case *UpdateBotPrecheckoutQuery:
-			b.PutID(0x8caa9a96)
-			return layerEncodeWire8caa9a96BareBody(profile, value, b, state)
-		case *UpdateBotPurchasedPaidMedia:
-			b.PutID(0x283bd312)
-			return layerEncodeWire283bd312BareBody(profile, value, b, state)
-		case *UpdateBotShippingQuery:
-			b.PutID(0xb5aefd7d)
-			return layerEncodeWireb5aefd7dBareBody(profile, value, b, state)
-		case *UpdateBotStopped:
-			b.PutID(0xc4870a49)
-			return layerEncodeWirec4870a49BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSON:
-			b.PutID(0x8317c0c3)
-			return layerEncodeWire8317c0c3BareBody(profile, value, b, state)
-		case *UpdateBotWebhookJSONQuery:
-			b.PutID(0x9b9240a6)
-			return layerEncodeWire9b9240a6BareBody(profile, value, b, state)
-		case *UpdateBusinessBotCallbackQuery:
-			b.PutID(0x1ea2fda7)
-			return layerEncodeWire1ea2fda7BareBody(profile, value, b, state)
-		case *UpdateChannel:
-			b.PutID(0x635b4c09)
-			return layerEncodeWire635b4c09BareBody(profile, value, b, state)
-		case *UpdateChannelAvailableMessages:
-			b.PutID(0xb23fc698)
-			return layerEncodeWireb23fc698BareBody(profile, value, b, state)
-		case *UpdateChannelMessageForwards:
-			b.PutID(0xd29a27f4)
-			return layerEncodeWired29a27f4BareBody(profile, value, b, state)
-		case *UpdateChannelMessageViews:
-			b.PutID(0xf226ac08)
-			return layerEncodeWiref226ac08BareBody(profile, value, b, state)
-		case *UpdateChannelParticipant:
-			b.PutID(0x985d3abb)
-			return layerEncodeWire985d3abbBareBody(profile, value, b, state)
-		case *UpdateChannelReadMessagesContents:
-			b.PutID(0x25f324f7)
-			return layerEncodeWire25f324f7BareBody(profile, value, b, state)
-		case *UpdateChannelTooLong:
-			b.PutID(0x108d941f)
-			return layerEncodeWire108d941fBareBody(profile, value, b, state)
-		case *UpdateChannelUserTyping:
-			b.PutID(0x8c88c923)
-			return layerEncodeWire8c88c923BareBody(profile, value, b, state)
-		case *UpdateChannelViewForumAsMessages:
-			b.PutID(0x07b68920)
-			return layerEncodeWire07b68920BareBody(profile, value, b, state)
-		case *UpdateChannelWebPage:
-			b.PutID(0x2f2ba99f)
-			return layerEncodeWire2f2ba99fBareBody(profile, value, b, state)
-		case *UpdateChat:
-			b.PutID(0xf89a6a4e)
-			return layerEncodeWiref89a6a4eBareBody(profile, value, b, state)
-		case *UpdateChatDefaultBannedRights:
-			b.PutID(0x54c01850)
-			return layerEncodeWire54c01850BareBody(profile, value, b, state)
-		case *UpdateChatParticipant:
-			b.PutID(0xd087663a)
-			return layerEncodeWired087663aBareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdd:
-			b.PutID(0x3dda5451)
-			return layerEncodeWire3dda5451BareBody(profile, value, b, state)
-		case *UpdateChatParticipantAdmin:
-			b.PutID(0xd7ca61a2)
-			return layerEncodeWired7ca61a2BareBody(profile, value, b, state)
-		case *UpdateChatParticipantDelete:
-			b.PutID(0xe32f3d77)
-			return layerEncodeWiree32f3d77BareBody(profile, value, b, state)
-		case *UpdateChatParticipantRank:
-			b.PutID(0xbd8367b9)
-			return layerEncodeWirebd8367b9BareBody(profile, value, b, state)
-		case *UpdateChatParticipants:
-			b.PutID(0x07761198)
-			return layerEncodeWire07761198BareBody(profile, value, b, state)
-		case *UpdateChatUserTyping:
-			b.PutID(0x83487af0)
-			return layerEncodeWire83487af0BareBody(profile, value, b, state)
-		case *UpdateConfig:
-			b.PutID(0xa229dd06)
-			return layerEncodeWirea229dd06BareBody(profile, value, b, state)
-		case *UpdateContactsReset:
-			b.PutID(0x7084a7be)
-			return layerEncodeWire7084a7beBareBody(profile, value, b, state)
-		case *UpdateDCOptions:
-			b.PutID(0x8e5e9873)
-			return layerEncodeWire8e5e9873BareBody(profile, value, b, state)
-		case *UpdateDeleteChannelMessages:
-			b.PutID(0xc32d5b12)
-			return layerEncodeWirec32d5b12BareBody(profile, value, b, state)
-		case *UpdateDeleteGroupCallMessages:
-			b.PutID(0x3e85e92c)
-			return layerEncodeWire3e85e92cBareBody(profile, value, b, state)
-		case *UpdateDeleteMessages:
-			b.PutID(0xa20db0e5)
-			return layerEncodeWirea20db0e5BareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReply:
-			b.PutID(0x53e6f1ec)
-			return layerEncodeWire53e6f1ecBareBody(profile, value, b, state)
-		case *UpdateDeleteQuickReplyMessages:
-			b.PutID(0x566fe7cd)
-			return layerEncodeWire566fe7cdBareBody(profile, value, b, state)
-		case *UpdateDeleteScheduledMessages:
-			b.PutID(0xf2a71983)
-			return layerEncodeWiref2a71983BareBody(profile, value, b, state)
-		case *UpdateDialogFilter:
-			b.PutID(0x26ffde7d)
-			return layerEncodeWire26ffde7dBareBody(profile, value, b, state)
-		case *UpdateDialogFilterOrder:
-			b.PutID(0xa5d72105)
-			return layerEncodeWirea5d72105BareBody(profile, value, b, state)
-		case *UpdateDialogFilters:
-			b.PutID(0x3504914f)
-			return layerEncodeWire3504914fBareBody(profile, value, b, state)
-		case *UpdateDialogPinned:
-			b.PutID(0x6e6fe51c)
-			return layerEncodeWire6e6fe51cBareBody(profile, value, b, state)
-		case *UpdateDialogUnreadMark:
-			b.PutID(0xb658f23e)
-			return layerEncodeWireb658f23eBareBody(profile, value, b, state)
-		case *UpdateDraftMessage:
-			b.PutID(0xedfc111e)
-			return layerEncodeWireedfc111eBareBody(profile, value, b, state)
-		case *UpdateEditChannelMessage:
-			b.PutID(0x1b3f4df7)
-			return layerEncodeWire1b3f4df7BareBody(profile, value, b, state)
-		case *UpdateEditMessage:
-			b.PutID(0xe40370a3)
-			return layerEncodeWiree40370a3BareBody(profile, value, b, state)
-		case *UpdateEmojiGameInfo:
-			b.PutID(0xfb9c547a)
-			return layerEncodeWirefb9c547aBareBody(profile, value, b, state)
-		case *UpdateEncryptedChatTyping:
-			b.PutID(0x1710f156)
-			return layerEncodeWire1710f156BareBody(profile, value, b, state)
-		case *UpdateEncryptedMessagesRead:
-			b.PutID(0x38fe25b7)
-			return layerEncodeWire38fe25b7BareBody(profile, value, b, state)
-		case *UpdateEncryption:
-			b.PutID(0xb4a2e88d)
-			return layerEncodeWireb4a2e88dBareBody(profile, value, b, state)
-		case *UpdateFavedStickers:
-			b.PutID(0xe511996d)
-			return layerEncodeWiree511996dBareBody(profile, value, b, state)
-		case *UpdateFolderPeers:
-			b.PutID(0x19360dc0)
-			return layerEncodeWire19360dc0BareBody(profile, value, b, state)
-		case *UpdateGeoLiveViewed:
-			b.PutID(0x871fb939)
-			return layerEncodeWire871fb939BareBody(profile, value, b, state)
-		case *UpdateGroupCall:
-			b.PutID(0x9d2216e0)
-			return layerEncodeWire9d2216e0BareBody(profile, value, b, state)
-		case *UpdateGroupCallChainBlocks:
-			b.PutID(0xa477288f)
-			return layerEncodeWirea477288fBareBody(profile, value, b, state)
-		case *UpdateGroupCallConnection:
-			b.PutID(0x0b783982)
-			return layerEncodeWire0b783982BareBody(profile, value, b, state)
-		case *UpdateGroupCallEncryptedMessage:
-			b.PutID(0xc957a766)
-			return layerEncodeWirec957a766BareBody(profile, value, b, state)
-		case *UpdateGroupCallMessage:
-			b.PutID(0xd8326f0d)
-			return layerEncodeWired8326f0dBareBody(profile, value, b, state)
-		case *UpdateGroupCallParticipants:
-			b.PutID(0xf2ebdb4e)
-			return layerEncodeWiref2ebdb4eBareBody(profile, value, b, state)
-		case *UpdateInlineBotCallbackQuery:
-			b.PutID(0x691e9052)
-			return layerEncodeWire691e9052BareBody(profile, value, b, state)
-		case *UpdateLangPack:
-			b.PutID(0x56022f4d)
-			return layerEncodeWire56022f4dBareBody(profile, value, b, state)
-		case *UpdateLangPackTooLong:
-			b.PutID(0x46560264)
-			return layerEncodeWire46560264BareBody(profile, value, b, state)
-		case *UpdateLoginToken:
-			b.PutID(0x564fe691)
-			return layerEncodeWire564fe691BareBody(profile, value, b, state)
-		case *UpdateManagedBot:
-			b.PutID(0x4880ed9a)
-			return layerEncodeWire4880ed9aBareBody(profile, value, b, state)
-		case *UpdateMessageExtendedMedia:
-			b.PutID(0xd5a41724)
-			return layerEncodeWired5a41724BareBody(profile, value, b, state)
-		case *UpdateMessageID:
-			b.PutID(0x4e90bfd6)
-			return layerEncodeWire4e90bfd6BareBody(profile, value, b, state)
-		case *UpdateMessagePoll:
-			b.PutID(0xd64c522b)
-			return layerEncodeWired64c522bBareBody(profile, value, b, state)
-		case *UpdateMessagePollVote:
-			b.PutID(0x7699f014)
-			return layerEncodeWire7699f014BareBody(profile, value, b, state)
-		case *UpdateMessageReactions:
-			b.PutID(0x1e297bfa)
-			return layerEncodeWire1e297bfaBareBody(profile, value, b, state)
-		case *UpdateMonoForumNoPaidException:
-			b.PutID(0x9f812b08)
-			return layerEncodeWire9f812b08BareBody(profile, value, b, state)
-		case *UpdateMoveStickerSetToTop:
-			b.PutID(0x86fccf85)
-			return layerEncodeWire86fccf85BareBody(profile, value, b, state)
-		case *UpdateNewAuthorization:
-			b.PutID(0x8951abef)
-			return layerEncodeWire8951abefBareBody(profile, value, b, state)
-		case *UpdateNewChannelMessage:
-			b.PutID(0x62ba04d9)
-			return layerEncodeWire62ba04d9BareBody(profile, value, b, state)
-		case *UpdateNewEncryptedMessage:
-			b.PutID(0x12bcbd9a)
-			return layerEncodeWire12bcbd9aBareBody(profile, value, b, state)
-		case *UpdateNewMessage:
-			b.PutID(0x1f2b0afd)
-			return layerEncodeWire1f2b0afdBareBody(profile, value, b, state)
-		case *UpdateNewQuickReply:
-			b.PutID(0xf53da717)
-			return layerEncodeWiref53da717BareBody(profile, value, b, state)
-		case *UpdateNewScheduledMessage:
-			b.PutID(0x39a51dfb)
-			return layerEncodeWire39a51dfbBareBody(profile, value, b, state)
-		case *UpdateNewStickerSet:
-			b.PutID(0x688a30aa)
-			return layerEncodeWire688a30aaBareBody(profile, value, b, state)
-		case *UpdateNewStoryReaction:
-			b.PutID(0x1824e40b)
-			return layerEncodeWire1824e40bBareBody(profile, value, b, state)
-		case *UpdateNotifySettings:
-			b.PutID(0xbec268ef)
-			return layerEncodeWirebec268efBareBody(profile, value, b, state)
-		case *UpdatePaidReactionPrivacy:
-			b.PutID(0x8b725fce)
-			return layerEncodeWire8b725fceBareBody(profile, value, b, state)
-		case *UpdatePeerBlocked:
-			b.PutID(0xebe07752)
-			return layerEncodeWireebe07752BareBody(profile, value, b, state)
-		case *UpdatePeerHistoryTTL:
-			b.PutID(0xbb9bb9a5)
-			return layerEncodeWirebb9bb9a5BareBody(profile, value, b, state)
-		case *UpdatePeerLocated:
-			b.PutID(0xb4afcfb0)
-			return layerEncodeWireb4afcfb0BareBody(profile, value, b, state)
-		case *UpdatePeerSettings:
-			b.PutID(0x6a7e7366)
-			return layerEncodeWire6a7e7366BareBody(profile, value, b, state)
-		case *UpdatePeerWallpaper:
-			b.PutID(0xae3f101d)
-			return layerEncodeWireae3f101dBareBody(profile, value, b, state)
-		case *UpdatePendingJoinRequests:
-			b.PutID(0x7063c3db)
-			return layerEncodeWire7063c3dbBareBody(profile, value, b, state)
-		case *UpdatePhoneCall:
-			b.PutID(0xab0f6b1e)
-			return layerEncodeWireab0f6b1eBareBody(profile, value, b, state)
-		case *UpdatePhoneCallSignalingData:
-			b.PutID(0x2661bf09)
-			return layerEncodeWire2661bf09BareBody(profile, value, b, state)
-		case *UpdatePinnedChannelMessages:
-			b.PutID(0x5bb98608)
-			return layerEncodeWire5bb98608BareBody(profile, value, b, state)
-		case *UpdatePinnedDialogs:
-			b.PutID(0xfa0f3ca2)
-			return layerEncodeWirefa0f3ca2BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopic:
-			b.PutID(0x683b2c52)
-			return layerEncodeWire683b2c52BareBody(profile, value, b, state)
-		case *UpdatePinnedForumTopics:
-			b.PutID(0xdef143d0)
-			return layerEncodeWiredef143d0BareBody(profile, value, b, state)
-		case *UpdatePinnedMessages:
-			b.PutID(0xed85eab5)
-			return layerEncodeWireed85eab5BareBody(profile, value, b, state)
-		case *UpdatePinnedSavedDialogs:
-			b.PutID(0x686c85a6)
-			return layerEncodeWire686c85a6BareBody(profile, value, b, state)
-		case *UpdatePrivacy:
-			b.PutID(0xee3b272a)
-			return layerEncodeWireee3b272aBareBody(profile, value, b, state)
-		case *UpdatePtsChanged:
-			b.PutID(0x3354678f)
-			return layerEncodeWire3354678fBareBody(profile, value, b, state)
-		case *UpdateQuickReplies:
-			b.PutID(0xf9470ab2)
-			return layerEncodeWiref9470ab2BareBody(profile, value, b, state)
-		case *UpdateQuickReplyMessage:
-			b.PutID(0x3e050d0f)
-			return layerEncodeWire3e050d0fBareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionInbox:
-			b.PutID(0xd6b19546)
-			return layerEncodeWired6b19546BareBody(profile, value, b, state)
-		case *UpdateReadChannelDiscussionOutbox:
-			b.PutID(0x695c9e7c)
-			return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
-		case *UpdateReadChannelInbox:
-			b.PutID(0x922e6e10)
-			return layerEncodeWire922e6e10BareBody(profile, value, b, state)
-		case *UpdateReadChannelOutbox:
-			b.PutID(0xb75f99a9)
-			return layerEncodeWireb75f99a9BareBody(profile, value, b, state)
-		case *UpdateReadFeaturedEmojiStickers:
-			b.PutID(0xfb4c496c)
-			return layerEncodeWirefb4c496cBareBody(profile, value, b, state)
-		case *UpdateReadFeaturedStickers:
-			b.PutID(0x571d2742)
-			return layerEncodeWire571d2742BareBody(profile, value, b, state)
-		case *UpdateReadHistoryInbox:
-			b.PutID(0x9e84bc99)
-			return layerEncodeWire9e84bc99BareBody(profile, value, b, state)
-		case *UpdateReadHistoryOutbox:
-			b.PutID(0x2f2f21bf)
-			return layerEncodeWire2f2f21bfBareBody(profile, value, b, state)
-		case *UpdateReadMessagesContents:
-			b.PutID(0xf8227181)
-			return layerEncodeWiref8227181BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumInbox:
-			b.PutID(0x77b0e372)
-			return layerEncodeWire77b0e372BareBody(profile, value, b, state)
-		case *UpdateReadMonoForumOutbox:
-			b.PutID(0xa4a79376)
-			return layerEncodeWirea4a79376BareBody(profile, value, b, state)
-		case *UpdateReadStories:
-			b.PutID(0xf74e932b)
-			return layerEncodeWiref74e932bBareBody(profile, value, b, state)
-		case *UpdateRecentEmojiStatuses:
-			b.PutID(0x30f443db)
-			return layerEncodeWire30f443dbBareBody(profile, value, b, state)
-		case *UpdateRecentReactions:
-			b.PutID(0x6f7863f4)
-			return layerEncodeWire6f7863f4BareBody(profile, value, b, state)
-		case *UpdateRecentStickers:
-			b.PutID(0x9a422c20)
-			return layerEncodeWire9a422c20BareBody(profile, value, b, state)
-		case *UpdateSMSJob:
-			b.PutID(0xf16269d4)
-			return layerEncodeWiref16269d4BareBody(profile, value, b, state)
-		case *UpdateSavedDialogPinned:
-			b.PutID(0xaeaf9e74)
-			return layerEncodeWireaeaf9e74BareBody(profile, value, b, state)
-		case *UpdateSavedGifs:
-			b.PutID(0x9375341e)
-			return layerEncodeWire9375341eBareBody(profile, value, b, state)
-		case *UpdateSavedReactionTags:
-			b.PutID(0x39c67432)
-			return layerEncodeWire39c67432BareBody(profile, value, b, state)
-		case *UpdateSavedRingtones:
-			b.PutID(0x74d8be99)
-			return layerEncodeWire74d8be99BareBody(profile, value, b, state)
-		case *UpdateSentPhoneCode:
-			b.PutID(0x504aa18f)
-			return layerEncodeWire504aa18fBareBody(profile, value, b, state)
-		case *UpdateSentStoryReaction:
-			b.PutID(0x7d627683)
-			return layerEncodeWire7d627683BareBody(profile, value, b, state)
-		case *UpdateServiceNotification:
-			b.PutID(0xebe46819)
-			return layerEncodeWireebe46819BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionState:
-			b.PutID(0x48e246c2)
-			return layerEncodeWire48e246c2BareBody(profile, value, b, state)
-		case *UpdateStarGiftAuctionUserState:
-			b.PutID(0xdc58f31e)
-			return layerEncodeWiredc58f31eBareBody(profile, value, b, state)
-		case *UpdateStarGiftCraftFail:
-			b.PutID(0xac072444)
-			return layerEncodeWireac072444BareBody(profile, value, b, state)
-		case *UpdateStarsBalance:
-			b.PutID(0x4e80a379)
-			return layerEncodeWire4e80a379BareBody(profile, value, b, state)
-		case *UpdateStarsRevenueStatus:
-			b.PutID(0xa584b019)
-			return layerEncodeWirea584b019BareBody(profile, value, b, state)
-		case *UpdateStickerSets:
-			b.PutID(0x31c24808)
-			return layerEncodeWire31c24808BareBody(profile, value, b, state)
-		case *UpdateStickerSetsOrder:
-			b.PutID(0x0bb2d201)
-			return layerEncodeWire0bb2d201BareBody(profile, value, b, state)
-		case *UpdateStoriesStealthMode:
-			b.PutID(0x2c084dc1)
-			return layerEncodeWire2c084dc1BareBody(profile, value, b, state)
-		case *UpdateStory:
-			b.PutID(0x75b3b798)
-			return layerEncodeWire75b3b798BareBody(profile, value, b, state)
-		case *UpdateStoryID:
-			b.PutID(0x1bf335b9)
-			return layerEncodeWire1bf335b9BareBody(profile, value, b, state)
-		case *UpdateTheme:
-			b.PutID(0x8216fba3)
-			return layerEncodeWire8216fba3BareBody(profile, value, b, state)
-		case *UpdateTranscribedAudio:
-			b.PutID(0x0084cd5a)
-			return layerEncodeWire0084cd5aBareBody(profile, value, b, state)
-		case *UpdateUser:
-			b.PutID(0x20529438)
-			return layerEncodeWire20529438BareBody(profile, value, b, state)
-		case *UpdateUserEmojiStatus:
-			b.PutID(0x28373599)
-			return layerEncodeWire28373599BareBody(profile, value, b, state)
-		case *UpdateUserName:
-			b.PutID(0xa7848924)
-			return layerEncodeWirea7848924BareBody(profile, value, b, state)
-		case *UpdateUserPhone:
-			b.PutID(0x05492a13)
-			return layerEncodeWire05492a13BareBody(profile, value, b, state)
-		case *UpdateUserStatus:
-			b.PutID(0xe5bdf8de)
-			return layerEncodeWiree5bdf8deBareBody(profile, value, b, state)
-		case *UpdateUserTyping:
-			b.PutID(0x2a17bf5c)
-			return layerEncodeWire2a17bf5cBareBody(profile, value, b, state)
-		case *UpdateWebPage:
-			b.PutID(0x7f891213)
-			return layerEncodeWire7f891213BareBody(profile, value, b, state)
-		case *UpdateWebViewResultSent:
-			b.PutID(0x1592b79d)
-			return layerEncodeWire1592b79dBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
 	case LayerProfile225:
 		switch value := projected.(type) {
 		case *UpdateAiComposeTones:
@@ -37453,6 +31692,504 @@ func layerEncodeClassUpdateBody(profile LayerProfile, value UpdateClass, b *bin.
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *UpdateAiComposeTones:
+			b.PutID(0x8c0f91fb)
+			return layerEncodeWire8c0f91fbBareBody(profile, value, b, state)
+		case *UpdateAttachMenuBots:
+			b.PutID(0x17b7a20b)
+			return layerEncodeWire17b7a20bBareBody(profile, value, b, state)
+		case *UpdateAutoSaveSettings:
+			b.PutID(0xec05b097)
+			return layerEncodeWireec05b097BareBody(profile, value, b, state)
+		case *UpdateBotBusinessConnect:
+			b.PutID(0x8ae5c97a)
+			return layerEncodeWire8ae5c97aBareBody(profile, value, b, state)
+		case *UpdateBotCallbackQuery:
+			b.PutID(0xb9cfc48d)
+			return layerEncodeWireb9cfc48dBareBody(profile, value, b, state)
+		case *UpdateBotChatBoost:
+			b.PutID(0x904dd49c)
+			return layerEncodeWire904dd49cBareBody(profile, value, b, state)
+		case *UpdateBotChatInviteRequester:
+			b.PutID(0x7cb34d79)
+			return layerEncodeWire7cb34d79BareBody(profile, value, b, state)
+		case *UpdateBotCommands:
+			b.PutID(0x4d712f2e)
+			return layerEncodeWire4d712f2eBareBody(profile, value, b, state)
+		case *UpdateBotDeleteBusinessMessage:
+			b.PutID(0xa02a982e)
+			return layerEncodeWirea02a982eBareBody(profile, value, b, state)
+		case *UpdateBotEditBusinessMessage:
+			b.PutID(0x07df587c)
+			return layerEncodeWire07df587cBareBody(profile, value, b, state)
+		case *UpdateBotGuestChatQuery:
+			b.PutID(0xcdd4093d)
+			return layerEncodeWirecdd4093dBareBody(profile, value, b, state)
+		case *UpdateBotInlineQuery:
+			b.PutID(0x496f379c)
+			return layerEncodeWire496f379cBareBody(profile, value, b, state)
+		case *UpdateBotInlineSend:
+			b.PutID(0x12f12a07)
+			return layerEncodeWire12f12a07BareBody(profile, value, b, state)
+		case *UpdateBotMenuButton:
+			b.PutID(0x14b85813)
+			return layerEncodeWire14b85813BareBody(profile, value, b, state)
+		case *UpdateBotMessageReaction:
+			b.PutID(0xac21d3ce)
+			return layerEncodeWireac21d3ceBareBody(profile, value, b, state)
+		case *UpdateBotMessageReactions:
+			b.PutID(0x09cb7759)
+			return layerEncodeWire09cb7759BareBody(profile, value, b, state)
+		case *UpdateBotNewBusinessMessage:
+			b.PutID(0x9ddb347c)
+			return layerEncodeWire9ddb347cBareBody(profile, value, b, state)
+		case *UpdateBotPrecheckoutQuery:
+			b.PutID(0x8caa9a96)
+			return layerEncodeWire8caa9a96BareBody(profile, value, b, state)
+		case *UpdateBotPurchasedPaidMedia:
+			b.PutID(0x283bd312)
+			return layerEncodeWire283bd312BareBody(profile, value, b, state)
+		case *UpdateBotShippingQuery:
+			b.PutID(0xb5aefd7d)
+			return layerEncodeWireb5aefd7dBareBody(profile, value, b, state)
+		case *UpdateBotStarsSubscription:
+			b.PutID(0x6c0d8e23)
+			return layerEncodeWire6c0d8e23BareBody(profile, value, b, state)
+		case *UpdateBotStopped:
+			b.PutID(0xc4870a49)
+			return layerEncodeWirec4870a49BareBody(profile, value, b, state)
+		case *UpdateBotWebhookJSON:
+			b.PutID(0x8317c0c3)
+			return layerEncodeWire8317c0c3BareBody(profile, value, b, state)
+		case *UpdateBotWebhookJSONQuery:
+			b.PutID(0x9b9240a6)
+			return layerEncodeWire9b9240a6BareBody(profile, value, b, state)
+		case *UpdateBusinessBotCallbackQuery:
+			b.PutID(0x1ea2fda7)
+			return layerEncodeWire1ea2fda7BareBody(profile, value, b, state)
+		case *UpdateChannel:
+			b.PutID(0x635b4c09)
+			return layerEncodeWire635b4c09BareBody(profile, value, b, state)
+		case *UpdateChannelAvailableMessages:
+			b.PutID(0xb23fc698)
+			return layerEncodeWireb23fc698BareBody(profile, value, b, state)
+		case *UpdateChannelMessageForwards:
+			b.PutID(0xd29a27f4)
+			return layerEncodeWired29a27f4BareBody(profile, value, b, state)
+		case *UpdateChannelMessageViews:
+			b.PutID(0xf226ac08)
+			return layerEncodeWiref226ac08BareBody(profile, value, b, state)
+		case *UpdateChannelParticipant:
+			b.PutID(0x985d3abb)
+			return layerEncodeWire985d3abbBareBody(profile, value, b, state)
+		case *UpdateChannelReadMessagesContents:
+			b.PutID(0x25f324f7)
+			return layerEncodeWire25f324f7BareBody(profile, value, b, state)
+		case *UpdateChannelTooLong:
+			b.PutID(0x108d941f)
+			return layerEncodeWire108d941fBareBody(profile, value, b, state)
+		case *UpdateChannelUserTyping:
+			b.PutID(0x8c88c923)
+			return layerEncodeWire8c88c923BareBody(profile, value, b, state)
+		case *UpdateChannelViewForumAsMessages:
+			b.PutID(0x07b68920)
+			return layerEncodeWire07b68920BareBody(profile, value, b, state)
+		case *UpdateChannelWebPage:
+			b.PutID(0x2f2ba99f)
+			return layerEncodeWire2f2ba99fBareBody(profile, value, b, state)
+		case *UpdateChat:
+			b.PutID(0xf89a6a4e)
+			return layerEncodeWiref89a6a4eBareBody(profile, value, b, state)
+		case *UpdateChatDefaultBannedRights:
+			b.PutID(0x54c01850)
+			return layerEncodeWire54c01850BareBody(profile, value, b, state)
+		case *UpdateChatParticipant:
+			b.PutID(0xd087663a)
+			return layerEncodeWired087663aBareBody(profile, value, b, state)
+		case *UpdateChatParticipantAdd:
+			b.PutID(0x3dda5451)
+			return layerEncodeWire3dda5451BareBody(profile, value, b, state)
+		case *UpdateChatParticipantAdmin:
+			b.PutID(0xd7ca61a2)
+			return layerEncodeWired7ca61a2BareBody(profile, value, b, state)
+		case *UpdateChatParticipantDelete:
+			b.PutID(0xe32f3d77)
+			return layerEncodeWiree32f3d77BareBody(profile, value, b, state)
+		case *UpdateChatParticipantRank:
+			b.PutID(0xbd8367b9)
+			return layerEncodeWirebd8367b9BareBody(profile, value, b, state)
+		case *UpdateChatParticipants:
+			b.PutID(0x07761198)
+			return layerEncodeWire07761198BareBody(profile, value, b, state)
+		case *UpdateChatUserTyping:
+			b.PutID(0x83487af0)
+			return layerEncodeWire83487af0BareBody(profile, value, b, state)
+		case *UpdateConfig:
+			b.PutID(0xa229dd06)
+			return layerEncodeWirea229dd06BareBody(profile, value, b, state)
+		case *UpdateContactsReset:
+			b.PutID(0x7084a7be)
+			return layerEncodeWire7084a7beBareBody(profile, value, b, state)
+		case *UpdateDCOptions:
+			b.PutID(0x8e5e9873)
+			return layerEncodeWire8e5e9873BareBody(profile, value, b, state)
+		case *UpdateDeleteChannelMessages:
+			b.PutID(0xc32d5b12)
+			return layerEncodeWirec32d5b12BareBody(profile, value, b, state)
+		case *UpdateDeleteEphemeralMessages:
+			b.PutID(0x56dbfcf8)
+			return layerEncodeWire56dbfcf8BareBody(profile, value, b, state)
+		case *UpdateDeleteGroupCallMessages:
+			b.PutID(0x3e85e92c)
+			return layerEncodeWire3e85e92cBareBody(profile, value, b, state)
+		case *UpdateDeleteMessages:
+			b.PutID(0xa20db0e5)
+			return layerEncodeWirea20db0e5BareBody(profile, value, b, state)
+		case *UpdateDeleteQuickReply:
+			b.PutID(0x53e6f1ec)
+			return layerEncodeWire53e6f1ecBareBody(profile, value, b, state)
+		case *UpdateDeleteQuickReplyMessages:
+			b.PutID(0x566fe7cd)
+			return layerEncodeWire566fe7cdBareBody(profile, value, b, state)
+		case *UpdateDeleteScheduledMessages:
+			b.PutID(0xf2a71983)
+			return layerEncodeWiref2a71983BareBody(profile, value, b, state)
+		case *UpdateDialogFilter:
+			b.PutID(0x26ffde7d)
+			return layerEncodeWire26ffde7dBareBody(profile, value, b, state)
+		case *UpdateDialogFilterOrder:
+			b.PutID(0xa5d72105)
+			return layerEncodeWirea5d72105BareBody(profile, value, b, state)
+		case *UpdateDialogFilters:
+			b.PutID(0x3504914f)
+			return layerEncodeWire3504914fBareBody(profile, value, b, state)
+		case *UpdateDialogPinned:
+			b.PutID(0x6e6fe51c)
+			return layerEncodeWire6e6fe51cBareBody(profile, value, b, state)
+		case *UpdateDialogUnreadMark:
+			b.PutID(0xb658f23e)
+			return layerEncodeWireb658f23eBareBody(profile, value, b, state)
+		case *UpdateDraftMessage:
+			b.PutID(0xedfc111e)
+			return layerEncodeWireedfc111eBareBody(profile, value, b, state)
+		case *UpdateEditChannelMessage:
+			b.PutID(0x1b3f4df7)
+			return layerEncodeWire1b3f4df7BareBody(profile, value, b, state)
+		case *UpdateEditEphemeralMessage:
+			b.PutID(0x4bbb8f01)
+			return layerEncodeWire4bbb8f01BareBody(profile, value, b, state)
+		case *UpdateEditMessage:
+			b.PutID(0xe40370a3)
+			return layerEncodeWiree40370a3BareBody(profile, value, b, state)
+		case *UpdateEmojiGameInfo:
+			b.PutID(0xfb9c547a)
+			return layerEncodeWirefb9c547aBareBody(profile, value, b, state)
+		case *UpdateEncryptedChatTyping:
+			b.PutID(0x1710f156)
+			return layerEncodeWire1710f156BareBody(profile, value, b, state)
+		case *UpdateEncryptedMessagesRead:
+			b.PutID(0x38fe25b7)
+			return layerEncodeWire38fe25b7BareBody(profile, value, b, state)
+		case *UpdateEncryption:
+			b.PutID(0xb4a2e88d)
+			return layerEncodeWireb4a2e88dBareBody(profile, value, b, state)
+		case *UpdateFavedStickers:
+			b.PutID(0xe511996d)
+			return layerEncodeWiree511996dBareBody(profile, value, b, state)
+		case *UpdateFolderPeers:
+			b.PutID(0x19360dc0)
+			return layerEncodeWire19360dc0BareBody(profile, value, b, state)
+		case *UpdateGeoLiveViewed:
+			b.PutID(0x871fb939)
+			return layerEncodeWire871fb939BareBody(profile, value, b, state)
+		case *UpdateGroupCall:
+			b.PutID(0x9d2216e0)
+			return layerEncodeWire9d2216e0BareBody(profile, value, b, state)
+		case *UpdateGroupCallChainBlocks:
+			b.PutID(0xa477288f)
+			return layerEncodeWirea477288fBareBody(profile, value, b, state)
+		case *UpdateGroupCallConnection:
+			b.PutID(0x0b783982)
+			return layerEncodeWire0b783982BareBody(profile, value, b, state)
+		case *UpdateGroupCallEncryptedMessage:
+			b.PutID(0xc957a766)
+			return layerEncodeWirec957a766BareBody(profile, value, b, state)
+		case *UpdateGroupCallMessage:
+			b.PutID(0xd8326f0d)
+			return layerEncodeWired8326f0dBareBody(profile, value, b, state)
+		case *UpdateGroupCallParticipants:
+			b.PutID(0xf2ebdb4e)
+			return layerEncodeWiref2ebdb4eBareBody(profile, value, b, state)
+		case *UpdateInlineBotCallbackQuery:
+			b.PutID(0x691e9052)
+			return layerEncodeWire691e9052BareBody(profile, value, b, state)
+		case *UpdateJoinChatWebViewDecision:
+			b.PutID(0xbdac7e70)
+			return layerEncodeWirebdac7e70BareBody(profile, value, b, state)
+		case *UpdateLangPack:
+			b.PutID(0x56022f4d)
+			return layerEncodeWire56022f4dBareBody(profile, value, b, state)
+		case *UpdateLangPackTooLong:
+			b.PutID(0x46560264)
+			return layerEncodeWire46560264BareBody(profile, value, b, state)
+		case *UpdateLoginToken:
+			b.PutID(0x564fe691)
+			return layerEncodeWire564fe691BareBody(profile, value, b, state)
+		case *UpdateManagedBot:
+			b.PutID(0x4880ed9a)
+			return layerEncodeWire4880ed9aBareBody(profile, value, b, state)
+		case *UpdateMessageExtendedMedia:
+			b.PutID(0xd5a41724)
+			return layerEncodeWired5a41724BareBody(profile, value, b, state)
+		case *UpdateMessageID:
+			b.PutID(0x4e90bfd6)
+			return layerEncodeWire4e90bfd6BareBody(profile, value, b, state)
+		case *UpdateMessagePoll:
+			b.PutID(0xd64c522b)
+			return layerEncodeWired64c522bBareBody(profile, value, b, state)
+		case *UpdateMessagePollVote:
+			b.PutID(0x7699f014)
+			return layerEncodeWire7699f014BareBody(profile, value, b, state)
+		case *UpdateMessageReactions:
+			b.PutID(0x1e297bfa)
+			return layerEncodeWire1e297bfaBareBody(profile, value, b, state)
+		case *UpdateMonoForumNoPaidException:
+			b.PutID(0x9f812b08)
+			return layerEncodeWire9f812b08BareBody(profile, value, b, state)
+		case *UpdateMoveStickerSetToTop:
+			b.PutID(0x86fccf85)
+			return layerEncodeWire86fccf85BareBody(profile, value, b, state)
+		case *UpdateNewAuthorization:
+			b.PutID(0x8951abef)
+			return layerEncodeWire8951abefBareBody(profile, value, b, state)
+		case *UpdateNewBotConnection:
+			b.PutID(0xb22083a6)
+			return layerEncodeWireb22083a6BareBody(profile, value, b, state)
+		case *UpdateNewChannelMessage:
+			b.PutID(0x62ba04d9)
+			return layerEncodeWire62ba04d9BareBody(profile, value, b, state)
+		case *UpdateNewEncryptedMessage:
+			b.PutID(0x12bcbd9a)
+			return layerEncodeWire12bcbd9aBareBody(profile, value, b, state)
+		case *UpdateNewEphemeralMessage:
+			b.PutID(0x20bcbba1)
+			return layerEncodeWire20bcbba1BareBody(profile, value, b, state)
+		case *UpdateNewMessage:
+			b.PutID(0x1f2b0afd)
+			return layerEncodeWire1f2b0afdBareBody(profile, value, b, state)
+		case *UpdateNewQuickReply:
+			b.PutID(0xf53da717)
+			return layerEncodeWiref53da717BareBody(profile, value, b, state)
+		case *UpdateNewScheduledMessage:
+			b.PutID(0x39a51dfb)
+			return layerEncodeWire39a51dfbBareBody(profile, value, b, state)
+		case *UpdateNewStickerSet:
+			b.PutID(0x688a30aa)
+			return layerEncodeWire688a30aaBareBody(profile, value, b, state)
+		case *UpdateNewStoryReaction:
+			b.PutID(0x1824e40b)
+			return layerEncodeWire1824e40bBareBody(profile, value, b, state)
+		case *UpdateNotifySettings:
+			b.PutID(0xbec268ef)
+			return layerEncodeWirebec268efBareBody(profile, value, b, state)
+		case *UpdatePaidReactionPrivacy:
+			b.PutID(0x8b725fce)
+			return layerEncodeWire8b725fceBareBody(profile, value, b, state)
+		case *UpdatePeerBlocked:
+			b.PutID(0xebe07752)
+			return layerEncodeWireebe07752BareBody(profile, value, b, state)
+		case *UpdatePeerHistoryTTL:
+			b.PutID(0xbb9bb9a5)
+			return layerEncodeWirebb9bb9a5BareBody(profile, value, b, state)
+		case *UpdatePeerLocated:
+			b.PutID(0xb4afcfb0)
+			return layerEncodeWireb4afcfb0BareBody(profile, value, b, state)
+		case *UpdatePeerSettings:
+			b.PutID(0x6a7e7366)
+			return layerEncodeWire6a7e7366BareBody(profile, value, b, state)
+		case *UpdatePeerWallpaper:
+			b.PutID(0xae3f101d)
+			return layerEncodeWireae3f101dBareBody(profile, value, b, state)
+		case *UpdatePendingJoinRequests:
+			b.PutID(0x7063c3db)
+			return layerEncodeWire7063c3dbBareBody(profile, value, b, state)
+		case *UpdatePhoneCall:
+			b.PutID(0xab0f6b1e)
+			return layerEncodeWireab0f6b1eBareBody(profile, value, b, state)
+		case *UpdatePhoneCallSignalingData:
+			b.PutID(0x2661bf09)
+			return layerEncodeWire2661bf09BareBody(profile, value, b, state)
+		case *UpdatePinnedChannelMessages:
+			b.PutID(0x5bb98608)
+			return layerEncodeWire5bb98608BareBody(profile, value, b, state)
+		case *UpdatePinnedDialogs:
+			b.PutID(0xfa0f3ca2)
+			return layerEncodeWirefa0f3ca2BareBody(profile, value, b, state)
+		case *UpdatePinnedForumTopic:
+			b.PutID(0x683b2c52)
+			return layerEncodeWire683b2c52BareBody(profile, value, b, state)
+		case *UpdatePinnedForumTopics:
+			b.PutID(0xdef143d0)
+			return layerEncodeWiredef143d0BareBody(profile, value, b, state)
+		case *UpdatePinnedMessages:
+			b.PutID(0xed85eab5)
+			return layerEncodeWireed85eab5BareBody(profile, value, b, state)
+		case *UpdatePinnedSavedDialogs:
+			b.PutID(0x686c85a6)
+			return layerEncodeWire686c85a6BareBody(profile, value, b, state)
+		case *UpdatePrivacy:
+			b.PutID(0xee3b272a)
+			return layerEncodeWireee3b272aBareBody(profile, value, b, state)
+		case *UpdatePtsChanged:
+			b.PutID(0x3354678f)
+			return layerEncodeWire3354678fBareBody(profile, value, b, state)
+		case *UpdateQuickReplies:
+			b.PutID(0xf9470ab2)
+			return layerEncodeWiref9470ab2BareBody(profile, value, b, state)
+		case *UpdateQuickReplyMessage:
+			b.PutID(0x3e050d0f)
+			return layerEncodeWire3e050d0fBareBody(profile, value, b, state)
+		case *UpdateReadChannelDiscussionInbox:
+			b.PutID(0xd6b19546)
+			return layerEncodeWired6b19546BareBody(profile, value, b, state)
+		case *UpdateReadChannelDiscussionOutbox:
+			b.PutID(0x695c9e7c)
+			return layerEncodeWire695c9e7cBareBody(profile, value, b, state)
+		case *UpdateReadChannelInbox:
+			b.PutID(0x922e6e10)
+			return layerEncodeWire922e6e10BareBody(profile, value, b, state)
+		case *UpdateReadChannelOutbox:
+			b.PutID(0xb75f99a9)
+			return layerEncodeWireb75f99a9BareBody(profile, value, b, state)
+		case *UpdateReadFeaturedEmojiStickers:
+			b.PutID(0xfb4c496c)
+			return layerEncodeWirefb4c496cBareBody(profile, value, b, state)
+		case *UpdateReadFeaturedStickers:
+			b.PutID(0x571d2742)
+			return layerEncodeWire571d2742BareBody(profile, value, b, state)
+		case *UpdateReadHistoryInbox:
+			b.PutID(0x9e84bc99)
+			return layerEncodeWire9e84bc99BareBody(profile, value, b, state)
+		case *UpdateReadHistoryOutbox:
+			b.PutID(0x2f2f21bf)
+			return layerEncodeWire2f2f21bfBareBody(profile, value, b, state)
+		case *UpdateReadMessagesContents:
+			b.PutID(0xf8227181)
+			return layerEncodeWiref8227181BareBody(profile, value, b, state)
+		case *UpdateReadMonoForumInbox:
+			b.PutID(0x77b0e372)
+			return layerEncodeWire77b0e372BareBody(profile, value, b, state)
+		case *UpdateReadMonoForumOutbox:
+			b.PutID(0xa4a79376)
+			return layerEncodeWirea4a79376BareBody(profile, value, b, state)
+		case *UpdateReadStories:
+			b.PutID(0xf74e932b)
+			return layerEncodeWiref74e932bBareBody(profile, value, b, state)
+		case *UpdateRecentEmojiStatuses:
+			b.PutID(0x30f443db)
+			return layerEncodeWire30f443dbBareBody(profile, value, b, state)
+		case *UpdateRecentReactions:
+			b.PutID(0x6f7863f4)
+			return layerEncodeWire6f7863f4BareBody(profile, value, b, state)
+		case *UpdateRecentStickers:
+			b.PutID(0x9a422c20)
+			return layerEncodeWire9a422c20BareBody(profile, value, b, state)
+		case *UpdateSMSJob:
+			b.PutID(0xf16269d4)
+			return layerEncodeWiref16269d4BareBody(profile, value, b, state)
+		case *UpdateSavedDialogPinned:
+			b.PutID(0xaeaf9e74)
+			return layerEncodeWireaeaf9e74BareBody(profile, value, b, state)
+		case *UpdateSavedGifs:
+			b.PutID(0x9375341e)
+			return layerEncodeWire9375341eBareBody(profile, value, b, state)
+		case *UpdateSavedReactionTags:
+			b.PutID(0x39c67432)
+			return layerEncodeWire39c67432BareBody(profile, value, b, state)
+		case *UpdateSavedRingtones:
+			b.PutID(0x74d8be99)
+			return layerEncodeWire74d8be99BareBody(profile, value, b, state)
+		case *UpdateSentPhoneCode:
+			b.PutID(0x504aa18f)
+			return layerEncodeWire504aa18fBareBody(profile, value, b, state)
+		case *UpdateSentStoryReaction:
+			b.PutID(0x7d627683)
+			return layerEncodeWire7d627683BareBody(profile, value, b, state)
+		case *UpdateServiceNotification:
+			b.PutID(0xebe46819)
+			return layerEncodeWireebe46819BareBody(profile, value, b, state)
+		case *UpdateStarGiftAuctionState:
+			b.PutID(0x48e246c2)
+			return layerEncodeWire48e246c2BareBody(profile, value, b, state)
+		case *UpdateStarGiftAuctionUserState:
+			b.PutID(0xdc58f31e)
+			return layerEncodeWiredc58f31eBareBody(profile, value, b, state)
+		case *UpdateStarGiftCraftFail:
+			b.PutID(0xac072444)
+			return layerEncodeWireac072444BareBody(profile, value, b, state)
+		case *UpdateStarsBalance:
+			b.PutID(0x4e80a379)
+			return layerEncodeWire4e80a379BareBody(profile, value, b, state)
+		case *UpdateStarsRevenueStatus:
+			b.PutID(0xa584b019)
+			return layerEncodeWirea584b019BareBody(profile, value, b, state)
+		case *UpdateStickerSets:
+			b.PutID(0x31c24808)
+			return layerEncodeWire31c24808BareBody(profile, value, b, state)
+		case *UpdateStickerSetsOrder:
+			b.PutID(0x0bb2d201)
+			return layerEncodeWire0bb2d201BareBody(profile, value, b, state)
+		case *UpdateStoriesStealthMode:
+			b.PutID(0x2c084dc1)
+			return layerEncodeWire2c084dc1BareBody(profile, value, b, state)
+		case *UpdateStory:
+			b.PutID(0x75b3b798)
+			return layerEncodeWire75b3b798BareBody(profile, value, b, state)
+		case *UpdateStoryID:
+			b.PutID(0x1bf335b9)
+			return layerEncodeWire1bf335b9BareBody(profile, value, b, state)
+		case *UpdateTheme:
+			b.PutID(0x8216fba3)
+			return layerEncodeWire8216fba3BareBody(profile, value, b, state)
+		case *UpdateTranscribedAudio:
+			b.PutID(0x0084cd5a)
+			return layerEncodeWire0084cd5aBareBody(profile, value, b, state)
+		case *UpdateUser:
+			b.PutID(0x20529438)
+			return layerEncodeWire20529438BareBody(profile, value, b, state)
+		case *UpdateUserEmojiStatus:
+			b.PutID(0x28373599)
+			return layerEncodeWire28373599BareBody(profile, value, b, state)
+		case *UpdateUserName:
+			b.PutID(0xa7848924)
+			return layerEncodeWirea7848924BareBody(profile, value, b, state)
+		case *UpdateUserPhone:
+			b.PutID(0x05492a13)
+			return layerEncodeWire05492a13BareBody(profile, value, b, state)
+		case *UpdateUserStatus:
+			b.PutID(0xe5bdf8de)
+			return layerEncodeWiree5bdf8deBareBody(profile, value, b, state)
+		case *UpdateUserTyping:
+			b.PutID(0x2a17bf5c)
+			return layerEncodeWire2a17bf5cBareBody(profile, value, b, state)
+		case *UpdateWebBrowserException:
+			b.PutID(0x140502d1)
+			return layerEncodeWire140502d1BareBody(profile, value, b, state)
+		case *UpdateWebBrowserSettings:
+			b.PutID(0xc39a2ade)
+			return layerEncodeWirec39a2adeBareBody(profile, value, b, state)
+		case *UpdateWebPage:
+			b.PutID(0x7f891213)
+			return layerEncodeWire7f891213BareBody(profile, value, b, state)
+		case *UpdateWebViewResultSent:
+			b.PutID(0x1592b79d)
+			return layerEncodeWire1592b79dBareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -37464,1551 +32201,6 @@ func layerDecodeClassUpdate(profile LayerProfile, b *bin.Buffer, state *layerCod
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220:
-		switch id {
-		case 0x0084cd5a:
-			return layerDecodeWire0084cd5a(profile, b, state)
-		case 0x05492a13:
-			return layerDecodeWire05492a13(profile, b, state)
-		case 0x07761198:
-			return layerDecodeWire07761198(profile, b, state)
-		case 0x07b68920:
-			return layerDecodeWire07b68920(profile, b, state)
-		case 0x07df587c:
-			return layerDecodeWire07df587c(profile, b, state)
-		case 0x09cb7759:
-			return layerDecodeWire09cb7759(profile, b, state)
-		case 0x0b783982:
-			return layerDecodeWire0b783982(profile, b, state)
-		case 0x0bb2d201:
-			return layerDecodeWire0bb2d201(profile, b, state)
-		case 0x108d941f:
-			return layerDecodeWire108d941f(profile, b, state)
-		case 0x11dfa986:
-			return layerDecodeWire11dfa986(profile, b, state)
-		case 0x12bcbd9a:
-			return layerDecodeWire12bcbd9a(profile, b, state)
-		case 0x12f12a07:
-			return layerDecodeWire12f12a07(profile, b, state)
-		case 0x14b85813:
-			return layerDecodeWire14b85813(profile, b, state)
-		case 0x1592b79d:
-			return layerDecodeWire1592b79d(profile, b, state)
-		case 0x1710f156:
-			return layerDecodeWire1710f156(profile, b, state)
-		case 0x17b7a20b:
-			return layerDecodeWire17b7a20b(profile, b, state)
-		case 0x1824e40b:
-			return layerDecodeWire1824e40b(profile, b, state)
-		case 0x19360dc0:
-			return layerDecodeWire19360dc0(profile, b, state)
-		case 0x1b3f4df7:
-			return layerDecodeWire1b3f4df7(profile, b, state)
-		case 0x1bf335b9:
-			return layerDecodeWire1bf335b9(profile, b, state)
-		case 0x1e297bfa:
-			return layerDecodeWire1e297bfa(profile, b, state)
-		case 0x1ea2fda7:
-			return layerDecodeWire1ea2fda7(profile, b, state)
-		case 0x1f2b0afd:
-			return layerDecodeWire1f2b0afd(profile, b, state)
-		case 0x20529438:
-			return layerDecodeWire20529438(profile, b, state)
-		case 0x24f40e77:
-			return layerDecodeWire24f40e77(profile, b, state)
-		case 0x25f324f7:
-			return layerDecodeWire25f324f7(profile, b, state)
-		case 0x2661bf09:
-			return layerDecodeWire2661bf09(profile, b, state)
-		case 0x26ffde7d:
-			return layerDecodeWire26ffde7d(profile, b, state)
-		case 0x28373599:
-			return layerDecodeWire28373599(profile, b, state)
-		case 0x283bd312:
-			return layerDecodeWire283bd312(profile, b, state)
-		case 0x2a17bf5c:
-			return layerDecodeWire2a17bf5c(profile, b, state)
-		case 0x2c084dc1:
-			return layerDecodeWire2c084dc1(profile, b, state)
-		case 0x2f2ba99f:
-			return layerDecodeWire2f2ba99f(profile, b, state)
-		case 0x2f2f21bf:
-			return layerDecodeWire2f2f21bf(profile, b, state)
-		case 0x30f443db:
-			return layerDecodeWire30f443db(profile, b, state)
-		case 0x31c24808:
-			return layerDecodeWire31c24808(profile, b, state)
-		case 0x3354678f:
-			return layerDecodeWire3354678f(profile, b, state)
-		case 0x3504914f:
-			return layerDecodeWire3504914f(profile, b, state)
-		case 0x38fe25b7:
-			return layerDecodeWire38fe25b7(profile, b, state)
-		case 0x39a51dfb:
-			return layerDecodeWire39a51dfb(profile, b, state)
-		case 0x39c67432:
-			return layerDecodeWire39c67432(profile, b, state)
-		case 0x3dda5451:
-			return layerDecodeWire3dda5451(profile, b, state)
-		case 0x3e050d0f:
-			return layerDecodeWire3e050d0f(profile, b, state)
-		case 0x3e85e92c:
-			return layerDecodeWire3e85e92c(profile, b, state)
-		case 0x46560264:
-			return layerDecodeWire46560264(profile, b, state)
-		case 0x48e246c2:
-			return layerDecodeWire48e246c2(profile, b, state)
-		case 0x496f379c:
-			return layerDecodeWire496f379c(profile, b, state)
-		case 0x4d712f2e:
-			return layerDecodeWire4d712f2e(profile, b, state)
-		case 0x4e80a379:
-			return layerDecodeWire4e80a379(profile, b, state)
-		case 0x4e90bfd6:
-			return layerDecodeWire4e90bfd6(profile, b, state)
-		case 0x504aa18f:
-			return layerDecodeWire504aa18f(profile, b, state)
-		case 0x53e6f1ec:
-			return layerDecodeWire53e6f1ec(profile, b, state)
-		case 0x54c01850:
-			return layerDecodeWire54c01850(profile, b, state)
-		case 0x56022f4d:
-			return layerDecodeWire56022f4d(profile, b, state)
-		case 0x564fe691:
-			return layerDecodeWire564fe691(profile, b, state)
-		case 0x566fe7cd:
-			return layerDecodeWire566fe7cd(profile, b, state)
-		case 0x571d2742:
-			return layerDecodeWire571d2742(profile, b, state)
-		case 0x5bb98608:
-			return layerDecodeWire5bb98608(profile, b, state)
-		case 0x62ba04d9:
-			return layerDecodeWire62ba04d9(profile, b, state)
-		case 0x635b4c09:
-			return layerDecodeWire635b4c09(profile, b, state)
-		case 0x683b2c52:
-			return layerDecodeWire683b2c52(profile, b, state)
-		case 0x686c85a6:
-			return layerDecodeWire686c85a6(profile, b, state)
-		case 0x688a30aa:
-			return layerDecodeWire688a30aa(profile, b, state)
-		case 0x691e9052:
-			return layerDecodeWire691e9052(profile, b, state)
-		case 0x695c9e7c:
-			return layerDecodeWire695c9e7c(profile, b, state)
-		case 0x6a7e7366:
-			return layerDecodeWire6a7e7366(profile, b, state)
-		case 0x6e6fe51c:
-			return layerDecodeWire6e6fe51c(profile, b, state)
-		case 0x6f7863f4:
-			return layerDecodeWire6f7863f4(profile, b, state)
-		case 0x7063c3db:
-			return layerDecodeWire7063c3db(profile, b, state)
-		case 0x7084a7be:
-			return layerDecodeWire7084a7be(profile, b, state)
-		case 0x74d8be99:
-			return layerDecodeWire74d8be99(profile, b, state)
-		case 0x75b3b798:
-			return layerDecodeWire75b3b798(profile, b, state)
-		case 0x77b0e372:
-			return layerDecodeWire77b0e372(profile, b, state)
-		case 0x7d627683:
-			return layerDecodeWire7d627683(profile, b, state)
-		case 0x7f891213:
-			return layerDecodeWire7f891213(profile, b, state)
-		case 0x8216fba3:
-			return layerDecodeWire8216fba3(profile, b, state)
-		case 0x8317c0c3:
-			return layerDecodeWire8317c0c3(profile, b, state)
-		case 0x83487af0:
-			return layerDecodeWire83487af0(profile, b, state)
-		case 0x86fccf85:
-			return layerDecodeWire86fccf85(profile, b, state)
-		case 0x871fb939:
-			return layerDecodeWire871fb939(profile, b, state)
-		case 0x8951abef:
-			return layerDecodeWire8951abef(profile, b, state)
-		case 0x8ae5c97a:
-			return layerDecodeWire8ae5c97a(profile, b, state)
-		case 0x8b725fce:
-			return layerDecodeWire8b725fce(profile, b, state)
-		case 0x8c88c923:
-			return layerDecodeWire8c88c923(profile, b, state)
-		case 0x8caa9a96:
-			return layerDecodeWire8caa9a96(profile, b, state)
-		case 0x8e5e9873:
-			return layerDecodeWire8e5e9873(profile, b, state)
-		case 0x904dd49c:
-			return layerDecodeWire904dd49c(profile, b, state)
-		case 0x922e6e10:
-			return layerDecodeWire922e6e10(profile, b, state)
-		case 0x9375341e:
-			return layerDecodeWire9375341e(profile, b, state)
-		case 0x985d3abb:
-			return layerDecodeWire985d3abb(profile, b, state)
-		case 0x9a422c20:
-			return layerDecodeWire9a422c20(profile, b, state)
-		case 0x9b9240a6:
-			return layerDecodeWire9b9240a6(profile, b, state)
-		case 0x9d2216e0:
-			return layerDecodeWire9d2216e0(profile, b, state)
-		case 0x9ddb347c:
-			return layerDecodeWire9ddb347c(profile, b, state)
-		case 0x9e84bc99:
-			return layerDecodeWire9e84bc99(profile, b, state)
-		case 0x9f812b08:
-			return layerDecodeWire9f812b08(profile, b, state)
-		case 0xa02a982e:
-			return layerDecodeWirea02a982e(profile, b, state)
-		case 0xa20db0e5:
-			return layerDecodeWirea20db0e5(profile, b, state)
-		case 0xa229dd06:
-			return layerDecodeWirea229dd06(profile, b, state)
-		case 0xa477288f:
-			return layerDecodeWirea477288f(profile, b, state)
-		case 0xa4a79376:
-			return layerDecodeWirea4a79376(profile, b, state)
-		case 0xa584b019:
-			return layerDecodeWirea584b019(profile, b, state)
-		case 0xa5d72105:
-			return layerDecodeWirea5d72105(profile, b, state)
-		case 0xa7848924:
-			return layerDecodeWirea7848924(profile, b, state)
-		case 0xab0f6b1e:
-			return layerDecodeWireab0f6b1e(profile, b, state)
-		case 0xac21d3ce:
-			return layerDecodeWireac21d3ce(profile, b, state)
-		case 0xaca1657b:
-			return layerDecodeWireaca1657b(profile, b, state)
-		case 0xae3f101d:
-			return layerDecodeWireae3f101d(profile, b, state)
-		case 0xaeaf9e74:
-			return layerDecodeWireaeaf9e74(profile, b, state)
-		case 0xb23fc698:
-			return layerDecodeWireb23fc698(profile, b, state)
-		case 0xb4a2e88d:
-			return layerDecodeWireb4a2e88d(profile, b, state)
-		case 0xb4afcfb0:
-			return layerDecodeWireb4afcfb0(profile, b, state)
-		case 0xb5aefd7d:
-			return layerDecodeWireb5aefd7d(profile, b, state)
-		case 0xb658f23e:
-			return layerDecodeWireb658f23e(profile, b, state)
-		case 0xb75f99a9:
-			return layerDecodeWireb75f99a9(profile, b, state)
-		case 0xb9cfc48d:
-			return layerDecodeWireb9cfc48d(profile, b, state)
-		case 0xbb9bb9a5:
-			return layerDecodeWirebb9bb9a5(profile, b, state)
-		case 0xbec268ef:
-			return layerDecodeWirebec268ef(profile, b, state)
-		case 0xc32d5b12:
-			return layerDecodeWirec32d5b12(profile, b, state)
-		case 0xc4870a49:
-			return layerDecodeWirec4870a49(profile, b, state)
-		case 0xc957a766:
-			return layerDecodeWirec957a766(profile, b, state)
-		case 0xd087663a:
-			return layerDecodeWired087663a(profile, b, state)
-		case 0xd29a27f4:
-			return layerDecodeWired29a27f4(profile, b, state)
-		case 0xd5a41724:
-			return layerDecodeWired5a41724(profile, b, state)
-		case 0xd6b19546:
-			return layerDecodeWired6b19546(profile, b, state)
-		case 0xd7ca61a2:
-			return layerDecodeWired7ca61a2(profile, b, state)
-		case 0xd8326f0d:
-			return layerDecodeWired8326f0d(profile, b, state)
-		case 0xdc58f31e:
-			return layerDecodeWiredc58f31e(profile, b, state)
-		case 0xdef143d0:
-			return layerDecodeWiredef143d0(profile, b, state)
-		case 0xe32f3d77:
-			return layerDecodeWiree32f3d77(profile, b, state)
-		case 0xe40370a3:
-			return layerDecodeWiree40370a3(profile, b, state)
-		case 0xe511996d:
-			return layerDecodeWiree511996d(profile, b, state)
-		case 0xe5bdf8de:
-			return layerDecodeWiree5bdf8de(profile, b, state)
-		case 0xebe07752:
-			return layerDecodeWireebe07752(profile, b, state)
-		case 0xebe46819:
-			return layerDecodeWireebe46819(profile, b, state)
-		case 0xec05b097:
-			return layerDecodeWireec05b097(profile, b, state)
-		case 0xed85eab5:
-			return layerDecodeWireed85eab5(profile, b, state)
-		case 0xedfc111e:
-			return layerDecodeWireedfc111e(profile, b, state)
-		case 0xee3b272a:
-			return layerDecodeWireee3b272a(profile, b, state)
-		case 0xf16269d4:
-			return layerDecodeWiref16269d4(profile, b, state)
-		case 0xf226ac08:
-			return layerDecodeWiref226ac08(profile, b, state)
-		case 0xf2a71983:
-			return layerDecodeWiref2a71983(profile, b, state)
-		case 0xf2ebdb4e:
-			return layerDecodeWiref2ebdb4e(profile, b, state)
-		case 0xf53da717:
-			return layerDecodeWiref53da717(profile, b, state)
-		case 0xf74e932b:
-			return layerDecodeWiref74e932b(profile, b, state)
-		case 0xf8227181:
-			return layerDecodeWiref8227181(profile, b, state)
-		case 0xf89a6a4e:
-			return layerDecodeWiref89a6a4e(profile, b, state)
-		case 0xf9470ab2:
-			return layerDecodeWiref9470ab2(profile, b, state)
-		case 0xfa0f3ca2:
-			return layerDecodeWirefa0f3ca2(profile, b, state)
-		case 0xfb4c496c:
-			return layerDecodeWirefb4c496c(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile221:
-		switch id {
-		case 0x0084cd5a:
-			return layerDecodeWire0084cd5a(profile, b, state)
-		case 0x05492a13:
-			return layerDecodeWire05492a13(profile, b, state)
-		case 0x07761198:
-			return layerDecodeWire07761198(profile, b, state)
-		case 0x07b68920:
-			return layerDecodeWire07b68920(profile, b, state)
-		case 0x07df587c:
-			return layerDecodeWire07df587c(profile, b, state)
-		case 0x09cb7759:
-			return layerDecodeWire09cb7759(profile, b, state)
-		case 0x0b783982:
-			return layerDecodeWire0b783982(profile, b, state)
-		case 0x0bb2d201:
-			return layerDecodeWire0bb2d201(profile, b, state)
-		case 0x108d941f:
-			return layerDecodeWire108d941f(profile, b, state)
-		case 0x11dfa986:
-			return layerDecodeWire11dfa986(profile, b, state)
-		case 0x12bcbd9a:
-			return layerDecodeWire12bcbd9a(profile, b, state)
-		case 0x12f12a07:
-			return layerDecodeWire12f12a07(profile, b, state)
-		case 0x14b85813:
-			return layerDecodeWire14b85813(profile, b, state)
-		case 0x1592b79d:
-			return layerDecodeWire1592b79d(profile, b, state)
-		case 0x1710f156:
-			return layerDecodeWire1710f156(profile, b, state)
-		case 0x17b7a20b:
-			return layerDecodeWire17b7a20b(profile, b, state)
-		case 0x1824e40b:
-			return layerDecodeWire1824e40b(profile, b, state)
-		case 0x19360dc0:
-			return layerDecodeWire19360dc0(profile, b, state)
-		case 0x1b3f4df7:
-			return layerDecodeWire1b3f4df7(profile, b, state)
-		case 0x1bf335b9:
-			return layerDecodeWire1bf335b9(profile, b, state)
-		case 0x1e297bfa:
-			return layerDecodeWire1e297bfa(profile, b, state)
-		case 0x1ea2fda7:
-			return layerDecodeWire1ea2fda7(profile, b, state)
-		case 0x1f2b0afd:
-			return layerDecodeWire1f2b0afd(profile, b, state)
-		case 0x20529438:
-			return layerDecodeWire20529438(profile, b, state)
-		case 0x24f40e77:
-			return layerDecodeWire24f40e77(profile, b, state)
-		case 0x25f324f7:
-			return layerDecodeWire25f324f7(profile, b, state)
-		case 0x2661bf09:
-			return layerDecodeWire2661bf09(profile, b, state)
-		case 0x26ffde7d:
-			return layerDecodeWire26ffde7d(profile, b, state)
-		case 0x28373599:
-			return layerDecodeWire28373599(profile, b, state)
-		case 0x283bd312:
-			return layerDecodeWire283bd312(profile, b, state)
-		case 0x2a17bf5c:
-			return layerDecodeWire2a17bf5c(profile, b, state)
-		case 0x2c084dc1:
-			return layerDecodeWire2c084dc1(profile, b, state)
-		case 0x2f2ba99f:
-			return layerDecodeWire2f2ba99f(profile, b, state)
-		case 0x2f2f21bf:
-			return layerDecodeWire2f2f21bf(profile, b, state)
-		case 0x30f443db:
-			return layerDecodeWire30f443db(profile, b, state)
-		case 0x31c24808:
-			return layerDecodeWire31c24808(profile, b, state)
-		case 0x3354678f:
-			return layerDecodeWire3354678f(profile, b, state)
-		case 0x3504914f:
-			return layerDecodeWire3504914f(profile, b, state)
-		case 0x38fe25b7:
-			return layerDecodeWire38fe25b7(profile, b, state)
-		case 0x39a51dfb:
-			return layerDecodeWire39a51dfb(profile, b, state)
-		case 0x39c67432:
-			return layerDecodeWire39c67432(profile, b, state)
-		case 0x3dda5451:
-			return layerDecodeWire3dda5451(profile, b, state)
-		case 0x3e050d0f:
-			return layerDecodeWire3e050d0f(profile, b, state)
-		case 0x3e85e92c:
-			return layerDecodeWire3e85e92c(profile, b, state)
-		case 0x46560264:
-			return layerDecodeWire46560264(profile, b, state)
-		case 0x48e246c2:
-			return layerDecodeWire48e246c2(profile, b, state)
-		case 0x496f379c:
-			return layerDecodeWire496f379c(profile, b, state)
-		case 0x4d712f2e:
-			return layerDecodeWire4d712f2e(profile, b, state)
-		case 0x4e80a379:
-			return layerDecodeWire4e80a379(profile, b, state)
-		case 0x4e90bfd6:
-			return layerDecodeWire4e90bfd6(profile, b, state)
-		case 0x504aa18f:
-			return layerDecodeWire504aa18f(profile, b, state)
-		case 0x53e6f1ec:
-			return layerDecodeWire53e6f1ec(profile, b, state)
-		case 0x54c01850:
-			return layerDecodeWire54c01850(profile, b, state)
-		case 0x56022f4d:
-			return layerDecodeWire56022f4d(profile, b, state)
-		case 0x564fe691:
-			return layerDecodeWire564fe691(profile, b, state)
-		case 0x566fe7cd:
-			return layerDecodeWire566fe7cd(profile, b, state)
-		case 0x571d2742:
-			return layerDecodeWire571d2742(profile, b, state)
-		case 0x5bb98608:
-			return layerDecodeWire5bb98608(profile, b, state)
-		case 0x62ba04d9:
-			return layerDecodeWire62ba04d9(profile, b, state)
-		case 0x635b4c09:
-			return layerDecodeWire635b4c09(profile, b, state)
-		case 0x683b2c52:
-			return layerDecodeWire683b2c52(profile, b, state)
-		case 0x686c85a6:
-			return layerDecodeWire686c85a6(profile, b, state)
-		case 0x688a30aa:
-			return layerDecodeWire688a30aa(profile, b, state)
-		case 0x691e9052:
-			return layerDecodeWire691e9052(profile, b, state)
-		case 0x695c9e7c:
-			return layerDecodeWire695c9e7c(profile, b, state)
-		case 0x6a7e7366:
-			return layerDecodeWire6a7e7366(profile, b, state)
-		case 0x6e6fe51c:
-			return layerDecodeWire6e6fe51c(profile, b, state)
-		case 0x6f7863f4:
-			return layerDecodeWire6f7863f4(profile, b, state)
-		case 0x7063c3db:
-			return layerDecodeWire7063c3db(profile, b, state)
-		case 0x7084a7be:
-			return layerDecodeWire7084a7be(profile, b, state)
-		case 0x74d8be99:
-			return layerDecodeWire74d8be99(profile, b, state)
-		case 0x75b3b798:
-			return layerDecodeWire75b3b798(profile, b, state)
-		case 0x77b0e372:
-			return layerDecodeWire77b0e372(profile, b, state)
-		case 0x7d627683:
-			return layerDecodeWire7d627683(profile, b, state)
-		case 0x7f891213:
-			return layerDecodeWire7f891213(profile, b, state)
-		case 0x8216fba3:
-			return layerDecodeWire8216fba3(profile, b, state)
-		case 0x8317c0c3:
-			return layerDecodeWire8317c0c3(profile, b, state)
-		case 0x83487af0:
-			return layerDecodeWire83487af0(profile, b, state)
-		case 0x86fccf85:
-			return layerDecodeWire86fccf85(profile, b, state)
-		case 0x871fb939:
-			return layerDecodeWire871fb939(profile, b, state)
-		case 0x8951abef:
-			return layerDecodeWire8951abef(profile, b, state)
-		case 0x8ae5c97a:
-			return layerDecodeWire8ae5c97a(profile, b, state)
-		case 0x8b725fce:
-			return layerDecodeWire8b725fce(profile, b, state)
-		case 0x8c88c923:
-			return layerDecodeWire8c88c923(profile, b, state)
-		case 0x8caa9a96:
-			return layerDecodeWire8caa9a96(profile, b, state)
-		case 0x8e5e9873:
-			return layerDecodeWire8e5e9873(profile, b, state)
-		case 0x904dd49c:
-			return layerDecodeWire904dd49c(profile, b, state)
-		case 0x922e6e10:
-			return layerDecodeWire922e6e10(profile, b, state)
-		case 0x9375341e:
-			return layerDecodeWire9375341e(profile, b, state)
-		case 0x985d3abb:
-			return layerDecodeWire985d3abb(profile, b, state)
-		case 0x9a422c20:
-			return layerDecodeWire9a422c20(profile, b, state)
-		case 0x9b9240a6:
-			return layerDecodeWire9b9240a6(profile, b, state)
-		case 0x9d2216e0:
-			return layerDecodeWire9d2216e0(profile, b, state)
-		case 0x9ddb347c:
-			return layerDecodeWire9ddb347c(profile, b, state)
-		case 0x9e84bc99:
-			return layerDecodeWire9e84bc99(profile, b, state)
-		case 0x9f812b08:
-			return layerDecodeWire9f812b08(profile, b, state)
-		case 0xa02a982e:
-			return layerDecodeWirea02a982e(profile, b, state)
-		case 0xa20db0e5:
-			return layerDecodeWirea20db0e5(profile, b, state)
-		case 0xa229dd06:
-			return layerDecodeWirea229dd06(profile, b, state)
-		case 0xa477288f:
-			return layerDecodeWirea477288f(profile, b, state)
-		case 0xa4a79376:
-			return layerDecodeWirea4a79376(profile, b, state)
-		case 0xa584b019:
-			return layerDecodeWirea584b019(profile, b, state)
-		case 0xa5d72105:
-			return layerDecodeWirea5d72105(profile, b, state)
-		case 0xa7848924:
-			return layerDecodeWirea7848924(profile, b, state)
-		case 0xab0f6b1e:
-			return layerDecodeWireab0f6b1e(profile, b, state)
-		case 0xac21d3ce:
-			return layerDecodeWireac21d3ce(profile, b, state)
-		case 0xaca1657b:
-			return layerDecodeWireaca1657b(profile, b, state)
-		case 0xae3f101d:
-			return layerDecodeWireae3f101d(profile, b, state)
-		case 0xaeaf9e74:
-			return layerDecodeWireaeaf9e74(profile, b, state)
-		case 0xb23fc698:
-			return layerDecodeWireb23fc698(profile, b, state)
-		case 0xb4a2e88d:
-			return layerDecodeWireb4a2e88d(profile, b, state)
-		case 0xb4afcfb0:
-			return layerDecodeWireb4afcfb0(profile, b, state)
-		case 0xb5aefd7d:
-			return layerDecodeWireb5aefd7d(profile, b, state)
-		case 0xb658f23e:
-			return layerDecodeWireb658f23e(profile, b, state)
-		case 0xb75f99a9:
-			return layerDecodeWireb75f99a9(profile, b, state)
-		case 0xb9cfc48d:
-			return layerDecodeWireb9cfc48d(profile, b, state)
-		case 0xbb9bb9a5:
-			return layerDecodeWirebb9bb9a5(profile, b, state)
-		case 0xbec268ef:
-			return layerDecodeWirebec268ef(profile, b, state)
-		case 0xc32d5b12:
-			return layerDecodeWirec32d5b12(profile, b, state)
-		case 0xc4870a49:
-			return layerDecodeWirec4870a49(profile, b, state)
-		case 0xc957a766:
-			return layerDecodeWirec957a766(profile, b, state)
-		case 0xd087663a:
-			return layerDecodeWired087663a(profile, b, state)
-		case 0xd29a27f4:
-			return layerDecodeWired29a27f4(profile, b, state)
-		case 0xd5a41724:
-			return layerDecodeWired5a41724(profile, b, state)
-		case 0xd6b19546:
-			return layerDecodeWired6b19546(profile, b, state)
-		case 0xd7ca61a2:
-			return layerDecodeWired7ca61a2(profile, b, state)
-		case 0xd8326f0d:
-			return layerDecodeWired8326f0d(profile, b, state)
-		case 0xdc58f31e:
-			return layerDecodeWiredc58f31e(profile, b, state)
-		case 0xdef143d0:
-			return layerDecodeWiredef143d0(profile, b, state)
-		case 0xe32f3d77:
-			return layerDecodeWiree32f3d77(profile, b, state)
-		case 0xe40370a3:
-			return layerDecodeWiree40370a3(profile, b, state)
-		case 0xe511996d:
-			return layerDecodeWiree511996d(profile, b, state)
-		case 0xe5bdf8de:
-			return layerDecodeWiree5bdf8de(profile, b, state)
-		case 0xebe07752:
-			return layerDecodeWireebe07752(profile, b, state)
-		case 0xebe46819:
-			return layerDecodeWireebe46819(profile, b, state)
-		case 0xec05b097:
-			return layerDecodeWireec05b097(profile, b, state)
-		case 0xed85eab5:
-			return layerDecodeWireed85eab5(profile, b, state)
-		case 0xedfc111e:
-			return layerDecodeWireedfc111e(profile, b, state)
-		case 0xee3b272a:
-			return layerDecodeWireee3b272a(profile, b, state)
-		case 0xf16269d4:
-			return layerDecodeWiref16269d4(profile, b, state)
-		case 0xf226ac08:
-			return layerDecodeWiref226ac08(profile, b, state)
-		case 0xf2a71983:
-			return layerDecodeWiref2a71983(profile, b, state)
-		case 0xf2ebdb4e:
-			return layerDecodeWiref2ebdb4e(profile, b, state)
-		case 0xf53da717:
-			return layerDecodeWiref53da717(profile, b, state)
-		case 0xf74e932b:
-			return layerDecodeWiref74e932b(profile, b, state)
-		case 0xf8227181:
-			return layerDecodeWiref8227181(profile, b, state)
-		case 0xf89a6a4e:
-			return layerDecodeWiref89a6a4e(profile, b, state)
-		case 0xf9470ab2:
-			return layerDecodeWiref9470ab2(profile, b, state)
-		case 0xfa0f3ca2:
-			return layerDecodeWirefa0f3ca2(profile, b, state)
-		case 0xfb4c496c:
-			return layerDecodeWirefb4c496c(profile, b, state)
-		case 0xfb9c547a:
-			return layerDecodeWirefb9c547a(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222:
-		switch id {
-		case 0x0084cd5a:
-			return layerDecodeWire0084cd5a(profile, b, state)
-		case 0x05492a13:
-			return layerDecodeWire05492a13(profile, b, state)
-		case 0x07761198:
-			return layerDecodeWire07761198(profile, b, state)
-		case 0x07b68920:
-			return layerDecodeWire07b68920(profile, b, state)
-		case 0x07df587c:
-			return layerDecodeWire07df587c(profile, b, state)
-		case 0x09cb7759:
-			return layerDecodeWire09cb7759(profile, b, state)
-		case 0x0b783982:
-			return layerDecodeWire0b783982(profile, b, state)
-		case 0x0bb2d201:
-			return layerDecodeWire0bb2d201(profile, b, state)
-		case 0x108d941f:
-			return layerDecodeWire108d941f(profile, b, state)
-		case 0x11dfa986:
-			return layerDecodeWire11dfa986(profile, b, state)
-		case 0x12bcbd9a:
-			return layerDecodeWire12bcbd9a(profile, b, state)
-		case 0x12f12a07:
-			return layerDecodeWire12f12a07(profile, b, state)
-		case 0x14b85813:
-			return layerDecodeWire14b85813(profile, b, state)
-		case 0x1592b79d:
-			return layerDecodeWire1592b79d(profile, b, state)
-		case 0x1710f156:
-			return layerDecodeWire1710f156(profile, b, state)
-		case 0x17b7a20b:
-			return layerDecodeWire17b7a20b(profile, b, state)
-		case 0x1824e40b:
-			return layerDecodeWire1824e40b(profile, b, state)
-		case 0x19360dc0:
-			return layerDecodeWire19360dc0(profile, b, state)
-		case 0x1b3f4df7:
-			return layerDecodeWire1b3f4df7(profile, b, state)
-		case 0x1bf335b9:
-			return layerDecodeWire1bf335b9(profile, b, state)
-		case 0x1e297bfa:
-			return layerDecodeWire1e297bfa(profile, b, state)
-		case 0x1ea2fda7:
-			return layerDecodeWire1ea2fda7(profile, b, state)
-		case 0x1f2b0afd:
-			return layerDecodeWire1f2b0afd(profile, b, state)
-		case 0x20529438:
-			return layerDecodeWire20529438(profile, b, state)
-		case 0x24f40e77:
-			return layerDecodeWire24f40e77(profile, b, state)
-		case 0x25f324f7:
-			return layerDecodeWire25f324f7(profile, b, state)
-		case 0x2661bf09:
-			return layerDecodeWire2661bf09(profile, b, state)
-		case 0x26ffde7d:
-			return layerDecodeWire26ffde7d(profile, b, state)
-		case 0x28373599:
-			return layerDecodeWire28373599(profile, b, state)
-		case 0x283bd312:
-			return layerDecodeWire283bd312(profile, b, state)
-		case 0x2a17bf5c:
-			return layerDecodeWire2a17bf5c(profile, b, state)
-		case 0x2c084dc1:
-			return layerDecodeWire2c084dc1(profile, b, state)
-		case 0x2f2ba99f:
-			return layerDecodeWire2f2ba99f(profile, b, state)
-		case 0x2f2f21bf:
-			return layerDecodeWire2f2f21bf(profile, b, state)
-		case 0x30f443db:
-			return layerDecodeWire30f443db(profile, b, state)
-		case 0x31c24808:
-			return layerDecodeWire31c24808(profile, b, state)
-		case 0x3354678f:
-			return layerDecodeWire3354678f(profile, b, state)
-		case 0x3504914f:
-			return layerDecodeWire3504914f(profile, b, state)
-		case 0x38fe25b7:
-			return layerDecodeWire38fe25b7(profile, b, state)
-		case 0x39a51dfb:
-			return layerDecodeWire39a51dfb(profile, b, state)
-		case 0x39c67432:
-			return layerDecodeWire39c67432(profile, b, state)
-		case 0x3dda5451:
-			return layerDecodeWire3dda5451(profile, b, state)
-		case 0x3e050d0f:
-			return layerDecodeWire3e050d0f(profile, b, state)
-		case 0x3e85e92c:
-			return layerDecodeWire3e85e92c(profile, b, state)
-		case 0x46560264:
-			return layerDecodeWire46560264(profile, b, state)
-		case 0x48e246c2:
-			return layerDecodeWire48e246c2(profile, b, state)
-		case 0x496f379c:
-			return layerDecodeWire496f379c(profile, b, state)
-		case 0x4d712f2e:
-			return layerDecodeWire4d712f2e(profile, b, state)
-		case 0x4e80a379:
-			return layerDecodeWire4e80a379(profile, b, state)
-		case 0x4e90bfd6:
-			return layerDecodeWire4e90bfd6(profile, b, state)
-		case 0x504aa18f:
-			return layerDecodeWire504aa18f(profile, b, state)
-		case 0x53e6f1ec:
-			return layerDecodeWire53e6f1ec(profile, b, state)
-		case 0x54c01850:
-			return layerDecodeWire54c01850(profile, b, state)
-		case 0x56022f4d:
-			return layerDecodeWire56022f4d(profile, b, state)
-		case 0x564fe691:
-			return layerDecodeWire564fe691(profile, b, state)
-		case 0x566fe7cd:
-			return layerDecodeWire566fe7cd(profile, b, state)
-		case 0x571d2742:
-			return layerDecodeWire571d2742(profile, b, state)
-		case 0x5bb98608:
-			return layerDecodeWire5bb98608(profile, b, state)
-		case 0x62ba04d9:
-			return layerDecodeWire62ba04d9(profile, b, state)
-		case 0x635b4c09:
-			return layerDecodeWire635b4c09(profile, b, state)
-		case 0x683b2c52:
-			return layerDecodeWire683b2c52(profile, b, state)
-		case 0x686c85a6:
-			return layerDecodeWire686c85a6(profile, b, state)
-		case 0x688a30aa:
-			return layerDecodeWire688a30aa(profile, b, state)
-		case 0x691e9052:
-			return layerDecodeWire691e9052(profile, b, state)
-		case 0x695c9e7c:
-			return layerDecodeWire695c9e7c(profile, b, state)
-		case 0x6a7e7366:
-			return layerDecodeWire6a7e7366(profile, b, state)
-		case 0x6e6fe51c:
-			return layerDecodeWire6e6fe51c(profile, b, state)
-		case 0x6f7863f4:
-			return layerDecodeWire6f7863f4(profile, b, state)
-		case 0x7063c3db:
-			return layerDecodeWire7063c3db(profile, b, state)
-		case 0x7084a7be:
-			return layerDecodeWire7084a7be(profile, b, state)
-		case 0x74d8be99:
-			return layerDecodeWire74d8be99(profile, b, state)
-		case 0x75b3b798:
-			return layerDecodeWire75b3b798(profile, b, state)
-		case 0x77b0e372:
-			return layerDecodeWire77b0e372(profile, b, state)
-		case 0x7d627683:
-			return layerDecodeWire7d627683(profile, b, state)
-		case 0x7f891213:
-			return layerDecodeWire7f891213(profile, b, state)
-		case 0x8216fba3:
-			return layerDecodeWire8216fba3(profile, b, state)
-		case 0x8317c0c3:
-			return layerDecodeWire8317c0c3(profile, b, state)
-		case 0x83487af0:
-			return layerDecodeWire83487af0(profile, b, state)
-		case 0x86fccf85:
-			return layerDecodeWire86fccf85(profile, b, state)
-		case 0x871fb939:
-			return layerDecodeWire871fb939(profile, b, state)
-		case 0x8951abef:
-			return layerDecodeWire8951abef(profile, b, state)
-		case 0x8ae5c97a:
-			return layerDecodeWire8ae5c97a(profile, b, state)
-		case 0x8b725fce:
-			return layerDecodeWire8b725fce(profile, b, state)
-		case 0x8c88c923:
-			return layerDecodeWire8c88c923(profile, b, state)
-		case 0x8caa9a96:
-			return layerDecodeWire8caa9a96(profile, b, state)
-		case 0x8e5e9873:
-			return layerDecodeWire8e5e9873(profile, b, state)
-		case 0x904dd49c:
-			return layerDecodeWire904dd49c(profile, b, state)
-		case 0x922e6e10:
-			return layerDecodeWire922e6e10(profile, b, state)
-		case 0x9375341e:
-			return layerDecodeWire9375341e(profile, b, state)
-		case 0x985d3abb:
-			return layerDecodeWire985d3abb(profile, b, state)
-		case 0x9a422c20:
-			return layerDecodeWire9a422c20(profile, b, state)
-		case 0x9b9240a6:
-			return layerDecodeWire9b9240a6(profile, b, state)
-		case 0x9d2216e0:
-			return layerDecodeWire9d2216e0(profile, b, state)
-		case 0x9ddb347c:
-			return layerDecodeWire9ddb347c(profile, b, state)
-		case 0x9e84bc99:
-			return layerDecodeWire9e84bc99(profile, b, state)
-		case 0x9f812b08:
-			return layerDecodeWire9f812b08(profile, b, state)
-		case 0xa02a982e:
-			return layerDecodeWirea02a982e(profile, b, state)
-		case 0xa20db0e5:
-			return layerDecodeWirea20db0e5(profile, b, state)
-		case 0xa229dd06:
-			return layerDecodeWirea229dd06(profile, b, state)
-		case 0xa477288f:
-			return layerDecodeWirea477288f(profile, b, state)
-		case 0xa4a79376:
-			return layerDecodeWirea4a79376(profile, b, state)
-		case 0xa584b019:
-			return layerDecodeWirea584b019(profile, b, state)
-		case 0xa5d72105:
-			return layerDecodeWirea5d72105(profile, b, state)
-		case 0xa7848924:
-			return layerDecodeWirea7848924(profile, b, state)
-		case 0xab0f6b1e:
-			return layerDecodeWireab0f6b1e(profile, b, state)
-		case 0xac072444:
-			return layerDecodeWireac072444(profile, b, state)
-		case 0xac21d3ce:
-			return layerDecodeWireac21d3ce(profile, b, state)
-		case 0xaca1657b:
-			return layerDecodeWireaca1657b(profile, b, state)
-		case 0xae3f101d:
-			return layerDecodeWireae3f101d(profile, b, state)
-		case 0xaeaf9e74:
-			return layerDecodeWireaeaf9e74(profile, b, state)
-		case 0xb23fc698:
-			return layerDecodeWireb23fc698(profile, b, state)
-		case 0xb4a2e88d:
-			return layerDecodeWireb4a2e88d(profile, b, state)
-		case 0xb4afcfb0:
-			return layerDecodeWireb4afcfb0(profile, b, state)
-		case 0xb5aefd7d:
-			return layerDecodeWireb5aefd7d(profile, b, state)
-		case 0xb658f23e:
-			return layerDecodeWireb658f23e(profile, b, state)
-		case 0xb75f99a9:
-			return layerDecodeWireb75f99a9(profile, b, state)
-		case 0xb9cfc48d:
-			return layerDecodeWireb9cfc48d(profile, b, state)
-		case 0xbb9bb9a5:
-			return layerDecodeWirebb9bb9a5(profile, b, state)
-		case 0xbec268ef:
-			return layerDecodeWirebec268ef(profile, b, state)
-		case 0xc32d5b12:
-			return layerDecodeWirec32d5b12(profile, b, state)
-		case 0xc4870a49:
-			return layerDecodeWirec4870a49(profile, b, state)
-		case 0xc957a766:
-			return layerDecodeWirec957a766(profile, b, state)
-		case 0xd087663a:
-			return layerDecodeWired087663a(profile, b, state)
-		case 0xd29a27f4:
-			return layerDecodeWired29a27f4(profile, b, state)
-		case 0xd5a41724:
-			return layerDecodeWired5a41724(profile, b, state)
-		case 0xd6b19546:
-			return layerDecodeWired6b19546(profile, b, state)
-		case 0xd7ca61a2:
-			return layerDecodeWired7ca61a2(profile, b, state)
-		case 0xd8326f0d:
-			return layerDecodeWired8326f0d(profile, b, state)
-		case 0xdc58f31e:
-			return layerDecodeWiredc58f31e(profile, b, state)
-		case 0xdef143d0:
-			return layerDecodeWiredef143d0(profile, b, state)
-		case 0xe32f3d77:
-			return layerDecodeWiree32f3d77(profile, b, state)
-		case 0xe40370a3:
-			return layerDecodeWiree40370a3(profile, b, state)
-		case 0xe511996d:
-			return layerDecodeWiree511996d(profile, b, state)
-		case 0xe5bdf8de:
-			return layerDecodeWiree5bdf8de(profile, b, state)
-		case 0xebe07752:
-			return layerDecodeWireebe07752(profile, b, state)
-		case 0xebe46819:
-			return layerDecodeWireebe46819(profile, b, state)
-		case 0xec05b097:
-			return layerDecodeWireec05b097(profile, b, state)
-		case 0xed85eab5:
-			return layerDecodeWireed85eab5(profile, b, state)
-		case 0xedfc111e:
-			return layerDecodeWireedfc111e(profile, b, state)
-		case 0xee3b272a:
-			return layerDecodeWireee3b272a(profile, b, state)
-		case 0xf16269d4:
-			return layerDecodeWiref16269d4(profile, b, state)
-		case 0xf226ac08:
-			return layerDecodeWiref226ac08(profile, b, state)
-		case 0xf2a71983:
-			return layerDecodeWiref2a71983(profile, b, state)
-		case 0xf2ebdb4e:
-			return layerDecodeWiref2ebdb4e(profile, b, state)
-		case 0xf53da717:
-			return layerDecodeWiref53da717(profile, b, state)
-		case 0xf74e932b:
-			return layerDecodeWiref74e932b(profile, b, state)
-		case 0xf8227181:
-			return layerDecodeWiref8227181(profile, b, state)
-		case 0xf89a6a4e:
-			return layerDecodeWiref89a6a4e(profile, b, state)
-		case 0xf9470ab2:
-			return layerDecodeWiref9470ab2(profile, b, state)
-		case 0xfa0f3ca2:
-			return layerDecodeWirefa0f3ca2(profile, b, state)
-		case 0xfb4c496c:
-			return layerDecodeWirefb4c496c(profile, b, state)
-		case 0xfb9c547a:
-			return layerDecodeWirefb9c547a(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223:
-		switch id {
-		case 0x0084cd5a:
-			return layerDecodeWire0084cd5a(profile, b, state)
-		case 0x05492a13:
-			return layerDecodeWire05492a13(profile, b, state)
-		case 0x07761198:
-			return layerDecodeWire07761198(profile, b, state)
-		case 0x07b68920:
-			return layerDecodeWire07b68920(profile, b, state)
-		case 0x07df587c:
-			return layerDecodeWire07df587c(profile, b, state)
-		case 0x09cb7759:
-			return layerDecodeWire09cb7759(profile, b, state)
-		case 0x0b783982:
-			return layerDecodeWire0b783982(profile, b, state)
-		case 0x0bb2d201:
-			return layerDecodeWire0bb2d201(profile, b, state)
-		case 0x108d941f:
-			return layerDecodeWire108d941f(profile, b, state)
-		case 0x11dfa986:
-			return layerDecodeWire11dfa986(profile, b, state)
-		case 0x12bcbd9a:
-			return layerDecodeWire12bcbd9a(profile, b, state)
-		case 0x12f12a07:
-			return layerDecodeWire12f12a07(profile, b, state)
-		case 0x14b85813:
-			return layerDecodeWire14b85813(profile, b, state)
-		case 0x1592b79d:
-			return layerDecodeWire1592b79d(profile, b, state)
-		case 0x1710f156:
-			return layerDecodeWire1710f156(profile, b, state)
-		case 0x17b7a20b:
-			return layerDecodeWire17b7a20b(profile, b, state)
-		case 0x1824e40b:
-			return layerDecodeWire1824e40b(profile, b, state)
-		case 0x19360dc0:
-			return layerDecodeWire19360dc0(profile, b, state)
-		case 0x1b3f4df7:
-			return layerDecodeWire1b3f4df7(profile, b, state)
-		case 0x1bf335b9:
-			return layerDecodeWire1bf335b9(profile, b, state)
-		case 0x1e297bfa:
-			return layerDecodeWire1e297bfa(profile, b, state)
-		case 0x1ea2fda7:
-			return layerDecodeWire1ea2fda7(profile, b, state)
-		case 0x1f2b0afd:
-			return layerDecodeWire1f2b0afd(profile, b, state)
-		case 0x20529438:
-			return layerDecodeWire20529438(profile, b, state)
-		case 0x24f40e77:
-			return layerDecodeWire24f40e77(profile, b, state)
-		case 0x25f324f7:
-			return layerDecodeWire25f324f7(profile, b, state)
-		case 0x2661bf09:
-			return layerDecodeWire2661bf09(profile, b, state)
-		case 0x26ffde7d:
-			return layerDecodeWire26ffde7d(profile, b, state)
-		case 0x28373599:
-			return layerDecodeWire28373599(profile, b, state)
-		case 0x283bd312:
-			return layerDecodeWire283bd312(profile, b, state)
-		case 0x2a17bf5c:
-			return layerDecodeWire2a17bf5c(profile, b, state)
-		case 0x2c084dc1:
-			return layerDecodeWire2c084dc1(profile, b, state)
-		case 0x2f2ba99f:
-			return layerDecodeWire2f2ba99f(profile, b, state)
-		case 0x2f2f21bf:
-			return layerDecodeWire2f2f21bf(profile, b, state)
-		case 0x30f443db:
-			return layerDecodeWire30f443db(profile, b, state)
-		case 0x31c24808:
-			return layerDecodeWire31c24808(profile, b, state)
-		case 0x3354678f:
-			return layerDecodeWire3354678f(profile, b, state)
-		case 0x3504914f:
-			return layerDecodeWire3504914f(profile, b, state)
-		case 0x38fe25b7:
-			return layerDecodeWire38fe25b7(profile, b, state)
-		case 0x39a51dfb:
-			return layerDecodeWire39a51dfb(profile, b, state)
-		case 0x39c67432:
-			return layerDecodeWire39c67432(profile, b, state)
-		case 0x3dda5451:
-			return layerDecodeWire3dda5451(profile, b, state)
-		case 0x3e050d0f:
-			return layerDecodeWire3e050d0f(profile, b, state)
-		case 0x3e85e92c:
-			return layerDecodeWire3e85e92c(profile, b, state)
-		case 0x46560264:
-			return layerDecodeWire46560264(profile, b, state)
-		case 0x48e246c2:
-			return layerDecodeWire48e246c2(profile, b, state)
-		case 0x496f379c:
-			return layerDecodeWire496f379c(profile, b, state)
-		case 0x4d712f2e:
-			return layerDecodeWire4d712f2e(profile, b, state)
-		case 0x4e80a379:
-			return layerDecodeWire4e80a379(profile, b, state)
-		case 0x4e90bfd6:
-			return layerDecodeWire4e90bfd6(profile, b, state)
-		case 0x504aa18f:
-			return layerDecodeWire504aa18f(profile, b, state)
-		case 0x53e6f1ec:
-			return layerDecodeWire53e6f1ec(profile, b, state)
-		case 0x54c01850:
-			return layerDecodeWire54c01850(profile, b, state)
-		case 0x56022f4d:
-			return layerDecodeWire56022f4d(profile, b, state)
-		case 0x564fe691:
-			return layerDecodeWire564fe691(profile, b, state)
-		case 0x566fe7cd:
-			return layerDecodeWire566fe7cd(profile, b, state)
-		case 0x571d2742:
-			return layerDecodeWire571d2742(profile, b, state)
-		case 0x5bb98608:
-			return layerDecodeWire5bb98608(profile, b, state)
-		case 0x62ba04d9:
-			return layerDecodeWire62ba04d9(profile, b, state)
-		case 0x635b4c09:
-			return layerDecodeWire635b4c09(profile, b, state)
-		case 0x683b2c52:
-			return layerDecodeWire683b2c52(profile, b, state)
-		case 0x686c85a6:
-			return layerDecodeWire686c85a6(profile, b, state)
-		case 0x688a30aa:
-			return layerDecodeWire688a30aa(profile, b, state)
-		case 0x691e9052:
-			return layerDecodeWire691e9052(profile, b, state)
-		case 0x695c9e7c:
-			return layerDecodeWire695c9e7c(profile, b, state)
-		case 0x6a7e7366:
-			return layerDecodeWire6a7e7366(profile, b, state)
-		case 0x6e6fe51c:
-			return layerDecodeWire6e6fe51c(profile, b, state)
-		case 0x6f7863f4:
-			return layerDecodeWire6f7863f4(profile, b, state)
-		case 0x7063c3db:
-			return layerDecodeWire7063c3db(profile, b, state)
-		case 0x7084a7be:
-			return layerDecodeWire7084a7be(profile, b, state)
-		case 0x74d8be99:
-			return layerDecodeWire74d8be99(profile, b, state)
-		case 0x75b3b798:
-			return layerDecodeWire75b3b798(profile, b, state)
-		case 0x77b0e372:
-			return layerDecodeWire77b0e372(profile, b, state)
-		case 0x7d627683:
-			return layerDecodeWire7d627683(profile, b, state)
-		case 0x7f891213:
-			return layerDecodeWire7f891213(profile, b, state)
-		case 0x8216fba3:
-			return layerDecodeWire8216fba3(profile, b, state)
-		case 0x8317c0c3:
-			return layerDecodeWire8317c0c3(profile, b, state)
-		case 0x83487af0:
-			return layerDecodeWire83487af0(profile, b, state)
-		case 0x86fccf85:
-			return layerDecodeWire86fccf85(profile, b, state)
-		case 0x871fb939:
-			return layerDecodeWire871fb939(profile, b, state)
-		case 0x8951abef:
-			return layerDecodeWire8951abef(profile, b, state)
-		case 0x8ae5c97a:
-			return layerDecodeWire8ae5c97a(profile, b, state)
-		case 0x8b725fce:
-			return layerDecodeWire8b725fce(profile, b, state)
-		case 0x8c88c923:
-			return layerDecodeWire8c88c923(profile, b, state)
-		case 0x8caa9a96:
-			return layerDecodeWire8caa9a96(profile, b, state)
-		case 0x8e5e9873:
-			return layerDecodeWire8e5e9873(profile, b, state)
-		case 0x904dd49c:
-			return layerDecodeWire904dd49c(profile, b, state)
-		case 0x922e6e10:
-			return layerDecodeWire922e6e10(profile, b, state)
-		case 0x9375341e:
-			return layerDecodeWire9375341e(profile, b, state)
-		case 0x985d3abb:
-			return layerDecodeWire985d3abb(profile, b, state)
-		case 0x9a422c20:
-			return layerDecodeWire9a422c20(profile, b, state)
-		case 0x9b9240a6:
-			return layerDecodeWire9b9240a6(profile, b, state)
-		case 0x9d2216e0:
-			return layerDecodeWire9d2216e0(profile, b, state)
-		case 0x9ddb347c:
-			return layerDecodeWire9ddb347c(profile, b, state)
-		case 0x9e84bc99:
-			return layerDecodeWire9e84bc99(profile, b, state)
-		case 0x9f812b08:
-			return layerDecodeWire9f812b08(profile, b, state)
-		case 0xa02a982e:
-			return layerDecodeWirea02a982e(profile, b, state)
-		case 0xa20db0e5:
-			return layerDecodeWirea20db0e5(profile, b, state)
-		case 0xa229dd06:
-			return layerDecodeWirea229dd06(profile, b, state)
-		case 0xa477288f:
-			return layerDecodeWirea477288f(profile, b, state)
-		case 0xa4a79376:
-			return layerDecodeWirea4a79376(profile, b, state)
-		case 0xa584b019:
-			return layerDecodeWirea584b019(profile, b, state)
-		case 0xa5d72105:
-			return layerDecodeWirea5d72105(profile, b, state)
-		case 0xa7848924:
-			return layerDecodeWirea7848924(profile, b, state)
-		case 0xab0f6b1e:
-			return layerDecodeWireab0f6b1e(profile, b, state)
-		case 0xac072444:
-			return layerDecodeWireac072444(profile, b, state)
-		case 0xac21d3ce:
-			return layerDecodeWireac21d3ce(profile, b, state)
-		case 0xaca1657b:
-			return layerDecodeWireaca1657b(profile, b, state)
-		case 0xae3f101d:
-			return layerDecodeWireae3f101d(profile, b, state)
-		case 0xaeaf9e74:
-			return layerDecodeWireaeaf9e74(profile, b, state)
-		case 0xb23fc698:
-			return layerDecodeWireb23fc698(profile, b, state)
-		case 0xb4a2e88d:
-			return layerDecodeWireb4a2e88d(profile, b, state)
-		case 0xb4afcfb0:
-			return layerDecodeWireb4afcfb0(profile, b, state)
-		case 0xb5aefd7d:
-			return layerDecodeWireb5aefd7d(profile, b, state)
-		case 0xb658f23e:
-			return layerDecodeWireb658f23e(profile, b, state)
-		case 0xb75f99a9:
-			return layerDecodeWireb75f99a9(profile, b, state)
-		case 0xb9cfc48d:
-			return layerDecodeWireb9cfc48d(profile, b, state)
-		case 0xbb9bb9a5:
-			return layerDecodeWirebb9bb9a5(profile, b, state)
-		case 0xbd8367b9:
-			return layerDecodeWirebd8367b9(profile, b, state)
-		case 0xbec268ef:
-			return layerDecodeWirebec268ef(profile, b, state)
-		case 0xc32d5b12:
-			return layerDecodeWirec32d5b12(profile, b, state)
-		case 0xc4870a49:
-			return layerDecodeWirec4870a49(profile, b, state)
-		case 0xc957a766:
-			return layerDecodeWirec957a766(profile, b, state)
-		case 0xd087663a:
-			return layerDecodeWired087663a(profile, b, state)
-		case 0xd29a27f4:
-			return layerDecodeWired29a27f4(profile, b, state)
-		case 0xd5a41724:
-			return layerDecodeWired5a41724(profile, b, state)
-		case 0xd6b19546:
-			return layerDecodeWired6b19546(profile, b, state)
-		case 0xd7ca61a2:
-			return layerDecodeWired7ca61a2(profile, b, state)
-		case 0xd8326f0d:
-			return layerDecodeWired8326f0d(profile, b, state)
-		case 0xdc58f31e:
-			return layerDecodeWiredc58f31e(profile, b, state)
-		case 0xdef143d0:
-			return layerDecodeWiredef143d0(profile, b, state)
-		case 0xe32f3d77:
-			return layerDecodeWiree32f3d77(profile, b, state)
-		case 0xe40370a3:
-			return layerDecodeWiree40370a3(profile, b, state)
-		case 0xe511996d:
-			return layerDecodeWiree511996d(profile, b, state)
-		case 0xe5bdf8de:
-			return layerDecodeWiree5bdf8de(profile, b, state)
-		case 0xebe07752:
-			return layerDecodeWireebe07752(profile, b, state)
-		case 0xebe46819:
-			return layerDecodeWireebe46819(profile, b, state)
-		case 0xec05b097:
-			return layerDecodeWireec05b097(profile, b, state)
-		case 0xed85eab5:
-			return layerDecodeWireed85eab5(profile, b, state)
-		case 0xedfc111e:
-			return layerDecodeWireedfc111e(profile, b, state)
-		case 0xee3b272a:
-			return layerDecodeWireee3b272a(profile, b, state)
-		case 0xf16269d4:
-			return layerDecodeWiref16269d4(profile, b, state)
-		case 0xf226ac08:
-			return layerDecodeWiref226ac08(profile, b, state)
-		case 0xf2a71983:
-			return layerDecodeWiref2a71983(profile, b, state)
-		case 0xf2ebdb4e:
-			return layerDecodeWiref2ebdb4e(profile, b, state)
-		case 0xf53da717:
-			return layerDecodeWiref53da717(profile, b, state)
-		case 0xf74e932b:
-			return layerDecodeWiref74e932b(profile, b, state)
-		case 0xf8227181:
-			return layerDecodeWiref8227181(profile, b, state)
-		case 0xf89a6a4e:
-			return layerDecodeWiref89a6a4e(profile, b, state)
-		case 0xf9470ab2:
-			return layerDecodeWiref9470ab2(profile, b, state)
-		case 0xfa0f3ca2:
-			return layerDecodeWirefa0f3ca2(profile, b, state)
-		case 0xfb4c496c:
-			return layerDecodeWirefb4c496c(profile, b, state)
-		case 0xfb9c547a:
-			return layerDecodeWirefb9c547a(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224:
-		switch id {
-		case 0x0084cd5a:
-			return layerDecodeWire0084cd5a(profile, b, state)
-		case 0x05492a13:
-			return layerDecodeWire05492a13(profile, b, state)
-		case 0x07761198:
-			return layerDecodeWire07761198(profile, b, state)
-		case 0x07b68920:
-			return layerDecodeWire07b68920(profile, b, state)
-		case 0x07df587c:
-			return layerDecodeWire07df587c(profile, b, state)
-		case 0x09cb7759:
-			return layerDecodeWire09cb7759(profile, b, state)
-		case 0x0b783982:
-			return layerDecodeWire0b783982(profile, b, state)
-		case 0x0bb2d201:
-			return layerDecodeWire0bb2d201(profile, b, state)
-		case 0x108d941f:
-			return layerDecodeWire108d941f(profile, b, state)
-		case 0x11dfa986:
-			return layerDecodeWire11dfa986(profile, b, state)
-		case 0x12bcbd9a:
-			return layerDecodeWire12bcbd9a(profile, b, state)
-		case 0x12f12a07:
-			return layerDecodeWire12f12a07(profile, b, state)
-		case 0x14b85813:
-			return layerDecodeWire14b85813(profile, b, state)
-		case 0x1592b79d:
-			return layerDecodeWire1592b79d(profile, b, state)
-		case 0x1710f156:
-			return layerDecodeWire1710f156(profile, b, state)
-		case 0x17b7a20b:
-			return layerDecodeWire17b7a20b(profile, b, state)
-		case 0x1824e40b:
-			return layerDecodeWire1824e40b(profile, b, state)
-		case 0x19360dc0:
-			return layerDecodeWire19360dc0(profile, b, state)
-		case 0x1b3f4df7:
-			return layerDecodeWire1b3f4df7(profile, b, state)
-		case 0x1bf335b9:
-			return layerDecodeWire1bf335b9(profile, b, state)
-		case 0x1e297bfa:
-			return layerDecodeWire1e297bfa(profile, b, state)
-		case 0x1ea2fda7:
-			return layerDecodeWire1ea2fda7(profile, b, state)
-		case 0x1f2b0afd:
-			return layerDecodeWire1f2b0afd(profile, b, state)
-		case 0x20529438:
-			return layerDecodeWire20529438(profile, b, state)
-		case 0x25f324f7:
-			return layerDecodeWire25f324f7(profile, b, state)
-		case 0x2661bf09:
-			return layerDecodeWire2661bf09(profile, b, state)
-		case 0x26ffde7d:
-			return layerDecodeWire26ffde7d(profile, b, state)
-		case 0x28373599:
-			return layerDecodeWire28373599(profile, b, state)
-		case 0x283bd312:
-			return layerDecodeWire283bd312(profile, b, state)
-		case 0x2a17bf5c:
-			return layerDecodeWire2a17bf5c(profile, b, state)
-		case 0x2c084dc1:
-			return layerDecodeWire2c084dc1(profile, b, state)
-		case 0x2f2ba99f:
-			return layerDecodeWire2f2ba99f(profile, b, state)
-		case 0x2f2f21bf:
-			return layerDecodeWire2f2f21bf(profile, b, state)
-		case 0x30f443db:
-			return layerDecodeWire30f443db(profile, b, state)
-		case 0x31c24808:
-			return layerDecodeWire31c24808(profile, b, state)
-		case 0x3354678f:
-			return layerDecodeWire3354678f(profile, b, state)
-		case 0x3504914f:
-			return layerDecodeWire3504914f(profile, b, state)
-		case 0x38fe25b7:
-			return layerDecodeWire38fe25b7(profile, b, state)
-		case 0x39a51dfb:
-			return layerDecodeWire39a51dfb(profile, b, state)
-		case 0x39c67432:
-			return layerDecodeWire39c67432(profile, b, state)
-		case 0x3dda5451:
-			return layerDecodeWire3dda5451(profile, b, state)
-		case 0x3e050d0f:
-			return layerDecodeWire3e050d0f(profile, b, state)
-		case 0x3e85e92c:
-			return layerDecodeWire3e85e92c(profile, b, state)
-		case 0x46560264:
-			return layerDecodeWire46560264(profile, b, state)
-		case 0x4880ed9a:
-			return layerDecodeWire4880ed9a(profile, b, state)
-		case 0x48e246c2:
-			return layerDecodeWire48e246c2(profile, b, state)
-		case 0x496f379c:
-			return layerDecodeWire496f379c(profile, b, state)
-		case 0x4d712f2e:
-			return layerDecodeWire4d712f2e(profile, b, state)
-		case 0x4e80a379:
-			return layerDecodeWire4e80a379(profile, b, state)
-		case 0x4e90bfd6:
-			return layerDecodeWire4e90bfd6(profile, b, state)
-		case 0x504aa18f:
-			return layerDecodeWire504aa18f(profile, b, state)
-		case 0x53e6f1ec:
-			return layerDecodeWire53e6f1ec(profile, b, state)
-		case 0x54c01850:
-			return layerDecodeWire54c01850(profile, b, state)
-		case 0x56022f4d:
-			return layerDecodeWire56022f4d(profile, b, state)
-		case 0x564fe691:
-			return layerDecodeWire564fe691(profile, b, state)
-		case 0x566fe7cd:
-			return layerDecodeWire566fe7cd(profile, b, state)
-		case 0x571d2742:
-			return layerDecodeWire571d2742(profile, b, state)
-		case 0x5bb98608:
-			return layerDecodeWire5bb98608(profile, b, state)
-		case 0x62ba04d9:
-			return layerDecodeWire62ba04d9(profile, b, state)
-		case 0x635b4c09:
-			return layerDecodeWire635b4c09(profile, b, state)
-		case 0x683b2c52:
-			return layerDecodeWire683b2c52(profile, b, state)
-		case 0x686c85a6:
-			return layerDecodeWire686c85a6(profile, b, state)
-		case 0x688a30aa:
-			return layerDecodeWire688a30aa(profile, b, state)
-		case 0x691e9052:
-			return layerDecodeWire691e9052(profile, b, state)
-		case 0x695c9e7c:
-			return layerDecodeWire695c9e7c(profile, b, state)
-		case 0x6a7e7366:
-			return layerDecodeWire6a7e7366(profile, b, state)
-		case 0x6e6fe51c:
-			return layerDecodeWire6e6fe51c(profile, b, state)
-		case 0x6f7863f4:
-			return layerDecodeWire6f7863f4(profile, b, state)
-		case 0x7063c3db:
-			return layerDecodeWire7063c3db(profile, b, state)
-		case 0x7084a7be:
-			return layerDecodeWire7084a7be(profile, b, state)
-		case 0x74d8be99:
-			return layerDecodeWire74d8be99(profile, b, state)
-		case 0x75b3b798:
-			return layerDecodeWire75b3b798(profile, b, state)
-		case 0x7699f014:
-			return layerDecodeWire7699f014(profile, b, state)
-		case 0x77b0e372:
-			return layerDecodeWire77b0e372(profile, b, state)
-		case 0x7d627683:
-			return layerDecodeWire7d627683(profile, b, state)
-		case 0x7f891213:
-			return layerDecodeWire7f891213(profile, b, state)
-		case 0x8216fba3:
-			return layerDecodeWire8216fba3(profile, b, state)
-		case 0x8317c0c3:
-			return layerDecodeWire8317c0c3(profile, b, state)
-		case 0x83487af0:
-			return layerDecodeWire83487af0(profile, b, state)
-		case 0x86fccf85:
-			return layerDecodeWire86fccf85(profile, b, state)
-		case 0x871fb939:
-			return layerDecodeWire871fb939(profile, b, state)
-		case 0x8951abef:
-			return layerDecodeWire8951abef(profile, b, state)
-		case 0x8ae5c97a:
-			return layerDecodeWire8ae5c97a(profile, b, state)
-		case 0x8b725fce:
-			return layerDecodeWire8b725fce(profile, b, state)
-		case 0x8c88c923:
-			return layerDecodeWire8c88c923(profile, b, state)
-		case 0x8caa9a96:
-			return layerDecodeWire8caa9a96(profile, b, state)
-		case 0x8e5e9873:
-			return layerDecodeWire8e5e9873(profile, b, state)
-		case 0x904dd49c:
-			return layerDecodeWire904dd49c(profile, b, state)
-		case 0x922e6e10:
-			return layerDecodeWire922e6e10(profile, b, state)
-		case 0x9375341e:
-			return layerDecodeWire9375341e(profile, b, state)
-		case 0x985d3abb:
-			return layerDecodeWire985d3abb(profile, b, state)
-		case 0x9a422c20:
-			return layerDecodeWire9a422c20(profile, b, state)
-		case 0x9b9240a6:
-			return layerDecodeWire9b9240a6(profile, b, state)
-		case 0x9d2216e0:
-			return layerDecodeWire9d2216e0(profile, b, state)
-		case 0x9ddb347c:
-			return layerDecodeWire9ddb347c(profile, b, state)
-		case 0x9e84bc99:
-			return layerDecodeWire9e84bc99(profile, b, state)
-		case 0x9f812b08:
-			return layerDecodeWire9f812b08(profile, b, state)
-		case 0xa02a982e:
-			return layerDecodeWirea02a982e(profile, b, state)
-		case 0xa20db0e5:
-			return layerDecodeWirea20db0e5(profile, b, state)
-		case 0xa229dd06:
-			return layerDecodeWirea229dd06(profile, b, state)
-		case 0xa477288f:
-			return layerDecodeWirea477288f(profile, b, state)
-		case 0xa4a79376:
-			return layerDecodeWirea4a79376(profile, b, state)
-		case 0xa584b019:
-			return layerDecodeWirea584b019(profile, b, state)
-		case 0xa5d72105:
-			return layerDecodeWirea5d72105(profile, b, state)
-		case 0xa7848924:
-			return layerDecodeWirea7848924(profile, b, state)
-		case 0xab0f6b1e:
-			return layerDecodeWireab0f6b1e(profile, b, state)
-		case 0xac072444:
-			return layerDecodeWireac072444(profile, b, state)
-		case 0xac21d3ce:
-			return layerDecodeWireac21d3ce(profile, b, state)
-		case 0xae3f101d:
-			return layerDecodeWireae3f101d(profile, b, state)
-		case 0xaeaf9e74:
-			return layerDecodeWireaeaf9e74(profile, b, state)
-		case 0xb23fc698:
-			return layerDecodeWireb23fc698(profile, b, state)
-		case 0xb4a2e88d:
-			return layerDecodeWireb4a2e88d(profile, b, state)
-		case 0xb4afcfb0:
-			return layerDecodeWireb4afcfb0(profile, b, state)
-		case 0xb5aefd7d:
-			return layerDecodeWireb5aefd7d(profile, b, state)
-		case 0xb658f23e:
-			return layerDecodeWireb658f23e(profile, b, state)
-		case 0xb75f99a9:
-			return layerDecodeWireb75f99a9(profile, b, state)
-		case 0xb9cfc48d:
-			return layerDecodeWireb9cfc48d(profile, b, state)
-		case 0xbb9bb9a5:
-			return layerDecodeWirebb9bb9a5(profile, b, state)
-		case 0xbd8367b9:
-			return layerDecodeWirebd8367b9(profile, b, state)
-		case 0xbec268ef:
-			return layerDecodeWirebec268ef(profile, b, state)
-		case 0xc32d5b12:
-			return layerDecodeWirec32d5b12(profile, b, state)
-		case 0xc4870a49:
-			return layerDecodeWirec4870a49(profile, b, state)
-		case 0xc957a766:
-			return layerDecodeWirec957a766(profile, b, state)
-		case 0xd087663a:
-			return layerDecodeWired087663a(profile, b, state)
-		case 0xd29a27f4:
-			return layerDecodeWired29a27f4(profile, b, state)
-		case 0xd5a41724:
-			return layerDecodeWired5a41724(profile, b, state)
-		case 0xd64c522b:
-			return layerDecodeWired64c522b(profile, b, state)
-		case 0xd6b19546:
-			return layerDecodeWired6b19546(profile, b, state)
-		case 0xd7ca61a2:
-			return layerDecodeWired7ca61a2(profile, b, state)
-		case 0xd8326f0d:
-			return layerDecodeWired8326f0d(profile, b, state)
-		case 0xdc58f31e:
-			return layerDecodeWiredc58f31e(profile, b, state)
-		case 0xdef143d0:
-			return layerDecodeWiredef143d0(profile, b, state)
-		case 0xe32f3d77:
-			return layerDecodeWiree32f3d77(profile, b, state)
-		case 0xe40370a3:
-			return layerDecodeWiree40370a3(profile, b, state)
-		case 0xe511996d:
-			return layerDecodeWiree511996d(profile, b, state)
-		case 0xe5bdf8de:
-			return layerDecodeWiree5bdf8de(profile, b, state)
-		case 0xebe07752:
-			return layerDecodeWireebe07752(profile, b, state)
-		case 0xebe46819:
-			return layerDecodeWireebe46819(profile, b, state)
-		case 0xec05b097:
-			return layerDecodeWireec05b097(profile, b, state)
-		case 0xed85eab5:
-			return layerDecodeWireed85eab5(profile, b, state)
-		case 0xedfc111e:
-			return layerDecodeWireedfc111e(profile, b, state)
-		case 0xee3b272a:
-			return layerDecodeWireee3b272a(profile, b, state)
-		case 0xf16269d4:
-			return layerDecodeWiref16269d4(profile, b, state)
-		case 0xf226ac08:
-			return layerDecodeWiref226ac08(profile, b, state)
-		case 0xf2a71983:
-			return layerDecodeWiref2a71983(profile, b, state)
-		case 0xf2ebdb4e:
-			return layerDecodeWiref2ebdb4e(profile, b, state)
-		case 0xf53da717:
-			return layerDecodeWiref53da717(profile, b, state)
-		case 0xf74e932b:
-			return layerDecodeWiref74e932b(profile, b, state)
-		case 0xf8227181:
-			return layerDecodeWiref8227181(profile, b, state)
-		case 0xf89a6a4e:
-			return layerDecodeWiref89a6a4e(profile, b, state)
-		case 0xf9470ab2:
-			return layerDecodeWiref9470ab2(profile, b, state)
-		case 0xfa0f3ca2:
-			return layerDecodeWirefa0f3ca2(profile, b, state)
-		case 0xfb4c496c:
-			return layerDecodeWirefb4c496c(profile, b, state)
-		case 0xfb9c547a:
-			return layerDecodeWirefb9c547a(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
 	case LayerProfile225:
 		switch id {
 		case 0x0084cd5a:
@@ -39651,6 +32843,339 @@ func layerDecodeClassUpdate(profile LayerProfile, b *bin.Buffer, state *layerCod
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
+	case LayerProfile228:
+		switch id {
+		case 0x0084cd5a:
+			return layerDecodeWire0084cd5a(profile, b, state)
+		case 0x05492a13:
+			return layerDecodeWire05492a13(profile, b, state)
+		case 0x07761198:
+			return layerDecodeWire07761198(profile, b, state)
+		case 0x07b68920:
+			return layerDecodeWire07b68920(profile, b, state)
+		case 0x07df587c:
+			return layerDecodeWire07df587c(profile, b, state)
+		case 0x09cb7759:
+			return layerDecodeWire09cb7759(profile, b, state)
+		case 0x0b783982:
+			return layerDecodeWire0b783982(profile, b, state)
+		case 0x0bb2d201:
+			return layerDecodeWire0bb2d201(profile, b, state)
+		case 0x108d941f:
+			return layerDecodeWire108d941f(profile, b, state)
+		case 0x12bcbd9a:
+			return layerDecodeWire12bcbd9a(profile, b, state)
+		case 0x12f12a07:
+			return layerDecodeWire12f12a07(profile, b, state)
+		case 0x140502d1:
+			return layerDecodeWire140502d1(profile, b, state)
+		case 0x14b85813:
+			return layerDecodeWire14b85813(profile, b, state)
+		case 0x1592b79d:
+			return layerDecodeWire1592b79d(profile, b, state)
+		case 0x1710f156:
+			return layerDecodeWire1710f156(profile, b, state)
+		case 0x17b7a20b:
+			return layerDecodeWire17b7a20b(profile, b, state)
+		case 0x1824e40b:
+			return layerDecodeWire1824e40b(profile, b, state)
+		case 0x19360dc0:
+			return layerDecodeWire19360dc0(profile, b, state)
+		case 0x1b3f4df7:
+			return layerDecodeWire1b3f4df7(profile, b, state)
+		case 0x1bf335b9:
+			return layerDecodeWire1bf335b9(profile, b, state)
+		case 0x1e297bfa:
+			return layerDecodeWire1e297bfa(profile, b, state)
+		case 0x1ea2fda7:
+			return layerDecodeWire1ea2fda7(profile, b, state)
+		case 0x1f2b0afd:
+			return layerDecodeWire1f2b0afd(profile, b, state)
+		case 0x20529438:
+			return layerDecodeWire20529438(profile, b, state)
+		case 0x20bcbba1:
+			return layerDecodeWire20bcbba1(profile, b, state)
+		case 0x25f324f7:
+			return layerDecodeWire25f324f7(profile, b, state)
+		case 0x2661bf09:
+			return layerDecodeWire2661bf09(profile, b, state)
+		case 0x26ffde7d:
+			return layerDecodeWire26ffde7d(profile, b, state)
+		case 0x28373599:
+			return layerDecodeWire28373599(profile, b, state)
+		case 0x283bd312:
+			return layerDecodeWire283bd312(profile, b, state)
+		case 0x2a17bf5c:
+			return layerDecodeWire2a17bf5c(profile, b, state)
+		case 0x2c084dc1:
+			return layerDecodeWire2c084dc1(profile, b, state)
+		case 0x2f2ba99f:
+			return layerDecodeWire2f2ba99f(profile, b, state)
+		case 0x2f2f21bf:
+			return layerDecodeWire2f2f21bf(profile, b, state)
+		case 0x30f443db:
+			return layerDecodeWire30f443db(profile, b, state)
+		case 0x31c24808:
+			return layerDecodeWire31c24808(profile, b, state)
+		case 0x3354678f:
+			return layerDecodeWire3354678f(profile, b, state)
+		case 0x3504914f:
+			return layerDecodeWire3504914f(profile, b, state)
+		case 0x38fe25b7:
+			return layerDecodeWire38fe25b7(profile, b, state)
+		case 0x39a51dfb:
+			return layerDecodeWire39a51dfb(profile, b, state)
+		case 0x39c67432:
+			return layerDecodeWire39c67432(profile, b, state)
+		case 0x3dda5451:
+			return layerDecodeWire3dda5451(profile, b, state)
+		case 0x3e050d0f:
+			return layerDecodeWire3e050d0f(profile, b, state)
+		case 0x3e85e92c:
+			return layerDecodeWire3e85e92c(profile, b, state)
+		case 0x46560264:
+			return layerDecodeWire46560264(profile, b, state)
+		case 0x4880ed9a:
+			return layerDecodeWire4880ed9a(profile, b, state)
+		case 0x48e246c2:
+			return layerDecodeWire48e246c2(profile, b, state)
+		case 0x496f379c:
+			return layerDecodeWire496f379c(profile, b, state)
+		case 0x4bbb8f01:
+			return layerDecodeWire4bbb8f01(profile, b, state)
+		case 0x4d712f2e:
+			return layerDecodeWire4d712f2e(profile, b, state)
+		case 0x4e80a379:
+			return layerDecodeWire4e80a379(profile, b, state)
+		case 0x4e90bfd6:
+			return layerDecodeWire4e90bfd6(profile, b, state)
+		case 0x504aa18f:
+			return layerDecodeWire504aa18f(profile, b, state)
+		case 0x53e6f1ec:
+			return layerDecodeWire53e6f1ec(profile, b, state)
+		case 0x54c01850:
+			return layerDecodeWire54c01850(profile, b, state)
+		case 0x56022f4d:
+			return layerDecodeWire56022f4d(profile, b, state)
+		case 0x564fe691:
+			return layerDecodeWire564fe691(profile, b, state)
+		case 0x566fe7cd:
+			return layerDecodeWire566fe7cd(profile, b, state)
+		case 0x56dbfcf8:
+			return layerDecodeWire56dbfcf8(profile, b, state)
+		case 0x571d2742:
+			return layerDecodeWire571d2742(profile, b, state)
+		case 0x5bb98608:
+			return layerDecodeWire5bb98608(profile, b, state)
+		case 0x62ba04d9:
+			return layerDecodeWire62ba04d9(profile, b, state)
+		case 0x635b4c09:
+			return layerDecodeWire635b4c09(profile, b, state)
+		case 0x683b2c52:
+			return layerDecodeWire683b2c52(profile, b, state)
+		case 0x686c85a6:
+			return layerDecodeWire686c85a6(profile, b, state)
+		case 0x688a30aa:
+			return layerDecodeWire688a30aa(profile, b, state)
+		case 0x691e9052:
+			return layerDecodeWire691e9052(profile, b, state)
+		case 0x695c9e7c:
+			return layerDecodeWire695c9e7c(profile, b, state)
+		case 0x6a7e7366:
+			return layerDecodeWire6a7e7366(profile, b, state)
+		case 0x6c0d8e23:
+			return layerDecodeWire6c0d8e23(profile, b, state)
+		case 0x6e6fe51c:
+			return layerDecodeWire6e6fe51c(profile, b, state)
+		case 0x6f7863f4:
+			return layerDecodeWire6f7863f4(profile, b, state)
+		case 0x7063c3db:
+			return layerDecodeWire7063c3db(profile, b, state)
+		case 0x7084a7be:
+			return layerDecodeWire7084a7be(profile, b, state)
+		case 0x74d8be99:
+			return layerDecodeWire74d8be99(profile, b, state)
+		case 0x75b3b798:
+			return layerDecodeWire75b3b798(profile, b, state)
+		case 0x7699f014:
+			return layerDecodeWire7699f014(profile, b, state)
+		case 0x77b0e372:
+			return layerDecodeWire77b0e372(profile, b, state)
+		case 0x7cb34d79:
+			return layerDecodeWire7cb34d79(profile, b, state)
+		case 0x7d627683:
+			return layerDecodeWire7d627683(profile, b, state)
+		case 0x7f891213:
+			return layerDecodeWire7f891213(profile, b, state)
+		case 0x8216fba3:
+			return layerDecodeWire8216fba3(profile, b, state)
+		case 0x8317c0c3:
+			return layerDecodeWire8317c0c3(profile, b, state)
+		case 0x83487af0:
+			return layerDecodeWire83487af0(profile, b, state)
+		case 0x86fccf85:
+			return layerDecodeWire86fccf85(profile, b, state)
+		case 0x871fb939:
+			return layerDecodeWire871fb939(profile, b, state)
+		case 0x8951abef:
+			return layerDecodeWire8951abef(profile, b, state)
+		case 0x8ae5c97a:
+			return layerDecodeWire8ae5c97a(profile, b, state)
+		case 0x8b725fce:
+			return layerDecodeWire8b725fce(profile, b, state)
+		case 0x8c0f91fb:
+			return layerDecodeWire8c0f91fb(profile, b, state)
+		case 0x8c88c923:
+			return layerDecodeWire8c88c923(profile, b, state)
+		case 0x8caa9a96:
+			return layerDecodeWire8caa9a96(profile, b, state)
+		case 0x8e5e9873:
+			return layerDecodeWire8e5e9873(profile, b, state)
+		case 0x904dd49c:
+			return layerDecodeWire904dd49c(profile, b, state)
+		case 0x922e6e10:
+			return layerDecodeWire922e6e10(profile, b, state)
+		case 0x9375341e:
+			return layerDecodeWire9375341e(profile, b, state)
+		case 0x985d3abb:
+			return layerDecodeWire985d3abb(profile, b, state)
+		case 0x9a422c20:
+			return layerDecodeWire9a422c20(profile, b, state)
+		case 0x9b9240a6:
+			return layerDecodeWire9b9240a6(profile, b, state)
+		case 0x9d2216e0:
+			return layerDecodeWire9d2216e0(profile, b, state)
+		case 0x9ddb347c:
+			return layerDecodeWire9ddb347c(profile, b, state)
+		case 0x9e84bc99:
+			return layerDecodeWire9e84bc99(profile, b, state)
+		case 0x9f812b08:
+			return layerDecodeWire9f812b08(profile, b, state)
+		case 0xa02a982e:
+			return layerDecodeWirea02a982e(profile, b, state)
+		case 0xa20db0e5:
+			return layerDecodeWirea20db0e5(profile, b, state)
+		case 0xa229dd06:
+			return layerDecodeWirea229dd06(profile, b, state)
+		case 0xa477288f:
+			return layerDecodeWirea477288f(profile, b, state)
+		case 0xa4a79376:
+			return layerDecodeWirea4a79376(profile, b, state)
+		case 0xa584b019:
+			return layerDecodeWirea584b019(profile, b, state)
+		case 0xa5d72105:
+			return layerDecodeWirea5d72105(profile, b, state)
+		case 0xa7848924:
+			return layerDecodeWirea7848924(profile, b, state)
+		case 0xab0f6b1e:
+			return layerDecodeWireab0f6b1e(profile, b, state)
+		case 0xac072444:
+			return layerDecodeWireac072444(profile, b, state)
+		case 0xac21d3ce:
+			return layerDecodeWireac21d3ce(profile, b, state)
+		case 0xae3f101d:
+			return layerDecodeWireae3f101d(profile, b, state)
+		case 0xaeaf9e74:
+			return layerDecodeWireaeaf9e74(profile, b, state)
+		case 0xb22083a6:
+			return layerDecodeWireb22083a6(profile, b, state)
+		case 0xb23fc698:
+			return layerDecodeWireb23fc698(profile, b, state)
+		case 0xb4a2e88d:
+			return layerDecodeWireb4a2e88d(profile, b, state)
+		case 0xb4afcfb0:
+			return layerDecodeWireb4afcfb0(profile, b, state)
+		case 0xb5aefd7d:
+			return layerDecodeWireb5aefd7d(profile, b, state)
+		case 0xb658f23e:
+			return layerDecodeWireb658f23e(profile, b, state)
+		case 0xb75f99a9:
+			return layerDecodeWireb75f99a9(profile, b, state)
+		case 0xb9cfc48d:
+			return layerDecodeWireb9cfc48d(profile, b, state)
+		case 0xbb9bb9a5:
+			return layerDecodeWirebb9bb9a5(profile, b, state)
+		case 0xbd8367b9:
+			return layerDecodeWirebd8367b9(profile, b, state)
+		case 0xbdac7e70:
+			return layerDecodeWirebdac7e70(profile, b, state)
+		case 0xbec268ef:
+			return layerDecodeWirebec268ef(profile, b, state)
+		case 0xc32d5b12:
+			return layerDecodeWirec32d5b12(profile, b, state)
+		case 0xc39a2ade:
+			return layerDecodeWirec39a2ade(profile, b, state)
+		case 0xc4870a49:
+			return layerDecodeWirec4870a49(profile, b, state)
+		case 0xc957a766:
+			return layerDecodeWirec957a766(profile, b, state)
+		case 0xcdd4093d:
+			return layerDecodeWirecdd4093d(profile, b, state)
+		case 0xd087663a:
+			return layerDecodeWired087663a(profile, b, state)
+		case 0xd29a27f4:
+			return layerDecodeWired29a27f4(profile, b, state)
+		case 0xd5a41724:
+			return layerDecodeWired5a41724(profile, b, state)
+		case 0xd64c522b:
+			return layerDecodeWired64c522b(profile, b, state)
+		case 0xd6b19546:
+			return layerDecodeWired6b19546(profile, b, state)
+		case 0xd7ca61a2:
+			return layerDecodeWired7ca61a2(profile, b, state)
+		case 0xd8326f0d:
+			return layerDecodeWired8326f0d(profile, b, state)
+		case 0xdc58f31e:
+			return layerDecodeWiredc58f31e(profile, b, state)
+		case 0xdef143d0:
+			return layerDecodeWiredef143d0(profile, b, state)
+		case 0xe32f3d77:
+			return layerDecodeWiree32f3d77(profile, b, state)
+		case 0xe40370a3:
+			return layerDecodeWiree40370a3(profile, b, state)
+		case 0xe511996d:
+			return layerDecodeWiree511996d(profile, b, state)
+		case 0xe5bdf8de:
+			return layerDecodeWiree5bdf8de(profile, b, state)
+		case 0xebe07752:
+			return layerDecodeWireebe07752(profile, b, state)
+		case 0xebe46819:
+			return layerDecodeWireebe46819(profile, b, state)
+		case 0xec05b097:
+			return layerDecodeWireec05b097(profile, b, state)
+		case 0xed85eab5:
+			return layerDecodeWireed85eab5(profile, b, state)
+		case 0xedfc111e:
+			return layerDecodeWireedfc111e(profile, b, state)
+		case 0xee3b272a:
+			return layerDecodeWireee3b272a(profile, b, state)
+		case 0xf16269d4:
+			return layerDecodeWiref16269d4(profile, b, state)
+		case 0xf226ac08:
+			return layerDecodeWiref226ac08(profile, b, state)
+		case 0xf2a71983:
+			return layerDecodeWiref2a71983(profile, b, state)
+		case 0xf2ebdb4e:
+			return layerDecodeWiref2ebdb4e(profile, b, state)
+		case 0xf53da717:
+			return layerDecodeWiref53da717(profile, b, state)
+		case 0xf74e932b:
+			return layerDecodeWiref74e932b(profile, b, state)
+		case 0xf8227181:
+			return layerDecodeWiref8227181(profile, b, state)
+		case 0xf89a6a4e:
+			return layerDecodeWiref89a6a4e(profile, b, state)
+		case 0xf9470ab2:
+			return layerDecodeWiref9470ab2(profile, b, state)
+		case 0xfa0f3ca2:
+			return layerDecodeWirefa0f3ca2(profile, b, state)
+		case 0xfb4c496c:
+			return layerDecodeWirefb4c496c(profile, b, state)
+		case 0xfb9c547a:
+			return layerDecodeWirefb9c547a(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
 	}
@@ -39745,7 +33270,7 @@ func layerPreflightClassUpdates(profile LayerProfile, value UpdatesClass, state 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UpdateShort:
 			return layerPreflightWire78d4dec1Bare(profile, value, state)
@@ -39783,7 +33308,7 @@ func layerEncodeClassUpdatesBody(profile LayerProfile, value UpdatesClass, b *bi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UpdateShort:
 			b.PutID(0x78d4dec1)
@@ -39821,7 +33346,7 @@ func layerDecodeClassUpdates(profile LayerProfile, b *bin.Buffer, state *layerCo
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x313bc7f8:
 			return layerDecodeWire313bc7f8(profile, b, state)
@@ -39894,43 +33419,7 @@ func layerPreflightClassURLAuthResult(profile LayerProfile, value URLAuthResultC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *URLAuthResultAccepted:
-			return layerPreflightWire8f8c0e4eBare(profile, value, state)
-		case *URLAuthResultDefault:
-			return layerPreflightWirea9d6db1fBare(profile, value, state)
-		case *URLAuthResultRequest:
-			return layerPreflightWire92d33a0eBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222:
-		switch value := projected.(type) {
-		case *URLAuthResultAccepted:
-			return layerPreflightWire623a8fa0Bare(profile, value, state)
-		case *URLAuthResultDefault:
-			return layerPreflightWirea9d6db1fBare(profile, value, state)
-		case *URLAuthResultRequest:
-			return layerPreflightWire32fabf1aBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *URLAuthResultAccepted:
-			return layerPreflightWire623a8fa0Bare(profile, value, state)
-		case *URLAuthResultDefault:
-			return layerPreflightWirea9d6db1fBare(profile, value, state)
-		case *URLAuthResultRequest:
-			return layerPreflightWiref8f8eb1eBare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *URLAuthResultAccepted:
 			return layerPreflightWire623a8fa0Bare(profile, value, state)
@@ -39960,52 +33449,7 @@ func layerEncodeClassURLAuthResultBody(profile LayerProfile, value URLAuthResult
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch value := projected.(type) {
-		case *URLAuthResultAccepted:
-			b.PutID(0x8f8c0e4e)
-			return layerEncodeWire8f8c0e4eBareBody(profile, value, b, state)
-		case *URLAuthResultDefault:
-			b.PutID(0xa9d6db1f)
-			return layerEncodeWirea9d6db1fBareBody(profile, value, b, state)
-		case *URLAuthResultRequest:
-			b.PutID(0x92d33a0e)
-			return layerEncodeWire92d33a0eBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile222:
-		switch value := projected.(type) {
-		case *URLAuthResultAccepted:
-			b.PutID(0x623a8fa0)
-			return layerEncodeWire623a8fa0BareBody(profile, value, b, state)
-		case *URLAuthResultDefault:
-			b.PutID(0xa9d6db1f)
-			return layerEncodeWirea9d6db1fBareBody(profile, value, b, state)
-		case *URLAuthResultRequest:
-			b.PutID(0x32fabf1a)
-			return layerEncodeWire32fabf1aBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile223:
-		switch value := projected.(type) {
-		case *URLAuthResultAccepted:
-			b.PutID(0x623a8fa0)
-			return layerEncodeWire623a8fa0BareBody(profile, value, b, state)
-		case *URLAuthResultDefault:
-			b.PutID(0xa9d6db1f)
-			return layerEncodeWirea9d6db1fBareBody(profile, value, b, state)
-		case *URLAuthResultRequest:
-			b.PutID(0xf8f8eb1e)
-			return layerEncodeWiref8f8eb1eBareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *URLAuthResultAccepted:
 			b.PutID(0x623a8fa0)
@@ -40031,40 +33475,7 @@ func layerDecodeClassURLAuthResult(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221:
-		switch id {
-		case 0x8f8c0e4e:
-			return layerDecodeWire8f8c0e4e(profile, b, state)
-		case 0x92d33a0e:
-			return layerDecodeWire92d33a0e(profile, b, state)
-		case 0xa9d6db1f:
-			return layerDecodeWirea9d6db1f(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile222:
-		switch id {
-		case 0x32fabf1a:
-			return layerDecodeWire32fabf1a(profile, b, state)
-		case 0x623a8fa0:
-			return layerDecodeWire623a8fa0(profile, b, state)
-		case 0xa9d6db1f:
-			return layerDecodeWirea9d6db1f(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile223:
-		switch id {
-		case 0x623a8fa0:
-			return layerDecodeWire623a8fa0(profile, b, state)
-		case 0xa9d6db1f:
-			return layerDecodeWirea9d6db1f(profile, b, state)
-		case 0xf8f8eb1e:
-			return layerDecodeWiref8f8eb1e(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3cd623ec:
 			return layerDecodeWire3cd623ec(profile, b, state)
@@ -40119,10 +33530,20 @@ func layerPreflightClassUser(profile LayerProfile, value UserClass, state *layer
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *User:
 			return layerPreflightWire31774388Bare(profile, value, state)
+		case *UserEmpty:
+			return layerPreflightWired3bc4b7aBare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *User:
+			return layerPreflightWireb1b8cc83Bare(profile, value, state)
 		case *UserEmpty:
 			return layerPreflightWired3bc4b7aBare(profile, value, state)
 		default:
@@ -40147,11 +33568,23 @@ func layerEncodeClassUserBody(profile LayerProfile, value UserClass, b *bin.Buff
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch value := projected.(type) {
 		case *User:
 			b.PutID(0x31774388)
 			return layerEncodeWire31774388BareBody(profile, value, b, state)
+		case *UserEmpty:
+			b.PutID(0xd3bc4b7a)
+			return layerEncodeWired3bc4b7aBareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *User:
+			b.PutID(0xb1b8cc83)
+			return layerEncodeWireb1b8cc83BareBody(profile, value, b, state)
 		case *UserEmpty:
 			b.PutID(0xd3bc4b7a)
 			return layerEncodeWired3bc4b7aBareBody(profile, value, b, state)
@@ -40170,10 +33603,19 @@ func layerDecodeClassUser(profile LayerProfile, b *bin.Buffer, state *layerCodec
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		switch id {
 		case 0x31774388:
 			return layerDecodeWire31774388(profile, b, state)
+		case 0xd3bc4b7a:
+			return layerDecodeWired3bc4b7a(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0xb1b8cc83:
+			return layerDecodeWireb1b8cc83(profile, b, state)
 		case 0xd3bc4b7a:
 			return layerDecodeWired3bc4b7a(profile, b, state)
 		default:
@@ -40223,7 +33665,7 @@ func layerPreflightClassUserProfilePhoto(profile LayerProfile, value UserProfile
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UserProfilePhoto:
 			return layerPreflightWire82d1f706Bare(profile, value, state)
@@ -40251,7 +33693,7 @@ func layerEncodeClassUserProfilePhotoBody(profile LayerProfile, value UserProfil
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UserProfilePhoto:
 			b.PutID(0x82d1f706)
@@ -40274,7 +33716,7 @@ func layerDecodeClassUserProfilePhoto(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4f11bae1:
 			return layerDecodeWire4f11bae1(profile, b, state)
@@ -40367,7 +33809,7 @@ func layerPreflightClassUserStatus(profile LayerProfile, value UserStatusClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UserStatusEmpty:
 			return layerPreflightWire09d05049Bare(profile, value, state)
@@ -40403,7 +33845,7 @@ func layerEncodeClassUserStatusBody(profile LayerProfile, value UserStatusClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UserStatusEmpty:
 			b.PutID(0x09d05049)
@@ -40438,7 +33880,7 @@ func layerDecodeClassUserStatus(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x008c703f:
 			return layerDecodeWire008c703f(profile, b, state)
@@ -40509,7 +33951,7 @@ func layerPreflightClassVideoSize(profile LayerProfile, value VideoSizeClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *VideoSize:
 			return layerPreflightWirede33b094Bare(profile, value, state)
@@ -40539,7 +33981,7 @@ func layerEncodeClassVideoSizeBody(profile LayerProfile, value VideoSizeClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *VideoSize:
 			b.PutID(0xde33b094)
@@ -40565,7 +34007,7 @@ func layerDecodeClassVideoSize(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0da082fe:
 			return layerDecodeWire0da082fe(profile, b, state)
@@ -40620,7 +34062,7 @@ func layerPreflightClassWallPaper(profile LayerProfile, value WallPaperClass, st
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WallPaper:
 			return layerPreflightWirea437c3edBare(profile, value, state)
@@ -40648,7 +34090,7 @@ func layerEncodeClassWallPaperBody(profile LayerProfile, value WallPaperClass, b
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WallPaper:
 			b.PutID(0xa437c3ed)
@@ -40671,7 +34113,7 @@ func layerDecodeClassWallPaper(profile LayerProfile, b *bin.Buffer, state *layer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xa437c3ed:
 			return layerDecodeWirea437c3ed(profile, b, state)
@@ -40724,7 +34166,7 @@ func layerPreflightClassWebDocument(profile LayerProfile, value WebDocumentClass
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WebDocument:
 			return layerPreflightWire1c570ed1Bare(profile, value, state)
@@ -40752,7 +34194,7 @@ func layerEncodeClassWebDocumentBody(profile LayerProfile, value WebDocumentClas
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WebDocument:
 			b.PutID(0x1c570ed1)
@@ -40775,7 +34217,7 @@ func layerDecodeClassWebDocument(profile LayerProfile, b *bin.Buffer, state *lay
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1c570ed1:
 			return layerDecodeWire1c570ed1(profile, b, state)
@@ -40848,7 +34290,7 @@ func layerPreflightClassWebPage(profile LayerProfile, value WebPageClass, state 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WebPage:
 			return layerPreflightWiree89c45b2Bare(profile, value, state)
@@ -40880,7 +34322,7 @@ func layerEncodeClassWebPageBody(profile LayerProfile, value WebPageClass, b *bi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WebPage:
 			b.PutID(0xe89c45b2)
@@ -40909,7 +34351,7 @@ func layerDecodeClassWebPage(profile LayerProfile, b *bin.Buffer, state *layerCo
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x211a1788:
 			return layerDecodeWire211a1788(profile, b, state)
@@ -41016,25 +34458,7 @@ func layerPreflightClassWebPageAttribute(profile LayerProfile, value WebPageAttr
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		case *WebPageAttributeStarGiftAuction:
-			return layerPreflightWire01c641c2Bare(profile, value, state)
-		case *WebPageAttributeStarGiftCollection:
-			return layerPreflightWire31cad303Bare(profile, value, state)
-		case *WebPageAttributeStickerSet:
-			return layerPreflightWire50cc03d3Bare(profile, value, state)
-		case *WebPageAttributeStory:
-			return layerPreflightWire2e94c3e7Bare(profile, value, state)
-		case *WebPageAttributeTheme:
-			return layerPreflightWire54b56617Bare(profile, value, state)
-		case *WebPageAttributeUniqueStarGift:
-			return layerPreflightWirecf6f6db8Bare(profile, value, state)
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WebPageAttributeAiComposeTone:
 			return layerPreflightWire7781fe18Bare(profile, value, state)
@@ -41072,31 +34496,7 @@ func layerEncodeClassWebPageAttributeBody(profile LayerProfile, value WebPageAtt
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		case *WebPageAttributeStarGiftAuction:
-			b.PutID(0x01c641c2)
-			return layerEncodeWire01c641c2BareBody(profile, value, b, state)
-		case *WebPageAttributeStarGiftCollection:
-			b.PutID(0x31cad303)
-			return layerEncodeWire31cad303BareBody(profile, value, b, state)
-		case *WebPageAttributeStickerSet:
-			b.PutID(0x50cc03d3)
-			return layerEncodeWire50cc03d3BareBody(profile, value, b, state)
-		case *WebPageAttributeStory:
-			b.PutID(0x2e94c3e7)
-			return layerEncodeWire2e94c3e7BareBody(profile, value, b, state)
-		case *WebPageAttributeTheme:
-			b.PutID(0x54b56617)
-			return layerEncodeWire54b56617BareBody(profile, value, b, state)
-		case *WebPageAttributeUniqueStarGift:
-			b.PutID(0xcf6f6db8)
-			return layerEncodeWirecf6f6db8BareBody(profile, value, b, state)
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *WebPageAttributeAiComposeTone:
 			b.PutID(0x7781fe18)
@@ -41134,24 +34534,7 @@ func layerDecodeClassWebPageAttribute(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch id {
-		case 0x01c641c2:
-			return layerDecodeWire01c641c2(profile, b, state)
-		case 0x2e94c3e7:
-			return layerDecodeWire2e94c3e7(profile, b, state)
-		case 0x31cad303:
-			return layerDecodeWire31cad303(profile, b, state)
-		case 0x50cc03d3:
-			return layerDecodeWire50cc03d3(profile, b, state)
-		case 0x54b56617:
-			return layerDecodeWire54b56617(profile, b, state)
-		case 0xcf6f6db8:
-			return layerDecodeWirecf6f6db8(profile, b, state)
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x01c641c2:
 			return layerDecodeWire01c641c2(profile, b, state)
@@ -41214,7 +34597,7 @@ func layerPreflightClassAccountChatThemes(profile LayerProfile, value AccountCha
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountChatThemes:
 			return layerPreflightWirebe098173Bare(profile, value, state)
@@ -41242,7 +34625,7 @@ func layerEncodeClassAccountChatThemesBody(profile LayerProfile, value AccountCh
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountChatThemes:
 			b.PutID(0xbe098173)
@@ -41265,7 +34648,7 @@ func layerDecodeClassAccountChatThemes(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xbe098173:
 			return layerDecodeWirebe098173(profile, b, state)
@@ -41318,7 +34701,7 @@ func layerPreflightClassAccountEmailVerified(profile LayerProfile, value Account
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountEmailVerified:
 			return layerPreflightWire2b96cd1bBare(profile, value, state)
@@ -41346,7 +34729,7 @@ func layerEncodeClassAccountEmailVerifiedBody(profile LayerProfile, value Accoun
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountEmailVerified:
 			b.PutID(0x2b96cd1b)
@@ -41369,7 +34752,7 @@ func layerDecodeClassAccountEmailVerified(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2b96cd1b:
 			return layerDecodeWire2b96cd1b(profile, b, state)
@@ -41422,7 +34805,7 @@ func layerPreflightClassAccountEmojiStatuses(profile LayerProfile, value Account
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountEmojiStatuses:
 			return layerPreflightWire90c467d1Bare(profile, value, state)
@@ -41450,7 +34833,7 @@ func layerEncodeClassAccountEmojiStatusesBody(profile LayerProfile, value Accoun
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountEmojiStatuses:
 			b.PutID(0x90c467d1)
@@ -41473,7 +34856,7 @@ func layerDecodeClassAccountEmojiStatuses(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x90c467d1:
 			return layerDecodeWire90c467d1(profile, b, state)
@@ -41536,7 +34919,7 @@ func layerPreflightClassAccountResetPasswordResult(profile LayerProfile, value A
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountResetPasswordFailedWait:
 			return layerPreflightWiree3779861Bare(profile, value, state)
@@ -41566,7 +34949,7 @@ func layerEncodeClassAccountResetPasswordResultBody(profile LayerProfile, value 
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountResetPasswordFailedWait:
 			b.PutID(0xe3779861)
@@ -41592,7 +34975,7 @@ func layerDecodeClassAccountResetPasswordResult(profile LayerProfile, b *bin.Buf
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xe3779861:
 			return layerDecodeWiree3779861(profile, b, state)
@@ -41647,7 +35030,7 @@ func layerPreflightClassAccountSavedMusicIDs(profile LayerProfile, value Account
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountSavedMusicIDs:
 			return layerPreflightWire998d6636Bare(profile, value, state)
@@ -41675,7 +35058,7 @@ func layerEncodeClassAccountSavedMusicIDsBody(profile LayerProfile, value Accoun
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountSavedMusicIDs:
 			b.PutID(0x998d6636)
@@ -41698,7 +35081,7 @@ func layerDecodeClassAccountSavedMusicIDs(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4fc81d6e:
 			return layerDecodeWire4fc81d6e(profile, b, state)
@@ -41751,7 +35134,7 @@ func layerPreflightClassAccountSavedRingtone(profile LayerProfile, value Account
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountSavedRingtone:
 			return layerPreflightWireb7263f6dBare(profile, value, state)
@@ -41779,7 +35162,7 @@ func layerEncodeClassAccountSavedRingtoneBody(profile LayerProfile, value Accoun
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountSavedRingtone:
 			b.PutID(0xb7263f6d)
@@ -41802,7 +35185,7 @@ func layerDecodeClassAccountSavedRingtone(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1f307eb7:
 			return layerDecodeWire1f307eb7(profile, b, state)
@@ -41855,7 +35238,7 @@ func layerPreflightClassAccountSavedRingtones(profile LayerProfile, value Accoun
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountSavedRingtones:
 			return layerPreflightWirec1e92cc5Bare(profile, value, state)
@@ -41883,7 +35266,7 @@ func layerEncodeClassAccountSavedRingtonesBody(profile LayerProfile, value Accou
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountSavedRingtones:
 			b.PutID(0xc1e92cc5)
@@ -41906,7 +35289,7 @@ func layerDecodeClassAccountSavedRingtones(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xc1e92cc5:
 			return layerDecodeWirec1e92cc5(profile, b, state)
@@ -41959,7 +35342,7 @@ func layerPreflightClassAccountThemes(profile LayerProfile, value AccountThemesC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountThemes:
 			return layerPreflightWire9a3d8c6dBare(profile, value, state)
@@ -41987,7 +35370,7 @@ func layerEncodeClassAccountThemesBody(profile LayerProfile, value AccountThemes
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountThemes:
 			b.PutID(0x9a3d8c6d)
@@ -42010,7 +35393,7 @@ func layerDecodeClassAccountThemes(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9a3d8c6d:
 			return layerDecodeWire9a3d8c6d(profile, b, state)
@@ -42063,7 +35446,7 @@ func layerPreflightClassAccountWallPapers(profile LayerProfile, value AccountWal
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountWallPapers:
 			return layerPreflightWirecdc3858cBare(profile, value, state)
@@ -42091,7 +35474,7 @@ func layerEncodeClassAccountWallPapersBody(profile LayerProfile, value AccountWa
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountWallPapers:
 			b.PutID(0xcdc3858c)
@@ -42114,7 +35497,7 @@ func layerDecodeClassAccountWallPapers(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1c199183:
 			return layerDecodeWire1c199183(profile, b, state)
@@ -42167,13 +35550,13 @@ func layerPreflightClassAccountWebBrowserSettings(profile LayerProfile, value Ac
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountWebBrowserSettings:
 			return layerPreflightWire79eb8cb3Bare(profile, value, state)
@@ -42201,13 +35584,13 @@ func layerEncodeClassAccountWebBrowserSettingsBody(profile LayerProfile, value A
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		default:
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AccountWebBrowserSettings:
 			b.PutID(0x79eb8cb3)
@@ -42230,12 +35613,12 @@ func layerDecodeClassAccountWebBrowserSettings(profile LayerProfile, b *bin.Buff
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x79eb8cb3:
 			return layerDecodeWire79eb8cb3(profile, b, state)
@@ -42288,13 +35671,7 @@ func layerPreflightClassAicomposeTones(profile LayerProfile, value AicomposeTone
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AicomposeTones:
 			return layerPreflightWire6c9d0efeBare(profile, value, state)
@@ -42322,13 +35699,7 @@ func layerEncodeClassAicomposeTonesBody(profile LayerProfile, value AicomposeTon
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AicomposeTones:
 			b.PutID(0x6c9d0efe)
@@ -42351,12 +35722,7 @@ func layerDecodeClassAicomposeTones(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224:
-		switch id {
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6c9d0efe:
 			return layerDecodeWire6c9d0efe(profile, b, state)
@@ -42409,7 +35775,7 @@ func layerPreflightClassAuthAuthorization(profile LayerProfile, value AuthAuthor
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthAuthorization:
 			return layerPreflightWire2ea2c0d4Bare(profile, value, state)
@@ -42437,7 +35803,7 @@ func layerEncodeClassAuthAuthorizationBody(profile LayerProfile, value AuthAutho
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthAuthorization:
 			b.PutID(0x2ea2c0d4)
@@ -42460,7 +35826,7 @@ func layerDecodeClassAuthAuthorization(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2ea2c0d4:
 			return layerDecodeWire2ea2c0d4(profile, b, state)
@@ -42543,7 +35909,7 @@ func layerPreflightClassAuthCodeType(profile LayerProfile, value AuthCodeTypeCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthCodeTypeCall:
 			return layerPreflightWire741cd3e3Bare(profile, value, state)
@@ -42577,7 +35943,7 @@ func layerEncodeClassAuthCodeTypeBody(profile LayerProfile, value AuthCodeTypeCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthCodeTypeCall:
 			b.PutID(0x741cd3e3)
@@ -42609,7 +35975,7 @@ func layerDecodeClassAuthCodeType(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x06ed998c:
 			return layerDecodeWire06ed998c(profile, b, state)
@@ -42678,7 +36044,7 @@ func layerPreflightClassAuthLoginToken(profile LayerProfile, value AuthLoginToke
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthLoginToken:
 			return layerPreflightWire629f1980Bare(profile, value, state)
@@ -42708,7 +36074,7 @@ func layerEncodeClassAuthLoginTokenBody(profile LayerProfile, value AuthLoginTok
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthLoginToken:
 			b.PutID(0x629f1980)
@@ -42734,7 +36100,7 @@ func layerDecodeClassAuthLoginToken(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x068e9916:
 			return layerDecodeWire068e9916(profile, b, state)
@@ -42799,7 +36165,7 @@ func layerPreflightClassAuthSentCode(profile LayerProfile, value AuthSentCodeCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *AuthSentCode:
 			return layerPreflightWire5e002502Bare(profile, value, state)
@@ -42811,7 +36177,7 @@ func layerPreflightClassAuthSentCode(profile LayerProfile, value AuthSentCodeCla
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthSentCode:
 			return layerPreflightWire5e002502Bare(profile, value, state)
@@ -42841,7 +36207,7 @@ func layerEncodeClassAuthSentCodeBody(profile LayerProfile, value AuthSentCodeCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		case *AuthSentCode:
 			b.PutID(0x5e002502)
@@ -42856,7 +36222,7 @@ func layerEncodeClassAuthSentCodeBody(profile LayerProfile, value AuthSentCodeCl
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthSentCode:
 			b.PutID(0x5e002502)
@@ -42882,7 +36248,7 @@ func layerDecodeClassAuthSentCode(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		case 0x2390fe44:
 			return layerDecodeWire2390fe44(profile, b, state)
@@ -42893,7 +36259,7 @@ func layerDecodeClassAuthSentCode(profile LayerProfile, b *bin.Buffer, state *la
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
-	case LayerProfile226, LayerProfile227:
+	case LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2390fe44:
 			return layerDecodeWire2390fe44(profile, b, state)
@@ -43038,7 +36404,7 @@ func layerPreflightClassAuthSentCodeType(profile LayerProfile, value AuthSentCod
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthSentCodeTypeApp:
 			return layerPreflightWire3dbb5986Bare(profile, value, state)
@@ -43084,7 +36450,7 @@ func layerEncodeClassAuthSentCodeTypeBody(profile LayerProfile, value AuthSentCo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *AuthSentCodeTypeApp:
 			b.PutID(0x3dbb5986)
@@ -43134,7 +36500,7 @@ func layerDecodeClassAuthSentCodeType(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x009fd736:
 			return layerDecodeWire009fd736(profile, b, state)
@@ -43205,7 +36571,7 @@ func layerPreflightClassChannelsChannelParticipants(profile LayerProfile, value 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelsChannelParticipants:
 			return layerPreflightWire9ab0feafBare(profile, value, state)
@@ -43233,7 +36599,7 @@ func layerEncodeClassChannelsChannelParticipantsBody(profile LayerProfile, value
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelsChannelParticipants:
 			b.PutID(0x9ab0feaf)
@@ -43256,7 +36622,7 @@ func layerDecodeClassChannelsChannelParticipants(profile LayerProfile, b *bin.Bu
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x9ab0feaf:
 			return layerDecodeWire9ab0feaf(profile, b, state)
@@ -43319,7 +36685,7 @@ func layerPreflightClassChannelsSponsoredMessageReportResult(profile LayerProfil
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelsSponsoredMessageReportResultAdsHidden:
 			return layerPreflightWire3e3bcf2fBare(profile, value, state)
@@ -43351,7 +36717,7 @@ func layerEncodeClassChannelsSponsoredMessageReportResultBody(profile LayerProfi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChannelsSponsoredMessageReportResultAdsHidden:
 			b.PutID(0x3e3bcf2f)
@@ -43377,7 +36743,7 @@ func layerDecodeClassChannelsSponsoredMessageReportResult(profile LayerProfile, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3e3bcf2f:
 			return layerDecodeWire3e3bcf2f(profile, b, state)
@@ -43432,7 +36798,7 @@ func layerPreflightClassChatlistsChatlistInvite(profile LayerProfile, value Chat
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatlistsChatlistInvite:
 			return layerPreflightWiref10ece2fBare(profile, value, state)
@@ -43460,7 +36826,7 @@ func layerEncodeClassChatlistsChatlistInviteBody(profile LayerProfile, value Cha
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ChatlistsChatlistInvite:
 			b.PutID(0xf10ece2f)
@@ -43483,7 +36849,7 @@ func layerDecodeClassChatlistsChatlistInvite(profile LayerProfile, b *bin.Buffer
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xf10ece2f:
 			return layerDecodeWiref10ece2f(profile, b, state)
@@ -43536,7 +36902,7 @@ func layerPreflightClassContactsBlocked(profile LayerProfile, value ContactsBloc
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsBlocked:
 			return layerPreflightWire0ade1591Bare(profile, value, state)
@@ -43564,7 +36930,7 @@ func layerEncodeClassContactsBlockedBody(profile LayerProfile, value ContactsBlo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsBlocked:
 			b.PutID(0x0ade1591)
@@ -43587,7 +36953,7 @@ func layerDecodeClassContactsBlocked(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0ade1591:
 			return layerDecodeWire0ade1591(profile, b, state)
@@ -43640,7 +37006,7 @@ func layerPreflightClassContactsContacts(profile LayerProfile, value ContactsCon
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsContacts:
 			return layerPreflightWireeae87e42Bare(profile, value, state)
@@ -43668,7 +37034,7 @@ func layerEncodeClassContactsContactsBody(profile LayerProfile, value ContactsCo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsContacts:
 			b.PutID(0xeae87e42)
@@ -43691,7 +37057,7 @@ func layerDecodeClassContactsContacts(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xb74ba9d2:
 			return layerDecodeWireb74ba9d2(profile, b, state)
@@ -43744,7 +37110,7 @@ func layerPreflightClassContactsSponsoredPeers(profile LayerProfile, value Conta
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsSponsoredPeers:
 			return layerPreflightWireeb032884Bare(profile, value, state)
@@ -43772,7 +37138,7 @@ func layerEncodeClassContactsSponsoredPeersBody(profile LayerProfile, value Cont
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsSponsoredPeers:
 			b.PutID(0xeb032884)
@@ -43795,7 +37161,7 @@ func layerDecodeClassContactsSponsoredPeers(profile LayerProfile, b *bin.Buffer,
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xea32b4b1:
 			return layerDecodeWireea32b4b1(profile, b, state)
@@ -43858,7 +37224,7 @@ func layerPreflightClassContactsTopPeers(profile LayerProfile, value ContactsTop
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsTopPeers:
 			return layerPreflightWire70b772a8Bare(profile, value, state)
@@ -43888,7 +37254,7 @@ func layerEncodeClassContactsTopPeersBody(profile LayerProfile, value ContactsTo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *ContactsTopPeers:
 			b.PutID(0x70b772a8)
@@ -43914,7 +37280,7 @@ func layerDecodeClassContactsTopPeers(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x70b772a8:
 			return layerDecodeWire70b772a8(profile, b, state)
@@ -43969,7 +37335,7 @@ func layerPreflightClassHelpAppConfig(profile LayerProfile, value HelpAppConfigC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpAppConfig:
 			return layerPreflightWiredd18782eBare(profile, value, state)
@@ -43997,7 +37363,7 @@ func layerEncodeClassHelpAppConfigBody(profile LayerProfile, value HelpAppConfig
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpAppConfig:
 			b.PutID(0xdd18782e)
@@ -44020,7 +37386,7 @@ func layerDecodeClassHelpAppConfig(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x7cde641d:
 			return layerDecodeWire7cde641d(profile, b, state)
@@ -44073,7 +37439,7 @@ func layerPreflightClassHelpAppUpdate(profile LayerProfile, value HelpAppUpdateC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpAppUpdate:
 			return layerPreflightWireccbbce30Bare(profile, value, state)
@@ -44101,7 +37467,7 @@ func layerEncodeClassHelpAppUpdateBody(profile LayerProfile, value HelpAppUpdate
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpAppUpdate:
 			b.PutID(0xccbbce30)
@@ -44124,7 +37490,7 @@ func layerDecodeClassHelpAppUpdate(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xc45a6536:
 			return layerDecodeWirec45a6536(profile, b, state)
@@ -44177,7 +37543,7 @@ func layerPreflightClassHelpCountriesList(profile LayerProfile, value HelpCountr
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpCountriesList:
 			return layerPreflightWire87d0759eBare(profile, value, state)
@@ -44205,7 +37571,7 @@ func layerEncodeClassHelpCountriesListBody(profile LayerProfile, value HelpCount
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpCountriesList:
 			b.PutID(0x87d0759e)
@@ -44228,7 +37594,7 @@ func layerDecodeClassHelpCountriesList(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x87d0759e:
 			return layerDecodeWire87d0759e(profile, b, state)
@@ -44281,7 +37647,7 @@ func layerPreflightClassHelpDeepLinkInfo(profile LayerProfile, value HelpDeepLin
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpDeepLinkInfo:
 			return layerPreflightWire6a4ee832Bare(profile, value, state)
@@ -44309,7 +37675,7 @@ func layerEncodeClassHelpDeepLinkInfoBody(profile LayerProfile, value HelpDeepLi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpDeepLinkInfo:
 			b.PutID(0x6a4ee832)
@@ -44332,7 +37698,7 @@ func layerDecodeClassHelpDeepLinkInfo(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x66afa166:
 			return layerDecodeWire66afa166(profile, b, state)
@@ -44385,7 +37751,7 @@ func layerPreflightClassHelpPassportConfig(profile LayerProfile, value HelpPassp
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPassportConfig:
 			return layerPreflightWirea098d6afBare(profile, value, state)
@@ -44413,7 +37779,7 @@ func layerEncodeClassHelpPassportConfigBody(profile LayerProfile, value HelpPass
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPassportConfig:
 			b.PutID(0xa098d6af)
@@ -44436,7 +37802,7 @@ func layerDecodeClassHelpPassportConfig(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xa098d6af:
 			return layerDecodeWirea098d6af(profile, b, state)
@@ -44489,7 +37855,7 @@ func layerPreflightClassHelpPeerColorSet(profile LayerProfile, value HelpPeerCol
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPeerColorProfileSet:
 			return layerPreflightWire767d61ebBare(profile, value, state)
@@ -44517,7 +37883,7 @@ func layerEncodeClassHelpPeerColorSetBody(profile LayerProfile, value HelpPeerCo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPeerColorProfileSet:
 			b.PutID(0x767d61eb)
@@ -44540,7 +37906,7 @@ func layerDecodeClassHelpPeerColorSet(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x26219a58:
 			return layerDecodeWire26219a58(profile, b, state)
@@ -44593,7 +37959,7 @@ func layerPreflightClassHelpPeerColors(profile LayerProfile, value HelpPeerColor
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPeerColors:
 			return layerPreflightWire00f8ed08Bare(profile, value, state)
@@ -44621,7 +37987,7 @@ func layerEncodeClassHelpPeerColorsBody(profile LayerProfile, value HelpPeerColo
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPeerColors:
 			b.PutID(0x00f8ed08)
@@ -44644,7 +38010,7 @@ func layerDecodeClassHelpPeerColors(profile LayerProfile, b *bin.Buffer, state *
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x00f8ed08:
 			return layerDecodeWire00f8ed08(profile, b, state)
@@ -44697,7 +38063,7 @@ func layerPreflightClassHelpPromoData(profile LayerProfile, value HelpPromoDataC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPromoData:
 			return layerPreflightWire08a4d87aBare(profile, value, state)
@@ -44725,7 +38091,7 @@ func layerEncodeClassHelpPromoDataBody(profile LayerProfile, value HelpPromoData
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpPromoData:
 			b.PutID(0x08a4d87a)
@@ -44748,7 +38114,7 @@ func layerDecodeClassHelpPromoData(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x08a4d87a:
 			return layerDecodeWire08a4d87a(profile, b, state)
@@ -44801,7 +38167,7 @@ func layerPreflightClassHelpTermsOfServiceUpdate(profile LayerProfile, value Hel
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpTermsOfServiceUpdate:
 			return layerPreflightWire28ecf961Bare(profile, value, state)
@@ -44829,7 +38195,7 @@ func layerEncodeClassHelpTermsOfServiceUpdateBody(profile LayerProfile, value He
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpTermsOfServiceUpdate:
 			b.PutID(0x28ecf961)
@@ -44852,7 +38218,7 @@ func layerDecodeClassHelpTermsOfServiceUpdate(profile LayerProfile, b *bin.Buffe
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x28ecf961:
 			return layerDecodeWire28ecf961(profile, b, state)
@@ -44905,7 +38271,7 @@ func layerPreflightClassHelpTimezonesList(profile LayerProfile, value HelpTimezo
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpTimezonesList:
 			return layerPreflightWire7b74ed71Bare(profile, value, state)
@@ -44933,7 +38299,7 @@ func layerEncodeClassHelpTimezonesListBody(profile LayerProfile, value HelpTimez
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpTimezonesList:
 			b.PutID(0x7b74ed71)
@@ -44956,7 +38322,7 @@ func layerDecodeClassHelpTimezonesList(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x7b74ed71:
 			return layerDecodeWire7b74ed71(profile, b, state)
@@ -45009,7 +38375,7 @@ func layerPreflightClassHelpUserInfo(profile LayerProfile, value HelpUserInfoCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpUserInfo:
 			return layerPreflightWire01eb3758Bare(profile, value, state)
@@ -45037,7 +38403,7 @@ func layerEncodeClassHelpUserInfoBody(profile LayerProfile, value HelpUserInfoCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *HelpUserInfo:
 			b.PutID(0x01eb3758)
@@ -45060,7 +38426,7 @@ func layerDecodeClassHelpUserInfo(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x01eb3758:
 			return layerDecodeWire01eb3758(profile, b, state)
@@ -45113,7 +38479,7 @@ func layerPreflightClassMessagesAllStickers(profile LayerProfile, value Messages
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesAllStickers:
 			return layerPreflightWirecdbbcebbBare(profile, value, state)
@@ -45141,7 +38507,7 @@ func layerEncodeClassMessagesAllStickersBody(profile LayerProfile, value Message
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesAllStickers:
 			b.PutID(0xcdbbcebb)
@@ -45164,7 +38530,7 @@ func layerDecodeClassMessagesAllStickers(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xcdbbcebb:
 			return layerDecodeWirecdbbcebb(profile, b, state)
@@ -45217,7 +38583,7 @@ func layerPreflightClassMessagesAvailableEffects(profile LayerProfile, value Mes
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesAvailableEffects:
 			return layerPreflightWirebddb616eBare(profile, value, state)
@@ -45245,7 +38611,7 @@ func layerEncodeClassMessagesAvailableEffectsBody(profile LayerProfile, value Me
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesAvailableEffects:
 			b.PutID(0xbddb616e)
@@ -45268,7 +38634,7 @@ func layerDecodeClassMessagesAvailableEffects(profile LayerProfile, b *bin.Buffe
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xbddb616e:
 			return layerDecodeWirebddb616e(profile, b, state)
@@ -45321,7 +38687,7 @@ func layerPreflightClassMessagesAvailableReactions(profile LayerProfile, value M
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesAvailableReactions:
 			return layerPreflightWire768e3aadBare(profile, value, state)
@@ -45349,7 +38715,7 @@ func layerEncodeClassMessagesAvailableReactionsBody(profile LayerProfile, value 
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesAvailableReactions:
 			b.PutID(0x768e3aad)
@@ -45372,7 +38738,7 @@ func layerDecodeClassMessagesAvailableReactions(profile LayerProfile, b *bin.Buf
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x768e3aad:
 			return layerDecodeWire768e3aad(profile, b, state)
@@ -45425,7 +38791,7 @@ func layerPreflightClassMessagesChatInviteJoinResult(profile LayerProfile, value
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		default:
 			_ = value
@@ -45451,6 +38817,16 @@ func layerPreflightClassMessagesChatInviteJoinResult(profile LayerProfile, value
 			_ = value
 			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *MessagesChatInviteJoinResultOk:
+			return layerPreflightWire445663a7Bare(profile, value, state)
+		case *MessagesChatInviteJoinResultWebView:
+			return layerPreflightWire61ca29d3Bare(profile, value, state)
+		default:
+			_ = value
+			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -45469,7 +38845,7 @@ func layerEncodeClassMessagesChatInviteJoinResultBody(profile LayerProfile, valu
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch value := projected.(type) {
 		default:
 			_ = value
@@ -45499,6 +38875,18 @@ func layerEncodeClassMessagesChatInviteJoinResultBody(profile LayerProfile, valu
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
 		}
+	case LayerProfile228:
+		switch value := projected.(type) {
+		case *MessagesChatInviteJoinResultOk:
+			b.PutID(0x445663a7)
+			return layerEncodeWire445663a7BareBody(profile, value, b, state)
+		case *MessagesChatInviteJoinResultWebView:
+			b.PutID(0x61ca29d3)
+			return layerEncodeWire61ca29d3BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
 	default:
 		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
 	}
@@ -45510,7 +38898,7 @@ func layerDecodeClassMessagesChatInviteJoinResult(profile LayerProfile, b *bin.B
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225:
+	case LayerProfile225:
 		switch id {
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
@@ -45530,6 +38918,15 @@ func layerDecodeClassMessagesChatInviteJoinResult(profile LayerProfile, b *bin.B
 			return layerDecodeWire2f51c337(profile, b, state)
 		case 0x445663a7:
 			return layerDecodeWire445663a7(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	case LayerProfile228:
+		switch id {
+		case 0x445663a7:
+			return layerDecodeWire445663a7(profile, b, state)
+		case 0x61ca29d3:
+			return layerDecodeWire61ca29d3(profile, b, state)
 		default:
 			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
 		}
@@ -45577,7 +38974,7 @@ func layerPreflightClassMessagesChats(profile LayerProfile, value MessagesChatsC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesChats:
 			return layerPreflightWire64ff9fd5Bare(profile, value, state)
@@ -45605,7 +39002,7 @@ func layerEncodeClassMessagesChatsBody(profile LayerProfile, value MessagesChats
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesChats:
 			b.PutID(0x64ff9fd5)
@@ -45628,7 +39025,7 @@ func layerDecodeClassMessagesChats(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x64ff9fd5:
 			return layerDecodeWire64ff9fd5(profile, b, state)
@@ -45681,7 +39078,7 @@ func layerPreflightClassMessagesDhConfig(profile LayerProfile, value MessagesDhC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesDhConfig:
 			return layerPreflightWire2c221eddBare(profile, value, state)
@@ -45709,7 +39106,7 @@ func layerEncodeClassMessagesDhConfigBody(profile LayerProfile, value MessagesDh
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesDhConfig:
 			b.PutID(0x2c221edd)
@@ -45732,7 +39129,7 @@ func layerDecodeClassMessagesDhConfig(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2c221edd:
 			return layerDecodeWire2c221edd(profile, b, state)
@@ -45795,7 +39192,7 @@ func layerPreflightClassMessagesDialogs(profile LayerProfile, value MessagesDial
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesDialogs:
 			return layerPreflightWire15ba6c40Bare(profile, value, state)
@@ -45825,7 +39222,7 @@ func layerEncodeClassMessagesDialogsBody(profile LayerProfile, value MessagesDia
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesDialogs:
 			b.PutID(0x15ba6c40)
@@ -45851,7 +39248,7 @@ func layerDecodeClassMessagesDialogs(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x15ba6c40:
 			return layerDecodeWire15ba6c40(profile, b, state)
@@ -45906,13 +39303,7 @@ func layerPreflightClassMessagesEmojiGameInfo(profile LayerProfile, value Messag
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesEmojiGameDiceInfo:
 			return layerPreflightWire44e56023Bare(profile, value, state)
@@ -45940,13 +39331,7 @@ func layerEncodeClassMessagesEmojiGameInfoBody(profile LayerProfile, value Messa
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220:
-		switch value := projected.(type) {
-		default:
-			_ = value
-			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesEmojiGameDiceInfo:
 			b.PutID(0x44e56023)
@@ -45969,12 +39354,7 @@ func layerDecodeClassMessagesEmojiGameInfo(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220:
-		switch id {
-		default:
-			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
-		}
-	case LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x44e56023:
 			return layerDecodeWire44e56023(profile, b, state)
@@ -46027,7 +39407,7 @@ func layerPreflightClassMessagesEmojiGroups(profile LayerProfile, value Messages
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesEmojiGroups:
 			return layerPreflightWire881fb94bBare(profile, value, state)
@@ -46055,7 +39435,7 @@ func layerEncodeClassMessagesEmojiGroupsBody(profile LayerProfile, value Message
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesEmojiGroups:
 			b.PutID(0x881fb94b)
@@ -46078,7 +39458,7 @@ func layerDecodeClassMessagesEmojiGroups(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6fb4ad87:
 			return layerDecodeWire6fb4ad87(profile, b, state)
@@ -46131,7 +39511,7 @@ func layerPreflightClassMessagesExportedChatInvite(profile LayerProfile, value M
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesExportedChatInvite:
 			return layerPreflightWire1871be50Bare(profile, value, state)
@@ -46159,7 +39539,7 @@ func layerEncodeClassMessagesExportedChatInviteBody(profile LayerProfile, value 
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesExportedChatInvite:
 			b.PutID(0x1871be50)
@@ -46182,7 +39562,7 @@ func layerDecodeClassMessagesExportedChatInvite(profile LayerProfile, b *bin.Buf
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1871be50:
 			return layerDecodeWire1871be50(profile, b, state)
@@ -46235,7 +39615,7 @@ func layerPreflightClassMessagesFavedStickers(profile LayerProfile, value Messag
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFavedStickers:
 			return layerPreflightWire2cb51097Bare(profile, value, state)
@@ -46263,7 +39643,7 @@ func layerEncodeClassMessagesFavedStickersBody(profile LayerProfile, value Messa
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFavedStickers:
 			b.PutID(0x2cb51097)
@@ -46286,7 +39666,7 @@ func layerDecodeClassMessagesFavedStickers(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2cb51097:
 			return layerDecodeWire2cb51097(profile, b, state)
@@ -46339,7 +39719,7 @@ func layerPreflightClassMessagesFeaturedStickers(profile LayerProfile, value Mes
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFeaturedStickers:
 			return layerPreflightWirebe382906Bare(profile, value, state)
@@ -46367,7 +39747,7 @@ func layerEncodeClassMessagesFeaturedStickersBody(profile LayerProfile, value Me
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFeaturedStickers:
 			b.PutID(0xbe382906)
@@ -46390,7 +39770,7 @@ func layerDecodeClassMessagesFeaturedStickers(profile LayerProfile, b *bin.Buffe
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xbe382906:
 			return layerDecodeWirebe382906(profile, b, state)
@@ -46443,7 +39823,7 @@ func layerPreflightClassMessagesFoundStickerSets(profile LayerProfile, value Mes
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFoundStickerSets:
 			return layerPreflightWire8af09dd2Bare(profile, value, state)
@@ -46471,7 +39851,7 @@ func layerEncodeClassMessagesFoundStickerSetsBody(profile LayerProfile, value Me
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFoundStickerSets:
 			b.PutID(0x8af09dd2)
@@ -46494,7 +39874,7 @@ func layerDecodeClassMessagesFoundStickerSets(profile LayerProfile, b *bin.Buffe
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0d54b65d:
 			return layerDecodeWire0d54b65d(profile, b, state)
@@ -46547,7 +39927,7 @@ func layerPreflightClassMessagesFoundStickers(profile LayerProfile, value Messag
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFoundStickers:
 			return layerPreflightWire82c9e290Bare(profile, value, state)
@@ -46575,7 +39955,7 @@ func layerEncodeClassMessagesFoundStickersBody(profile LayerProfile, value Messa
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesFoundStickers:
 			b.PutID(0x82c9e290)
@@ -46598,7 +39978,7 @@ func layerDecodeClassMessagesFoundStickers(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6010c534:
 			return layerDecodeWire6010c534(profile, b, state)
@@ -46671,7 +40051,7 @@ func layerPreflightClassMessagesMessages(profile LayerProfile, value MessagesMes
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesChannelMessages:
 			return layerPreflightWirec776ba4eBare(profile, value, state)
@@ -46703,7 +40083,7 @@ func layerEncodeClassMessagesMessagesBody(profile LayerProfile, value MessagesMe
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesChannelMessages:
 			b.PutID(0xc776ba4e)
@@ -46732,7 +40112,7 @@ func layerDecodeClassMessagesMessages(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1d73e7ea:
 			return layerDecodeWire1d73e7ea(profile, b, state)
@@ -46789,7 +40169,7 @@ func layerPreflightClassMessagesQuickReplies(profile LayerProfile, value Message
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesQuickReplies:
 			return layerPreflightWirec68d6695Bare(profile, value, state)
@@ -46817,7 +40197,7 @@ func layerEncodeClassMessagesQuickRepliesBody(profile LayerProfile, value Messag
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesQuickReplies:
 			b.PutID(0xc68d6695)
@@ -46840,7 +40220,7 @@ func layerDecodeClassMessagesQuickReplies(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x5f91eb5b:
 			return layerDecodeWire5f91eb5b(profile, b, state)
@@ -46893,7 +40273,7 @@ func layerPreflightClassMessagesReactions(profile LayerProfile, value MessagesRe
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesReactions:
 			return layerPreflightWireeafdf716Bare(profile, value, state)
@@ -46921,7 +40301,7 @@ func layerEncodeClassMessagesReactionsBody(profile LayerProfile, value MessagesR
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesReactions:
 			b.PutID(0xeafdf716)
@@ -46944,7 +40324,7 @@ func layerDecodeClassMessagesReactions(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xb06fdbdf:
 			return layerDecodeWireb06fdbdf(profile, b, state)
@@ -46997,7 +40377,7 @@ func layerPreflightClassMessagesRecentStickers(profile LayerProfile, value Messa
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesRecentStickers:
 			return layerPreflightWire88d37c56Bare(profile, value, state)
@@ -47025,7 +40405,7 @@ func layerEncodeClassMessagesRecentStickersBody(profile LayerProfile, value Mess
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesRecentStickers:
 			b.PutID(0x88d37c56)
@@ -47048,7 +40428,7 @@ func layerDecodeClassMessagesRecentStickers(profile LayerProfile, b *bin.Buffer,
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x0b17f890:
 			return layerDecodeWire0b17f890(profile, b, state)
@@ -47111,7 +40491,7 @@ func layerPreflightClassMessagesSavedDialogs(profile LayerProfile, value Message
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSavedDialogs:
 			return layerPreflightWiref83ae221Bare(profile, value, state)
@@ -47141,7 +40521,7 @@ func layerEncodeClassMessagesSavedDialogsBody(profile LayerProfile, value Messag
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSavedDialogs:
 			b.PutID(0xf83ae221)
@@ -47167,7 +40547,7 @@ func layerDecodeClassMessagesSavedDialogs(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x44ba9dd9:
 			return layerDecodeWire44ba9dd9(profile, b, state)
@@ -47222,7 +40602,7 @@ func layerPreflightClassMessagesSavedGifs(profile LayerProfile, value MessagesSa
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSavedGifs:
 			return layerPreflightWire84a02a0dBare(profile, value, state)
@@ -47250,7 +40630,7 @@ func layerEncodeClassMessagesSavedGifsBody(profile LayerProfile, value MessagesS
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSavedGifs:
 			b.PutID(0x84a02a0d)
@@ -47273,7 +40653,7 @@ func layerDecodeClassMessagesSavedGifs(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x84a02a0d:
 			return layerDecodeWire84a02a0d(profile, b, state)
@@ -47326,7 +40706,7 @@ func layerPreflightClassMessagesSavedReactionTags(profile LayerProfile, value Me
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSavedReactionTags:
 			return layerPreflightWire3259950aBare(profile, value, state)
@@ -47354,7 +40734,7 @@ func layerEncodeClassMessagesSavedReactionTagsBody(profile LayerProfile, value M
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSavedReactionTags:
 			b.PutID(0x3259950a)
@@ -47377,7 +40757,7 @@ func layerDecodeClassMessagesSavedReactionTags(profile LayerProfile, b *bin.Buff
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x3259950a:
 			return layerDecodeWire3259950a(profile, b, state)
@@ -47430,7 +40810,7 @@ func layerPreflightClassMessagesSentEncryptedMessage(profile LayerProfile, value
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSentEncryptedFile:
 			return layerPreflightWire9493ff32Bare(profile, value, state)
@@ -47458,7 +40838,7 @@ func layerEncodeClassMessagesSentEncryptedMessageBody(profile LayerProfile, valu
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSentEncryptedFile:
 			b.PutID(0x9493ff32)
@@ -47481,7 +40861,7 @@ func layerDecodeClassMessagesSentEncryptedMessage(profile LayerProfile, b *bin.B
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x560f8935:
 			return layerDecodeWire560f8935(profile, b, state)
@@ -47534,7 +40914,7 @@ func layerPreflightClassMessagesSponsoredMessages(profile LayerProfile, value Me
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSponsoredMessages:
 			return layerPreflightWireffda656dBare(profile, value, state)
@@ -47562,7 +40942,7 @@ func layerEncodeClassMessagesSponsoredMessagesBody(profile LayerProfile, value M
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesSponsoredMessages:
 			b.PutID(0xffda656d)
@@ -47585,7 +40965,7 @@ func layerDecodeClassMessagesSponsoredMessages(profile LayerProfile, b *bin.Buff
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1839490f:
 			return layerDecodeWire1839490f(profile, b, state)
@@ -47638,7 +41018,7 @@ func layerPreflightClassMessagesStickerSet(profile LayerProfile, value MessagesS
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesStickerSet:
 			return layerPreflightWire6e153f16Bare(profile, value, state)
@@ -47666,7 +41046,7 @@ func layerEncodeClassMessagesStickerSetBody(profile LayerProfile, value Messages
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesStickerSet:
 			b.PutID(0x6e153f16)
@@ -47689,7 +41069,7 @@ func layerDecodeClassMessagesStickerSet(profile LayerProfile, b *bin.Buffer, sta
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x6e153f16:
 			return layerDecodeWire6e153f16(profile, b, state)
@@ -47742,7 +41122,7 @@ func layerPreflightClassMessagesStickerSetInstallResult(profile LayerProfile, va
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesStickerSetInstallResultArchive:
 			return layerPreflightWire35e410a8Bare(profile, value, state)
@@ -47770,7 +41150,7 @@ func layerEncodeClassMessagesStickerSetInstallResultBody(profile LayerProfile, v
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesStickerSetInstallResultArchive:
 			b.PutID(0x35e410a8)
@@ -47793,7 +41173,7 @@ func layerDecodeClassMessagesStickerSetInstallResult(profile LayerProfile, b *bi
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x35e410a8:
 			return layerDecodeWire35e410a8(profile, b, state)
@@ -47846,7 +41226,7 @@ func layerPreflightClassMessagesStickers(profile LayerProfile, value MessagesSti
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesStickers:
 			return layerPreflightWire30a6ec7eBare(profile, value, state)
@@ -47874,7 +41254,7 @@ func layerEncodeClassMessagesStickersBody(profile LayerProfile, value MessagesSt
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *MessagesStickers:
 			b.PutID(0x30a6ec7e)
@@ -47897,7 +41277,7 @@ func layerDecodeClassMessagesStickers(profile LayerProfile, b *bin.Buffer, state
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x30a6ec7e:
 			return layerDecodeWire30a6ec7e(profile, b, state)
@@ -47950,7 +41330,7 @@ func layerPreflightClassPaymentsCheckCanSendGiftResult(profile LayerProfile, val
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsCheckCanSendGiftResultFail:
 			return layerPreflightWired5e58274Bare(profile, value, state)
@@ -47978,7 +41358,7 @@ func layerEncodeClassPaymentsCheckCanSendGiftResultBody(profile LayerProfile, va
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsCheckCanSendGiftResultFail:
 			b.PutID(0xd5e58274)
@@ -48001,7 +41381,7 @@ func layerDecodeClassPaymentsCheckCanSendGiftResult(profile LayerProfile, b *bin
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x374fa7ad:
 			return layerDecodeWire374fa7ad(profile, b, state)
@@ -48054,7 +41434,7 @@ func layerPreflightClassPaymentsGiveawayInfo(profile LayerProfile, value Payment
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsGiveawayInfo:
 			return layerPreflightWire4367daa0Bare(profile, value, state)
@@ -48082,7 +41462,7 @@ func layerEncodeClassPaymentsGiveawayInfoBody(profile LayerProfile, value Paymen
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsGiveawayInfo:
 			b.PutID(0x4367daa0)
@@ -48105,7 +41485,7 @@ func layerDecodeClassPaymentsGiveawayInfo(profile LayerProfile, b *bin.Buffer, s
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4367daa0:
 			return layerDecodeWire4367daa0(profile, b, state)
@@ -48168,7 +41548,7 @@ func layerPreflightClassPaymentsPaymentForm(profile LayerProfile, value Payments
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsPaymentForm:
 			return layerPreflightWirea0058751Bare(profile, value, state)
@@ -48198,7 +41578,7 @@ func layerEncodeClassPaymentsPaymentFormBody(profile LayerProfile, value Payment
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsPaymentForm:
 			b.PutID(0xa0058751)
@@ -48224,7 +41604,7 @@ func layerDecodeClassPaymentsPaymentForm(profile LayerProfile, b *bin.Buffer, st
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x7bf6b15c:
 			return layerDecodeWire7bf6b15c(profile, b, state)
@@ -48279,7 +41659,7 @@ func layerPreflightClassPaymentsPaymentReceipt(profile LayerProfile, value Payme
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsPaymentReceipt:
 			return layerPreflightWire70c4fe03Bare(profile, value, state)
@@ -48307,7 +41687,7 @@ func layerEncodeClassPaymentsPaymentReceiptBody(profile LayerProfile, value Paym
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsPaymentReceipt:
 			b.PutID(0x70c4fe03)
@@ -48330,7 +41710,7 @@ func layerDecodeClassPaymentsPaymentReceipt(profile LayerProfile, b *bin.Buffer,
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x70c4fe03:
 			return layerDecodeWire70c4fe03(profile, b, state)
@@ -48383,7 +41763,7 @@ func layerPreflightClassPaymentsPaymentResult(profile LayerProfile, value Paymen
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsPaymentResult:
 			return layerPreflightWire4e5f810dBare(profile, value, state)
@@ -48411,7 +41791,7 @@ func layerEncodeClassPaymentsPaymentResultBody(profile LayerProfile, value Payme
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsPaymentResult:
 			b.PutID(0x4e5f810d)
@@ -48434,7 +41814,7 @@ func layerDecodeClassPaymentsPaymentResult(profile LayerProfile, b *bin.Buffer, 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x4e5f810d:
 			return layerDecodeWire4e5f810d(profile, b, state)
@@ -48487,7 +41867,7 @@ func layerPreflightClassPaymentsStarGiftActiveAuctions(profile LayerProfile, val
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsStarGiftActiveAuctions:
 			return layerPreflightWireaef6abbcBare(profile, value, state)
@@ -48515,7 +41895,7 @@ func layerEncodeClassPaymentsStarGiftActiveAuctionsBody(profile LayerProfile, va
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsStarGiftActiveAuctions:
 			b.PutID(0xaef6abbc)
@@ -48538,7 +41918,7 @@ func layerDecodeClassPaymentsStarGiftActiveAuctions(profile LayerProfile, b *bin
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xaef6abbc:
 			return layerDecodeWireaef6abbc(profile, b, state)
@@ -48591,7 +41971,7 @@ func layerPreflightClassPaymentsStarGiftCollections(profile LayerProfile, value 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsStarGiftCollections:
 			return layerPreflightWire8a2932f3Bare(profile, value, state)
@@ -48619,7 +41999,7 @@ func layerEncodeClassPaymentsStarGiftCollectionsBody(profile LayerProfile, value
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsStarGiftCollections:
 			b.PutID(0x8a2932f3)
@@ -48642,7 +42022,7 @@ func layerDecodeClassPaymentsStarGiftCollections(profile LayerProfile, b *bin.Bu
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x8a2932f3:
 			return layerDecodeWire8a2932f3(profile, b, state)
@@ -48695,7 +42075,7 @@ func layerPreflightClassPaymentsStarGifts(profile LayerProfile, value PaymentsSt
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsStarGifts:
 			return layerPreflightWire2ed82995Bare(profile, value, state)
@@ -48723,7 +42103,7 @@ func layerEncodeClassPaymentsStarGiftsBody(profile LayerProfile, value PaymentsS
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PaymentsStarGifts:
 			b.PutID(0x2ed82995)
@@ -48746,7 +42126,7 @@ func layerDecodeClassPaymentsStarGifts(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2ed82995:
 			return layerDecodeWire2ed82995(profile, b, state)
@@ -48799,7 +42179,7 @@ func layerPreflightClassPhotosPhotos(profile LayerProfile, value PhotosPhotosCla
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhotosPhotos:
 			return layerPreflightWire8dca6aa5Bare(profile, value, state)
@@ -48827,7 +42207,7 @@ func layerEncodeClassPhotosPhotosBody(profile LayerProfile, value PhotosPhotosCl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *PhotosPhotos:
 			b.PutID(0x8dca6aa5)
@@ -48850,7 +42230,7 @@ func layerDecodeClassPhotosPhotos(profile LayerProfile, b *bin.Buffer, state *la
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x15051f54:
 			return layerDecodeWire15051f54(profile, b, state)
@@ -48983,7 +42363,7 @@ func layerPreflightClassStorageFileType(profile LayerProfile, value StorageFileT
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StorageFileGif:
 			return layerPreflightWirecae1aadfBare(profile, value, state)
@@ -49027,7 +42407,7 @@ func layerEncodeClassStorageFileTypeBody(profile LayerProfile, value StorageFile
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StorageFileGif:
 			b.PutID(0xcae1aadf)
@@ -49074,7 +42454,7 @@ func layerDecodeClassStorageFileType(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x007efe0e:
 			return layerDecodeWire007efe0e(profile, b, state)
@@ -49143,7 +42523,7 @@ func layerPreflightClassStoriesAlbums(profile LayerProfile, value StoriesAlbumsC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoriesAlbums:
 			return layerPreflightWirec3987a3aBare(profile, value, state)
@@ -49171,7 +42551,7 @@ func layerEncodeClassStoriesAlbumsBody(profile LayerProfile, value StoriesAlbums
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoriesAlbums:
 			b.PutID(0xc3987a3a)
@@ -49194,7 +42574,7 @@ func layerDecodeClassStoriesAlbums(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x564edaeb:
 			return layerDecodeWire564edaeb(profile, b, state)
@@ -49247,7 +42627,7 @@ func layerPreflightClassStoriesAllStories(profile LayerProfile, value StoriesAll
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoriesAllStories:
 			return layerPreflightWire6efc5e81Bare(profile, value, state)
@@ -49275,7 +42655,7 @@ func layerEncodeClassStoriesAllStoriesBody(profile LayerProfile, value StoriesAl
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *StoriesAllStories:
 			b.PutID(0x6efc5e81)
@@ -49298,7 +42678,7 @@ func layerDecodeClassStoriesAllStories(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x1158fe3e:
 			return layerDecodeWire1158fe3e(profile, b, state)
@@ -49361,7 +42741,7 @@ func layerPreflightClassUpdatesChannelDifference(profile LayerProfile, value Upd
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UpdatesChannelDifference:
 			return layerPreflightWire2064674eBare(profile, value, state)
@@ -49391,7 +42771,7 @@ func layerEncodeClassUpdatesChannelDifferenceBody(profile LayerProfile, value Up
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UpdatesChannelDifference:
 			b.PutID(0x2064674e)
@@ -49417,7 +42797,7 @@ func layerDecodeClassUpdatesChannelDifference(profile LayerProfile, b *bin.Buffe
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x2064674e:
 			return layerDecodeWire2064674e(profile, b, state)
@@ -49492,7 +42872,7 @@ func layerPreflightClassUpdatesDifference(profile LayerProfile, value UpdatesDif
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UpdatesDifference:
 			return layerPreflightWire00f49ca0Bare(profile, value, state)
@@ -49524,7 +42904,7 @@ func layerEncodeClassUpdatesDifferenceBody(profile LayerProfile, value UpdatesDi
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UpdatesDifference:
 			b.PutID(0x00f49ca0)
@@ -49553,7 +42933,7 @@ func layerDecodeClassUpdatesDifference(profile LayerProfile, b *bin.Buffer, stat
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x00f49ca0:
 			return layerDecodeWire00f49ca0(profile, b, state)
@@ -49610,7 +42990,7 @@ func layerPreflightClassUploadCDNFile(profile LayerProfile, value UploadCDNFileC
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UploadCDNFile:
 			return layerPreflightWirea99fca4fBare(profile, value, state)
@@ -49638,7 +43018,7 @@ func layerEncodeClassUploadCDNFileBody(profile LayerProfile, value UploadCDNFile
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UploadCDNFile:
 			b.PutID(0xa99fca4f)
@@ -49661,7 +43041,7 @@ func layerDecodeClassUploadCDNFile(profile LayerProfile, b *bin.Buffer, state *l
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0xa99fca4f:
 			return layerDecodeWirea99fca4f(profile, b, state)
@@ -49714,7 +43094,7 @@ func layerPreflightClassUploadFile(profile LayerProfile, value UploadFileClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UploadFile:
 			return layerPreflightWire096a18d5Bare(profile, value, state)
@@ -49742,7 +43122,7 @@ func layerEncodeClassUploadFileBody(profile LayerProfile, value UploadFileClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UploadFile:
 			b.PutID(0x096a18d5)
@@ -49765,7 +43145,7 @@ func layerDecodeClassUploadFile(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x096a18d5:
 			return layerDecodeWire096a18d5(profile, b, state)
@@ -49818,7 +43198,7 @@ func layerPreflightClassUsersSavedMusic(profile LayerProfile, value UsersSavedMu
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UsersSavedMusic:
 			return layerPreflightWire34a2f297Bare(profile, value, state)
@@ -49846,7 +43226,7 @@ func layerEncodeClassUsersSavedMusicBody(profile LayerProfile, value UsersSavedM
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UsersSavedMusic:
 			b.PutID(0x34a2f297)
@@ -49869,7 +43249,7 @@ func layerDecodeClassUsersSavedMusic(profile LayerProfile, b *bin.Buffer, state 
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x34a2f297:
 			return layerDecodeWire34a2f297(profile, b, state)
@@ -49922,7 +43302,7 @@ func layerPreflightClassUsersUsers(profile LayerProfile, value UsersUsersClass, 
 		return 0, nil
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UsersUsers:
 			return layerPreflightWire62d706b8Bare(profile, value, state)
@@ -49950,7 +43330,7 @@ func layerEncodeClassUsersUsersBody(profile LayerProfile, value UsersUsersClass,
 		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch value := projected.(type) {
 		case *UsersUsers:
 			b.PutID(0x62d706b8)
@@ -49973,7 +43353,7 @@ func layerDecodeClassUsersUsers(profile LayerProfile, b *bin.Buffer, state *laye
 		return nil, fmt.Errorf("peek class constructor: %w", err)
 	}
 	switch profile {
-	case LayerProfile220, LayerProfile221, LayerProfile222, LayerProfile223, LayerProfile224, LayerProfile225, LayerProfile226, LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
 		switch id {
 		case 0x315a4974:
 			return layerDecodeWire315a4974(profile, b, state)

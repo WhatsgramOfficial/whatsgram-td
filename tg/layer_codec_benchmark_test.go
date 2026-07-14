@@ -17,19 +17,15 @@ var layerBenchmarkDecoded *UpdateUserStatus
 var layerBenchmarkFanoutBytes int
 
 var layerBenchmarkProfiles = []LayerProfile{
-	LayerProfile220,
-	LayerProfile221,
-	LayerProfile222,
-	LayerProfile223,
-	LayerProfile224,
 	LayerProfile225,
 	LayerProfile226,
 	LayerProfile227,
+	LayerProfile228,
 }
 
 func BenchmarkLayerEncodeUpdateUserStatus(b *testing.B) {
 	typ := LayerConstructorUpdateUserStatusType()
-	for _, profile := range []LayerProfile{LayerProfile220, LayerProfile227} {
+	for _, profile := range []LayerProfile{LayerProfile225, LayerProfile228} {
 		b.Run(layerBenchmarkProfileName(profile), func(b *testing.B) {
 			var encoded bin.Buffer
 			b.ReportAllocs()
@@ -46,7 +42,7 @@ func BenchmarkLayerEncodeUpdateUserStatus(b *testing.B) {
 
 func BenchmarkLayerDecodeUpdateUserStatus(b *testing.B) {
 	typ := LayerConstructorUpdateUserStatusType()
-	for _, profile := range []LayerProfile{LayerProfile220, LayerProfile227} {
+	for _, profile := range []LayerProfile{LayerProfile225, LayerProfile228} {
 		var encoded bin.Buffer
 		if err := EncodeLayer(profile, typ, layerBenchmarkValue, &encoded); err != nil {
 			b.Fatal(err)
@@ -73,7 +69,7 @@ func BenchmarkLayerPreparedFanout(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	for _, profile := range []LayerProfile{LayerProfile220, LayerProfile227} {
+	for _, profile := range []LayerProfile{LayerProfile225, LayerProfile228} {
 		prepared, err := PrepareFrozenLayer(profile, frozen)
 		if err != nil {
 			b.Fatal(err)

@@ -281,7 +281,7 @@ func TestLayerRPCModelNeverFallsBackAcrossRejectedBoundary(t *testing.T) {
 	}
 }
 
-func TestLayerRPCModelTelegram220Through227(t *testing.T) {
+func TestLayerRPCModelTelegram225Through228(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
@@ -373,7 +373,7 @@ func TestLayerRPCModelTelegram220Through227(t *testing.T) {
 	if handlers == 0 || wrappers == 0 || len(model.Routes) == 0 {
 		t.Fatalf("real RPC model counts: handlers=%d wrappers=%d routes=%d", handlers, wrappers, len(model.Routes))
 	}
-	t.Logf("Telegram Layers 220-227 RPC model: semantic_methods=%d handlers=%d wrappers=%d exact_routes=%d", len(model.Methods), handlers, wrappers, len(model.Routes))
+	t.Logf("Telegram Layers 225-228 RPC model: semantic_methods=%d handlers=%d wrappers=%d exact_routes=%d", len(model.Methods), handlers, wrappers, len(model.Routes))
 }
 
 func TestLayerRPCServerTemplateKeepsOneOnFacadePerSemanticMethod(t *testing.T) {

@@ -13,19 +13,20 @@ import (
 
 // config is input data for templates.
 type config struct {
-	Layer             int
-	Flags             GenerateFlags
-	Package           string
-	Structs           []structDef
-	Interfaces        []interfaceDef
-	Mappings          map[string][]constructorMapping
-	Registry          []bindingDef
-	Errors            []errCheckDef
-	LayerMetadata     *layerMetadata
-	LayerCodec        *layerCodecModel
-	LayerTypeRefs     *layerTypeRefModel
-	LayerRPCSource    *layerRPCSourceModel
-	LayerClientSource *layerClientSourceModel
+	Layer                 int
+	Flags                 GenerateFlags
+	Package               string
+	Structs               []structDef
+	Interfaces            []interfaceDef
+	Mappings              map[string][]constructorMapping
+	Registry              []bindingDef
+	Errors                []errCheckDef
+	LayerMetadata         *layerMetadata
+	LayerCodec            *layerCodecModel
+	LayerTypeRefs         *layerTypeRefModel
+	LayerRPCSource        *layerRPCSourceModel
+	LayerClientSource     *layerClientSourceModel
+	LayerClientRPCOverlay *layerClientRPCOverlaySourceModel
 }
 
 // FileSystem represents a directory of generated package.
@@ -272,6 +273,16 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 			LayerMetadata: metadata,
 		}); err != nil {
 			return errors.Wrap(err, "layer metadata")
+		}
+		clientRPCOverlay, err := g.buildLayerClientRPCOverlaySourceModel(pkgName)
+		if err != nil {
+			return errors.Wrap(err, "client RPC overlay")
+		}
+		if err := w.Generate("layer_client_rpc_overlay", "tl_layer_client_rpc_overlay_gen.go", config{
+			Package:               pkgName,
+			LayerClientRPCOverlay: clientRPCOverlay,
+		}); err != nil {
+			return errors.Wrap(err, "client RPC overlay source")
 		}
 		if err := w.Generate("layer_codec_api", "tl_layer_codec_api_gen.go", config{
 			Package: pkgName,

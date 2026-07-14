@@ -2,285 +2,18 @@
   "version": 1,
   "entries": [
     {
-      "key": "layer-obligation/v1/atomic-flag-group/0027a2d6c58361f850323a09ad369eaa80c8fa02b70d4f5ad7a3ed5031f3a27d",
+      "key": "layer-obligation/v1/discard/148a42583d9fb03eb7de71be4fe70459b53140632b30ec2f494014ad90c31385",
       "resolution": {
         "action": "adapter",
-        "hook": "layerAdaptPollAnswerVotersAtomic",
-        "note": "kind=atomic-flag-group; layer=222; direction=profile-to-canonical; semantic=type:pollAnswerVoters; wire=0x3b6ddad2-\u003e0x3645230a; flag=flags.2; fields=recent_voters,voters; source_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e; target_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656"
+        "hook": "layerCaptureChatInviteJoinQueryIDFromWebView",
+        "note": "kind=discard; layer=227; direction=profile-to-canonical; semantic=type:messages.chatInviteJoinResultWebView; wire=0x2f51c337-\u003e0x61ca29d3; field=webview-\u003e; type=WebViewResult-\u003e; source_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620; target_shape=23897ef08057397f177aec8394608c9d59b1981d8c1ed60c7c69304c83b52674"
       }
     },
     {
-      "key": "layer-obligation/v1/atomic-flag-group/55a661aa1f1d0cd481d18caaa868a16d310f0c1d03ce04eb4c05694c2e6a825b",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptPollAnswerVotersAtomic",
-        "note": "kind=atomic-flag-group; layer=223; direction=profile-to-canonical; semantic=type:pollAnswerVoters; wire=0x3b6ddad2-\u003e0x3645230a; flag=flags.2; fields=recent_voters,voters; source_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e; target_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/atomic-flag-group/8411911e0cd2fd6722221d4c03c0762da42fee8ee011fd7b7319d6110bb3e823",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptPollAnswerVotersAtomic",
-        "note": "kind=atomic-flag-group; layer=221; direction=profile-to-canonical; semantic=type:pollAnswerVoters; wire=0x3b6ddad2-\u003e0x3645230a; flag=flags.2; fields=recent_voters,voters; source_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e; target_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/atomic-flag-group/8abbdd8a9bfa96cce605a2b6e600b7dba8429892f82c360de13b16e7ad49bc5e",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptPollAnswerVotersAtomic",
-        "note": "kind=atomic-flag-group; layer=220; direction=profile-to-canonical; semantic=type:pollAnswerVoters; wire=0x3b6ddad2-\u003e0x3645230a; flag=flags.2; fields=recent_voters,voters; source_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e; target_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/5138ddea6972666fff787ba47229447cecb38fd921874f71bf75d4fe88db1e86",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureChatInviteJoinWebViewURL",
-        "note": "kind=discard; layer=226; direction=profile-to-canonical; semantic=type:messages.chatInviteJoinResultWebView; wire=0x774bbdf4-\u003e0x2f51c337; field=url-\u003e; type=string-\u003e; source_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a; target_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/6b0fbf80a7c167272d4e26b870c5480787134e620b851296e82b4ee4c8ae9acf",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureStarGiftAttributePatternRarityPermille",
-        "note": "kind=discard; layer=221; direction=profile-to-canonical; semantic=type:starGiftAttributePattern; wire=0x13acff19-\u003e0x4e7085ea; field=rarity_permille-\u003e; type=int-\u003e; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/74ccae83727274ef055b6907d6e798374d93d04ff4d4d65b3c6217d75aabead3",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureStarGiftAttributeModelRarityPermille",
-        "note": "kind=discard; layer=221; direction=profile-to-canonical; semantic=type:starGiftAttributeModel; wire=0x39d99013-\u003e0x565251e2; field=rarity_permille-\u003e; type=int-\u003e; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/8a8cef618be076c577e0c6d9e8df5fd665526b8514616a94dcd7d55006a16cbd",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureStarGiftAttributePatternRarityPermille",
-        "note": "kind=discard; layer=220; direction=profile-to-canonical; semantic=type:starGiftAttributePattern; wire=0x13acff19-\u003e0x4e7085ea; field=rarity_permille-\u003e; type=int-\u003e; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/aeef1d93fe69a281fc12e81ac3b71e3f9a4198f5a6d37e4c606af73e3bc32766",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureStarGiftAttributeModelRarityPermille",
-        "note": "kind=discard; layer=220; direction=profile-to-canonical; semantic=type:starGiftAttributeModel; wire=0x39d99013-\u003e0x565251e2; field=rarity_permille-\u003e; type=int-\u003e; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/bc029d6b551fb67a38498677a5cefaf7a449e58134eeeb13fd11cad304e96c5a",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureStarGiftAttributeBackdropRarityPermille",
-        "note": "kind=discard; layer=221; direction=profile-to-canonical; semantic=type:starGiftAttributeBackdrop; wire=0xd93d859c-\u003e0x9f2504e4; field=rarity_permille-\u003e; type=int-\u003e; source_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa; target_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/c11c22f7c8ec9e4f0d70a945cad2ffaaa7857513d01d1a1a08320a4af8faea93",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureChatInviteJoinWebViewQueryID",
-        "note": "kind=discard; layer=226; direction=profile-to-canonical; semantic=type:messages.chatInviteJoinResultWebView; wire=0x774bbdf4-\u003e0x2f51c337; field=query_id-\u003e; type=long-\u003e; source_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a; target_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/discard/df29dc941f2007d0fbf0209687c0288e10d883214a2bacba1237e20159df145d",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerCaptureStarGiftAttributeBackdropRarityPermille",
-        "note": "kind=discard; layer=220; direction=profile-to-canonical; semantic=type:starGiftAttributeBackdrop; wire=0xd93d859c-\u003e0x9f2504e4; field=rarity_permille-\u003e; type=int-\u003e; source_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa; target_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/3a6d2800ea8cc1aa7df502ff1fd87b3c1933a5024a3dc77f6c1298f61ca87631",
+      "key": "layer-obligation/v1/discard/a03d3a8eca03b74c961a039d2093066dd541ef618cf9facd3e34c95aa5d7bc81",
       "resolution": {
         "action": "drop",
-        "note": "kind=field-projection; layer=221; direction=canonical-to-profile; semantic=type:starGiftAttributeBackdrop; wire=0x9f2504e4-\u003e0xd93d859c; field=rarity-\u003e; type=StarGiftAttributeRarity-\u003e; source_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8; target_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/745796ad76f99f08c918f9c8acfd269ad13d6a400704a5023f9e4efc8a962c34",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=field-projection; layer=220; direction=canonical-to-profile; semantic=type:starGiftAttributeModel; wire=0x565251e2-\u003e0x39d99013; field=rarity-\u003e; type=StarGiftAttributeRarity-\u003e; source_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/75a0160d4e07ad65237a5694391365559f988f5d763c23ce8a64063c78b4b159",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=field-projection; layer=221; direction=canonical-to-profile; semantic=type:starGiftAttributePattern; wire=0x4e7085ea-\u003e0x13acff19; field=rarity-\u003e; type=StarGiftAttributeRarity-\u003e; source_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/a56b41a36533afb7e8f1dcf261aea81aad9ff3da5f236902f3217d9340043246",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=field-projection; layer=221; direction=canonical-to-profile; semantic=type:starGiftAttributeModel; wire=0x565251e2-\u003e0x39d99013; field=rarity-\u003e; type=StarGiftAttributeRarity-\u003e; source_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/daa79035f4c8f7b999bb210a92f60c59f4d75bbd6a432dceaf119625dea200d8",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=field-projection; layer=220; direction=canonical-to-profile; semantic=type:starGiftAttributeBackdrop; wire=0x9f2504e4-\u003e0xd93d859c; field=rarity-\u003e; type=StarGiftAttributeRarity-\u003e; source_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8; target_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/e2fbb0efb103a9cdb934ad3de995b9ff74b44afea235cb6f422a6ac09ecea22a",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:messages.chatInviteJoinResultWebView; wire=0x2f51c337-\u003e0x774bbdf4; field=webview-\u003e; type=WebViewResult-\u003e; source_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620; target_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-projection/f6374e305ffaa355508834c244454ba00424cf054653d085f82b3be66a604574",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=field-projection; layer=220; direction=canonical-to-profile; semantic=type:starGiftAttributePattern; wire=0x4e7085ea-\u003e0x13acff19; field=rarity-\u003e; type=StarGiftAttributeRarity-\u003e; source_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/field-replacement/99dd7774aac36ab6a21612d0b4578eb654701a9380974deaaa12212fd24d5ff6",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptComposeMessageTone",
-        "note": "kind=field-replacement; layer=224; direction=both; semantic=function:messages.composeMessageWithAI; wire=0xdaecc589-\u003e0xfd426afe; field=tone-\u003echange_tone; type=InputAiComposeTone-\u003estring; source_shape=eca99c72dc824473a1177254171e82a6d1b3ab0dd9063fe2f2d9898e8592170b; target_shape=0b9778f224e7d1712956aaea0a5e595836a0f8628a9dadf0b1b4424567355824"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/45554cd3dc1d7e992db3d9699d68ecf69389e16cd60b7a5a79279e592497a26e",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=221; direction=canonical-to-profile; semantic=type:inputMediaPoll; wire=0x883a4108-\u003e0x0f94e5f1; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cint\u003e-\u003eVector\u003cbytes\u003e; source_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab; target_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/6282234d7f1c32abfdf3bf8ebc5d7e5c1f7fa84e9241d5bd9d3540d30ede058d",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=221; direction=profile-to-canonical; semantic=type:inputMediaPoll; wire=0x0f94e5f1-\u003e0x883a4108; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cbytes\u003e-\u003eVector\u003cint\u003e; source_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5; target_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/71cbcdc98b2948b58649f981cd4916c15ceed3295795a9fb923358eb2030ffd2",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=220; direction=canonical-to-profile; semantic=type:inputMediaPoll; wire=0x883a4108-\u003e0x0f94e5f1; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cint\u003e-\u003eVector\u003cbytes\u003e; source_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab; target_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/824acd793fae0e1b7fe85c96a8c05bfe12073539622bdf92fc99f63ca6134d80",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=222; direction=profile-to-canonical; semantic=type:inputMediaPoll; wire=0x0f94e5f1-\u003e0x883a4108; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cbytes\u003e-\u003eVector\u003cint\u003e; source_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5; target_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/8b5db5efe876c001744ef29f5344e40eb79d8adea2bf02bb0bc4a6988b8e3967",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=220; direction=profile-to-canonical; semantic=type:inputMediaPoll; wire=0x0f94e5f1-\u003e0x883a4108; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cbytes\u003e-\u003eVector\u003cint\u003e; source_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5; target_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/aa0d8331a573179d95730eab4455ef4be24788201e8b9b1dab2cba09d3e6d659",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=222; direction=canonical-to-profile; semantic=type:inputMediaPoll; wire=0x883a4108-\u003e0x0f94e5f1; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cint\u003e-\u003eVector\u003cbytes\u003e; source_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab; target_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/ada0a9080fd9f27d3e32d9e0655ce4f1e74501012daac3db32a8aab7b0f68044",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=223; direction=profile-to-canonical; semantic=type:inputMediaPoll; wire=0x0f94e5f1-\u003e0x883a4108; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cbytes\u003e-\u003eVector\u003cint\u003e; source_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5; target_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/incompatible/fac81d88af24ea649f8014f452b3987218570c5ecca83b99e9ec95c11d66aac4",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptInputMediaPollCorrectAnswers",
-        "note": "kind=incompatible; layer=223; direction=canonical-to-profile; semantic=type:inputMediaPoll; wire=0x883a4108-\u003e0x0f94e5f1; field=correct_answers-\u003ecorrect_answers; type=Vector\u003cint\u003e-\u003eVector\u003cbytes\u003e; source_shape=abfa1f05cdcba5fb47ec5fb68060fdccfdc970f8ceb7d5150b999d7c163874ab; target_shape=0f6bd282e964e0809dcdf40d252cb5e34ba620cc2020c27dcb5f104f11c330b5"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/old-only/2fcabbae4bbde296b6d098e88e71cf094864a0bc7793618e4a3fdc42fbff27ac",
-      "resolution": {
-        "action": "alias",
-        "hook": "layerAliasChannelsEditCreator",
-        "target": "function:messages.editChatCreator",
-        "note": "kind=old-only; layer=220; direction=profile-to-canonical; semantic=function:channels.editCreator; wire=0x8f38cd1f-\u003e0x00000000; type=Updates-\u003e; source_shape=d16b45936368cb1796bf6ea558f76b9db528d1891854bd7a921cfcebc093b33c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/old-only/a93c58ef84394abdb12ffa014cb0d7db5f2ace5ca2cf1ecf4cf2dab0acb3ab47",
-      "resolution": {
-        "action": "alias",
-        "hook": "layerAliasChannelsEditCreator",
-        "target": "function:messages.editChatCreator",
-        "note": "kind=old-only; layer=222; direction=profile-to-canonical; semantic=function:channels.editCreator; wire=0x8f38cd1f-\u003e0x00000000; type=Updates-\u003e; source_shape=d16b45936368cb1796bf6ea558f76b9db528d1891854bd7a921cfcebc093b33c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/old-only/dd04e1b8116eb3722a157c38dbdfdce0cdf95b23a5d16b49349a2e5fa3a44e0e",
-      "resolution": {
-        "action": "alias",
-        "hook": "layerAliasChannelsGetFutureCreatorAfterLeave",
-        "target": "function:messages.getFutureChatCreatorAfterLeave",
-        "note": "kind=old-only; layer=222; direction=profile-to-canonical; semantic=function:channels.getFutureCreatorAfterLeave; wire=0xa00918af-\u003e0x00000000; type=User-\u003e; source_shape=7b2c164a1f186e275b52fdf384f035c25ce4a80ad90556222a450a7cd1af7c2a; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/old-only/e891577939393da272ef7ca8d7d8c6a7bb114b79c375bd7e6bdde38ed4d0aecd",
-      "resolution": {
-        "action": "alias",
-        "hook": "layerAliasChannelsEditCreator",
-        "target": "function:messages.editChatCreator",
-        "note": "kind=old-only; layer=221; direction=profile-to-canonical; semantic=function:channels.editCreator; wire=0x8f38cd1f-\u003e0x00000000; type=Updates-\u003e; source_shape=d16b45936368cb1796bf6ea558f76b9db528d1891854bd7a921cfcebc093b33c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/0178dfba8e911df7e4242f399703cc02b1821248fc3c9a431b96adb35be981b6",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:auth.sentCodePaymentRequired; wire=0xe0955a3c-\u003e0xf8827ebf; field=-\u003epremium_days; type=-\u003eint; source_shape=d6fca389d4abef2f9130eaf369e52010a711f85472c3200d7c05d33d9842b056; target_shape=1cc470a331d1ce106352041967817006f1ff034ca122c186a35ff11cc1f0cabe"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/058141829161f1314cfe5c3b97f3482293d1f2e0037613fb1f690bfc48da416d",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=type:forumTopic; wire=0xcdff0eca-\u003e0xfcdad815; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=a30fc6d1b1b2cb4cc513cee64fa48a749d3ee712f1ccf3e496ccaff6f1a98281; target_shape=370a33d1a217de963522a38f07102ea28ea27999d564b10583d24596232d5322"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/09b2ccb373869b03970add9c145a7ba03690b0b6533e0c29c3703bc1c26ddbb8",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireSendBotRequestedPeerMessageID",
-        "note": "kind=required; layer=223; direction=canonical-to-profile; semantic=function:messages.sendBotRequestedPeer; wire=0x6c5cf2a7-\u003e0x91b2d060; field=msg_id-\u003emsg_id; type=int-\u003eint; source_shape=c95b188f746c67e1c919466f540a5dbf74f6d162c4ba8cbddf7554cdd19af090; target_shape=b70422bbf4185d023d4bf0375b3dca4c8e80b599fa0d514a7ecc4977ab9893f8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/0a80da1fdd8af03b593dae4a0ee3cd92b004eebde8aa71d75e036e9cb8a534c5",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=224; direction=canonical-to-profile; semantic=type:pageListOrderedItemBlocks; wire=0x8ff2d5f0-\u003e0x98dd8936; field=num-\u003enum; type=string-\u003estring; source_shape=2daa98691b9e948d7b4edff85bef4932815116ed884963efd9b83631edfc948f; target_shape=3cd6031c308bc9b8275f84a965877b23f8e24725b238a372c673f28380214619"
+        "note": "kind=discard; layer=226; direction=profile-to-canonical; semantic=type:messages.chatInviteJoinResultWebView; wire=0x774bbdf4-\u003e0x61ca29d3; field=url-\u003e; type=string-\u003e; source_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a; target_shape=23897ef08057397f177aec8394608c9d59b1981d8c1ed60c7c69304c83b52674"
       }
     },
     {
@@ -291,136 +24,10 @@
       }
     },
     {
-      "key": "layer-obligation/v1/required/0f5a8fb840cd8fe43e3a98fbdf56d0846c240e665dab12b2197d199567b1e039",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireChatInviteJoinWebView",
-        "note": "kind=required; layer=226; direction=profile-to-canonical; semantic=type:messages.chatInviteJoinResultWebView; wire=0x774bbdf4-\u003e0x2f51c337; field=-\u003ewebview; type=-\u003eWebViewResult; source_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a; target_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/0fb5c0a42883759baaf0a21fc13605aa5d894ef01c7dd03b35dd193f1c21a488",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:pollAnswerVoters; wire=0x3645230a-\u003e0x3b6ddad2; field=voters-\u003evoters; type=int-\u003eint; source_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656; target_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/1372c014cedf0d39d720a7eb11720723bfa5d19684da48dcd3fc2b0a9d4c53ac",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=canonical-to-profile; semantic=type:pageListOrderedItemBlocks; wire=0x8ff2d5f0-\u003e0x98dd8936; field=num-\u003enum; type=string-\u003estring; source_shape=2daa98691b9e948d7b4edff85bef4932815116ed884963efd9b83631edfc948f; target_shape=3cd6031c308bc9b8275f84a965877b23f8e24725b238a372c673f28380214619"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/19bdc59955cb92fff2442bd360e8c1cb752003a25c17af7a11be5e4d86fbfdaf",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireURLAuthResultAcceptedURL",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:urlAuthResultAccepted; wire=0x623a8fa0-\u003e0x8f8c0e4e; field=url-\u003eurl; type=string-\u003estring; source_shape=80b9f16eb169c67d1bf45ac87ad1eb2081d7cc311844f9ad84b0d164a3807be5; target_shape=75c27fe59c09f55b55ff846e5757d74bcba5c65bc10e1493e168eaa0ea1fcdf1"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/1c71671a1240df1ab34ec8d7829799734bb1c8773a2715eaadf391359dd57026",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=type:auth.sentCodePaymentRequired; wire=0xe0955a3c-\u003e0xf8827ebf; field=-\u003epremium_days; type=-\u003eint; source_shape=d6fca389d4abef2f9130eaf369e52010a711f85472c3200d7c05d33d9842b056; target_shape=1cc470a331d1ce106352041967817006f1ff034ca122c186a35ff11cc1f0cabe"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/1d2b6a4ce810d9a8d8d18ea2052410096854b975a8f36acdc3383967624d5113",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:dialog; wire=0xd58a08c6-\u003e0xfc89f7f3; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=bed6f8a821be7b15f107084029c56fa33f7720bf629f0e03009923a67f316f68; target_shape=bd51d7b4178a65cce6ec3d4d6fceb32f4e2fa6eb0470f25a1afcbdf7ed5e4be3"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/1f2a727a457dda973de48f5ac9c5c3f94ffc577921e49de3433088b5a980033c",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=canonical-to-profile; semantic=type:pollAnswerVoters; wire=0x3645230a-\u003e0x3b6ddad2; field=voters-\u003evoters; type=int-\u003eint; source_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656; target_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/1f2d09b52dfc2a7a88c159ff0132f7d46f2c2a002cfffa99441a6daaba6f3c57",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=function:messages.getPollResults; wire=0x73bb643b-\u003e0xeda3e33b; field=-\u003epoll_hash; type=-\u003elong; source_shape=0796ae728aa18c4ff1758aff9dd6626d8c8fd7b6b3e5236ef3d50548ca6b2fdd; target_shape=da55a7dba3fd8cba719e3178c79f9584451aaa44adc0dd565be7465057f59a66"
-      }
-    },
-    {
       "key": "layer-obligation/v1/required/2072300214e3cfa3c116c30d1ede4877a543cfe09b85d295290019734417a379",
       "resolution": {
         "action": "default",
         "note": "kind=required; layer=226; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/21fd96964219faade0f156a8a9cf9953918f39c87eadf1e71e31f919da86e2e6",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireStarGiftAttributeBackdropRarity",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:starGiftAttributeBackdrop; wire=0xd93d859c-\u003e0x9f2504e4; field=-\u003erarity; type=-\u003eStarGiftAttributeRarity; source_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa; target_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/260626a806938d0a84d97000b64a801c895c16619e4b4134d4d76b7dc1eb4944",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:updateMessagePollVote; wire=0x24f40e77-\u003e0x7699f014; field=-\u003epositions; type=-\u003eVector\u003cint\u003e; source_shape=3b991bdb2981f2dcacb0255e46377512a4233927dd760ddd538258746f03ba66; target_shape=3cef0807931f51771aad1dc5a3faacfc55ab9e6783bdbfb0d060c4609dfdb06d"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/2a06a74adcfa2179e6d24c95f08da10c2a82cfb2040999d3a1cf5509f4e0b5dd",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:pageListOrderedItemBlocks; wire=0x8ff2d5f0-\u003e0x98dd8936; field=num-\u003enum; type=string-\u003estring; source_shape=2daa98691b9e948d7b4edff85bef4932815116ed884963efd9b83631edfc948f; target_shape=3cd6031c308bc9b8275f84a965877b23f8e24725b238a372c673f28380214619"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/3954343c8abee2c217f96348146cb9d135cc619463bec2d67bb96df0f4a2d435",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeStarGiftAttributePatternRarityPermille",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:starGiftAttributePattern; wire=0x4e7085ea-\u003e0x13acff19; field=-\u003erarity_permille; type=-\u003eint; source_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/42d2490bec243f33ba0c8a89193206bc856e7193c8c235b8f71cc061de0a56af",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireSendBotRequestedPeerMessageID",
-        "note": "kind=required; layer=222; direction=canonical-to-profile; semantic=function:messages.sendBotRequestedPeer; wire=0x6c5cf2a7-\u003e0x91b2d060; field=msg_id-\u003emsg_id; type=int-\u003eint; source_shape=c95b188f746c67e1c919466f540a5dbf74f6d162c4ba8cbddf7554cdd19af090; target_shape=b70422bbf4185d023d4bf0375b3dca4c8e80b599fa0d514a7ecc4977ab9893f8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/4aab77f76ffba0698cff41804695fbb130d196e045dc60f218487d43f03b5693",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeChatInviteJoinWebViewURL",
-        "note": "kind=required; layer=226; direction=canonical-to-profile; semantic=type:messages.chatInviteJoinResultWebView; wire=0x2f51c337-\u003e0x774bbdf4; field=-\u003eurl; type=-\u003estring; source_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620; target_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/4d19544de84630db87f7d26bb1b4290e8615b659807d45c66c10ef2fc887de4e",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:forumTopic; wire=0xcdff0eca-\u003e0xfcdad815; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=a30fc6d1b1b2cb4cc513cee64fa48a749d3ee712f1ccf3e496ccaff6f1a98281; target_shape=370a33d1a217de963522a38f07102ea28ea27999d564b10583d24596232d5322"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/4efed956b0bea73d0eb94ac02615cf21c45d3cc2a547097454ef579d33f7a538",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireStarGiftAttributePatternRarity",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:starGiftAttributePattern; wire=0x13acff19-\u003e0x4e7085ea; field=-\u003erarity; type=-\u003eStarGiftAttributeRarity; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/5029baca087428b72bf127b0949d908a8b9b545e9bd9ff9188ac7fd8ad4f8bfc",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:poll; wire=0x58747131-\u003e0x966e2dbf; field=-\u003ehash; type=-\u003elong; source_shape=841b424949407c400758980f5601aa2d1021ffd783f6fb901ab325f727e0b296; target_shape=49194b7da724d2fe4b27db71ce7f2dc7af1405190d5eecebe0ade63c1339c454"
       }
     },
     {
@@ -431,71 +38,18 @@
       }
     },
     {
-      "key": "layer-obligation/v1/required/59f830ba0ebf1c690f9077e88ba3a15042448709ad698981ed240c73e77e27bd",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=type:auth.sentCodePaymentRequired; wire=0xe0955a3c-\u003e0xf8827ebf; field=-\u003epremium_days; type=-\u003eint; source_shape=d6fca389d4abef2f9130eaf369e52010a711f85472c3200d7c05d33d9842b056; target_shape=1cc470a331d1ce106352041967817006f1ff034ca122c186a35ff11cc1f0cabe"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/690f3a3d3ff31135ec105915a829f16f9afa0665d66715a6229d4a8e9a9c32a7",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=type:dialog; wire=0xd58a08c6-\u003e0xfc89f7f3; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=bed6f8a821be7b15f107084029c56fa33f7720bf629f0e03009923a67f316f68; target_shape=bd51d7b4178a65cce6ec3d4d6fceb32f4e2fa6eb0470f25a1afcbdf7ed5e4be3"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/6b3eaa6bbe2d43a98c68a6d2516df2033388af29ca02dccb2a2ea40910c6b7b5",
+      "key": "layer-obligation/v1/required/63e88c6f198321c2d5fe6827402735f2ff5fc03efde5af5b2cc3a387bb37f301",
       "resolution": {
         "action": "adapter",
-        "hook": "layerEncodeStarGiftAttributeModelRarityPermille",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:starGiftAttributeModel; wire=0x565251e2-\u003e0x39d99013; field=-\u003erarity_permille; type=-\u003eint; source_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
+        "hook": "layerRequireCapturedChatInviteJoinQueryID",
+        "note": "kind=required; layer=227; direction=profile-to-canonical; semantic=type:messages.chatInviteJoinResultWebView; wire=0x2f51c337-\u003e0x61ca29d3; field=-\u003equery_id; type=-\u003elong; source_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620; target_shape=23897ef08057397f177aec8394608c9d59b1981d8c1ed60c7c69304c83b52674"
       }
     },
     {
-      "key": "layer-obligation/v1/required/6bd6e958c7b647a84752109c3e128d3c16b13ad8e6e8a1823ecd411066acfd6b",
+      "key": "layer-obligation/v1/required/66d38ac4643bffdbe8fa1be9fd4a9f0fff60f33ade29eedaa312b3d2c0717e51",
       "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeStarGiftAttributeBackdropRarityPermille",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:starGiftAttributeBackdrop; wire=0x9f2504e4-\u003e0xd93d859c; field=-\u003erarity_permille; type=-\u003eint; source_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8; target_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/6bf229fba00c2bf31a6c49fe11fba5eeeb1dec2be8c1a28cea10b5d2f7e7e829",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireStarGiftAttributePatternRarity",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:starGiftAttributePattern; wire=0x13acff19-\u003e0x4e7085ea; field=-\u003erarity; type=-\u003eStarGiftAttributeRarity; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/7294cbed7107b6818e6634eb5aa2d5b0e7248e58d4bcb016b0b85c16d143a08d",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeChatInviteJoinWebViewQueryID",
-        "note": "kind=required; layer=226; direction=canonical-to-profile; semantic=type:messages.chatInviteJoinResultWebView; wire=0x2f51c337-\u003e0x774bbdf4; field=-\u003equery_id; type=-\u003elong; source_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620; target_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/74d1884cdc5ff62d811ba3e7c911700465b4efe5428b6596312faebed9346a1d",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=function:messages.getPollResults; wire=0x73bb643b-\u003e0xeda3e33b; field=-\u003epoll_hash; type=-\u003elong; source_shape=0796ae728aa18c4ff1758aff9dd6626d8c8fd7b6b3e5236ef3d50548ca6b2fdd; target_shape=da55a7dba3fd8cba719e3178c79f9584451aaa44adc0dd565be7465057f59a66"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/7889417b7290d69e811d29b3064e371d85ff722279daf6847842e5b22dc41cb3",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=type:poll; wire=0x58747131-\u003e0x966e2dbf; field=-\u003ehash; type=-\u003elong; source_shape=841b424949407c400758980f5601aa2d1021ffd783f6fb901ab325f727e0b296; target_shape=49194b7da724d2fe4b27db71ce7f2dc7af1405190d5eecebe0ade63c1339c454"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/78e66e7642eb12a3ede5e0d44a653d0d1f41456f2bd6927db5a0eabca5841dfe",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeStarGiftAttributeModelRarityPermille",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:starGiftAttributeModel; wire=0x565251e2-\u003e0x39d99013; field=-\u003erarity_permille; type=-\u003eint; source_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
+        "action": "reject",
+        "note": "kind=required; layer=227; direction=canonical-to-profile; semantic=type:messages.chatInviteJoinResultWebView; wire=0x61ca29d3-\u003e0x2f51c337; field=-\u003ewebview; type=-\u003eWebViewResult; source_shape=23897ef08057397f177aec8394608c9d59b1981d8c1ed60c7c69304c83b52674; target_shape=b192c47f9af5e9169852c0c671d1df005972308315a457f6e911ec64e85e3620"
       }
     },
     {
@@ -506,35 +60,6 @@
       }
     },
     {
-      "key": "layer-obligation/v1/required/7c50dbb024dcecabb6015968473393f80d9986ab3556aa2a93905524b8b6da79",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/7cc7e772ce11c0f103e93ab0baff89bcee4f0f401a9696bbaf414787fcd8f838",
-      "resolution": {
-        "action": "reject",
-        "note": "kind=required; layer=224; direction=profile-to-canonical; semantic=type:inputStorePaymentAuthCode; wire=0x9bb2636d-\u003e0x3fc18057; field=-\u003epremium_days; type=-\u003eint; source_shape=c2c2a54f381085b0b2871e33d81f3152b3ccb2023fef38968dd63596fbe75938; target_shape=10604ecf13f9f8556e9d16216fb579d320cf1bedc005e3c57e3114d3d6d6f278"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/7dda08b8a5b20e5201b9eb696724ee57169c8d3456e4119a25cc0e3be1691dd0",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireStarGiftAttributeModelRarity",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:starGiftAttributeModel; wire=0x39d99013-\u003e0x565251e2; field=-\u003erarity; type=-\u003eStarGiftAttributeRarity; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/7e1d6abb78ff308610e7731a3484fdc8ee35bf294782d91c17de9cb14c070f8c",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=type:updateMessagePollVote; wire=0x24f40e77-\u003e0x7699f014; field=-\u003epositions; type=-\u003eVector\u003cint\u003e; source_shape=3b991bdb2981f2dcacb0255e46377512a4233927dd760ddd538258746f03ba66; target_shape=3cef0807931f51771aad1dc5a3faacfc55ab9e6783bdbfb0d060c4609dfdb06d"
-      }
-    },
-    {
       "key": "layer-obligation/v1/required/80caad5e891aa10433ca649bcb331cee1b2d8c21735b5aaeb39aa49ea8149095",
       "resolution": {
         "action": "default",
@@ -542,161 +67,10 @@
       }
     },
     {
-      "key": "layer-obligation/v1/required/82bb64821a6c993a9e5984e27b4829dd98094a7fc6706a024b19b9636da168fd",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeStarGiftAttributePatternRarityPermille",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:starGiftAttributePattern; wire=0x4e7085ea-\u003e0x13acff19; field=-\u003erarity_permille; type=-\u003eint; source_shape=7bf9edbf52a44f7f225f23bb4bf4c1968a39f66d1d21e02800dd02e29b38cadd; target_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/8303fa51188f2e788d4d3462f8f0805d0410b82b3fb961e4e949b3df6a4845e1",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/885afeaf412fab05c118b65a70efe57cda6f4b912cb9517786816791c7c1274c",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=function:messages.getPollResults; wire=0x73bb643b-\u003e0xeda3e33b; field=-\u003epoll_hash; type=-\u003elong; source_shape=0796ae728aa18c4ff1758aff9dd6626d8c8fd7b6b3e5236ef3d50548ca6b2fdd; target_shape=da55a7dba3fd8cba719e3178c79f9584451aaa44adc0dd565be7465057f59a66"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/924a4e385c1e1801110b4c4c2e011f3162a9e004388beef36f11e1a6b675a927",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:dialog; wire=0xd58a08c6-\u003e0xfc89f7f3; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=bed6f8a821be7b15f107084029c56fa33f7720bf629f0e03009923a67f316f68; target_shape=bd51d7b4178a65cce6ec3d4d6fceb32f4e2fa6eb0470f25a1afcbdf7ed5e4be3"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/98a46c811d409a73b8c4b2d0025e3959cd8830367e969d3c926a8563d1d2c921",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:pollAnswerVoters; wire=0x3645230a-\u003e0x3b6ddad2; field=voters-\u003evoters; type=int-\u003eint; source_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656; target_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/993377e94ea03a5e4da3c36d62abd39f52dcbf5e4e8dde68cfcf1d36d906efcb",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireURLAuthResultAcceptedURL",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=type:urlAuthResultAccepted; wire=0x623a8fa0-\u003e0x8f8c0e4e; field=url-\u003eurl; type=string-\u003estring; source_shape=80b9f16eb169c67d1bf45ac87ad1eb2081d7cc311844f9ad84b0d164a3807be5; target_shape=75c27fe59c09f55b55ff846e5757d74bcba5c65bc10e1493e168eaa0ea1fcdf1"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/9dce0bd78b854a9d146e09269c87cda9affdedaee05ab129e9f9bbd6de6501b1",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=224; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/9fe8d745710c9cf242d0a7b63e877962efba7321e1ceb8fa2af9980afb6e4f94",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=canonical-to-profile; semantic=function:channels.editAdmin; wire=0x9a98ad68-\u003e0xd33c8902; field=rank-\u003erank; type=string-\u003estring; source_shape=b89ff4f0be52ce4d37510db696771e4276cdc1c77bde986c57ec5c831e3e56c3; target_shape=b43f99babc54ae9b3742d67ab1e2a44435ccef7c6e152d84a0b8812dff68432e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/a2fe0d071747bb5f72456f6de4e17ed2d895344b4e0c125d78192d96943438da",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=function:channels.editAdmin; wire=0x9a98ad68-\u003e0xd33c8902; field=rank-\u003erank; type=string-\u003estring; source_shape=b89ff4f0be52ce4d37510db696771e4276cdc1c77bde986c57ec5c831e3e56c3; target_shape=b43f99babc54ae9b3742d67ab1e2a44435ccef7c6e152d84a0b8812dff68432e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/a4d18aaf66ad721ea85a3b49f9d3dd72158efa4f866ad19fbf163c2a5faa59c7",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:pageListOrderedItemBlocks; wire=0x8ff2d5f0-\u003e0x98dd8936; field=num-\u003enum; type=string-\u003estring; source_shape=2daa98691b9e948d7b4edff85bef4932815116ed884963efd9b83631edfc948f; target_shape=3cd6031c308bc9b8275f84a965877b23f8e24725b238a372c673f28380214619"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/ab66b01cd9da40982d231f7d81a8c4ecabb51fec386b17daaf4ccec7ad2f7fd3",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireStarGiftAttributeModelRarity",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:starGiftAttributeModel; wire=0x39d99013-\u003e0x565251e2; field=-\u003erarity; type=-\u003eStarGiftAttributeRarity; source_shape=8972b7d19182f857233f8dfd8467bdb4a25990a79399c974e3ed5f989a2ff53e; target_shape=3dc62293e0a3dbeb6b0126c7c35f2c17d5b977b9d33c25e5c7bdd0106c2c8076"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/ae389addfc92c6dc3d24a01d4ee0b76f9a55f433b765ed3bea2ca029b9a644a5",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=function:messages.getPollResults; wire=0x73bb643b-\u003e0xeda3e33b; field=-\u003epoll_hash; type=-\u003elong; source_shape=0796ae728aa18c4ff1758aff9dd6626d8c8fd7b6b3e5236ef3d50548ca6b2fdd; target_shape=da55a7dba3fd8cba719e3178c79f9584451aaa44adc0dd565be7465057f59a66"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/aea0c0706c6174b6ff987f01e0fa39d431976d0ea48db696825b9894bddfcfc6",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=type:forumTopic; wire=0xcdff0eca-\u003e0xfcdad815; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=a30fc6d1b1b2cb4cc513cee64fa48a749d3ee712f1ccf3e496ccaff6f1a98281; target_shape=370a33d1a217de963522a38f07102ea28ea27999d564b10583d24596232d5322"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/b5f447811abb08d62115995c8b5253be2f145c2c6c0cd24556cf2f00523d802c",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/b71ed0157ecd305eca04f47f9b2d5a4883fca76f03ba00530dbff36b5109e343",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=224; direction=profile-to-canonical; semantic=type:auth.sentCodePaymentRequired; wire=0xe0955a3c-\u003e0xf8827ebf; field=-\u003epremium_days; type=-\u003eint; source_shape=d6fca389d4abef2f9130eaf369e52010a711f85472c3200d7c05d33d9842b056; target_shape=1cc470a331d1ce106352041967817006f1ff034ca122c186a35ff11cc1f0cabe"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/bb9326b505997c88919e027d9eafe2e104a46cfe7b1b784b8f38c96ec9296576",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireSendBotRequestedPeerMessageID",
-        "note": "kind=required; layer=221; direction=canonical-to-profile; semantic=function:messages.sendBotRequestedPeer; wire=0x6c5cf2a7-\u003e0x91b2d060; field=msg_id-\u003emsg_id; type=int-\u003eint; source_shape=c95b188f746c67e1c919466f540a5dbf74f6d162c4ba8cbddf7554cdd19af090; target_shape=b70422bbf4185d023d4bf0375b3dca4c8e80b599fa0d514a7ecc4977ab9893f8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/c329ac87cff1b4ba448f13079d12513e67c6f1deb339002d36ed76253bd78920",
+      "key": "layer-obligation/v1/required/cd9125a49bb4740f5108e644ca0a2323925d40a81a9df4f50e3bafc49ba167d7",
       "resolution": {
         "action": "reject",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:inputStorePaymentAuthCode; wire=0x9bb2636d-\u003e0x3fc18057; field=-\u003epremium_days; type=-\u003eint; source_shape=c2c2a54f381085b0b2871e33d81f3152b3ccb2023fef38968dd63596fbe75938; target_shape=10604ecf13f9f8556e9d16216fb579d320cf1bedc005e3c57e3114d3d6d6f278"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/c617ae36469895d16abc0a83bc84cb308b0abafe0a73010e3370aad2eb379eec",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:poll; wire=0x58747131-\u003e0x966e2dbf; field=-\u003ehash; type=-\u003elong; source_shape=841b424949407c400758980f5601aa2d1021ffd783f6fb901ab325f727e0b296; target_shape=49194b7da724d2fe4b27db71ce7f2dc7af1405190d5eecebe0ade63c1339c454"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/c689a5bb344ac6a269063ca81bbc88f5ea70411fa3a709fa058058babdb0f636",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/c892a0675919071772bbbe85c78c6f50d2815d3cf04645ecf9dbcb00fd7f6a4c",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:forumTopic; wire=0xcdff0eca-\u003e0xfcdad815; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=a30fc6d1b1b2cb4cc513cee64fa48a749d3ee712f1ccf3e496ccaff6f1a98281; target_shape=370a33d1a217de963522a38f07102ea28ea27999d564b10583d24596232d5322"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/c8f3a90b8a240f5e8777c63ca16d7a96594cbb4ef1ca17ea007689cede9c3a3e",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=function:channels.editAdmin; wire=0x9a98ad68-\u003e0xd33c8902; field=rank-\u003erank; type=string-\u003estring; source_shape=b89ff4f0be52ce4d37510db696771e4276cdc1c77bde986c57ec5c831e3e56c3; target_shape=b43f99babc54ae9b3742d67ab1e2a44435ccef7c6e152d84a0b8812dff68432e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/cd984031ce15c02e88c861b2cb7b91244b6be9b47d928a51663a4917f39271d9",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=type:poll; wire=0x58747131-\u003e0x966e2dbf; field=-\u003ehash; type=-\u003elong; source_shape=841b424949407c400758980f5601aa2d1021ffd783f6fb901ab325f727e0b296; target_shape=49194b7da724d2fe4b27db71ce7f2dc7af1405190d5eecebe0ade63c1339c454"
+        "note": "kind=required; layer=226; direction=canonical-to-profile; semantic=type:messages.chatInviteJoinResultWebView; wire=0x61ca29d3-\u003e0x774bbdf4; field=-\u003eurl; type=-\u003estring; source_shape=23897ef08057397f177aec8394608c9d59b1981d8c1ed60c7c69304c83b52674; target_shape=4232b0fbdb1d2bf00a07c97e23623fb406e9362a37fd7436db7b7282d43a5e9a"
       }
     },
     {
@@ -704,149 +78,6 @@
       "resolution": {
         "action": "default",
         "note": "kind=required; layer=225; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/d590cc0ed1295cd500e6f39df4cb816d33f23947e463f6f3f2f97eba26d56596",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=220; direction=profile-to-canonical; semantic=type:auth.sentCodePaymentRequired; wire=0xe0955a3c-\u003e0xf8827ebf; field=-\u003epremium_days; type=-\u003eint; source_shape=d6fca389d4abef2f9130eaf369e52010a711f85472c3200d7c05d33d9842b056; target_shape=1cc470a331d1ce106352041967817006f1ff034ca122c186a35ff11cc1f0cabe"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/d6e7280157fde801cf74a0ee7c55171d83a36680bbac5772c6ce9ab9361b021e",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=type:updateMessagePollVote; wire=0x24f40e77-\u003e0x7699f014; field=-\u003epositions; type=-\u003eVector\u003cint\u003e; source_shape=3b991bdb2981f2dcacb0255e46377512a4233927dd760ddd538258746f03ba66; target_shape=3cef0807931f51771aad1dc5a3faacfc55ab9e6783bdbfb0d060c4609dfdb06d"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/d93974b407a5d0afb833a049f017245ce707d4ffdaae8e539f21c403ead91b75",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireSendBotRequestedPeerMessageID",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=function:messages.sendBotRequestedPeer; wire=0x6c5cf2a7-\u003e0x91b2d060; field=msg_id-\u003emsg_id; type=int-\u003eint; source_shape=c95b188f746c67e1c919466f540a5dbf74f6d162c4ba8cbddf7554cdd19af090; target_shape=b70422bbf4185d023d4bf0375b3dca4c8e80b599fa0d514a7ecc4977ab9893f8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/de9a5470aa5c1026c102aa41a088ea8dddfa228f683ef77a7668df99a5515481",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=223; direction=canonical-to-profile; semantic=type:pageListOrderedItemBlocks; wire=0x8ff2d5f0-\u003e0x98dd8936; field=num-\u003enum; type=string-\u003estring; source_shape=2daa98691b9e948d7b4edff85bef4932815116ed884963efd9b83631edfc948f; target_shape=3cd6031c308bc9b8275f84a965877b23f8e24725b238a372c673f28380214619"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/defa31c057986da369c8ad9411c8a691121e40f5ce71dc34523f19a929b11bfe",
-      "resolution": {
-        "action": "reject",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:inputStorePaymentAuthCode; wire=0x9bb2636d-\u003e0x3fc18057; field=-\u003epremium_days; type=-\u003eint; source_shape=c2c2a54f381085b0b2871e33d81f3152b3ccb2023fef38968dd63596fbe75938; target_shape=10604ecf13f9f8556e9d16216fb579d320cf1bedc005e3c57e3114d3d6d6f278"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/df089eda7b729a57ffae525952719f02d92dcd58e5dbd72810c05fe48e15fa9c",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerEncodeStarGiftAttributeBackdropRarityPermille",
-        "note": "kind=required; layer=220; direction=canonical-to-profile; semantic=type:starGiftAttributeBackdrop; wire=0x9f2504e4-\u003e0xd93d859c; field=-\u003erarity_permille; type=-\u003eint; source_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8; target_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/e6712b935126fbf3d9f724a99b2abfa95100be9fd7244a787a7b39126fc3ddd0",
-      "resolution": {
-        "action": "reject",
-        "note": "kind=required; layer=223; direction=profile-to-canonical; semantic=type:inputStorePaymentAuthCode; wire=0x9bb2636d-\u003e0x3fc18057; field=-\u003epremium_days; type=-\u003eint; source_shape=c2c2a54f381085b0b2871e33d81f3152b3ccb2023fef38968dd63596fbe75938; target_shape=10604ecf13f9f8556e9d16216fb579d320cf1bedc005e3c57e3114d3d6d6f278"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/e98392dd3949235075b70d9f117d5ced873e4b785cd7f5c502209dff7227fdc1",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerRequireStarGiftAttributeBackdropRarity",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:starGiftAttributeBackdrop; wire=0xd93d859c-\u003e0x9f2504e4; field=-\u003erarity; type=-\u003eStarGiftAttributeRarity; source_shape=8f3db88e3ce521536f65e248b608487b4746db6d9e2e120cb9378f9f04d0b5aa; target_shape=0172c530d866311a366514b5515c19841d5d04157a8be88cb7109fd9291244d8"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/ee9432ccd36fc73f798fbab2c996e84d2649e4defef455e6012260223695c591",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=canonical-to-profile; semantic=type:pollAnswerVoters; wire=0x3645230a-\u003e0x3b6ddad2; field=voters-\u003evoters; type=int-\u003eint; source_shape=308e5135c018125cff3d0ade0d1349cdeab344623bdaaf89613eb80fcda26656; target_shape=c0eee5604eba05226b03ff7229f1d132b657c6e452787817be7d94f2620fd89e"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/fa67039349fe096b8bbfc2d166397bd1b2e1a60d0a0e52584328487f6c499146",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=type:dialog; wire=0xd58a08c6-\u003e0xfc89f7f3; field=-\u003eunread_poll_votes_count; type=-\u003eint; source_shape=bed6f8a821be7b15f107084029c56fa33f7720bf629f0e03009923a67f316f68; target_shape=bd51d7b4178a65cce6ec3d4d6fceb32f4e2fa6eb0470f25a1afcbdf7ed5e4be3"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/fb39d0d0a02067a4602cdec13879c202792ef3955af9f1fa0fdcfae7cc12ab46",
-      "resolution": {
-        "action": "reject",
-        "note": "kind=required; layer=222; direction=profile-to-canonical; semantic=type:inputStorePaymentAuthCode; wire=0x9bb2636d-\u003e0x3fc18057; field=-\u003epremium_days; type=-\u003eint; source_shape=c2c2a54f381085b0b2871e33d81f3152b3ccb2023fef38968dd63596fbe75938; target_shape=10604ecf13f9f8556e9d16216fb579d320cf1bedc005e3c57e3114d3d6d6f278"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/required/ff4115ee952ed3531ee988b6ad5f57a4e2050d2d08e766e83c6dc0b8f8132c93",
-      "resolution": {
-        "action": "default",
-        "note": "kind=required; layer=221; direction=profile-to-canonical; semantic=type:updateMessagePollVote; wire=0x24f40e77-\u003e0x7699f014; field=-\u003epositions; type=-\u003eVector\u003cint\u003e; source_shape=3b991bdb2981f2dcacb0255e46377512a4233927dd760ddd538258746f03ba66; target_shape=3cef0807931f51771aad1dc5a3faacfc55ab9e6783bdbfb0d060c4609dfdb06d"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/0021cd83f053df9a1e6a51d2397976ce14a89a766a95558778f5ef70f75ff502",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=223; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/03fac28658518be930ba0c3d9f78fc3beed75a92ab442b7a88bec2946fb8229d",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=220; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/0db184135fb54c660d6c1f0442e7ae193e697328dfda49df1c3f7b2f5fe76da3",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=222; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/1a538ec464a5f00a4aa55d9306242cb694cd4c07c045a0fcc0994cfa399fd5d6",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=221; direction=canonical-to-profile; semantic=function:messages.importChatInvite; wire=0xde91436e-\u003e0x6c50051c; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4; target_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/46d19cd526cd1fee08e3647e0a65e50f797e3cf418f67b57fbf0a64cec45fb34",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=221; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/49aa5c3733ee442d64a061bc13512af741951194eb86bea422c693773bba3acf",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=222; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/542e19531235bcc2b8f300e8f230382c0b9aae2459f246fce3fd9d23662f1aaa",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=224; direction=canonical-to-profile; semantic=function:messages.importChatInvite; wire=0xde91436e-\u003e0x6c50051c; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4; target_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555"
       }
     },
     {
@@ -866,35 +97,11 @@
       }
     },
     {
-      "key": "layer-obligation/v1/result/61c63a249777756362b6ae3a7fc0f16cae62f8457a0d9ddc8fee69e18e9df54a",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=223; direction=canonical-to-profile; semantic=function:messages.importChatInvite; wire=0xde91436e-\u003e0x6c50051c; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4; target_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/62a941328bf4b27e21eae6fd30a36c9e678d1a1a95fc2052dd4d085e486d98e6",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=222; direction=canonical-to-profile; semantic=function:messages.importChatInvite; wire=0xde91436e-\u003e0x6c50051c; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4; target_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555"
-      }
-    },
-    {
       "key": "layer-obligation/v1/result/6ea397a7aa78860e5fffe84cacf21d07f0375d7e91499016c90efc9dc5399355",
       "resolution": {
         "action": "adapter",
         "hook": "layerAdaptChatInviteJoinResultToUpdates",
         "note": "kind=result; layer=225; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/78613fcc40156c4eda540a53fe2ac18f7d76368154546dcdc6a00ec0a91a75a4",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=224; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
       }
     },
     {
@@ -906,14 +113,6 @@
       }
     },
     {
-      "key": "layer-obligation/v1/result/7bd045dc743d65867fe0df125db82be33b40b47a020f61b49c5a2b7a3198f285",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=221; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
-      }
-    },
-    {
       "key": "layer-obligation/v1/result/946f8c3bf87815584c129adb13624d2c3366d465721c3b96d700d5196c338d99",
       "resolution": {
         "action": "reject",
@@ -921,66 +120,10 @@
       }
     },
     {
-      "key": "layer-obligation/v1/result/9e22a2eb8592bafc158a15c6a0572bb35db413db05c37d11006c1e0d84b65c01",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=221; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/9e63d6ba6f8d1a2d45f2822557326ec6ad78d69bac0a004f2c6ff4dead011cb2",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=222; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/9faaec37dfed4e5fa7250f1a9fd0a4fd4b90c08401b68504a968b2e249525939",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=220; direction=canonical-to-profile; semantic=function:messages.importChatInvite; wire=0xde91436e-\u003e0x6c50051c; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4; target_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/9fffb6c4b22d51ceeb2f42e382f1593b533460e542a5736f35f02d299c3b1ad0",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=223; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
-      }
-    },
-    {
       "key": "layer-obligation/v1/result/a435206391753916deb8ffd8bb40723f2aca357378d08a2def45691e059907c6",
       "resolution": {
         "action": "reject",
         "note": "kind=result; layer=226; direction=profile-to-canonical; semantic=function:account.toggleWebBrowserSettingsException; wire=0x2d0a0571-\u003e0x60ed4229; type=Bool-\u003eUpdates; source_shape=248c17505adfcffbf5154296b6d86a63fe2691e40205f126a866ec2aee5b9d37; target_shape=71a777e81899a1a141d5b9ec01112186bc2c8d9b532989a1d33f7fe4603e1810"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/b2594d798ba4cac65f32ae2c9970ac09807622bbe8e16c55a50a16b23fbe16ef",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=224; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/b5ce1e12c040e76429510342d5befe78f715761fa169db07b2c82cef943473ff",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=220; direction=profile-to-canonical; semantic=function:messages.importChatInvite; wire=0x6c50051c-\u003e0xde91436e; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=b80d81ed91a1379b82bf6bbe06c167c6c9b97dc6e6406b648527252400554555; target_shape=89eafaa817d2ee701f1db30702b4b4b8b566f961faa43135d50d269f7994d4f4"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/ce616b2663d7db69fe806c3cd2560a24d79e522600d30c15e1900d764f938f41",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptUpdatesToChatInviteJoinResult",
-        "note": "kind=result; layer=220; direction=profile-to-canonical; semantic=function:channels.joinChannel; wire=0x24b524c5-\u003e0x7f6a1e22; type=Updates-\u003emessages.ChatInviteJoinResult; source_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa; target_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11"
       }
     },
     {
@@ -1000,22 +143,6 @@
       }
     },
     {
-      "key": "layer-obligation/v1/result/d63e1399eb21adb5e1ddb1f53455b69806963ba1742d8e38e331e8fa05efe373",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=224; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/result/f4954d74c465daa6c7f4b96125d6bb4292f5b3e861fcfae4c6ae3ad915df5057",
-      "resolution": {
-        "action": "adapter",
-        "hook": "layerAdaptChatInviteJoinResultToUpdates",
-        "note": "kind=result; layer=223; direction=canonical-to-profile; semantic=function:channels.joinChannel; wire=0x7f6a1e22-\u003e0x24b524c5; type=messages.ChatInviteJoinResult-\u003eUpdates; source_shape=da13079be0600bffd99e630167c45a4965e3d3b7d4594f98cc3cb68ca0c35b11; target_shape=4e68800d9cc703ce07c32f77f421819c7f582efe850b9e8f1b300848459da5fa"
-      }
-    },
-    {
       "key": "layer-obligation/v1/update-projection/0119d77138022c26d4c26a090b2620d259701ec9b70a75a352f282eccc2d78cf",
       "resolution": {
         "action": "drop",
@@ -1023,24 +150,24 @@
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/1084b7c16dd42aef3f3438ad2e36c9312676bc7cd84316537f9becc0625ca577",
+      "key": "layer-obligation/v1/update-projection/03b9a983e0cf4139a8d67e016e2bedb811169279d51f6e6cc5980fbcb9b13686",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateNewBotConnection; wire=0xb22083a6-\u003e0x00000000; type=Update-\u003e; source_shape=6d1d0b7a5fef5efb34b13b06b85400a3ead51a5689dd1a761cbc0130af91ded0; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=227; direction=canonical-to-profile; semantic=type:updateEditEphemeralMessage; wire=0x4bbb8f01-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/13f43a7ae1f760ba0f9c4aecbad7e5e658932880c93b14916d5a753c4052db6e",
+      "key": "layer-obligation/v1/update-projection/0f15711037597488a8a4469fe20bfcba7f878e9e71141c0b6b6cd8b93a22b65d",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateJoinChatWebViewDecision; wire=0xbdac7e70-\u003e0x00000000; type=Update-\u003e; source_shape=8089ecf389ae91712eb4365efa9722e2fba3dc0283845cc496ba540cd5385608; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=225; direction=canonical-to-profile; semantic=type:updateNewEphemeralMessage; wire=0x20bcbba1-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/179024903992464f80c914fa6555c12a19694c727681d68ace749d682078c296",
+      "key": "layer-obligation/v1/update-projection/11cd6d26cb992fc18ed0555c5271754f3c9c2c413d0ee8a5ccefcec463393163",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=224; direction=canonical-to-profile; semantic=type:updateBotGuestChatQuery; wire=0xcdd4093d-\u003e0x00000000; type=Update-\u003e; source_shape=33b345597d7737d4dc012eec98b0a29bb15f44c7cce2b11217228d51d6ace3e4; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=225; direction=canonical-to-profile; semantic=type:updateBotStarsSubscription; wire=0x6c0d8e23-\u003e0x00000000; type=Update-\u003e; source_shape=39ca7dd39714a785025057f9edb30debfaeb6bc68d4e287bde2151f1e6a1684a; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
@@ -1051,101 +178,10 @@
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/200bb0572ead6a398e03261ac0a69cd1747d0fa7c52af442f4e8b829875a550e",
+      "key": "layer-obligation/v1/update-projection/1f922f0b057c7e9078a78c6fe374e692c4001d6fa01235eb9c11211cc5ecdc78",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateBotGuestChatQuery; wire=0xcdd4093d-\u003e0x00000000; type=Update-\u003e; source_shape=33b345597d7737d4dc012eec98b0a29bb15f44c7cce2b11217228d51d6ace3e4; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/24e22c3049336e6b4879cb5510b6b7ccec99043485c0facbd6da47d2b566ccf3",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateJoinChatWebViewDecision; wire=0xbdac7e70-\u003e0x00000000; type=Update-\u003e; source_shape=8089ecf389ae91712eb4365efa9722e2fba3dc0283845cc496ba540cd5385608; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/25cc6e04bc92551e1fc400f431426ee6755c56fde3534b5f4d80547a49c7699f",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateWebBrowserException; wire=0x140502d1-\u003e0x00000000; type=Update-\u003e; source_shape=e119452ef7f63a7b79a07647c91ee776e8552fe3f2ddc446e8d7f3a050ccdab6; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/266431baf5ef6845b0430299b7ce23a7c1dc6e3a09d559d73643ac55298b2e8b",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateAiComposeTones; wire=0x8c0f91fb-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/27ea9cfd2986195b17edb86b81f5c9cfd0001371dcfd144416f65577bca47e4c",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateBotGuestChatQuery; wire=0xcdd4093d-\u003e0x00000000; type=Update-\u003e; source_shape=33b345597d7737d4dc012eec98b0a29bb15f44c7cce2b11217228d51d6ace3e4; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/2d034833165df5b9c35b2a2b76e49c4886610c73fb177db02db9cac97232a545",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateBotGuestChatQuery; wire=0xcdd4093d-\u003e0x00000000; type=Update-\u003e; source_shape=33b345597d7737d4dc012eec98b0a29bb15f44c7cce2b11217228d51d6ace3e4; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/2faebc84f5a5eb2b97c093ef7d0fd9cc2c741d7ef4b3a72f7ad6041735aca13e",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateWebBrowserSettings; wire=0xc39a2ade-\u003e0x00000000; type=Update-\u003e; source_shape=85caa3586e6836d530f7b2ceaa7415f4daa058e36aacd3d8eae9494b41864a9c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/41da0167bbbde83b96b57c4b9a3e14fb4665677a4eb892348e96477992a9cc7f",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateWebBrowserException; wire=0x140502d1-\u003e0x00000000; type=Update-\u003e; source_shape=e119452ef7f63a7b79a07647c91ee776e8552fe3f2ddc446e8d7f3a050ccdab6; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/45d9e916216c6279a079280d3003ba60bbb9b6a59439eb26d9abd79d34c82f85",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateNewBotConnection; wire=0xb22083a6-\u003e0x00000000; type=Update-\u003e; source_shape=6d1d0b7a5fef5efb34b13b06b85400a3ead51a5689dd1a761cbc0130af91ded0; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/62ff68374054dc3f4a58a59ef4a20c2987f0f44caa445ec2d8fa55a20bdcd2db",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateManagedBot; wire=0x4880ed9a-\u003e0x00000000; type=Update-\u003e; source_shape=08fc6f6e4b4233fb6b44183d6fa263f5635bf354903854828435268c00c52ef9; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/716761f14fd4a63dd7db417ced48a55d0f2531f3774f95ed21d4667cd29b3cbd",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateNewBotConnection; wire=0xb22083a6-\u003e0x00000000; type=Update-\u003e; source_shape=6d1d0b7a5fef5efb34b13b06b85400a3ead51a5689dd1a761cbc0130af91ded0; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/77c68970d144b2d86866fcba94233585ebc2a40f48f0b69643469e2b51ef1e1f",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateAiComposeTones; wire=0x8c0f91fb-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/7af7c4e9c1001b2ee49332e75fcd4dcd64534ee7d93572f280d0a906cb9fd037",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateChatParticipantRank; wire=0xbd8367b9-\u003e0x00000000; type=Update-\u003e; source_shape=4f794cd8c4f3be97d25e4a540560d0dd66f1b9ad1d94b5c1f329fff869187046; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/8444dcef277c3bfd63acbed8227abb08921c21440b10069aa368dc7b580cf5a0",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=224; direction=canonical-to-profile; semantic=type:updateAiComposeTones; wire=0x8c0f91fb-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=227; direction=canonical-to-profile; semantic=type:updateDeleteEphemeralMessages; wire=0x56dbfcf8-\u003e0x00000000; type=Update-\u003e; source_shape=73d0e0c1bd2550bff811fee67243e7624522d81f12ca67e1469cf8cac0cd182e; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
@@ -1156,45 +192,17 @@
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/8c39b2955787cc8018fe0ee478a1a23e23065e4ab291fef78eda77cd62ae43b8",
+      "key": "layer-obligation/v1/update-projection/93411aff327e6ed4329a0081a86756a8a894db0a7d403cd74277d03ac7fc0c10",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=224; direction=canonical-to-profile; semantic=type:updateWebBrowserException; wire=0x140502d1-\u003e0x00000000; type=Update-\u003e; source_shape=e119452ef7f63a7b79a07647c91ee776e8552fe3f2ddc446e8d7f3a050ccdab6; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=227; direction=canonical-to-profile; semantic=type:updateNewEphemeralMessage; wire=0x20bcbba1-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/8e71e6614d8c5cb2bb693133e7b340494ca5deab812322ed4456e938a22eddac",
+      "key": "layer-obligation/v1/update-projection/9e0943ea0a6e0d680fd77e3826d6d3ed03f5aa9b6d755a2f3f32bd1c610abd4f",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateEmojiGameInfo; wire=0xfb9c547a-\u003e0x00000000; type=Update-\u003e; source_shape=0bed34ccfe6976937b9db49a57eacf316ebc8970fc2525c7e0927851a2847c56; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/9515bff4d00e3d2a92c112cce92afcc5b0d8a07d719740c568bd93079e9c50e2",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateWebBrowserSettings; wire=0xc39a2ade-\u003e0x00000000; type=Update-\u003e; source_shape=85caa3586e6836d530f7b2ceaa7415f4daa058e36aacd3d8eae9494b41864a9c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/95692eab0edc63ab7372b361ffc66101f0f96d44c59e9492cfee77c8bb38f997",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateNewBotConnection; wire=0xb22083a6-\u003e0x00000000; type=Update-\u003e; source_shape=6d1d0b7a5fef5efb34b13b06b85400a3ead51a5689dd1a761cbc0130af91ded0; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/963dc879b1f000c31a33e6aa3300065d25bd00197e04829f4b6db0ba15946c4a",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateAiComposeTones; wire=0x8c0f91fb-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/98901b5907a4ff5f82bbc351295af9879f711af7db37a4656dbf22230513cd8e",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateWebBrowserSettings; wire=0xc39a2ade-\u003e0x00000000; type=Update-\u003e; source_shape=85caa3586e6836d530f7b2ceaa7415f4daa058e36aacd3d8eae9494b41864a9c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=226; direction=canonical-to-profile; semantic=type:updateEditEphemeralMessage; wire=0x4bbb8f01-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
@@ -1205,122 +213,45 @@
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/ab6be58b3e1b29bc0a653eaba7c3267203898fdfb51ecbb284e7200ba8c89e87",
+      "key": "layer-obligation/v1/update-projection/bc2845ff69eadae4e86497cd74d79fa25d6fd8dd2e873e0082fbdf8e4801d89b",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateWebBrowserSettings; wire=0xc39a2ade-\u003e0x00000000; type=Update-\u003e; source_shape=85caa3586e6836d530f7b2ceaa7415f4daa058e36aacd3d8eae9494b41864a9c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=226; direction=canonical-to-profile; semantic=type:updateDeleteEphemeralMessages; wire=0x56dbfcf8-\u003e0x00000000; type=Update-\u003e; source_shape=73d0e0c1bd2550bff811fee67243e7624522d81f12ca67e1469cf8cac0cd182e; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/aeef256e1f4e39a557c9c4ae2de0756bf7d2d6cef7bfc2ea06c3ad03d63ff3b6",
+      "key": "layer-obligation/v1/update-projection/c10ad8b584c96a6495d7553c3d151aef780e2efeb7fb72568b295c67c9359f21",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=224; direction=canonical-to-profile; semantic=type:updateJoinChatWebViewDecision; wire=0xbdac7e70-\u003e0x00000000; type=Update-\u003e; source_shape=8089ecf389ae91712eb4365efa9722e2fba3dc0283845cc496ba540cd5385608; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=226; direction=canonical-to-profile; semantic=type:updateNewEphemeralMessage; wire=0x20bcbba1-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/b49438de59de0dd158c8e96d83a8b58cdd82b1cf2d86e626b27f814da935838e",
+      "key": "layer-obligation/v1/update-projection/c7b08bec006528961981bf19582d95b487b8dae3a5ce2cf29a43b3059f0f2dd3",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateChatParticipantRank; wire=0xbd8367b9-\u003e0x00000000; type=Update-\u003e; source_shape=4f794cd8c4f3be97d25e4a540560d0dd66f1b9ad1d94b5c1f329fff869187046; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=226; direction=canonical-to-profile; semantic=type:updateBotStarsSubscription; wire=0x6c0d8e23-\u003e0x00000000; type=Update-\u003e; source_shape=39ca7dd39714a785025057f9edb30debfaeb6bc68d4e287bde2151f1e6a1684a; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/ba1b0f9354aca2cb359c98e0c8b16de32ce74ee54537bb6db2d4d778ecd3eac4",
+      "key": "layer-obligation/v1/update-projection/cf77f9794f9cd327039f57769f8400bc0769e2c4365bdc92cf612f5bebe82af1",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateWebBrowserException; wire=0x140502d1-\u003e0x00000000; type=Update-\u003e; source_shape=e119452ef7f63a7b79a07647c91ee776e8552fe3f2ddc446e8d7f3a050ccdab6; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=227; direction=canonical-to-profile; semantic=type:updateBotStarsSubscription; wire=0x6c0d8e23-\u003e0x00000000; type=Update-\u003e; source_shape=39ca7dd39714a785025057f9edb30debfaeb6bc68d4e287bde2151f1e6a1684a; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/bfc6c5aa67674f2826545e63697f5d1853f80195404d4678f33f2fb9fce6e84a",
+      "key": "layer-obligation/v1/update-projection/d95417857b0e7716838853cf9ea21509fe1ea2435b7ec6e9f647f0e603a8bbea",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=224; direction=canonical-to-profile; semantic=type:updateNewBotConnection; wire=0xb22083a6-\u003e0x00000000; type=Update-\u003e; source_shape=6d1d0b7a5fef5efb34b13b06b85400a3ead51a5689dd1a761cbc0130af91ded0; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=225; direction=canonical-to-profile; semantic=type:updateEditEphemeralMessage; wire=0x4bbb8f01-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
-      "key": "layer-obligation/v1/update-projection/c935dfd62b50a2af6be4422700aec1109d4059e9bc5f84ae3d1493797e18eed9",
+      "key": "layer-obligation/v1/update-projection/e59e5aca70980db274767a4b94032a0002458cd2b900cb5b38e885a2143c2f2f",
       "resolution": {
         "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateJoinChatWebViewDecision; wire=0xbdac7e70-\u003e0x00000000; type=Update-\u003e; source_shape=8089ecf389ae91712eb4365efa9722e2fba3dc0283845cc496ba540cd5385608; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/cc371d7a7143c32e1c01c367ecea5be099643590ab9921f917b55a8d71dae1de",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateManagedBot; wire=0x4880ed9a-\u003e0x00000000; type=Update-\u003e; source_shape=08fc6f6e4b4233fb6b44183d6fa263f5635bf354903854828435268c00c52ef9; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/cf8973b4cb03b36d76b39d994d115ef94f1531f42f01beea71b19f2e78812093",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateAiComposeTones; wire=0x8c0f91fb-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/d1b5abbcf1f4cad183e6e0e09b6b03587a4d65a443f083391adc483b78caccff",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateJoinChatWebViewDecision; wire=0xbdac7e70-\u003e0x00000000; type=Update-\u003e; source_shape=8089ecf389ae91712eb4365efa9722e2fba3dc0283845cc496ba540cd5385608; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/d709f7d80bd7eab0fec79cc28c58076cc431f45fef472a6ceef4ac1675da1962",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateWebBrowserException; wire=0x140502d1-\u003e0x00000000; type=Update-\u003e; source_shape=e119452ef7f63a7b79a07647c91ee776e8552fe3f2ddc446e8d7f3a050ccdab6; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/dd33734741b32430c2a55c0ce1fcd4e8425437343165cd246b109372d1399b5d",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=220; direction=canonical-to-profile; semantic=type:updateStarGiftCraftFail; wire=0xac072444-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/ea79b358b9a625877f690504311405a9ebaa6f42c2ff500b80111231b67ac291",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateManagedBot; wire=0x4880ed9a-\u003e0x00000000; type=Update-\u003e; source_shape=08fc6f6e4b4233fb6b44183d6fa263f5635bf354903854828435268c00c52ef9; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/ecba0756b6be7423cbb177fca3c55444713da7da6df8375100ba334beef348f9",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=224; direction=canonical-to-profile; semantic=type:updateWebBrowserSettings; wire=0xc39a2ade-\u003e0x00000000; type=Update-\u003e; source_shape=85caa3586e6836d530f7b2ceaa7415f4daa058e36aacd3d8eae9494b41864a9c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/f00c7b5287c1d8139622390478750da32b7166642c1554359a3c18eb5f6f9b0d",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=223; direction=canonical-to-profile; semantic=type:updateBotGuestChatQuery; wire=0xcdd4093d-\u003e0x00000000; type=Update-\u003e; source_shape=33b345597d7737d4dc012eec98b0a29bb15f44c7cce2b11217228d51d6ace3e4; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/f85e6db4795be5230da91c8174987d709bce0a54891e8055f4fb4f0aa59891f4",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateManagedBot; wire=0x4880ed9a-\u003e0x00000000; type=Update-\u003e; source_shape=08fc6f6e4b4233fb6b44183d6fa263f5635bf354903854828435268c00c52ef9; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/fd6f064fc050e99452de4384e5baf6d9546fb4c0aaf3e23e11ef99dba7f9e583",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=222; direction=canonical-to-profile; semantic=type:updateChatParticipantRank; wire=0xbd8367b9-\u003e0x00000000; type=Update-\u003e; source_shape=4f794cd8c4f3be97d25e4a540560d0dd66f1b9ad1d94b5c1f329fff869187046; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
-      }
-    },
-    {
-      "key": "layer-obligation/v1/update-projection/ff51ef9b0843fc8b36da87968af39a2c2051434db0fb71d467b9faeeace09200",
-      "resolution": {
-        "action": "drop",
-        "note": "kind=update-projection; layer=221; direction=canonical-to-profile; semantic=type:updateStarGiftCraftFail; wire=0xac072444-\u003e0x00000000; type=Update-\u003e; source_shape=e5c063790cb5f3b82a0bcdfff0a0cb7699445b9d4d4a3902b0f7992e20ecb9e8; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+        "note": "kind=update-projection; layer=225; direction=canonical-to-profile; semantic=type:updateDeleteEphemeralMessages; wire=0x56dbfcf8-\u003e0x00000000; type=Update-\u003e; source_shape=73d0e0c1bd2550bff811fee67243e7624522d81f12ca67e1469cf8cac0cd182e; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     }
   ]

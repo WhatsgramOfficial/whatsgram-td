@@ -269,7 +269,7 @@ func TestLayerRPCAdmissionFieldCoverageFailsClosed(t *testing.T) {
 	})
 }
 
-func TestLayerRPCAdmissionFieldReal220Through227PolicyMetrics(t *testing.T) {
+func TestLayerRPCAdmissionFieldReal225Through228PolicyMetrics(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)

@@ -36,36 +36,24 @@ var (
 type LayerProfile int
 
 const (
-	LayerProfile220       LayerProfile = 220
-	LayerProfile221       LayerProfile = 221
-	LayerProfile222       LayerProfile = 222
-	LayerProfile223       LayerProfile = 223
-	LayerProfile224       LayerProfile = 224
 	LayerProfile225       LayerProfile = 225
 	LayerProfile226       LayerProfile = 226
 	LayerProfile227       LayerProfile = 227
-	LayerProfileCanonical LayerProfile = 227
+	LayerProfile228       LayerProfile = 228
+	LayerProfileCanonical LayerProfile = 228
 )
 
 // ResolveLayerProfile resolves only exact generated profiles.
 func ResolveLayerProfile(layer int) (LayerProfile, bool) {
 	switch LayerProfile(layer) {
-	case LayerProfile220:
-		return LayerProfile220, true
-	case LayerProfile221:
-		return LayerProfile221, true
-	case LayerProfile222:
-		return LayerProfile222, true
-	case LayerProfile223:
-		return LayerProfile223, true
-	case LayerProfile224:
-		return LayerProfile224, true
 	case LayerProfile225:
 		return LayerProfile225, true
 	case LayerProfile226:
 		return LayerProfile226, true
 	case LayerProfile227:
 		return LayerProfile227, true
+	case LayerProfile228:
+		return LayerProfile228, true
 	default:
 		return 0, false
 	}
@@ -348,6 +336,13 @@ const (
 	LayerSemanticTypeChatlistsExportedChatlistInvite                                   LayerSemanticID = 0x6d635718ff03b30a
 	LayerSemanticTypeChatlistsExportedInvites                                          LayerSemanticID = 0xb6e14077b7a44d7e
 	LayerSemanticTypeCodeSettings                                                      LayerSemanticID = 0xc55eea92f6699b31
+	LayerSemanticTypeCommunitiesParticipantJoinedChats                                 LayerSemanticID = 0x3fcc45846cecf072
+	LayerSemanticTypeCommunitiesPeerLinkRequests                                       LayerSemanticID = 0x09da907d2f5c2f39
+	LayerSemanticTypeCommunity                                                         LayerSemanticID = 0x84229750a5ac4e8b
+	LayerSemanticTypeCommunityForbidden                                                LayerSemanticID = 0xc77542241e57af0d
+	LayerSemanticTypeCommunityFull                                                     LayerSemanticID = 0xa2ce8f6d3aa7b448
+	LayerSemanticTypeCommunityPeer                                                     LayerSemanticID = 0xcce1b7739637c3db
+	LayerSemanticTypeCommunityPeerRequest                                              LayerSemanticID = 0xa4b5eddd67cdfd9c
 	LayerSemanticTypeConfig                                                            LayerSemanticID = 0xf3217a53efa1c770
 	LayerSemanticTypeConnectedBot                                                      LayerSemanticID = 0xde228e0fa20212dd
 	LayerSemanticTypeConnectedBotStarRef                                               LayerSemanticID = 0x44500644c77bb84a
@@ -371,12 +366,14 @@ const (
 	LayerSemanticTypeDCOption                                                          LayerSemanticID = 0x25d5ce0e4c4922a7
 	LayerSemanticTypeDefaultHistoryTTL                                                 LayerSemanticID = 0xc53f97038482161f
 	LayerSemanticTypeDialog                                                            LayerSemanticID = 0x29ff98849896d664
+	LayerSemanticTypeDialogCommunity                                                   LayerSemanticID = 0x4401937b1944401c
 	LayerSemanticTypeDialogFilter                                                      LayerSemanticID = 0x0e2bb53e5d1da330
 	LayerSemanticTypeDialogFilterChatlist                                              LayerSemanticID = 0x2c5e6d011d3b506d
 	LayerSemanticTypeDialogFilterDefault                                               LayerSemanticID = 0xb3ff26fb1a2b0688
 	LayerSemanticTypeDialogFilterSuggested                                             LayerSemanticID = 0xcb0dd17f8d9535a6
 	LayerSemanticTypeDialogFolder                                                      LayerSemanticID = 0x461456a814e264c8
 	LayerSemanticTypeDialogPeer                                                        LayerSemanticID = 0x4345927a1fca6eae
+	LayerSemanticTypeDialogPeerCommunity                                               LayerSemanticID = 0xfafe6f8c3642027f
 	LayerSemanticTypeDialogPeerFolder                                                  LayerSemanticID = 0xc0ca1ceebd0d7eec
 	LayerSemanticTypeDisallowedGiftsSettings                                           LayerSemanticID = 0x77082ea57ddf9f3f
 	LayerSemanticTypeDocument                                                          LayerSemanticID = 0x3ab01cfaf9270ae4
@@ -420,6 +417,7 @@ const (
 	LayerSemanticTypeEncryptedFileEmpty                                                LayerSemanticID = 0xf1b2c2bb8ba81019
 	LayerSemanticTypeEncryptedMessage                                                  LayerSemanticID = 0xa083886b6578d4a7
 	LayerSemanticTypeEncryptedMessageService                                           LayerSemanticID = 0x9bce34fdb1ec5d1e
+	LayerSemanticTypeEphemeralMessage                                                  LayerSemanticID = 0x65df9ee16c125347
 	LayerSemanticTypeError                                                             LayerSemanticID = 0xe86dd245adb3a397
 	LayerSemanticTypeExportedChatlistInvite                                            LayerSemanticID = 0xe00371df0adc407f
 	LayerSemanticTypeExportedContactToken                                              LayerSemanticID = 0xe8cec563ea9bbcef
@@ -490,6 +488,7 @@ const (
 	LayerSemanticTypeInlineQueryPeerTypeSameBotPM                                      LayerSemanticID = 0xc0afffa99c686bba
 	LayerSemanticTypeInputAiComposeToneDefault                                         LayerSemanticID = 0xd1f5bf9df6cf2438
 	LayerSemanticTypeInputAiComposeToneID                                              LayerSemanticID = 0x7dd2c06fc8aef972
+	LayerSemanticTypeInputAiComposeToneSingleUse                                       LayerSemanticID = 0x4bd32667b5a4a250
 	LayerSemanticTypeInputAiComposeToneSlug                                            LayerSemanticID = 0x77d5f99f7c5f96b4
 	LayerSemanticTypeInputAppEvent                                                     LayerSemanticID = 0xb7099ee89ebbb5cd
 	LayerSemanticTypeInputBotAppID                                                     LayerSemanticID = 0x7af7a64cbb82f389
@@ -531,6 +530,7 @@ const (
 	LayerSemanticTypeInputCollectiblePhone                                             LayerSemanticID = 0xe5d951da7ae75222
 	LayerSemanticTypeInputCollectibleUsername                                          LayerSemanticID = 0x932efca186b8413d
 	LayerSemanticTypeInputDialogPeer                                                   LayerSemanticID = 0x52b58c7847ea7aef
+	LayerSemanticTypeInputDialogPeerCommunity                                          LayerSemanticID = 0xfa179eb5735b5856
 	LayerSemanticTypeInputDialogPeerFolder                                             LayerSemanticID = 0x8aeb9698a1aa7702
 	LayerSemanticTypeInputDocument                                                     LayerSemanticID = 0x9da55ed987a64638
 	LayerSemanticTypeInputDocumentEmpty                                                LayerSemanticID = 0x7bd1970de12950da
@@ -621,6 +621,7 @@ const (
 	LayerSemanticTypeInputMessagesFilterVoice                                          LayerSemanticID = 0xa1b736609a1a8882
 	LayerSemanticTypeInputNotifyBroadcasts                                             LayerSemanticID = 0x69df7624706f91a3
 	LayerSemanticTypeInputNotifyChats                                                  LayerSemanticID = 0xa6258e970c66329c
+	LayerSemanticTypeInputNotifyCommunity                                              LayerSemanticID = 0x8eebf6be60642171
 	LayerSemanticTypeInputNotifyForumTopic                                             LayerSemanticID = 0x92b1a4d804850b2e
 	LayerSemanticTypeInputNotifyPeer                                                   LayerSemanticID = 0xe5ee4513011668a1
 	LayerSemanticTypeInputNotifyUsers                                                  LayerSemanticID = 0x100d04895516729d
@@ -679,6 +680,7 @@ const (
 	LayerSemanticTypeInputPrivacyValueDisallowUsers                                    LayerSemanticID = 0x9d89a3acc52c0f5c
 	LayerSemanticTypeInputQuickReplyShortcut                                           LayerSemanticID = 0x76118f344a90d836
 	LayerSemanticTypeInputQuickReplyShortcutID                                         LayerSemanticID = 0xc30e5eec10c5829b
+	LayerSemanticTypeInputReplyToEphemeralMessage                                      LayerSemanticID = 0xe193ea8861f038d3
 	LayerSemanticTypeInputReplyToMessage                                               LayerSemanticID = 0xd7f59c613c2362f9
 	LayerSemanticTypeInputReplyToMonoForum                                             LayerSemanticID = 0x299e72a5874377b9
 	LayerSemanticTypeInputReplyToStory                                                 LayerSemanticID = 0xddbb621ca52406fc
@@ -800,6 +802,7 @@ const (
 	LayerSemanticTypeMessage                                                           LayerSemanticID = 0x69c8e34961a5e3df
 	LayerSemanticTypeMessageActionBoostApply                                           LayerSemanticID = 0xfb43a1e01e09f2c4
 	LayerSemanticTypeMessageActionBotAllowed                                           LayerSemanticID = 0xb07fa6a9dba5d376
+	LayerSemanticTypeMessageActionChangeCommunity                                      LayerSemanticID = 0x6dde12c6537842ba
 	LayerSemanticTypeMessageActionChangeCreator                                        LayerSemanticID = 0xd5f3ded4b99ce8cd
 	LayerSemanticTypeMessageActionChannelCreate                                        LayerSemanticID = 0xcf1eeecc78308148
 	LayerSemanticTypeMessageActionChannelMigrateFrom                                   LayerSemanticID = 0xf3035e31bbee0411
@@ -949,6 +952,7 @@ const (
 	LayerSemanticTypeMessagesChatsSlice                                                LayerSemanticID = 0x7310b1d0b22be71c
 	LayerSemanticTypeMessagesCheckedHistoryImportPeer                                  LayerSemanticID = 0x79ceb9e0c6033bf5
 	LayerSemanticTypeMessagesComposedMessageWithAI                                     LayerSemanticID = 0x156c8b6bc8022bb1
+	LayerSemanticTypeMessagesComposedRichMessageWithAI                                 LayerSemanticID = 0xb6ee652f853f4495
 	LayerSemanticTypeMessagesDhConfig                                                  LayerSemanticID = 0xd27cc6301a8b74c8
 	LayerSemanticTypeMessagesDhConfigNotModified                                       LayerSemanticID = 0xcef545a3060511ec
 	LayerSemanticTypeMessagesDialogFilters                                             LayerSemanticID = 0x9f857417efa1b25d
@@ -1016,6 +1020,7 @@ const (
 	LayerSemanticTypeMessagesStickersNotModified                                       LayerSemanticID = 0x1ca7532701e4f06e
 	LayerSemanticTypeMessagesTranscribedAudio                                          LayerSemanticID = 0x813903107ac78350
 	LayerSemanticTypeMessagesTranslateResult                                           LayerSemanticID = 0xf8fa373e7e100853
+	LayerSemanticTypeMessagesTranslatedRichMessage                                     LayerSemanticID = 0xe99c11530bfa00e7
 	LayerSemanticTypeMessagesVotesList                                                 LayerSemanticID = 0x937100cbb0764efa
 	LayerSemanticTypeMessagesWebPage                                                   LayerSemanticID = 0x45717ba4270b82b4
 	LayerSemanticTypeMessagesWebPagePreview                                            LayerSemanticID = 0x61ce96d54eec0e12
@@ -1029,6 +1034,7 @@ const (
 	LayerSemanticTypeNotificationSoundRingtone                                         LayerSemanticID = 0x952bc276ed9d4723
 	LayerSemanticTypeNotifyBroadcasts                                                  LayerSemanticID = 0xc9a73eff3d779943
 	LayerSemanticTypeNotifyChats                                                       LayerSemanticID = 0x24ba6cd7b122bd49
+	LayerSemanticTypeNotifyCommunity                                                   LayerSemanticID = 0xd947007df9e431e3
 	LayerSemanticTypeNotifyForumTopic                                                  LayerSemanticID = 0xcae8f248569f17c9
 	LayerSemanticTypeNotifyPeer                                                        LayerSemanticID = 0xe4420731d164096b
 	LayerSemanticTypeNotifyUsers                                                       LayerSemanticID = 0x40532615100d1e65
@@ -1448,6 +1454,7 @@ const (
 	LayerSemanticTypeTextConcat                                                        LayerSemanticID = 0x564db7a63abef445
 	LayerSemanticTypeTextCustomEmoji                                                   LayerSemanticID = 0xefdc22d3ea47bcc7
 	LayerSemanticTypeTextDate                                                          LayerSemanticID = 0xd0f08f1fa668f4c8
+	LayerSemanticTypeTextDiff                                                          LayerSemanticID = 0x49a8e2a0fc465827
 	LayerSemanticTypeTextEmail                                                         LayerSemanticID = 0xe754dcebfdaecc1c
 	LayerSemanticTypeTextEmpty                                                         LayerSemanticID = 0x1200ffe7f364d425
 	LayerSemanticTypeTextFixed                                                         LayerSemanticID = 0x560b341834d8127c
@@ -1506,6 +1513,7 @@ const (
 	LayerSemanticTypeUpdateBotPrecheckoutQuery                                         LayerSemanticID = 0x0b6160f3e883a053
 	LayerSemanticTypeUpdateBotPurchasedPaidMedia                                       LayerSemanticID = 0xf25afee4fde3770a
 	LayerSemanticTypeUpdateBotShippingQuery                                            LayerSemanticID = 0x2f893ffd4d79cfc6
+	LayerSemanticTypeUpdateBotStarsSubscription                                        LayerSemanticID = 0xcd716bef9a29e43c
 	LayerSemanticTypeUpdateBotStopped                                                  LayerSemanticID = 0x7482d562d7361c0c
 	LayerSemanticTypeUpdateBotWebhookJSON                                              LayerSemanticID = 0xd074a5a9fd2cddca
 	LayerSemanticTypeUpdateBotWebhookJSONQuery                                         LayerSemanticID = 0x5c9ba9769cc13e4c
@@ -1533,6 +1541,7 @@ const (
 	LayerSemanticTypeUpdateContactsReset                                               LayerSemanticID = 0xb6a3c6f96b5d06e1
 	LayerSemanticTypeUpdateDCOptions                                                   LayerSemanticID = 0x839dae12d1d09963
 	LayerSemanticTypeUpdateDeleteChannelMessages                                       LayerSemanticID = 0x589e3465cc11de74
+	LayerSemanticTypeUpdateDeleteEphemeralMessages                                     LayerSemanticID = 0x9ef1edaed1658c79
 	LayerSemanticTypeUpdateDeleteGroupCallMessages                                     LayerSemanticID = 0xdf5516178ab5e82b
 	LayerSemanticTypeUpdateDeleteMessages                                              LayerSemanticID = 0xf68380facb94c605
 	LayerSemanticTypeUpdateDeleteQuickReply                                            LayerSemanticID = 0x07339df9090c3602
@@ -1545,6 +1554,7 @@ const (
 	LayerSemanticTypeUpdateDialogUnreadMark                                            LayerSemanticID = 0x9c74c5c888eec815
 	LayerSemanticTypeUpdateDraftMessage                                                LayerSemanticID = 0xbcd1893fb6eb7cf2
 	LayerSemanticTypeUpdateEditChannelMessage                                          LayerSemanticID = 0x37c789380972065b
+	LayerSemanticTypeUpdateEditEphemeralMessage                                        LayerSemanticID = 0x74acd7129fa055c7
 	LayerSemanticTypeUpdateEditMessage                                                 LayerSemanticID = 0x155662cf73aea559
 	LayerSemanticTypeUpdateEmojiGameInfo                                               LayerSemanticID = 0x1051126ccb7f796f
 	LayerSemanticTypeUpdateEncryptedChatTyping                                         LayerSemanticID = 0xf1632c646536c1d1
@@ -1576,6 +1586,7 @@ const (
 	LayerSemanticTypeUpdateNewBotConnection                                            LayerSemanticID = 0x88def43f78f4de9d
 	LayerSemanticTypeUpdateNewChannelMessage                                           LayerSemanticID = 0x77e278d11ad7b458
 	LayerSemanticTypeUpdateNewEncryptedMessage                                         LayerSemanticID = 0xc5993db5a628620d
+	LayerSemanticTypeUpdateNewEphemeralMessage                                         LayerSemanticID = 0x0fddb82e016eb6dc
 	LayerSemanticTypeUpdateNewMessage                                                  LayerSemanticID = 0x76150bd58c8b76c8
 	LayerSemanticTypeUpdateNewQuickReply                                               LayerSemanticID = 0x55af7e80fb40f45b
 	LayerSemanticTypeUpdateNewScheduledMessage                                         LayerSemanticID = 0x35ae9a979824c039
@@ -1919,7 +1930,6 @@ const (
 	LayerSemanticMethodChannelsDeleteParticipantHistory                                LayerSemanticID = 0x3850cebc8edce27f
 	LayerSemanticMethodChannelsEditAdmin                                               LayerSemanticID = 0x1fd689b34c5b4866
 	LayerSemanticMethodChannelsEditBanned                                              LayerSemanticID = 0x443199c37df51c7d
-	LayerSemanticMethodChannelsEditCreator                                             LayerSemanticID = 0xa222eb77f559be26
 	LayerSemanticMethodChannelsEditLocation                                            LayerSemanticID = 0xe9b9bd5f5ef599d3
 	LayerSemanticMethodChannelsEditPhoto                                               LayerSemanticID = 0xab97f1aa1e066fe9
 	LayerSemanticMethodChannelsEditTitle                                               LayerSemanticID = 0xdddede02af91b7cd
@@ -1929,7 +1939,6 @@ const (
 	LayerSemanticMethodChannelsGetChannelRecommendations                               LayerSemanticID = 0xc274e62ed6559702
 	LayerSemanticMethodChannelsGetChannels                                             LayerSemanticID = 0xf0af5e8c07aa0ae5
 	LayerSemanticMethodChannelsGetFullChannel                                          LayerSemanticID = 0x379a954b8a27a6d0
-	LayerSemanticMethodChannelsGetFutureCreatorAfterLeave                              LayerSemanticID = 0x687e956b643203da
 	LayerSemanticMethodChannelsGetGroupsForDiscussion                                  LayerSemanticID = 0x00dc2c30a603e0f2
 	LayerSemanticMethodChannelsGetInactiveChannels                                     LayerSemanticID = 0xfa92d310f45a45b1
 	LayerSemanticMethodChannelsGetLeftChannels                                         LayerSemanticID = 0xaf6bd838d01c02be
@@ -1979,6 +1988,15 @@ const (
 	LayerSemanticMethodChatlistsJoinChatlistInvite                                     LayerSemanticID = 0xcda35218a58a0d98
 	LayerSemanticMethodChatlistsJoinChatlistUpdates                                    LayerSemanticID = 0xb36d240860937c0e
 	LayerSemanticMethodChatlistsLeaveChatlist                                          LayerSemanticID = 0x67ad43428a304a71
+	LayerSemanticMethodCommunitiesCreate                                               LayerSemanticID = 0x833048a1d6060495
+	LayerSemanticMethodCommunitiesGetJoinedCommunities                                 LayerSemanticID = 0x5cc23d8780648a75
+	LayerSemanticMethodCommunitiesGetParticipantJoinedChats                            LayerSemanticID = 0xcff8853a196ada11
+	LayerSemanticMethodCommunitiesGetPeerLinkRequests                                  LayerSemanticID = 0x7fc2c37416852ccb
+	LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval                     LayerSemanticID = 0xa7bbc435fc399f4f
+	LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs                    LayerSemanticID = 0xf351354a9e7d58f2
+	LayerSemanticMethodCommunitiesToggleParticipantBanned                              LayerSemanticID = 0x45e20730c379e976
+	LayerSemanticMethodCommunitiesTogglePeerLink                                       LayerSemanticID = 0x6fe9ccc41d1d980e
+	LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval                        LayerSemanticID = 0x19a6c6c435ba745e
 	LayerSemanticMethodContactsAcceptContact                                           LayerSemanticID = 0xc0a4a7379dc2e51c
 	LayerSemanticMethodContactsAddContact                                              LayerSemanticID = 0x9a168bfa95a7eaaa
 	LayerSemanticMethodContactsBlock                                                   LayerSemanticID = 0xdbab599165e7d92a
@@ -2007,6 +2025,10 @@ const (
 	LayerSemanticMethodContactsToggleTopPeers                                          LayerSemanticID = 0x57b66c588e99476b
 	LayerSemanticMethodContactsUnblock                                                 LayerSemanticID = 0xa2b19d52fac2cd2c
 	LayerSemanticMethodContactsUpdateContactNote                                       LayerSemanticID = 0xb09d2ca6963f789b
+	LayerSemanticMethodEphemeralDeleteMessage                                          LayerSemanticID = 0xd97652edaea05670
+	LayerSemanticMethodEphemeralGetCallbackAnswer                                      LayerSemanticID = 0xf387ebc717ea163a
+	LayerSemanticMethodEphemeralReportMessage                                          LayerSemanticID = 0xdc06202673655c33
+	LayerSemanticMethodEphemeralSendMessage                                            LayerSemanticID = 0x2f4e06d70a5b4a97
 	LayerSemanticMethodFoldersEditPeerFolders                                          LayerSemanticID = 0x9a42556d276afb78
 	LayerSemanticMethodFragmentGetCollectibleInfo                                      LayerSemanticID = 0x73dc22d2f7556d23
 	LayerSemanticMethodHelpAcceptTermsOfService                                        LayerSemanticID = 0x3680bc9559aa7310
@@ -2065,6 +2087,7 @@ const (
 	LayerSemanticMethodMessagesClearRecentStickers                                     LayerSemanticID = 0xc14f36f0cf0639db
 	LayerSemanticMethodMessagesClickSponsoredMessage                                   LayerSemanticID = 0x8c817f140815d4df
 	LayerSemanticMethodMessagesComposeMessageWithAI                                    LayerSemanticID = 0x57cb2d77eadd0c41
+	LayerSemanticMethodMessagesComposeRichMessageWithAI                                LayerSemanticID = 0x464305ca15cce226
 	LayerSemanticMethodMessagesCreateChat                                              LayerSemanticID = 0xe1869e4f3a723721
 	LayerSemanticMethodMessagesCreateForumTopic                                        LayerSemanticID = 0x0c1a10d6de3f470f
 	LayerSemanticMethodMessagesDeclineURLAuth                                          LayerSemanticID = 0x224b233e2007983c
@@ -2232,6 +2255,7 @@ const (
 	LayerSemanticMethodMessagesReportSpam                                              LayerSemanticID = 0xcf70b0fe69ccf012
 	LayerSemanticMethodMessagesReportSponsoredMessage                                  LayerSemanticID = 0xb8f12729b4c28c18
 	LayerSemanticMethodMessagesRequestAppWebView                                       LayerSemanticID = 0x2ed6b298b6f2341c
+	LayerSemanticMethodMessagesRequestChatJoinWebView                                  LayerSemanticID = 0x483d8b8cfed8b5f7
 	LayerSemanticMethodMessagesRequestEncryption                                       LayerSemanticID = 0x02031656c58956be
 	LayerSemanticMethodMessagesRequestMainWebView                                      LayerSemanticID = 0xaa0136bdd114246a
 	LayerSemanticMethodMessagesRequestSimpleWebView                                    LayerSemanticID = 0x05987c1182c347aa
@@ -2294,6 +2318,7 @@ const (
 	LayerSemanticMethodMessagesToggleSuggestedPostApproval                             LayerSemanticID = 0x6a9016f49e5c38ba
 	LayerSemanticMethodMessagesToggleTodoCompleted                                     LayerSemanticID = 0x91d0bd12682635ae
 	LayerSemanticMethodMessagesTranscribeAudio                                         LayerSemanticID = 0xbb02445848c6842f
+	LayerSemanticMethodMessagesTranslateRichMessage                                    LayerSemanticID = 0x7070bf59c60a751a
 	LayerSemanticMethodMessagesTranslateText                                           LayerSemanticID = 0x92d06598bd322163
 	LayerSemanticMethodMessagesUninstallStickerSet                                     LayerSemanticID = 0x24e287a8119212a0
 	LayerSemanticMethodMessagesUnpinAllMessages                                        LayerSemanticID = 0x0737629354fa3742
@@ -3046,6 +3071,20 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "chatlists.exportedInvites", true
 	case LayerSemanticTypeCodeSettings:
 		return "type", "codeSettings", true
+	case LayerSemanticTypeCommunitiesParticipantJoinedChats:
+		return "type", "communities.participantJoinedChats", true
+	case LayerSemanticTypeCommunitiesPeerLinkRequests:
+		return "type", "communities.peerLinkRequests", true
+	case LayerSemanticTypeCommunity:
+		return "type", "community", true
+	case LayerSemanticTypeCommunityForbidden:
+		return "type", "communityForbidden", true
+	case LayerSemanticTypeCommunityFull:
+		return "type", "communityFull", true
+	case LayerSemanticTypeCommunityPeer:
+		return "type", "communityPeer", true
+	case LayerSemanticTypeCommunityPeerRequest:
+		return "type", "communityPeerRequest", true
 	case LayerSemanticTypeConfig:
 		return "type", "config", true
 	case LayerSemanticTypeConnectedBot:
@@ -3092,6 +3131,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "defaultHistoryTTL", true
 	case LayerSemanticTypeDialog:
 		return "type", "dialog", true
+	case LayerSemanticTypeDialogCommunity:
+		return "type", "dialogCommunity", true
 	case LayerSemanticTypeDialogFilter:
 		return "type", "dialogFilter", true
 	case LayerSemanticTypeDialogFilterChatlist:
@@ -3104,6 +3145,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "dialogFolder", true
 	case LayerSemanticTypeDialogPeer:
 		return "type", "dialogPeer", true
+	case LayerSemanticTypeDialogPeerCommunity:
+		return "type", "dialogPeerCommunity", true
 	case LayerSemanticTypeDialogPeerFolder:
 		return "type", "dialogPeerFolder", true
 	case LayerSemanticTypeDisallowedGiftsSettings:
@@ -3190,6 +3233,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "encryptedMessage", true
 	case LayerSemanticTypeEncryptedMessageService:
 		return "type", "encryptedMessageService", true
+	case LayerSemanticTypeEphemeralMessage:
+		return "type", "ephemeralMessage", true
 	case LayerSemanticTypeError:
 		return "type", "error", true
 	case LayerSemanticTypeExportedChatlistInvite:
@@ -3330,6 +3375,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "inputAiComposeToneDefault", true
 	case LayerSemanticTypeInputAiComposeToneID:
 		return "type", "inputAiComposeToneID", true
+	case LayerSemanticTypeInputAiComposeToneSingleUse:
+		return "type", "inputAiComposeToneSingleUse", true
 	case LayerSemanticTypeInputAiComposeToneSlug:
 		return "type", "inputAiComposeToneSlug", true
 	case LayerSemanticTypeInputAppEvent:
@@ -3412,6 +3459,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "inputCollectibleUsername", true
 	case LayerSemanticTypeInputDialogPeer:
 		return "type", "inputDialogPeer", true
+	case LayerSemanticTypeInputDialogPeerCommunity:
+		return "type", "inputDialogPeerCommunity", true
 	case LayerSemanticTypeInputDialogPeerFolder:
 		return "type", "inputDialogPeerFolder", true
 	case LayerSemanticTypeInputDocument:
@@ -3592,6 +3641,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "inputNotifyBroadcasts", true
 	case LayerSemanticTypeInputNotifyChats:
 		return "type", "inputNotifyChats", true
+	case LayerSemanticTypeInputNotifyCommunity:
+		return "type", "inputNotifyCommunity", true
 	case LayerSemanticTypeInputNotifyForumTopic:
 		return "type", "inputNotifyForumTopic", true
 	case LayerSemanticTypeInputNotifyPeer:
@@ -3708,6 +3759,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "inputQuickReplyShortcut", true
 	case LayerSemanticTypeInputQuickReplyShortcutID:
 		return "type", "inputQuickReplyShortcutId", true
+	case LayerSemanticTypeInputReplyToEphemeralMessage:
+		return "type", "inputReplyToEphemeralMessage", true
 	case LayerSemanticTypeInputReplyToMessage:
 		return "type", "inputReplyToMessage", true
 	case LayerSemanticTypeInputReplyToMonoForum:
@@ -3950,6 +4003,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "messageActionBoostApply", true
 	case LayerSemanticTypeMessageActionBotAllowed:
 		return "type", "messageActionBotAllowed", true
+	case LayerSemanticTypeMessageActionChangeCommunity:
+		return "type", "messageActionChangeCommunity", true
 	case LayerSemanticTypeMessageActionChangeCreator:
 		return "type", "messageActionChangeCreator", true
 	case LayerSemanticTypeMessageActionChannelCreate:
@@ -4248,6 +4303,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "messages.checkedHistoryImportPeer", true
 	case LayerSemanticTypeMessagesComposedMessageWithAI:
 		return "type", "messages.composedMessageWithAI", true
+	case LayerSemanticTypeMessagesComposedRichMessageWithAI:
+		return "type", "messages.composedRichMessageWithAI", true
 	case LayerSemanticTypeMessagesDhConfig:
 		return "type", "messages.dhConfig", true
 	case LayerSemanticTypeMessagesDhConfigNotModified:
@@ -4382,6 +4439,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "messages.transcribedAudio", true
 	case LayerSemanticTypeMessagesTranslateResult:
 		return "type", "messages.translateResult", true
+	case LayerSemanticTypeMessagesTranslatedRichMessage:
+		return "type", "messages.translatedRichMessage", true
 	case LayerSemanticTypeMessagesVotesList:
 		return "type", "messages.votesList", true
 	case LayerSemanticTypeMessagesWebPage:
@@ -4408,6 +4467,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "notifyBroadcasts", true
 	case LayerSemanticTypeNotifyChats:
 		return "type", "notifyChats", true
+	case LayerSemanticTypeNotifyCommunity:
+		return "type", "notifyCommunity", true
 	case LayerSemanticTypeNotifyForumTopic:
 		return "type", "notifyForumTopic", true
 	case LayerSemanticTypeNotifyPeer:
@@ -5246,6 +5307,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "textCustomEmoji", true
 	case LayerSemanticTypeTextDate:
 		return "type", "textDate", true
+	case LayerSemanticTypeTextDiff:
+		return "type", "textDiff", true
 	case LayerSemanticTypeTextEmail:
 		return "type", "textEmail", true
 	case LayerSemanticTypeTextEmpty:
@@ -5362,6 +5425,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "updateBotPurchasedPaidMedia", true
 	case LayerSemanticTypeUpdateBotShippingQuery:
 		return "type", "updateBotShippingQuery", true
+	case LayerSemanticTypeUpdateBotStarsSubscription:
+		return "type", "updateBotStarsSubscription", true
 	case LayerSemanticTypeUpdateBotStopped:
 		return "type", "updateBotStopped", true
 	case LayerSemanticTypeUpdateBotWebhookJSON:
@@ -5416,6 +5481,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "updateDcOptions", true
 	case LayerSemanticTypeUpdateDeleteChannelMessages:
 		return "type", "updateDeleteChannelMessages", true
+	case LayerSemanticTypeUpdateDeleteEphemeralMessages:
+		return "type", "updateDeleteEphemeralMessages", true
 	case LayerSemanticTypeUpdateDeleteGroupCallMessages:
 		return "type", "updateDeleteGroupCallMessages", true
 	case LayerSemanticTypeUpdateDeleteMessages:
@@ -5440,6 +5507,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "updateDraftMessage", true
 	case LayerSemanticTypeUpdateEditChannelMessage:
 		return "type", "updateEditChannelMessage", true
+	case LayerSemanticTypeUpdateEditEphemeralMessage:
+		return "type", "updateEditEphemeralMessage", true
 	case LayerSemanticTypeUpdateEditMessage:
 		return "type", "updateEditMessage", true
 	case LayerSemanticTypeUpdateEmojiGameInfo:
@@ -5502,6 +5571,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "type", "updateNewChannelMessage", true
 	case LayerSemanticTypeUpdateNewEncryptedMessage:
 		return "type", "updateNewEncryptedMessage", true
+	case LayerSemanticTypeUpdateNewEphemeralMessage:
+		return "type", "updateNewEphemeralMessage", true
 	case LayerSemanticTypeUpdateNewMessage:
 		return "type", "updateNewMessage", true
 	case LayerSemanticTypeUpdateNewQuickReply:
@@ -6188,8 +6259,6 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "channels.editAdmin", true
 	case LayerSemanticMethodChannelsEditBanned:
 		return "function", "channels.editBanned", true
-	case LayerSemanticMethodChannelsEditCreator:
-		return "function", "channels.editCreator", true
 	case LayerSemanticMethodChannelsEditLocation:
 		return "function", "channels.editLocation", true
 	case LayerSemanticMethodChannelsEditPhoto:
@@ -6208,8 +6277,6 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "channels.getChannels", true
 	case LayerSemanticMethodChannelsGetFullChannel:
 		return "function", "channels.getFullChannel", true
-	case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-		return "function", "channels.getFutureCreatorAfterLeave", true
 	case LayerSemanticMethodChannelsGetGroupsForDiscussion:
 		return "function", "channels.getGroupsForDiscussion", true
 	case LayerSemanticMethodChannelsGetInactiveChannels:
@@ -6308,6 +6375,24 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "chatlists.joinChatlistUpdates", true
 	case LayerSemanticMethodChatlistsLeaveChatlist:
 		return "function", "chatlists.leaveChatlist", true
+	case LayerSemanticMethodCommunitiesCreate:
+		return "function", "communities.create", true
+	case LayerSemanticMethodCommunitiesGetJoinedCommunities:
+		return "function", "communities.getJoinedCommunities", true
+	case LayerSemanticMethodCommunitiesGetParticipantJoinedChats:
+		return "function", "communities.getParticipantJoinedChats", true
+	case LayerSemanticMethodCommunitiesGetPeerLinkRequests:
+		return "function", "communities.getPeerLinkRequests", true
+	case LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval:
+		return "function", "communities.toggleAllPeerLinkRequestApproval", true
+	case LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs:
+		return "function", "communities.toggleCommunityCollapsedInDialogs", true
+	case LayerSemanticMethodCommunitiesToggleParticipantBanned:
+		return "function", "communities.toggleParticipantBanned", true
+	case LayerSemanticMethodCommunitiesTogglePeerLink:
+		return "function", "communities.togglePeerLink", true
+	case LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval:
+		return "function", "communities.togglePeerLinkRequestApproval", true
 	case LayerSemanticMethodContactsAcceptContact:
 		return "function", "contacts.acceptContact", true
 	case LayerSemanticMethodContactsAddContact:
@@ -6364,6 +6449,14 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "contacts.unblock", true
 	case LayerSemanticMethodContactsUpdateContactNote:
 		return "function", "contacts.updateContactNote", true
+	case LayerSemanticMethodEphemeralDeleteMessage:
+		return "function", "ephemeral.deleteMessage", true
+	case LayerSemanticMethodEphemeralGetCallbackAnswer:
+		return "function", "ephemeral.getCallbackAnswer", true
+	case LayerSemanticMethodEphemeralReportMessage:
+		return "function", "ephemeral.reportMessage", true
+	case LayerSemanticMethodEphemeralSendMessage:
+		return "function", "ephemeral.sendMessage", true
 	case LayerSemanticMethodFoldersEditPeerFolders:
 		return "function", "folders.editPeerFolders", true
 	case LayerSemanticMethodFragmentGetCollectibleInfo:
@@ -6480,6 +6573,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "messages.clickSponsoredMessage", true
 	case LayerSemanticMethodMessagesComposeMessageWithAI:
 		return "function", "messages.composeMessageWithAI", true
+	case LayerSemanticMethodMessagesComposeRichMessageWithAI:
+		return "function", "messages.composeRichMessageWithAI", true
 	case LayerSemanticMethodMessagesCreateChat:
 		return "function", "messages.createChat", true
 	case LayerSemanticMethodMessagesCreateForumTopic:
@@ -6814,6 +6909,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "messages.reportSponsoredMessage", true
 	case LayerSemanticMethodMessagesRequestAppWebView:
 		return "function", "messages.requestAppWebView", true
+	case LayerSemanticMethodMessagesRequestChatJoinWebView:
+		return "function", "messages.requestChatJoinWebView", true
 	case LayerSemanticMethodMessagesRequestEncryption:
 		return "function", "messages.requestEncryption", true
 	case LayerSemanticMethodMessagesRequestMainWebView:
@@ -6938,6 +7035,8 @@ func LayerSemanticName(id LayerSemanticID) (category, qname string, ok bool) {
 		return "function", "messages.toggleTodoCompleted", true
 	case LayerSemanticMethodMessagesTranscribeAudio:
 		return "function", "messages.transcribeAudio", true
+	case LayerSemanticMethodMessagesTranslateRichMessage:
+		return "function", "messages.translateRichMessage", true
 	case LayerSemanticMethodMessagesTranslateText:
 		return "function", "messages.translateText", true
 	case LayerSemanticMethodMessagesUninstallStickerSet:
@@ -7578,7 +7677,7 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 	case LayerSemanticTypeBotBusinessConnection:
 		return 0x8f34b2f5, true
 	case LayerSemanticTypeBotCommand:
-		return 0xc27ac8c7, true
+		return 0x9852d6d2, true
 	case LayerSemanticTypeBotCommandScopeChatAdmins:
 		return 0xb9aa606a, true
 	case LayerSemanticTypeBotCommandScopeChats:
@@ -7672,7 +7771,7 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 	case LayerSemanticTypeCDNPublicKey:
 		return 0xc982eaba, true
 	case LayerSemanticTypeChannel:
-		return 0x1c32b11c, true
+		return 0xd49f34c6, true
 	case LayerSemanticTypeChannelAdminLogEvent:
 		return 0x1fad68cd, true
 	case LayerSemanticTypeChannelAdminLogEventActionChangeAbout:
@@ -7901,6 +8000,20 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x10ab6dc7, true
 	case LayerSemanticTypeCodeSettings:
 		return 0xad253d78, true
+	case LayerSemanticTypeCommunitiesParticipantJoinedChats:
+		return 0x8d78512a, true
+	case LayerSemanticTypeCommunitiesPeerLinkRequests:
+		return 0x2244afad, true
+	case LayerSemanticTypeCommunity:
+		return 0x65efe954, true
+	case LayerSemanticTypeCommunityForbidden:
+		return 0xfd3cdab8, true
+	case LayerSemanticTypeCommunityFull:
+		return 0xcbb7a507, true
+	case LayerSemanticTypeCommunityPeer:
+		return 0x76141ebd, true
+	case LayerSemanticTypeCommunityPeerRequest:
+		return 0x7beafa85, true
 	case LayerSemanticTypeConfig:
 		return 0xcc1a241e, true
 	case LayerSemanticTypeConnectedBot:
@@ -7947,6 +8060,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x43b46b20, true
 	case LayerSemanticTypeDialog:
 		return 0xfc89f7f3, true
+	case LayerSemanticTypeDialogCommunity:
+		return 0xf78a0973, true
 	case LayerSemanticTypeDialogFilter:
 		return 0xaa472651, true
 	case LayerSemanticTypeDialogFilterChatlist:
@@ -7959,6 +8074,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x71bd134c, true
 	case LayerSemanticTypeDialogPeer:
 		return 0xe56dbf05, true
+	case LayerSemanticTypeDialogPeerCommunity:
+		return 0x2f65c8e4, true
 	case LayerSemanticTypeDialogPeerFolder:
 		return 0x514519e2, true
 	case LayerSemanticTypeDisallowedGiftsSettings:
@@ -8045,6 +8162,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xed18c118, true
 	case LayerSemanticTypeEncryptedMessageService:
 		return 0x23734b06, true
+	case LayerSemanticTypeEphemeralMessage:
+		return 0xd9c6dc1a, true
 	case LayerSemanticTypeError:
 		return 0xc4b9f9bb, true
 	case LayerSemanticTypeExportedChatlistInvite:
@@ -8185,6 +8304,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x1fe9a9bf, true
 	case LayerSemanticTypeInputAiComposeToneID:
 		return 0x0773c080, true
+	case LayerSemanticTypeInputAiComposeToneSingleUse:
+		return 0x0e0c35af, true
 	case LayerSemanticTypeInputAiComposeToneSlug:
 		return 0x1fa01357, true
 	case LayerSemanticTypeInputAppEvent:
@@ -8267,6 +8388,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xe39460a9, true
 	case LayerSemanticTypeInputDialogPeer:
 		return 0xfcaafeb7, true
+	case LayerSemanticTypeInputDialogPeerCommunity:
+		return 0x69ef72c4, true
 	case LayerSemanticTypeInputDialogPeerFolder:
 		return 0x64600527, true
 	case LayerSemanticTypeInputDocument:
@@ -8447,6 +8570,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xb1db7c7e, true
 	case LayerSemanticTypeInputNotifyChats:
 		return 0x4a95e84e, true
+	case LayerSemanticTypeInputNotifyCommunity:
+		return 0x27bb1adc, true
 	case LayerSemanticTypeInputNotifyForumTopic:
 		return 0x5c467992, true
 	case LayerSemanticTypeInputNotifyPeer:
@@ -8563,6 +8688,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x24596d41, true
 	case LayerSemanticTypeInputQuickReplyShortcutID:
 		return 0x01190cf1, true
+	case LayerSemanticTypeInputReplyToEphemeralMessage:
+		return 0x4119b95e, true
 	case LayerSemanticTypeInputReplyToMessage:
 		return 0x3bd4b7c2, true
 	case LayerSemanticTypeInputReplyToMonoForum:
@@ -8805,6 +8932,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xcc02aa6d, true
 	case LayerSemanticTypeMessageActionBotAllowed:
 		return 0xc516d679, true
+	case LayerSemanticTypeMessageActionChangeCommunity:
+		return 0x5d20bae8, true
 	case LayerSemanticTypeMessageActionChangeCreator:
 		return 0xe188503b, true
 	case LayerSemanticTypeMessageActionChannelCreate:
@@ -9094,7 +9223,7 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 	case LayerSemanticTypeMessagesChatInviteJoinResultOk:
 		return 0x445663a7, true
 	case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
-		return 0x2f51c337, true
+		return 0x61ca29d3, true
 	case LayerSemanticTypeMessagesChats:
 		return 0x64ff9fd5, true
 	case LayerSemanticTypeMessagesChatsSlice:
@@ -9103,6 +9232,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xa24de717, true
 	case LayerSemanticTypeMessagesComposedMessageWithAI:
 		return 0x90d7adfa, true
+	case LayerSemanticTypeMessagesComposedRichMessageWithAI:
+		return 0x4c4537c8, true
 	case LayerSemanticTypeMessagesDhConfig:
 		return 0x2c221edd, true
 	case LayerSemanticTypeMessagesDhConfigNotModified:
@@ -9237,6 +9368,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xcfb9d957, true
 	case LayerSemanticTypeMessagesTranslateResult:
 		return 0x33db32f8, true
+	case LayerSemanticTypeMessagesTranslatedRichMessage:
+		return 0x4203998f, true
 	case LayerSemanticTypeMessagesVotesList:
 		return 0x4899484e, true
 	case LayerSemanticTypeMessagesWebPage:
@@ -9263,6 +9396,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xd612e8ef, true
 	case LayerSemanticTypeNotifyChats:
 		return 0xc007cec3, true
+	case LayerSemanticTypeNotifyCommunity:
+		return 0xbe376999, true
 	case LayerSemanticTypeNotifyForumTopic:
 		return 0x226e6308, true
 	case LayerSemanticTypeNotifyPeer:
@@ -10101,6 +10236,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xa26156c0, true
 	case LayerSemanticTypeTextDate:
 		return 0xa5b45e2b, true
+	case LayerSemanticTypeTextDiff:
+		return 0x9686cb50, true
 	case LayerSemanticTypeTextEmail:
 		return 0xde5a0dd6, true
 	case LayerSemanticTypeTextEmpty:
@@ -10217,6 +10354,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x283bd312, true
 	case LayerSemanticTypeUpdateBotShippingQuery:
 		return 0xb5aefd7d, true
+	case LayerSemanticTypeUpdateBotStarsSubscription:
+		return 0x6c0d8e23, true
 	case LayerSemanticTypeUpdateBotStopped:
 		return 0xc4870a49, true
 	case LayerSemanticTypeUpdateBotWebhookJSON:
@@ -10271,6 +10410,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x8e5e9873, true
 	case LayerSemanticTypeUpdateDeleteChannelMessages:
 		return 0xc32d5b12, true
+	case LayerSemanticTypeUpdateDeleteEphemeralMessages:
+		return 0x56dbfcf8, true
 	case LayerSemanticTypeUpdateDeleteGroupCallMessages:
 		return 0x3e85e92c, true
 	case LayerSemanticTypeUpdateDeleteMessages:
@@ -10295,6 +10436,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xedfc111e, true
 	case LayerSemanticTypeUpdateEditChannelMessage:
 		return 0x1b3f4df7, true
+	case LayerSemanticTypeUpdateEditEphemeralMessage:
+		return 0x4bbb8f01, true
 	case LayerSemanticTypeUpdateEditMessage:
 		return 0xe40370a3, true
 	case LayerSemanticTypeUpdateEmojiGameInfo:
@@ -10357,6 +10500,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x62ba04d9, true
 	case LayerSemanticTypeUpdateNewEncryptedMessage:
 		return 0x12bcbd9a, true
+	case LayerSemanticTypeUpdateNewEphemeralMessage:
+		return 0x20bcbba1, true
 	case LayerSemanticTypeUpdateNewMessage:
 		return 0x1f2b0afd, true
 	case LayerSemanticTypeUpdateNewQuickReply:
@@ -10544,7 +10689,7 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 	case LayerSemanticTypeURLAuthResultRequest:
 		return 0x3cd623ec, true
 	case LayerSemanticTypeUser:
-		return 0x31774388, true
+		return 0xb1b8cc83, true
 	case LayerSemanticTypeUserEmpty:
 		return 0xd3bc4b7a, true
 	case LayerSemanticTypeUserFull:
@@ -11159,6 +11304,24 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xe089f8f5, true
 	case LayerSemanticMethodChatlistsLeaveChatlist:
 		return 0x74fae13a, true
+	case LayerSemanticMethodCommunitiesCreate:
+		return 0xa63859ec, true
+	case LayerSemanticMethodCommunitiesGetJoinedCommunities:
+		return 0xa663e830, true
+	case LayerSemanticMethodCommunitiesGetParticipantJoinedChats:
+		return 0xf87eabab, true
+	case LayerSemanticMethodCommunitiesGetPeerLinkRequests:
+		return 0x93773344, true
+	case LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval:
+		return 0xbfe3dd3d, true
+	case LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs:
+		return 0xd766e3ea, true
+	case LayerSemanticMethodCommunitiesToggleParticipantBanned:
+		return 0x9967ad0f, true
+	case LayerSemanticMethodCommunitiesTogglePeerLink:
+		return 0x736dcfea, true
+	case LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval:
+		return 0x8c8219a8, true
 	case LayerSemanticMethodContactsAcceptContact:
 		return 0xf831a20f, true
 	case LayerSemanticMethodContactsAddContact:
@@ -11215,6 +11378,14 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xb550d328, true
 	case LayerSemanticMethodContactsUpdateContactNote:
 		return 0x139f63fb, true
+	case LayerSemanticMethodEphemeralDeleteMessage:
+		return 0xa3c0d511, true
+	case LayerSemanticMethodEphemeralGetCallbackAnswer:
+		return 0x3fa464c8, true
+	case LayerSemanticMethodEphemeralReportMessage:
+		return 0x8704f2bf, true
+	case LayerSemanticMethodEphemeralSendMessage:
+		return 0x68cbd09f, true
 	case LayerSemanticMethodFoldersEditPeerFolders:
 		return 0x6847d0ab, true
 	case LayerSemanticMethodFragmentGetCollectibleInfo:
@@ -11331,6 +11502,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x8235057e, true
 	case LayerSemanticMethodMessagesComposeMessageWithAI:
 		return 0xdaecc589, true
+	case LayerSemanticMethodMessagesComposeRichMessageWithAI:
+		return 0x8d7ae6af, true
 	case LayerSemanticMethodMessagesCreateChat:
 		return 0x92ceddd4, true
 	case LayerSemanticMethodMessagesCreateForumTopic:
@@ -11665,6 +11838,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0x12cbf0c4, true
 	case LayerSemanticMethodMessagesRequestAppWebView:
 		return 0x53618bce, true
+	case LayerSemanticMethodMessagesRequestChatJoinWebView:
+		return 0xba9ee679, true
 	case LayerSemanticMethodMessagesRequestEncryption:
 		return 0xf64daf43, true
 	case LayerSemanticMethodMessagesRequestMainWebView:
@@ -11692,7 +11867,7 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 	case LayerSemanticMethodMessagesSearchEmojiStickerSets:
 		return 0x92b4494c, true
 	case LayerSemanticMethodMessagesSearchGlobal:
-		return 0x4bc6589a, true
+		return 0x6126a43c, true
 	case LayerSemanticMethodMessagesSearchSentMedia:
 		return 0x107e31a0, true
 	case LayerSemanticMethodMessagesSearchStickerSets:
@@ -11789,6 +11964,8 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 		return 0xd3e03124, true
 	case LayerSemanticMethodMessagesTranscribeAudio:
 		return 0x269e9a49, true
+	case LayerSemanticMethodMessagesTranslateRichMessage:
+		return 0x1a542004, true
 	case LayerSemanticMethodMessagesTranslateText:
 		return 0xa5eec345, true
 	case LayerSemanticMethodMessagesUninstallStickerSet:
@@ -12215,1743 +12392,6 @@ func layerCanonicalWireID(id LayerSemanticID) (uint32, bool) {
 // LayerWireID resolves a semantic constructor or method in an exact profile.
 func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) {
 	switch profile {
-	case LayerProfile220:
-		switch semantic {
-		case LayerSemanticTypeAccountWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeAccountWebBrowserSettingsNotModified:
-			return 0, false
-		case LayerSemanticTypeAiComposeTone:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneExample:
-			return 0, false
-		case LayerSemanticTypeAicomposeTones:
-			return 0, false
-		case LayerSemanticTypeAicomposeTonesNotModified:
-			return 0, false
-		case LayerSemanticTypeAuthSentCodePaymentRequired:
-			return 0xe0955a3c, true
-		case LayerSemanticTypeBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeBotsAccessSettings:
-			return 0, false
-		case LayerSemanticTypeBotsExportedBotToken:
-			return 0, false
-		case LayerSemanticTypeBotsRequestedButton:
-			return 0, false
-		case LayerSemanticTypeChannelAdminLogEventActionParticipantEditRank:
-			return 0, false
-		case LayerSemanticTypeChannelFull:
-			return 0xe4e0b29d, true
-		case LayerSemanticTypeChannelParticipant:
-			return 0xcb397619, true
-		case LayerSemanticTypeChannelParticipantBanned:
-			return 0x6df8014e, true
-		case LayerSemanticTypeChannelParticipantSelf:
-			return 0x4f607bef, true
-		case LayerSemanticTypeChatParticipant:
-			return 0xc02d4007, true
-		case LayerSemanticTypeChatParticipantAdmin:
-			return 0xa0933f5b, true
-		case LayerSemanticTypeChatParticipantCreator:
-			return 0xe46bcee4, true
-		case LayerSemanticTypeConnectedBot:
-			return 0xcd64636c, true
-		case LayerSemanticTypeDialog:
-			return 0xd58a08c6, true
-		case LayerSemanticTypeDraftMessage:
-			return 0x96eaa5eb, true
-		case LayerSemanticTypeForumTopic:
-			return 0xcdff0eca, true
-		case LayerSemanticTypeInputAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneID:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneSlug:
-			return 0, false
-		case LayerSemanticTypeInputBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputKeyboardButtonRequestPeer:
-			return 0xc9662d05, true
-		case LayerSemanticTypeInputKeyboardButtonURLAuth:
-			return 0xd02e7fd4, true
-		case LayerSemanticTypeInputKeyboardButtonUserProfile:
-			return 0xe988037b, true
-		case LayerSemanticTypeInputMediaPhoto:
-			return 0xb3ba0635, true
-		case LayerSemanticTypeInputMediaPoll:
-			return 0x0f94e5f1, true
-		case LayerSemanticTypeInputMediaStakeDice:
-			return 0, false
-		case LayerSemanticTypeInputMediaUploadedPhoto:
-			return 0x1e287d04, true
-		case LayerSemanticTypeInputMessageReadMetric:
-			return 0, false
-		case LayerSemanticTypeInputMessagesFilterPoll:
-			return 0, false
-		case LayerSemanticTypeInputPageBlockMap:
-			return 0, false
-		case LayerSemanticTypeInputPasskeyCredentialFirebasePNV:
-			return 0, false
-		case LayerSemanticTypeInputPollAnswer:
-			return 0, false
-		case LayerSemanticTypeInputReplyToMessage:
-			return 0x869fbe10, true
-		case LayerSemanticTypeInputRichFileDocument:
-			return 0, false
-		case LayerSemanticTypeInputRichFilePhoto:
-			return 0, false
-		case LayerSemanticTypeInputRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageHTML:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageMarkdown:
-			return 0, false
-		case LayerSemanticTypeInputSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeInputStorePaymentAuthCode:
-			return 0x9bb2636d, true
-		case LayerSemanticTypeJoinChatBotResultApproved:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultDeclined:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultQueued:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultWebView:
-			return 0, false
-		case LayerSemanticTypeKeyboardButton:
-			return 0xa2fa4880, true
-		case LayerSemanticTypeKeyboardButtonBuy:
-			return 0xafd93fbb, true
-		case LayerSemanticTypeKeyboardButtonCallback:
-			return 0x35bbdb6b, true
-		case LayerSemanticTypeKeyboardButtonCopy:
-			return 0x75d2698e, true
-		case LayerSemanticTypeKeyboardButtonGame:
-			return 0x50f41ccf, true
-		case LayerSemanticTypeKeyboardButtonRequestGeoLocation:
-			return 0xfc796b3f, true
-		case LayerSemanticTypeKeyboardButtonRequestPeer:
-			return 0x53d7bfd8, true
-		case LayerSemanticTypeKeyboardButtonRequestPhone:
-			return 0xb16a6c29, true
-		case LayerSemanticTypeKeyboardButtonRequestPoll:
-			return 0xbbc7515d, true
-		case LayerSemanticTypeKeyboardButtonSimpleWebView:
-			return 0xa0c0505c, true
-		case LayerSemanticTypeKeyboardButtonStyle:
-			return 0, false
-		case LayerSemanticTypeKeyboardButtonSwitchInline:
-			return 0x93b9fbb5, true
-		case LayerSemanticTypeKeyboardButtonURL:
-			return 0x258aff05, true
-		case LayerSemanticTypeKeyboardButtonURLAuth:
-			return 0x10b78d29, true
-		case LayerSemanticTypeKeyboardButtonUserProfile:
-			return 0x308660c1, true
-		case LayerSemanticTypeKeyboardButtonWebView:
-			return 0x13767230, true
-		case LayerSemanticTypeMessage:
-			return 0xb92f76cf, true
-		case LayerSemanticTypeMessageActionChangeCreator:
-			return 0, false
-		case LayerSemanticTypeMessageActionManagedBotCreated:
-			return 0, false
-		case LayerSemanticTypeMessageActionNewCreatorPending:
-			return 0, false
-		case LayerSemanticTypeMessageActionNoForwardsRequest:
-			return 0, false
-		case LayerSemanticTypeMessageActionNoForwardsToggle:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollAppendAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollDeleteAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageActionStarGiftUnique:
-			return 0x95728543, true
-		case LayerSemanticTypeMessageEntityDiffDelete:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffInsert:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffReplace:
-			return 0, false
-		case LayerSemanticTypeMessageEntityFormattedDate:
-			return 0, false
-		case LayerSemanticTypeMessageMediaDice:
-			return 0x3f7ee58b, true
-		case LayerSemanticTypeMessageMediaPhoto:
-			return 0x695150d7, true
-		case LayerSemanticTypeMessageMediaPoll:
-			return 0x4bd6e798, true
-		case LayerSemanticTypeMessageReplyHeader:
-			return 0x6917560b, true
-		case LayerSemanticTypeMessagesChatInviteJoinResultOk:
-			return 0, false
-		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessagesComposedMessageWithAI:
-			return 0, false
-		case LayerSemanticTypeMessagesEmojiGameDiceInfo:
-			return 0, false
-		case LayerSemanticTypeMessagesEmojiGameOutcome:
-			return 0, false
-		case LayerSemanticTypeMessagesEmojiGameUnavailable:
-			return 0, false
-		case LayerSemanticTypePageBlockBlockquoteBlocks:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading1:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading2:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading3:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading4:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading5:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading6:
-			return 0, false
-		case LayerSemanticTypePageBlockMath:
-			return 0, false
-		case LayerSemanticTypePageBlockOrderedList:
-			return 0x9a8ae1e1, true
-		case LayerSemanticTypePageBlockThinking:
-			return 0, false
-		case LayerSemanticTypePageListItemBlocks:
-			return 0x25e073fc, true
-		case LayerSemanticTypePageListItemText:
-			return 0xb92fb6cd, true
-		case LayerSemanticTypePageListOrderedItemBlocks:
-			return 0x98dd8936, true
-		case LayerSemanticTypePageListOrderedItemText:
-			return 0x5e068047, true
-		case LayerSemanticTypePoll:
-			return 0x58747131, true
-		case LayerSemanticTypePollAnswer:
-			return 0xff16e2ca, true
-		case LayerSemanticTypePollAnswerVoters:
-			return 0x3b6ddad2, true
-		case LayerSemanticTypePollResults:
-			return 0x7adf2420, true
-		case LayerSemanticTypeReactionsNotifySettings:
-			return 0x56e34970, true
-		case LayerSemanticTypeRequestPeerTypeCreateBot:
-			return 0, false
-		case LayerSemanticTypeRichMessage:
-			return 0, false
-		case LayerSemanticTypeSavedStarGift:
-			return 0xead6805e, true
-		case LayerSemanticTypeSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeBackdrop:
-			return 0xd93d859c, true
-		case LayerSemanticTypeStarGiftAttributeModel:
-			return 0x39d99013, true
-		case LayerSemanticTypeStarGiftAttributePattern:
-			return 0x13acff19, true
-		case LayerSemanticTypeStarGiftAttributeRarity:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityEpic:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityLegendary:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityRare:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityUncommon:
-			return 0, false
-		case LayerSemanticTypeStarGiftUnique:
-			return 0x569d64c9, true
-		case LayerSemanticTypeStatsPollStats:
-			return 0, false
-		case LayerSemanticTypeStoryItem:
-			return 0xedf164f1, true
-		case LayerSemanticTypeTextAutoEmail:
-			return 0, false
-		case LayerSemanticTypeTextAutoPhone:
-			return 0, false
-		case LayerSemanticTypeTextAutoURL:
-			return 0, false
-		case LayerSemanticTypeTextBankCard:
-			return 0, false
-		case LayerSemanticTypeTextBotCommand:
-			return 0, false
-		case LayerSemanticTypeTextCashtag:
-			return 0, false
-		case LayerSemanticTypeTextCustomEmoji:
-			return 0, false
-		case LayerSemanticTypeTextDate:
-			return 0, false
-		case LayerSemanticTypeTextHashtag:
-			return 0, false
-		case LayerSemanticTypeTextMath:
-			return 0, false
-		case LayerSemanticTypeTextMention:
-			return 0, false
-		case LayerSemanticTypeTextMentionName:
-			return 0, false
-		case LayerSemanticTypeTextSpoiler:
-			return 0, false
-		case LayerSemanticTypeTopPeerCategoryBotsGuestChat:
-			return 0, false
-		case LayerSemanticTypeUpdateAiComposeTones:
-			return 0, false
-		case LayerSemanticTypeUpdateBotChatInviteRequester:
-			return 0x11dfa986, true
-		case LayerSemanticTypeUpdateBotGuestChatQuery:
-			return 0, false
-		case LayerSemanticTypeUpdateChatParticipantRank:
-			return 0, false
-		case LayerSemanticTypeUpdateEmojiGameInfo:
-			return 0, false
-		case LayerSemanticTypeUpdateJoinChatWebViewDecision:
-			return 0, false
-		case LayerSemanticTypeUpdateManagedBot:
-			return 0, false
-		case LayerSemanticTypeUpdateMessagePoll:
-			return 0xaca1657b, true
-		case LayerSemanticTypeUpdateMessagePollVote:
-			return 0x24f40e77, true
-		case LayerSemanticTypeUpdateNewBotConnection:
-			return 0, false
-		case LayerSemanticTypeUpdateStarGiftCraftFail:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserException:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeURLAuthResultAccepted:
-			return 0x8f8c0e4e, true
-		case LayerSemanticTypeURLAuthResultRequest:
-			return 0x92d33a0e, true
-		case LayerSemanticTypeUserFull:
-			return 0xa02bc13e, true
-		case LayerSemanticTypeWebDomainException:
-			return 0, false
-		case LayerSemanticTypeWebPageAttributeAiComposeTone:
-			return 0, false
-		case LayerSemanticMethodAccountConfirmBotConnection:
-			return 0, false
-		case LayerSemanticMethodAccountDeleteWebBrowserSettingsExceptions:
-			return 0, false
-		case LayerSemanticMethodAccountGetWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAccountToggleWebBrowserSettingsException:
-			return 0, false
-		case LayerSemanticMethodAccountUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAicomposeCreateTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeDeleteTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetToneExample:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTones:
-			return 0, false
-		case LayerSemanticMethodAicomposeSaveTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeUpdateTone:
-			return 0, false
-		case LayerSemanticMethodBotsCheckUsername:
-			return 0, false
-		case LayerSemanticMethodBotsCreateBot:
-			return 0, false
-		case LayerSemanticMethodBotsEditAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsExportBotToken:
-			return 0, false
-		case LayerSemanticMethodBotsGetAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsGetRequestedWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsRequestWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsSetJoinChatResults:
-			return 0, false
-		case LayerSemanticMethodChannelsEditAdmin:
-			return 0xd33c8902, true
-		case LayerSemanticMethodChannelsEditCreator:
-			return 0x8f38cd1f, true
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodChannelsJoinChannel:
-			return 0x24b524c5, true
-		case LayerSemanticMethodChannelsToggleJoinRequest:
-			return 0x4c2985b6, true
-		case LayerSemanticMethodContactsSearch:
-			return 0x11f812d8, true
-		case LayerSemanticMethodMessagesAcceptURLAuth:
-			return 0xb12c7125, true
-		case LayerSemanticMethodMessagesAddPollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesCheckURLAuthMatchCode:
-			return 0, false
-		case LayerSemanticMethodMessagesComposeMessageWithAI:
-			return 0, false
-		case LayerSemanticMethodMessagesDeclineURLAuth:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReaction:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReactions:
-			return 0, false
-		case LayerSemanticMethodMessagesDeletePollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesEditChatCreator:
-			return 0, false
-		case LayerSemanticMethodMessagesEditChatParticipantRank:
-			return 0, false
-		case LayerSemanticMethodMessagesEditInlineBotMessage:
-			return 0x83557dba, true
-		case LayerSemanticMethodMessagesEditMessage:
-			return 0x51e842e1, true
-		case LayerSemanticMethodMessagesGetEmojiGameInfo:
-			return 0, false
-		case LayerSemanticMethodMessagesGetFutureChatCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPersonalChannelHistory:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPollResults:
-			return 0x73bb643b, true
-		case LayerSemanticMethodMessagesGetRichMessage:
-			return 0, false
-		case LayerSemanticMethodMessagesGetUnreadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesImportChatInvite:
-			return 0x6c50051c, true
-		case LayerSemanticMethodMessagesReadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesReportMusicListen:
-			return 0, false
-		case LayerSemanticMethodMessagesReportReadMetrics:
-			return 0, false
-		case LayerSemanticMethodMessagesRequestURLAuth:
-			return 0x198fb446, true
-		case LayerSemanticMethodMessagesSaveDraft:
-			return 0x54ae308e, true
-		case LayerSemanticMethodMessagesSendBotRequestedPeer:
-			return 0x91b2d060, true
-		case LayerSemanticMethodMessagesSendMessage:
-			return 0x545cd15a, true
-		case LayerSemanticMethodMessagesSetBotGuestChatResult:
-			return 0, false
-		case LayerSemanticMethodMessagesSummarizeText:
-			return 0, false
-		case LayerSemanticMethodMessagesToggleNoForwards:
-			return 0xb11eafa2, true
-		case LayerSemanticMethodMessagesTranslateText:
-			return 0x63183030, true
-		case LayerSemanticMethodPaymentsCraftStarGift:
-			return 0, false
-		case LayerSemanticMethodPaymentsGetCraftStarGifts:
-			return 0, false
-		case LayerSemanticMethodStatsGetPollStats:
-			return 0, false
-		case LayerSemanticMethodStoriesEditStory:
-			return 0xb583ba46, true
-		case LayerSemanticMethodStoriesSendStory:
-			return 0x737fc2ec, true
-		}
-	case LayerProfile221:
-		switch semantic {
-		case LayerSemanticTypeAccountWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeAccountWebBrowserSettingsNotModified:
-			return 0, false
-		case LayerSemanticTypeAiComposeTone:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneExample:
-			return 0, false
-		case LayerSemanticTypeAicomposeTones:
-			return 0, false
-		case LayerSemanticTypeAicomposeTonesNotModified:
-			return 0, false
-		case LayerSemanticTypeAuthSentCodePaymentRequired:
-			return 0xe0955a3c, true
-		case LayerSemanticTypeBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeBotsAccessSettings:
-			return 0, false
-		case LayerSemanticTypeBotsExportedBotToken:
-			return 0, false
-		case LayerSemanticTypeBotsRequestedButton:
-			return 0, false
-		case LayerSemanticTypeChannelAdminLogEventActionParticipantEditRank:
-			return 0, false
-		case LayerSemanticTypeChannelFull:
-			return 0xe4e0b29d, true
-		case LayerSemanticTypeChannelParticipant:
-			return 0xcb397619, true
-		case LayerSemanticTypeChannelParticipantBanned:
-			return 0x6df8014e, true
-		case LayerSemanticTypeChannelParticipantSelf:
-			return 0x4f607bef, true
-		case LayerSemanticTypeChatParticipant:
-			return 0xc02d4007, true
-		case LayerSemanticTypeChatParticipantAdmin:
-			return 0xa0933f5b, true
-		case LayerSemanticTypeChatParticipantCreator:
-			return 0xe46bcee4, true
-		case LayerSemanticTypeConnectedBot:
-			return 0xcd64636c, true
-		case LayerSemanticTypeDialog:
-			return 0xd58a08c6, true
-		case LayerSemanticTypeDraftMessage:
-			return 0x96eaa5eb, true
-		case LayerSemanticTypeForumTopic:
-			return 0xcdff0eca, true
-		case LayerSemanticTypeInputAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneID:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneSlug:
-			return 0, false
-		case LayerSemanticTypeInputBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputKeyboardButtonRequestPeer:
-			return 0xc9662d05, true
-		case LayerSemanticTypeInputKeyboardButtonURLAuth:
-			return 0xd02e7fd4, true
-		case LayerSemanticTypeInputKeyboardButtonUserProfile:
-			return 0xe988037b, true
-		case LayerSemanticTypeInputMediaPhoto:
-			return 0xb3ba0635, true
-		case LayerSemanticTypeInputMediaPoll:
-			return 0x0f94e5f1, true
-		case LayerSemanticTypeInputMediaUploadedPhoto:
-			return 0x1e287d04, true
-		case LayerSemanticTypeInputMessageReadMetric:
-			return 0, false
-		case LayerSemanticTypeInputMessagesFilterPoll:
-			return 0, false
-		case LayerSemanticTypeInputPageBlockMap:
-			return 0, false
-		case LayerSemanticTypeInputPollAnswer:
-			return 0, false
-		case LayerSemanticTypeInputReplyToMessage:
-			return 0x869fbe10, true
-		case LayerSemanticTypeInputRichFileDocument:
-			return 0, false
-		case LayerSemanticTypeInputRichFilePhoto:
-			return 0, false
-		case LayerSemanticTypeInputRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageHTML:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageMarkdown:
-			return 0, false
-		case LayerSemanticTypeInputSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeInputStorePaymentAuthCode:
-			return 0x9bb2636d, true
-		case LayerSemanticTypeJoinChatBotResultApproved:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultDeclined:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultQueued:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultWebView:
-			return 0, false
-		case LayerSemanticTypeKeyboardButton:
-			return 0xa2fa4880, true
-		case LayerSemanticTypeKeyboardButtonBuy:
-			return 0xafd93fbb, true
-		case LayerSemanticTypeKeyboardButtonCallback:
-			return 0x35bbdb6b, true
-		case LayerSemanticTypeKeyboardButtonCopy:
-			return 0x75d2698e, true
-		case LayerSemanticTypeKeyboardButtonGame:
-			return 0x50f41ccf, true
-		case LayerSemanticTypeKeyboardButtonRequestGeoLocation:
-			return 0xfc796b3f, true
-		case LayerSemanticTypeKeyboardButtonRequestPeer:
-			return 0x53d7bfd8, true
-		case LayerSemanticTypeKeyboardButtonRequestPhone:
-			return 0xb16a6c29, true
-		case LayerSemanticTypeKeyboardButtonRequestPoll:
-			return 0xbbc7515d, true
-		case LayerSemanticTypeKeyboardButtonSimpleWebView:
-			return 0xa0c0505c, true
-		case LayerSemanticTypeKeyboardButtonStyle:
-			return 0, false
-		case LayerSemanticTypeKeyboardButtonSwitchInline:
-			return 0x93b9fbb5, true
-		case LayerSemanticTypeKeyboardButtonURL:
-			return 0x258aff05, true
-		case LayerSemanticTypeKeyboardButtonURLAuth:
-			return 0x10b78d29, true
-		case LayerSemanticTypeKeyboardButtonUserProfile:
-			return 0x308660c1, true
-		case LayerSemanticTypeKeyboardButtonWebView:
-			return 0x13767230, true
-		case LayerSemanticTypeMessage:
-			return 0x9cb490e9, true
-		case LayerSemanticTypeMessageActionChangeCreator:
-			return 0, false
-		case LayerSemanticTypeMessageActionManagedBotCreated:
-			return 0, false
-		case LayerSemanticTypeMessageActionNewCreatorPending:
-			return 0, false
-		case LayerSemanticTypeMessageActionNoForwardsRequest:
-			return 0, false
-		case LayerSemanticTypeMessageActionNoForwardsToggle:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollAppendAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollDeleteAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageActionStarGiftUnique:
-			return 0x95728543, true
-		case LayerSemanticTypeMessageEntityDiffDelete:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffInsert:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffReplace:
-			return 0, false
-		case LayerSemanticTypeMessageEntityFormattedDate:
-			return 0, false
-		case LayerSemanticTypeMessageMediaPhoto:
-			return 0x695150d7, true
-		case LayerSemanticTypeMessageMediaPoll:
-			return 0x4bd6e798, true
-		case LayerSemanticTypeMessageReplyHeader:
-			return 0x6917560b, true
-		case LayerSemanticTypeMessagesChatInviteJoinResultOk:
-			return 0, false
-		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessagesComposedMessageWithAI:
-			return 0, false
-		case LayerSemanticTypePageBlockBlockquoteBlocks:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading1:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading2:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading3:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading4:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading5:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading6:
-			return 0, false
-		case LayerSemanticTypePageBlockMath:
-			return 0, false
-		case LayerSemanticTypePageBlockOrderedList:
-			return 0x9a8ae1e1, true
-		case LayerSemanticTypePageBlockThinking:
-			return 0, false
-		case LayerSemanticTypePageListItemBlocks:
-			return 0x25e073fc, true
-		case LayerSemanticTypePageListItemText:
-			return 0xb92fb6cd, true
-		case LayerSemanticTypePageListOrderedItemBlocks:
-			return 0x98dd8936, true
-		case LayerSemanticTypePageListOrderedItemText:
-			return 0x5e068047, true
-		case LayerSemanticTypePoll:
-			return 0x58747131, true
-		case LayerSemanticTypePollAnswer:
-			return 0xff16e2ca, true
-		case LayerSemanticTypePollAnswerVoters:
-			return 0x3b6ddad2, true
-		case LayerSemanticTypePollResults:
-			return 0x7adf2420, true
-		case LayerSemanticTypeReactionsNotifySettings:
-			return 0x56e34970, true
-		case LayerSemanticTypeRequestPeerTypeCreateBot:
-			return 0, false
-		case LayerSemanticTypeRichMessage:
-			return 0, false
-		case LayerSemanticTypeSavedStarGift:
-			return 0xead6805e, true
-		case LayerSemanticTypeSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeBackdrop:
-			return 0xd93d859c, true
-		case LayerSemanticTypeStarGiftAttributeModel:
-			return 0x39d99013, true
-		case LayerSemanticTypeStarGiftAttributePattern:
-			return 0x13acff19, true
-		case LayerSemanticTypeStarGiftAttributeRarity:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityEpic:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityLegendary:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityRare:
-			return 0, false
-		case LayerSemanticTypeStarGiftAttributeRarityUncommon:
-			return 0, false
-		case LayerSemanticTypeStarGiftUnique:
-			return 0x569d64c9, true
-		case LayerSemanticTypeStatsPollStats:
-			return 0, false
-		case LayerSemanticTypeStoryItem:
-			return 0xedf164f1, true
-		case LayerSemanticTypeTextAutoEmail:
-			return 0, false
-		case LayerSemanticTypeTextAutoPhone:
-			return 0, false
-		case LayerSemanticTypeTextAutoURL:
-			return 0, false
-		case LayerSemanticTypeTextBankCard:
-			return 0, false
-		case LayerSemanticTypeTextBotCommand:
-			return 0, false
-		case LayerSemanticTypeTextCashtag:
-			return 0, false
-		case LayerSemanticTypeTextCustomEmoji:
-			return 0, false
-		case LayerSemanticTypeTextDate:
-			return 0, false
-		case LayerSemanticTypeTextHashtag:
-			return 0, false
-		case LayerSemanticTypeTextMath:
-			return 0, false
-		case LayerSemanticTypeTextMention:
-			return 0, false
-		case LayerSemanticTypeTextMentionName:
-			return 0, false
-		case LayerSemanticTypeTextSpoiler:
-			return 0, false
-		case LayerSemanticTypeTopPeerCategoryBotsGuestChat:
-			return 0, false
-		case LayerSemanticTypeUpdateAiComposeTones:
-			return 0, false
-		case LayerSemanticTypeUpdateBotChatInviteRequester:
-			return 0x11dfa986, true
-		case LayerSemanticTypeUpdateBotGuestChatQuery:
-			return 0, false
-		case LayerSemanticTypeUpdateChatParticipantRank:
-			return 0, false
-		case LayerSemanticTypeUpdateJoinChatWebViewDecision:
-			return 0, false
-		case LayerSemanticTypeUpdateManagedBot:
-			return 0, false
-		case LayerSemanticTypeUpdateMessagePoll:
-			return 0xaca1657b, true
-		case LayerSemanticTypeUpdateMessagePollVote:
-			return 0x24f40e77, true
-		case LayerSemanticTypeUpdateNewBotConnection:
-			return 0, false
-		case LayerSemanticTypeUpdateStarGiftCraftFail:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserException:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeURLAuthResultAccepted:
-			return 0x8f8c0e4e, true
-		case LayerSemanticTypeURLAuthResultRequest:
-			return 0x92d33a0e, true
-		case LayerSemanticTypeUserFull:
-			return 0xa02bc13e, true
-		case LayerSemanticTypeWebDomainException:
-			return 0, false
-		case LayerSemanticTypeWebPageAttributeAiComposeTone:
-			return 0, false
-		case LayerSemanticMethodAccountConfirmBotConnection:
-			return 0, false
-		case LayerSemanticMethodAccountDeleteWebBrowserSettingsExceptions:
-			return 0, false
-		case LayerSemanticMethodAccountGetWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAccountToggleWebBrowserSettingsException:
-			return 0, false
-		case LayerSemanticMethodAccountUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAicomposeCreateTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeDeleteTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetToneExample:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTones:
-			return 0, false
-		case LayerSemanticMethodAicomposeSaveTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeUpdateTone:
-			return 0, false
-		case LayerSemanticMethodBotsCheckUsername:
-			return 0, false
-		case LayerSemanticMethodBotsCreateBot:
-			return 0, false
-		case LayerSemanticMethodBotsEditAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsExportBotToken:
-			return 0, false
-		case LayerSemanticMethodBotsGetAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsGetRequestedWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsRequestWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsSetJoinChatResults:
-			return 0, false
-		case LayerSemanticMethodChannelsEditAdmin:
-			return 0xd33c8902, true
-		case LayerSemanticMethodChannelsEditCreator:
-			return 0x8f38cd1f, true
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodChannelsJoinChannel:
-			return 0x24b524c5, true
-		case LayerSemanticMethodChannelsToggleJoinRequest:
-			return 0x4c2985b6, true
-		case LayerSemanticMethodContactsSearch:
-			return 0x11f812d8, true
-		case LayerSemanticMethodMessagesAcceptURLAuth:
-			return 0xb12c7125, true
-		case LayerSemanticMethodMessagesAddPollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesCheckURLAuthMatchCode:
-			return 0, false
-		case LayerSemanticMethodMessagesComposeMessageWithAI:
-			return 0, false
-		case LayerSemanticMethodMessagesDeclineURLAuth:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReaction:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReactions:
-			return 0, false
-		case LayerSemanticMethodMessagesDeletePollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesEditChatCreator:
-			return 0, false
-		case LayerSemanticMethodMessagesEditChatParticipantRank:
-			return 0, false
-		case LayerSemanticMethodMessagesEditInlineBotMessage:
-			return 0x83557dba, true
-		case LayerSemanticMethodMessagesEditMessage:
-			return 0x51e842e1, true
-		case LayerSemanticMethodMessagesGetFutureChatCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPersonalChannelHistory:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPollResults:
-			return 0x73bb643b, true
-		case LayerSemanticMethodMessagesGetRichMessage:
-			return 0, false
-		case LayerSemanticMethodMessagesGetUnreadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesImportChatInvite:
-			return 0x6c50051c, true
-		case LayerSemanticMethodMessagesReadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesReportMusicListen:
-			return 0, false
-		case LayerSemanticMethodMessagesReportReadMetrics:
-			return 0, false
-		case LayerSemanticMethodMessagesRequestURLAuth:
-			return 0x198fb446, true
-		case LayerSemanticMethodMessagesSaveDraft:
-			return 0x54ae308e, true
-		case LayerSemanticMethodMessagesSendBotRequestedPeer:
-			return 0x91b2d060, true
-		case LayerSemanticMethodMessagesSendMessage:
-			return 0x545cd15a, true
-		case LayerSemanticMethodMessagesSetBotGuestChatResult:
-			return 0, false
-		case LayerSemanticMethodMessagesSummarizeText:
-			return 0x9d4104e2, true
-		case LayerSemanticMethodMessagesToggleNoForwards:
-			return 0xb11eafa2, true
-		case LayerSemanticMethodMessagesTranslateText:
-			return 0x63183030, true
-		case LayerSemanticMethodPaymentsCraftStarGift:
-			return 0, false
-		case LayerSemanticMethodPaymentsGetCraftStarGifts:
-			return 0, false
-		case LayerSemanticMethodStatsGetPollStats:
-			return 0, false
-		case LayerSemanticMethodStoriesEditStory:
-			return 0xb583ba46, true
-		case LayerSemanticMethodStoriesSendStory:
-			return 0x737fc2ec, true
-		}
-	case LayerProfile222:
-		switch semantic {
-		case LayerSemanticTypeAccountWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeAccountWebBrowserSettingsNotModified:
-			return 0, false
-		case LayerSemanticTypeAiComposeTone:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneExample:
-			return 0, false
-		case LayerSemanticTypeAicomposeTones:
-			return 0, false
-		case LayerSemanticTypeAicomposeTonesNotModified:
-			return 0, false
-		case LayerSemanticTypeAuthSentCodePaymentRequired:
-			return 0xe0955a3c, true
-		case LayerSemanticTypeBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeBotsAccessSettings:
-			return 0, false
-		case LayerSemanticTypeBotsExportedBotToken:
-			return 0, false
-		case LayerSemanticTypeBotsRequestedButton:
-			return 0, false
-		case LayerSemanticTypeChannelAdminLogEventActionParticipantEditRank:
-			return 0, false
-		case LayerSemanticTypeChannelFull:
-			return 0xe4e0b29d, true
-		case LayerSemanticTypeChannelParticipant:
-			return 0xcb397619, true
-		case LayerSemanticTypeChannelParticipantBanned:
-			return 0x6df8014e, true
-		case LayerSemanticTypeChannelParticipantSelf:
-			return 0x4f607bef, true
-		case LayerSemanticTypeChatParticipant:
-			return 0xc02d4007, true
-		case LayerSemanticTypeChatParticipantAdmin:
-			return 0xa0933f5b, true
-		case LayerSemanticTypeChatParticipantCreator:
-			return 0xe46bcee4, true
-		case LayerSemanticTypeConnectedBot:
-			return 0xcd64636c, true
-		case LayerSemanticTypeDialog:
-			return 0xd58a08c6, true
-		case LayerSemanticTypeDraftMessage:
-			return 0x96eaa5eb, true
-		case LayerSemanticTypeForumTopic:
-			return 0xcdff0eca, true
-		case LayerSemanticTypeInputAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneID:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneSlug:
-			return 0, false
-		case LayerSemanticTypeInputBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputMediaPhoto:
-			return 0xb3ba0635, true
-		case LayerSemanticTypeInputMediaPoll:
-			return 0x0f94e5f1, true
-		case LayerSemanticTypeInputMediaUploadedPhoto:
-			return 0x1e287d04, true
-		case LayerSemanticTypeInputMessageReadMetric:
-			return 0, false
-		case LayerSemanticTypeInputMessagesFilterPoll:
-			return 0, false
-		case LayerSemanticTypeInputPageBlockMap:
-			return 0, false
-		case LayerSemanticTypeInputPollAnswer:
-			return 0, false
-		case LayerSemanticTypeInputReplyToMessage:
-			return 0x869fbe10, true
-		case LayerSemanticTypeInputRichFileDocument:
-			return 0, false
-		case LayerSemanticTypeInputRichFilePhoto:
-			return 0, false
-		case LayerSemanticTypeInputRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageHTML:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageMarkdown:
-			return 0, false
-		case LayerSemanticTypeInputSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeInputStorePaymentAuthCode:
-			return 0x9bb2636d, true
-		case LayerSemanticTypeJoinChatBotResultApproved:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultDeclined:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultQueued:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessage:
-			return 0x9cb490e9, true
-		case LayerSemanticTypeMessageActionManagedBotCreated:
-			return 0, false
-		case LayerSemanticTypeMessageActionNoForwardsRequest:
-			return 0, false
-		case LayerSemanticTypeMessageActionNoForwardsToggle:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollAppendAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollDeleteAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffDelete:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffInsert:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffReplace:
-			return 0, false
-		case LayerSemanticTypeMessageEntityFormattedDate:
-			return 0, false
-		case LayerSemanticTypeMessageMediaPhoto:
-			return 0x695150d7, true
-		case LayerSemanticTypeMessageMediaPoll:
-			return 0x4bd6e798, true
-		case LayerSemanticTypeMessageReplyHeader:
-			return 0x6917560b, true
-		case LayerSemanticTypeMessagesChatInviteJoinResultOk:
-			return 0, false
-		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessagesComposedMessageWithAI:
-			return 0, false
-		case LayerSemanticTypePageBlockBlockquoteBlocks:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading1:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading2:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading3:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading4:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading5:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading6:
-			return 0, false
-		case LayerSemanticTypePageBlockMath:
-			return 0, false
-		case LayerSemanticTypePageBlockOrderedList:
-			return 0x9a8ae1e1, true
-		case LayerSemanticTypePageBlockThinking:
-			return 0, false
-		case LayerSemanticTypePageListItemBlocks:
-			return 0x25e073fc, true
-		case LayerSemanticTypePageListItemText:
-			return 0xb92fb6cd, true
-		case LayerSemanticTypePageListOrderedItemBlocks:
-			return 0x98dd8936, true
-		case LayerSemanticTypePageListOrderedItemText:
-			return 0x5e068047, true
-		case LayerSemanticTypePoll:
-			return 0x58747131, true
-		case LayerSemanticTypePollAnswer:
-			return 0xff16e2ca, true
-		case LayerSemanticTypePollAnswerVoters:
-			return 0x3b6ddad2, true
-		case LayerSemanticTypePollResults:
-			return 0x7adf2420, true
-		case LayerSemanticTypeReactionsNotifySettings:
-			return 0x56e34970, true
-		case LayerSemanticTypeRequestPeerTypeCreateBot:
-			return 0, false
-		case LayerSemanticTypeRichMessage:
-			return 0, false
-		case LayerSemanticTypeSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeStatsPollStats:
-			return 0, false
-		case LayerSemanticTypeStoryItem:
-			return 0xedf164f1, true
-		case LayerSemanticTypeTextAutoEmail:
-			return 0, false
-		case LayerSemanticTypeTextAutoPhone:
-			return 0, false
-		case LayerSemanticTypeTextAutoURL:
-			return 0, false
-		case LayerSemanticTypeTextBankCard:
-			return 0, false
-		case LayerSemanticTypeTextBotCommand:
-			return 0, false
-		case LayerSemanticTypeTextCashtag:
-			return 0, false
-		case LayerSemanticTypeTextCustomEmoji:
-			return 0, false
-		case LayerSemanticTypeTextDate:
-			return 0, false
-		case LayerSemanticTypeTextHashtag:
-			return 0, false
-		case LayerSemanticTypeTextMath:
-			return 0, false
-		case LayerSemanticTypeTextMention:
-			return 0, false
-		case LayerSemanticTypeTextMentionName:
-			return 0, false
-		case LayerSemanticTypeTextSpoiler:
-			return 0, false
-		case LayerSemanticTypeTopPeerCategoryBotsGuestChat:
-			return 0, false
-		case LayerSemanticTypeUpdateAiComposeTones:
-			return 0, false
-		case LayerSemanticTypeUpdateBotChatInviteRequester:
-			return 0x11dfa986, true
-		case LayerSemanticTypeUpdateBotGuestChatQuery:
-			return 0, false
-		case LayerSemanticTypeUpdateChatParticipantRank:
-			return 0, false
-		case LayerSemanticTypeUpdateJoinChatWebViewDecision:
-			return 0, false
-		case LayerSemanticTypeUpdateManagedBot:
-			return 0, false
-		case LayerSemanticTypeUpdateMessagePoll:
-			return 0xaca1657b, true
-		case LayerSemanticTypeUpdateMessagePollVote:
-			return 0x24f40e77, true
-		case LayerSemanticTypeUpdateNewBotConnection:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserException:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeURLAuthResultRequest:
-			return 0x32fabf1a, true
-		case LayerSemanticTypeUserFull:
-			return 0xa02bc13e, true
-		case LayerSemanticTypeWebDomainException:
-			return 0, false
-		case LayerSemanticTypeWebPageAttributeAiComposeTone:
-			return 0, false
-		case LayerSemanticMethodAccountConfirmBotConnection:
-			return 0, false
-		case LayerSemanticMethodAccountDeleteWebBrowserSettingsExceptions:
-			return 0, false
-		case LayerSemanticMethodAccountGetWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAccountToggleWebBrowserSettingsException:
-			return 0, false
-		case LayerSemanticMethodAccountUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAicomposeCreateTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeDeleteTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetToneExample:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTones:
-			return 0, false
-		case LayerSemanticMethodAicomposeSaveTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeUpdateTone:
-			return 0, false
-		case LayerSemanticMethodBotsCheckUsername:
-			return 0, false
-		case LayerSemanticMethodBotsCreateBot:
-			return 0, false
-		case LayerSemanticMethodBotsEditAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsExportBotToken:
-			return 0, false
-		case LayerSemanticMethodBotsGetAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsGetRequestedWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsRequestWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsSetJoinChatResults:
-			return 0, false
-		case LayerSemanticMethodChannelsEditAdmin:
-			return 0xd33c8902, true
-		case LayerSemanticMethodChannelsEditCreator:
-			return 0x8f38cd1f, true
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-			return 0xa00918af, true
-		case LayerSemanticMethodChannelsJoinChannel:
-			return 0x24b524c5, true
-		case LayerSemanticMethodChannelsToggleJoinRequest:
-			return 0x4c2985b6, true
-		case LayerSemanticMethodContactsSearch:
-			return 0x11f812d8, true
-		case LayerSemanticMethodMessagesAcceptURLAuth:
-			return 0xb12c7125, true
-		case LayerSemanticMethodMessagesAddPollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesCheckURLAuthMatchCode:
-			return 0, false
-		case LayerSemanticMethodMessagesComposeMessageWithAI:
-			return 0, false
-		case LayerSemanticMethodMessagesDeclineURLAuth:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReaction:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReactions:
-			return 0, false
-		case LayerSemanticMethodMessagesDeletePollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesEditChatCreator:
-			return 0, false
-		case LayerSemanticMethodMessagesEditChatParticipantRank:
-			return 0, false
-		case LayerSemanticMethodMessagesEditInlineBotMessage:
-			return 0x83557dba, true
-		case LayerSemanticMethodMessagesEditMessage:
-			return 0x51e842e1, true
-		case LayerSemanticMethodMessagesGetFutureChatCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPersonalChannelHistory:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPollResults:
-			return 0x73bb643b, true
-		case LayerSemanticMethodMessagesGetRichMessage:
-			return 0, false
-		case LayerSemanticMethodMessagesGetUnreadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesImportChatInvite:
-			return 0x6c50051c, true
-		case LayerSemanticMethodMessagesReadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesReportMusicListen:
-			return 0, false
-		case LayerSemanticMethodMessagesReportReadMetrics:
-			return 0, false
-		case LayerSemanticMethodMessagesRequestURLAuth:
-			return 0x198fb446, true
-		case LayerSemanticMethodMessagesSaveDraft:
-			return 0x54ae308e, true
-		case LayerSemanticMethodMessagesSendBotRequestedPeer:
-			return 0x91b2d060, true
-		case LayerSemanticMethodMessagesSendMessage:
-			return 0x545cd15a, true
-		case LayerSemanticMethodMessagesSetBotGuestChatResult:
-			return 0, false
-		case LayerSemanticMethodMessagesSummarizeText:
-			return 0x9d4104e2, true
-		case LayerSemanticMethodMessagesToggleNoForwards:
-			return 0xb11eafa2, true
-		case LayerSemanticMethodMessagesTranslateText:
-			return 0x63183030, true
-		case LayerSemanticMethodStatsGetPollStats:
-			return 0, false
-		case LayerSemanticMethodStoriesEditStory:
-			return 0xb583ba46, true
-		case LayerSemanticMethodStoriesSendStory:
-			return 0x737fc2ec, true
-		}
-	case LayerProfile223:
-		switch semantic {
-		case LayerSemanticTypeAccountWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeAccountWebBrowserSettingsNotModified:
-			return 0, false
-		case LayerSemanticTypeAiComposeTone:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneExample:
-			return 0, false
-		case LayerSemanticTypeAicomposeTones:
-			return 0, false
-		case LayerSemanticTypeAicomposeTonesNotModified:
-			return 0, false
-		case LayerSemanticTypeAuthSentCodePaymentRequired:
-			return 0xe0955a3c, true
-		case LayerSemanticTypeBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeBotsAccessSettings:
-			return 0, false
-		case LayerSemanticTypeBotsExportedBotToken:
-			return 0, false
-		case LayerSemanticTypeBotsRequestedButton:
-			return 0, false
-		case LayerSemanticTypeChannelFull:
-			return 0xe4e0b29d, true
-		case LayerSemanticTypeConnectedBot:
-			return 0xcd64636c, true
-		case LayerSemanticTypeDialog:
-			return 0xd58a08c6, true
-		case LayerSemanticTypeDraftMessage:
-			return 0x96eaa5eb, true
-		case LayerSemanticTypeForumTopic:
-			return 0xcdff0eca, true
-		case LayerSemanticTypeInputAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneID:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneSlug:
-			return 0, false
-		case LayerSemanticTypeInputBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputMediaPhoto:
-			return 0xb3ba0635, true
-		case LayerSemanticTypeInputMediaPoll:
-			return 0x0f94e5f1, true
-		case LayerSemanticTypeInputMediaUploadedPhoto:
-			return 0x1e287d04, true
-		case LayerSemanticTypeInputMessageReadMetric:
-			return 0, false
-		case LayerSemanticTypeInputMessagesFilterPoll:
-			return 0, false
-		case LayerSemanticTypeInputPageBlockMap:
-			return 0, false
-		case LayerSemanticTypeInputPollAnswer:
-			return 0, false
-		case LayerSemanticTypeInputReplyToMessage:
-			return 0x869fbe10, true
-		case LayerSemanticTypeInputRichFileDocument:
-			return 0, false
-		case LayerSemanticTypeInputRichFilePhoto:
-			return 0, false
-		case LayerSemanticTypeInputRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageHTML:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageMarkdown:
-			return 0, false
-		case LayerSemanticTypeInputSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeInputStorePaymentAuthCode:
-			return 0x9bb2636d, true
-		case LayerSemanticTypeJoinChatBotResultApproved:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultDeclined:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultQueued:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessage:
-			return 0x3ae56482, true
-		case LayerSemanticTypeMessageActionManagedBotCreated:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollAppendAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageActionPollDeleteAnswer:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffDelete:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffInsert:
-			return 0, false
-		case LayerSemanticTypeMessageEntityDiffReplace:
-			return 0, false
-		case LayerSemanticTypeMessageMediaPhoto:
-			return 0x695150d7, true
-		case LayerSemanticTypeMessageMediaPoll:
-			return 0x4bd6e798, true
-		case LayerSemanticTypeMessageReplyHeader:
-			return 0x6917560b, true
-		case LayerSemanticTypeMessagesChatInviteJoinResultOk:
-			return 0, false
-		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessagesComposedMessageWithAI:
-			return 0, false
-		case LayerSemanticTypePageBlockBlockquoteBlocks:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading1:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading2:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading3:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading4:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading5:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading6:
-			return 0, false
-		case LayerSemanticTypePageBlockMath:
-			return 0, false
-		case LayerSemanticTypePageBlockOrderedList:
-			return 0x9a8ae1e1, true
-		case LayerSemanticTypePageBlockThinking:
-			return 0, false
-		case LayerSemanticTypePageListItemBlocks:
-			return 0x25e073fc, true
-		case LayerSemanticTypePageListItemText:
-			return 0xb92fb6cd, true
-		case LayerSemanticTypePageListOrderedItemBlocks:
-			return 0x98dd8936, true
-		case LayerSemanticTypePageListOrderedItemText:
-			return 0x5e068047, true
-		case LayerSemanticTypePoll:
-			return 0x58747131, true
-		case LayerSemanticTypePollAnswer:
-			return 0xff16e2ca, true
-		case LayerSemanticTypePollAnswerVoters:
-			return 0x3b6ddad2, true
-		case LayerSemanticTypePollResults:
-			return 0x7adf2420, true
-		case LayerSemanticTypeReactionsNotifySettings:
-			return 0x56e34970, true
-		case LayerSemanticTypeRequestPeerTypeCreateBot:
-			return 0, false
-		case LayerSemanticTypeRichMessage:
-			return 0, false
-		case LayerSemanticTypeSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeStatsPollStats:
-			return 0, false
-		case LayerSemanticTypeStoryItem:
-			return 0xedf164f1, true
-		case LayerSemanticTypeTextAutoEmail:
-			return 0, false
-		case LayerSemanticTypeTextAutoPhone:
-			return 0, false
-		case LayerSemanticTypeTextAutoURL:
-			return 0, false
-		case LayerSemanticTypeTextBankCard:
-			return 0, false
-		case LayerSemanticTypeTextBotCommand:
-			return 0, false
-		case LayerSemanticTypeTextCashtag:
-			return 0, false
-		case LayerSemanticTypeTextCustomEmoji:
-			return 0, false
-		case LayerSemanticTypeTextDate:
-			return 0, false
-		case LayerSemanticTypeTextHashtag:
-			return 0, false
-		case LayerSemanticTypeTextMath:
-			return 0, false
-		case LayerSemanticTypeTextMention:
-			return 0, false
-		case LayerSemanticTypeTextMentionName:
-			return 0, false
-		case LayerSemanticTypeTextSpoiler:
-			return 0, false
-		case LayerSemanticTypeTopPeerCategoryBotsGuestChat:
-			return 0, false
-		case LayerSemanticTypeUpdateAiComposeTones:
-			return 0, false
-		case LayerSemanticTypeUpdateBotChatInviteRequester:
-			return 0x11dfa986, true
-		case LayerSemanticTypeUpdateBotGuestChatQuery:
-			return 0, false
-		case LayerSemanticTypeUpdateJoinChatWebViewDecision:
-			return 0, false
-		case LayerSemanticTypeUpdateManagedBot:
-			return 0, false
-		case LayerSemanticTypeUpdateMessagePoll:
-			return 0xaca1657b, true
-		case LayerSemanticTypeUpdateMessagePollVote:
-			return 0x24f40e77, true
-		case LayerSemanticTypeUpdateNewBotConnection:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserException:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeURLAuthResultRequest:
-			return 0xf8f8eb1e, true
-		case LayerSemanticTypeUserFull:
-			return 0xa02bc13e, true
-		case LayerSemanticTypeWebDomainException:
-			return 0, false
-		case LayerSemanticTypeWebPageAttributeAiComposeTone:
-			return 0, false
-		case LayerSemanticMethodAccountConfirmBotConnection:
-			return 0, false
-		case LayerSemanticMethodAccountDeleteWebBrowserSettingsExceptions:
-			return 0, false
-		case LayerSemanticMethodAccountGetWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAccountToggleWebBrowserSettingsException:
-			return 0, false
-		case LayerSemanticMethodAccountUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAicomposeCreateTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeDeleteTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetToneExample:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTones:
-			return 0, false
-		case LayerSemanticMethodAicomposeSaveTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeUpdateTone:
-			return 0, false
-		case LayerSemanticMethodBotsCheckUsername:
-			return 0, false
-		case LayerSemanticMethodBotsCreateBot:
-			return 0, false
-		case LayerSemanticMethodBotsEditAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsExportBotToken:
-			return 0, false
-		case LayerSemanticMethodBotsGetAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsGetRequestedWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsRequestWebViewButton:
-			return 0, false
-		case LayerSemanticMethodBotsSetJoinChatResults:
-			return 0, false
-		case LayerSemanticMethodChannelsEditCreator:
-			return 0, false
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodChannelsJoinChannel:
-			return 0x24b524c5, true
-		case LayerSemanticMethodChannelsToggleJoinRequest:
-			return 0x4c2985b6, true
-		case LayerSemanticMethodContactsSearch:
-			return 0x11f812d8, true
-		case LayerSemanticMethodMessagesAddPollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesComposeMessageWithAI:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReaction:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReactions:
-			return 0, false
-		case LayerSemanticMethodMessagesDeletePollAnswer:
-			return 0, false
-		case LayerSemanticMethodMessagesEditInlineBotMessage:
-			return 0x83557dba, true
-		case LayerSemanticMethodMessagesEditMessage:
-			return 0x51e842e1, true
-		case LayerSemanticMethodMessagesGetPersonalChannelHistory:
-			return 0, false
-		case LayerSemanticMethodMessagesGetPollResults:
-			return 0x73bb643b, true
-		case LayerSemanticMethodMessagesGetRichMessage:
-			return 0, false
-		case LayerSemanticMethodMessagesGetUnreadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesImportChatInvite:
-			return 0x6c50051c, true
-		case LayerSemanticMethodMessagesReadPollVotes:
-			return 0, false
-		case LayerSemanticMethodMessagesReportMusicListen:
-			return 0, false
-		case LayerSemanticMethodMessagesReportReadMetrics:
-			return 0, false
-		case LayerSemanticMethodMessagesSaveDraft:
-			return 0x54ae308e, true
-		case LayerSemanticMethodMessagesSendBotRequestedPeer:
-			return 0x91b2d060, true
-		case LayerSemanticMethodMessagesSendMessage:
-			return 0x545cd15a, true
-		case LayerSemanticMethodMessagesSetBotGuestChatResult:
-			return 0, false
-		case LayerSemanticMethodMessagesSummarizeText:
-			return 0x9d4104e2, true
-		case LayerSemanticMethodMessagesTranslateText:
-			return 0x63183030, true
-		case LayerSemanticMethodStatsGetPollStats:
-			return 0, false
-		case LayerSemanticMethodStoriesEditStory:
-			return 0xb583ba46, true
-		case LayerSemanticMethodStoriesSendStory:
-			return 0x737fc2ec, true
-		}
-	case LayerProfile224:
-		switch semantic {
-		case LayerSemanticTypeAccountWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeAccountWebBrowserSettingsNotModified:
-			return 0, false
-		case LayerSemanticTypeAiComposeTone:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeAiComposeToneExample:
-			return 0, false
-		case LayerSemanticTypeAicomposeTones:
-			return 0, false
-		case LayerSemanticTypeAicomposeTonesNotModified:
-			return 0, false
-		case LayerSemanticTypeAuthSentCodePaymentRequired:
-			return 0xe0955a3c, true
-		case LayerSemanticTypeBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeBotsAccessSettings:
-			return 0, false
-		case LayerSemanticTypeChannelFull:
-			return 0xe4e0b29d, true
-		case LayerSemanticTypeConnectedBot:
-			return 0xcd64636c, true
-		case LayerSemanticTypeDraftMessage:
-			return 0x96eaa5eb, true
-		case LayerSemanticTypeInputAiComposeToneDefault:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneID:
-			return 0, false
-		case LayerSemanticTypeInputAiComposeToneSlug:
-			return 0, false
-		case LayerSemanticTypeInputBotInlineMessageRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputPageBlockMap:
-			return 0, false
-		case LayerSemanticTypeInputRichFileDocument:
-			return 0, false
-		case LayerSemanticTypeInputRichFilePhoto:
-			return 0, false
-		case LayerSemanticTypeInputRichMessage:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageHTML:
-			return 0, false
-		case LayerSemanticTypeInputRichMessageMarkdown:
-			return 0, false
-		case LayerSemanticTypeInputSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeInputStorePaymentAuthCode:
-			return 0x9bb2636d, true
-		case LayerSemanticTypeJoinChatBotResultApproved:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultDeclined:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultQueued:
-			return 0, false
-		case LayerSemanticTypeJoinChatBotResultWebView:
-			return 0, false
-		case LayerSemanticTypeMessage:
-			return 0x3ae56482, true
-		case LayerSemanticTypeMessagesChatInviteJoinResultOk:
-			return 0, false
-		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
-			return 0, false
-		case LayerSemanticTypePageBlockBlockquoteBlocks:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading1:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading2:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading3:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading4:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading5:
-			return 0, false
-		case LayerSemanticTypePageBlockHeading6:
-			return 0, false
-		case LayerSemanticTypePageBlockMath:
-			return 0, false
-		case LayerSemanticTypePageBlockOrderedList:
-			return 0x9a8ae1e1, true
-		case LayerSemanticTypePageBlockThinking:
-			return 0, false
-		case LayerSemanticTypePageListItemBlocks:
-			return 0x25e073fc, true
-		case LayerSemanticTypePageListItemText:
-			return 0xb92fb6cd, true
-		case LayerSemanticTypePageListOrderedItemBlocks:
-			return 0x98dd8936, true
-		case LayerSemanticTypePageListOrderedItemText:
-			return 0x5e068047, true
-		case LayerSemanticTypePoll:
-			return 0xb8425be9, true
-		case LayerSemanticTypeRichMessage:
-			return 0, false
-		case LayerSemanticTypeSendMessageRichMessageDraftAction:
-			return 0, false
-		case LayerSemanticTypeStatsPollStats:
-			return 0, false
-		case LayerSemanticTypeTextAutoEmail:
-			return 0, false
-		case LayerSemanticTypeTextAutoPhone:
-			return 0, false
-		case LayerSemanticTypeTextAutoURL:
-			return 0, false
-		case LayerSemanticTypeTextBankCard:
-			return 0, false
-		case LayerSemanticTypeTextBotCommand:
-			return 0, false
-		case LayerSemanticTypeTextCashtag:
-			return 0, false
-		case LayerSemanticTypeTextCustomEmoji:
-			return 0, false
-		case LayerSemanticTypeTextDate:
-			return 0, false
-		case LayerSemanticTypeTextHashtag:
-			return 0, false
-		case LayerSemanticTypeTextMath:
-			return 0, false
-		case LayerSemanticTypeTextMention:
-			return 0, false
-		case LayerSemanticTypeTextMentionName:
-			return 0, false
-		case LayerSemanticTypeTextSpoiler:
-			return 0, false
-		case LayerSemanticTypeTopPeerCategoryBotsGuestChat:
-			return 0, false
-		case LayerSemanticTypeUpdateAiComposeTones:
-			return 0, false
-		case LayerSemanticTypeUpdateBotChatInviteRequester:
-			return 0x11dfa986, true
-		case LayerSemanticTypeUpdateBotGuestChatQuery:
-			return 0, false
-		case LayerSemanticTypeUpdateJoinChatWebViewDecision:
-			return 0, false
-		case LayerSemanticTypeUpdateNewBotConnection:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserException:
-			return 0, false
-		case LayerSemanticTypeUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticTypeWebDomainException:
-			return 0, false
-		case LayerSemanticTypeWebPageAttributeAiComposeTone:
-			return 0, false
-		case LayerSemanticMethodAccountConfirmBotConnection:
-			return 0, false
-		case LayerSemanticMethodAccountDeleteWebBrowserSettingsExceptions:
-			return 0, false
-		case LayerSemanticMethodAccountGetWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAccountToggleWebBrowserSettingsException:
-			return 0, false
-		case LayerSemanticMethodAccountUpdateWebBrowserSettings:
-			return 0, false
-		case LayerSemanticMethodAicomposeCreateTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeDeleteTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetToneExample:
-			return 0, false
-		case LayerSemanticMethodAicomposeGetTones:
-			return 0, false
-		case LayerSemanticMethodAicomposeSaveTone:
-			return 0, false
-		case LayerSemanticMethodAicomposeUpdateTone:
-			return 0, false
-		case LayerSemanticMethodBotsEditAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsGetAccessSettings:
-			return 0, false
-		case LayerSemanticMethodBotsSetJoinChatResults:
-			return 0, false
-		case LayerSemanticMethodChannelsEditCreator:
-			return 0, false
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-			return 0, false
-		case LayerSemanticMethodChannelsJoinChannel:
-			return 0x24b524c5, true
-		case LayerSemanticMethodChannelsToggleJoinRequest:
-			return 0x4c2985b6, true
-		case LayerSemanticMethodContactsSearch:
-			return 0x11f812d8, true
-		case LayerSemanticMethodMessagesComposeMessageWithAI:
-			return 0xfd426afe, true
-		case LayerSemanticMethodMessagesDeleteParticipantReaction:
-			return 0, false
-		case LayerSemanticMethodMessagesDeleteParticipantReactions:
-			return 0, false
-		case LayerSemanticMethodMessagesEditInlineBotMessage:
-			return 0x83557dba, true
-		case LayerSemanticMethodMessagesEditMessage:
-			return 0x51e842e1, true
-		case LayerSemanticMethodMessagesGetPersonalChannelHistory:
-			return 0, false
-		case LayerSemanticMethodMessagesGetRichMessage:
-			return 0, false
-		case LayerSemanticMethodMessagesImportChatInvite:
-			return 0x6c50051c, true
-		case LayerSemanticMethodMessagesSaveDraft:
-			return 0x54ae308e, true
-		case LayerSemanticMethodMessagesSendMessage:
-			return 0x545cd15a, true
-		case LayerSemanticMethodMessagesSetBotGuestChatResult:
-			return 0, false
-		case LayerSemanticMethodStatsGetPollStats:
-			return 0, false
-		}
 	case LayerProfile225:
 		switch semantic {
 		case LayerSemanticTypeAccountWebBrowserSettings:
@@ -13960,17 +12400,49 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticTypeAuthSentCodePaymentRequired:
 			return 0xe0955a3c, true
+		case LayerSemanticTypeBotCommand:
+			return 0xc27ac8c7, true
 		case LayerSemanticTypeBotInlineMessageRichMessage:
 			return 0, false
+		case LayerSemanticTypeChannel:
+			return 0x1c32b11c, true
 		case LayerSemanticTypeChannelFull:
 			return 0xe4e0b29d, true
+		case LayerSemanticTypeCommunitiesParticipantJoinedChats:
+			return 0, false
+		case LayerSemanticTypeCommunitiesPeerLinkRequests:
+			return 0, false
+		case LayerSemanticTypeCommunity:
+			return 0, false
+		case LayerSemanticTypeCommunityForbidden:
+			return 0, false
+		case LayerSemanticTypeCommunityFull:
+			return 0, false
+		case LayerSemanticTypeCommunityPeer:
+			return 0, false
+		case LayerSemanticTypeCommunityPeerRequest:
+			return 0, false
 		case LayerSemanticTypeConnectedBot:
 			return 0xcd64636c, true
+		case LayerSemanticTypeDialogCommunity:
+			return 0, false
+		case LayerSemanticTypeDialogPeerCommunity:
+			return 0, false
 		case LayerSemanticTypeDraftMessage:
 			return 0x96eaa5eb, true
+		case LayerSemanticTypeEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeInputAiComposeToneSingleUse:
+			return 0, false
 		case LayerSemanticTypeInputBotInlineMessageRichMessage:
 			return 0, false
+		case LayerSemanticTypeInputDialogPeerCommunity:
+			return 0, false
+		case LayerSemanticTypeInputNotifyCommunity:
+			return 0, false
 		case LayerSemanticTypeInputPageBlockMap:
+			return 0, false
+		case LayerSemanticTypeInputReplyToEphemeralMessage:
 			return 0, false
 		case LayerSemanticTypeInputRichFileDocument:
 			return 0, false
@@ -13996,9 +12468,17 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticTypeMessage:
 			return 0x95ef6f2b, true
+		case LayerSemanticTypeMessageActionChangeCommunity:
+			return 0, false
 		case LayerSemanticTypeMessagesChatInviteJoinResultOk:
 			return 0, false
 		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
+			return 0, false
+		case LayerSemanticTypeMessagesComposedRichMessageWithAI:
+			return 0, false
+		case LayerSemanticTypeMessagesTranslatedRichMessage:
+			return 0, false
+		case LayerSemanticTypeNotifyCommunity:
 			return 0, false
 		case LayerSemanticTypePageBlockBlockquoteBlocks:
 			return 0, false
@@ -14047,6 +12527,8 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 		case LayerSemanticTypeTextCustomEmoji:
 			return 0, false
 		case LayerSemanticTypeTextDate:
+			return 0, false
+		case LayerSemanticTypeTextDiff:
 			return 0, false
 		case LayerSemanticTypeTextHashtag:
 			return 0, false
@@ -14062,14 +12544,24 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticTypeUpdateBotChatInviteRequester:
 			return 0x11dfa986, true
+		case LayerSemanticTypeUpdateBotStarsSubscription:
+			return 0, false
+		case LayerSemanticTypeUpdateDeleteEphemeralMessages:
+			return 0, false
+		case LayerSemanticTypeUpdateEditEphemeralMessage:
+			return 0, false
 		case LayerSemanticTypeUpdateJoinChatWebViewDecision:
 			return 0, false
 		case LayerSemanticTypeUpdateNewBotConnection:
+			return 0, false
+		case LayerSemanticTypeUpdateNewEphemeralMessage:
 			return 0, false
 		case LayerSemanticTypeUpdateWebBrowserException:
 			return 0, false
 		case LayerSemanticTypeUpdateWebBrowserSettings:
 			return 0, false
+		case LayerSemanticTypeUser:
+			return 0x31774388, true
 		case LayerSemanticTypeWebDomainException:
 			return 0, false
 		case LayerSemanticMethodAccountConfirmBotConnection:
@@ -14084,16 +12576,40 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticMethodBotsSetJoinChatResults:
 			return 0, false
-		case LayerSemanticMethodChannelsEditCreator:
-			return 0, false
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
-			return 0, false
 		case LayerSemanticMethodChannelsJoinChannel:
 			return 0x24b524c5, true
 		case LayerSemanticMethodChannelsToggleJoinRequest:
 			return 0x4c2985b6, true
+		case LayerSemanticMethodCommunitiesCreate:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetJoinedCommunities:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetParticipantJoinedChats:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetPeerLinkRequests:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleParticipantBanned:
+			return 0, false
+		case LayerSemanticMethodCommunitiesTogglePeerLink:
+			return 0, false
+		case LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval:
+			return 0, false
 		case LayerSemanticMethodContactsSearch:
 			return 0x11f812d8, true
+		case LayerSemanticMethodEphemeralDeleteMessage:
+			return 0, false
+		case LayerSemanticMethodEphemeralGetCallbackAnswer:
+			return 0, false
+		case LayerSemanticMethodEphemeralReportMessage:
+			return 0, false
+		case LayerSemanticMethodEphemeralSendMessage:
+			return 0, false
+		case LayerSemanticMethodMessagesComposeRichMessageWithAI:
+			return 0, false
 		case LayerSemanticMethodMessagesEditInlineBotMessage:
 			return 0x83557dba, true
 		case LayerSemanticMethodMessagesEditMessage:
@@ -14104,22 +12620,60 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticMethodMessagesImportChatInvite:
 			return 0x6c50051c, true
+		case LayerSemanticMethodMessagesRequestChatJoinWebView:
+			return 0, false
 		case LayerSemanticMethodMessagesSaveDraft:
 			return 0x54ae308e, true
+		case LayerSemanticMethodMessagesSearchGlobal:
+			return 0x4bc6589a, true
 		case LayerSemanticMethodMessagesSendMessage:
 			return 0x545cd15a, true
 		case LayerSemanticMethodMessagesSetBotGuestChatResult:
 			return 0x052b08db, true
+		case LayerSemanticMethodMessagesTranslateRichMessage:
+			return 0, false
 		}
 	case LayerProfile226:
 		switch semantic {
+		case LayerSemanticTypeBotCommand:
+			return 0xc27ac8c7, true
 		case LayerSemanticTypeBotInlineMessageRichMessage:
+			return 0, false
+		case LayerSemanticTypeChannel:
+			return 0x1c32b11c, true
+		case LayerSemanticTypeCommunitiesParticipantJoinedChats:
+			return 0, false
+		case LayerSemanticTypeCommunitiesPeerLinkRequests:
+			return 0, false
+		case LayerSemanticTypeCommunity:
+			return 0, false
+		case LayerSemanticTypeCommunityForbidden:
+			return 0, false
+		case LayerSemanticTypeCommunityFull:
+			return 0, false
+		case LayerSemanticTypeCommunityPeer:
+			return 0, false
+		case LayerSemanticTypeCommunityPeerRequest:
+			return 0, false
+		case LayerSemanticTypeDialogCommunity:
+			return 0, false
+		case LayerSemanticTypeDialogPeerCommunity:
 			return 0, false
 		case LayerSemanticTypeDraftMessage:
 			return 0x96eaa5eb, true
+		case LayerSemanticTypeEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeInputAiComposeToneSingleUse:
+			return 0, false
 		case LayerSemanticTypeInputBotInlineMessageRichMessage:
 			return 0, false
+		case LayerSemanticTypeInputDialogPeerCommunity:
+			return 0, false
+		case LayerSemanticTypeInputNotifyCommunity:
+			return 0, false
 		case LayerSemanticTypeInputPageBlockMap:
+			return 0, false
+		case LayerSemanticTypeInputReplyToEphemeralMessage:
 			return 0, false
 		case LayerSemanticTypeInputRichFileDocument:
 			return 0, false
@@ -14135,8 +12689,16 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticTypeMessage:
 			return 0x95ef6f2b, true
+		case LayerSemanticTypeMessageActionChangeCommunity:
+			return 0, false
 		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
 			return 0x774bbdf4, true
+		case LayerSemanticTypeMessagesComposedRichMessageWithAI:
+			return 0, false
+		case LayerSemanticTypeMessagesTranslatedRichMessage:
+			return 0, false
+		case LayerSemanticTypeNotifyCommunity:
+			return 0, false
 		case LayerSemanticTypePageBlockBlockquoteBlocks:
 			return 0, false
 		case LayerSemanticTypePageBlockHeading1:
@@ -14185,6 +12747,8 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticTypeTextDate:
 			return 0, false
+		case LayerSemanticTypeTextDiff:
+			return 0, false
 		case LayerSemanticTypeTextHashtag:
 			return 0, false
 		case LayerSemanticTypeTextMath:
@@ -14195,24 +12759,155 @@ func LayerWireID(profile LayerProfile, semantic LayerSemanticID) (uint32, bool) 
 			return 0, false
 		case LayerSemanticTypeTextSpoiler:
 			return 0, false
+		case LayerSemanticTypeUpdateBotStarsSubscription:
+			return 0, false
+		case LayerSemanticTypeUpdateDeleteEphemeralMessages:
+			return 0, false
+		case LayerSemanticTypeUpdateEditEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeUpdateNewEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeUser:
+			return 0x31774388, true
 		case LayerSemanticMethodAccountToggleWebBrowserSettingsException:
 			return 0x2d0a0571, true
-		case LayerSemanticMethodChannelsEditCreator:
+		case LayerSemanticMethodCommunitiesCreate:
 			return 0, false
-		case LayerSemanticMethodChannelsGetFutureCreatorAfterLeave:
+		case LayerSemanticMethodCommunitiesGetJoinedCommunities:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetParticipantJoinedChats:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetPeerLinkRequests:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleParticipantBanned:
+			return 0, false
+		case LayerSemanticMethodCommunitiesTogglePeerLink:
+			return 0, false
+		case LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval:
 			return 0, false
 		case LayerSemanticMethodContactsSearch:
 			return 0x11f812d8, true
+		case LayerSemanticMethodEphemeralDeleteMessage:
+			return 0, false
+		case LayerSemanticMethodEphemeralGetCallbackAnswer:
+			return 0, false
+		case LayerSemanticMethodEphemeralReportMessage:
+			return 0, false
+		case LayerSemanticMethodEphemeralSendMessage:
+			return 0, false
+		case LayerSemanticMethodMessagesComposeRichMessageWithAI:
+			return 0, false
 		case LayerSemanticMethodMessagesEditInlineBotMessage:
 			return 0x83557dba, true
 		case LayerSemanticMethodMessagesEditMessage:
 			return 0x51e842e1, true
 		case LayerSemanticMethodMessagesGetRichMessage:
 			return 0, false
+		case LayerSemanticMethodMessagesRequestChatJoinWebView:
+			return 0, false
 		case LayerSemanticMethodMessagesSaveDraft:
 			return 0x54ae308e, true
+		case LayerSemanticMethodMessagesSearchGlobal:
+			return 0x4bc6589a, true
 		case LayerSemanticMethodMessagesSendMessage:
 			return 0x545cd15a, true
+		case LayerSemanticMethodMessagesTranslateRichMessage:
+			return 0, false
+		}
+	case LayerProfile227:
+		switch semantic {
+		case LayerSemanticTypeBotCommand:
+			return 0xc27ac8c7, true
+		case LayerSemanticTypeChannel:
+			return 0x1c32b11c, true
+		case LayerSemanticTypeCommunitiesParticipantJoinedChats:
+			return 0, false
+		case LayerSemanticTypeCommunitiesPeerLinkRequests:
+			return 0, false
+		case LayerSemanticTypeCommunity:
+			return 0, false
+		case LayerSemanticTypeCommunityForbidden:
+			return 0, false
+		case LayerSemanticTypeCommunityFull:
+			return 0, false
+		case LayerSemanticTypeCommunityPeer:
+			return 0, false
+		case LayerSemanticTypeCommunityPeerRequest:
+			return 0, false
+		case LayerSemanticTypeDialogCommunity:
+			return 0, false
+		case LayerSemanticTypeDialogPeerCommunity:
+			return 0, false
+		case LayerSemanticTypeEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeInputAiComposeToneSingleUse:
+			return 0, false
+		case LayerSemanticTypeInputDialogPeerCommunity:
+			return 0, false
+		case LayerSemanticTypeInputNotifyCommunity:
+			return 0, false
+		case LayerSemanticTypeInputReplyToEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeMessageActionChangeCommunity:
+			return 0, false
+		case LayerSemanticTypeMessagesChatInviteJoinResultWebView:
+			return 0x2f51c337, true
+		case LayerSemanticTypeMessagesComposedRichMessageWithAI:
+			return 0, false
+		case LayerSemanticTypeMessagesTranslatedRichMessage:
+			return 0, false
+		case LayerSemanticTypeNotifyCommunity:
+			return 0, false
+		case LayerSemanticTypeTextDiff:
+			return 0, false
+		case LayerSemanticTypeUpdateBotStarsSubscription:
+			return 0, false
+		case LayerSemanticTypeUpdateDeleteEphemeralMessages:
+			return 0, false
+		case LayerSemanticTypeUpdateEditEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeUpdateNewEphemeralMessage:
+			return 0, false
+		case LayerSemanticTypeUser:
+			return 0x31774388, true
+		case LayerSemanticMethodCommunitiesCreate:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetJoinedCommunities:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetParticipantJoinedChats:
+			return 0, false
+		case LayerSemanticMethodCommunitiesGetPeerLinkRequests:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs:
+			return 0, false
+		case LayerSemanticMethodCommunitiesToggleParticipantBanned:
+			return 0, false
+		case LayerSemanticMethodCommunitiesTogglePeerLink:
+			return 0, false
+		case LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval:
+			return 0, false
+		case LayerSemanticMethodEphemeralDeleteMessage:
+			return 0, false
+		case LayerSemanticMethodEphemeralGetCallbackAnswer:
+			return 0, false
+		case LayerSemanticMethodEphemeralReportMessage:
+			return 0, false
+		case LayerSemanticMethodEphemeralSendMessage:
+			return 0, false
+		case LayerSemanticMethodMessagesComposeRichMessageWithAI:
+			return 0, false
+		case LayerSemanticMethodMessagesRequestChatJoinWebView:
+			return 0, false
+		case LayerSemanticMethodMessagesSearchGlobal:
+			return 0x4bc6589a, true
+		case LayerSemanticMethodMessagesTranslateRichMessage:
+			return 0, false
 		}
 	case LayerProfileCanonical:
 		// Canonical mappings are handled below.
@@ -14476,6 +13171,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputStickerSetThumbLegacy, true
 	case 0x0e0310d7:
 		return LayerSemanticTypeHelpRecentMeURLs, true
+	case 0x0e0c35af:
+		return LayerSemanticTypeInputAiComposeToneSingleUse, true
 	case 0x0e17e23c:
 		return LayerSemanticTypePhotoSizeEmpty, true
 	case 0x0e306d3a:
@@ -14506,8 +13203,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesGetInlineGameHighScores, true
 	case 0x0f91b065:
 		return LayerSemanticMethodPaymentsExportInvoice, true
-	case 0x0f94e5f1:
-		return LayerSemanticTypeInputMediaPoll, true
 	case 0x1013fd9e:
 		return LayerSemanticMethodContactsDeleteByPhones, true
 	case 0x107e31a0:
@@ -14520,8 +13215,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodSMSJobsGetStatus, true
 	case 0x10ab6dc7:
 		return LayerSemanticTypeChatlistsExportedInvites, true
-	case 0x10b78d29:
-		return LayerSemanticTypeKeyboardButtonURLAuth, true
 	case 0x10cf3123:
 		return LayerSemanticMethodBotsSetBotInfo, true
 	case 0x10e6bd2c:
@@ -14576,14 +13269,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeStarsTransaction, true
 	case 0x13704a7c:
 		return LayerSemanticMethodMessagesForwardMessages, true
-	case 0x13767230:
-		return LayerSemanticTypeKeyboardButtonWebView, true
 	case 0x137948a5:
 		return LayerSemanticTypeAuthPasswordRecovery, true
 	case 0x139f63fb:
 		return LayerSemanticMethodContactsUpdateContactNote, true
-	case 0x13acff19:
-		return LayerSemanticTypeStarGiftAttributePattern, true
 	case 0x140502d1:
 		return LayerSemanticTypeUpdateWebBrowserException, true
 	case 0x1427a5e1:
@@ -14700,8 +13389,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUpdateFolderPeers, true
 	case 0x193b4417:
 		return LayerSemanticTypeInputNotifyUsers, true
-	case 0x198fb446:
-		return LayerSemanticMethodMessagesRequestURLAuth, true
 	case 0x1991b13b:
 		return LayerSemanticTypeBotsPopularAppBots, true
 	case 0x199fed96:
@@ -14716,6 +13403,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodUpdatesGetDifference, true
 	case 0x19d8eb45:
 		return LayerSemanticMethodStoriesReport, true
+	case 0x1a542004:
+		return LayerSemanticMethodMessagesTranslateRichMessage, true
 	case 0x1a8afc7e:
 		return LayerSemanticTypeGroupCallMessage, true
 	case 0x1ab21940:
@@ -14810,8 +13499,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputReportReasonViolence, true
 	case 0x1e251c95:
 		return LayerSemanticMethodHelpHidePromoData, true
-	case 0x1e287d04:
-		return LayerSemanticTypeInputMediaUploadedPhoto, true
 	case 0x1e297bfa:
 		return LayerSemanticTypeUpdateMessageReactions, true
 	case 0x1e36fded:
@@ -14870,6 +13557,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputMessageEntityMentionName, true
 	case 0x209b82db:
 		return LayerSemanticTypeChannelLocation, true
+	case 0x20bcbba1:
+		return LayerSemanticTypeUpdateNewEphemeralMessage, true
 	case 0x21108ff7:
 		return LayerSemanticTypeBusinessRecipients, true
 	case 0x211a1788:
@@ -14898,6 +13587,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeTodoCompletion, true
 	case 0x222600ef:
 		return LayerSemanticTypeMessagesExportedChatInviteReplaced, true
+	case 0x2244afad:
+		return LayerSemanticTypeCommunitiesPeerLinkRequests, true
 	case 0x22567115:
 		return LayerSemanticMethodChannelsCheckSearchPostsFlood, true
 	case 0x226ccefb:
@@ -14938,14 +13629,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeTextAutoPhone, true
 	case 0x24e6818d:
 		return LayerSemanticMethodUploadGetWebFile, true
-	case 0x24f40e77:
-		return LayerSemanticTypeUpdateMessagePollVote, true
 	case 0x250dbaf8:
 		return LayerSemanticTypeStarsTransactionPeerPremiumBot, true
 	case 0x257e962b:
 		return LayerSemanticTypePremiumGiftCodeOption, true
-	case 0x258aff05:
-		return LayerSemanticTypeKeyboardButtonURL, true
 	case 0x25972bcb:
 		return LayerSemanticTypeSendMessageEmojiInteraction, true
 	case 0x25a71742:
@@ -14988,6 +13675,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPhoneSaveCallDebug, true
 	case 0x278f2868:
 		return LayerSemanticTypeChannelAdminLogEventActionSendMessage, true
+	case 0x27bb1adc:
+		return LayerSemanticTypeInputNotifyCommunity, true
 	case 0x27bcbbfc:
 		return LayerSemanticTypeInputPeerChannel, true
 	case 0x27d69997:
@@ -15118,6 +13807,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeMessagesChatInviteJoinResultWebView, true
 	case 0x2f58683c:
 		return LayerSemanticTypePageListItemText, true
+	case 0x2f65c8e4:
+		return LayerSemanticTypeDialogPeerCommunity, true
 	case 0x2f6cb2ab:
 		return LayerSemanticTypeBotCommandScopeDefault, true
 	case 0x2f98c3d5:
@@ -15130,8 +13821,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePhoneCall, true
 	case 0x3081ed9d:
 		return LayerSemanticTypeInlineQueryPeerTypeSameBotPM, true
-	case 0x308660c1:
-		return LayerSemanticTypeKeyboardButtonUserProfile, true
 	case 0x30a6ec7e:
 		return LayerSemanticTypeMessagesStickers, true
 	case 0x30eb63f0:
@@ -15178,8 +13867,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesSendEncryptedService, true
 	case 0x32da9e9c:
 		return LayerSemanticTypeInputStickerSetItem, true
-	case 0x32fabf1a:
-		return LayerSemanticTypeURLAuthResultRequest, true
 	case 0x3334b0f0:
 		return LayerSemanticTypeInputSecureFileUploaded, true
 	case 0x3354678f:
@@ -15236,8 +13923,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputPeerChat, true
 	case 0x35a9e0d5:
 		return LayerSemanticMethodAccountGetChannelRestrictedStatusEmojis, true
-	case 0x35bbdb6b:
-		return LayerSemanticTypeKeyboardButtonCallback, true
 	case 0x35ddd674:
 		return LayerSemanticMethodMessagesEditChatPhoto, true
 	case 0x35e410a8:
@@ -15324,8 +14009,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUpdateNewScheduledMessage, true
 	case 0x39c67432:
 		return LayerSemanticTypeUpdateSavedReactionTags, true
-	case 0x39d99013:
-		return LayerSemanticTypeStarGiftAttributeModel, true
 	case 0x39f23300:
 		return LayerSemanticTypePageBlockCover, true
 	case 0x3a20ecb8:
@@ -15336,14 +14019,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePasswordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow, true
 	case 0x3aae0528:
 		return LayerSemanticTypeStarGiftAuctionRound, true
-	case 0x3ae56482:
-		return LayerSemanticTypeMessage, true
 	case 0x3b1adf37:
 		return LayerSemanticMethodMessagesReorderPinnedDialogs, true
 	case 0x3b6d152e:
 		return LayerSemanticTypeUsersUserFull, true
-	case 0x3b6ddad2:
-		return LayerSemanticTypePollAnswerVoters, true
 	case 0x3b7d0ea6:
 		return LayerSemanticMethodMessagesGetFutureChatCreatorAfterLeave, true
 	case 0x3ba47bff:
@@ -15444,8 +14123,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesReportReaction, true
 	case 0x3f6d7b68:
 		return LayerSemanticTypeJSONNull, true
-	case 0x3f7ee58b:
-		return LayerSemanticTypeMessageMediaDice, true
+	case 0x3fa464c8:
+		return LayerSemanticMethodEphemeralGetCallbackAnswer, true
 	case 0x3fa53905:
 		return LayerSemanticTypeKeyboardButtonBuy, true
 	case 0x3fc18057:
@@ -15478,6 +14157,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodAccountChangeAuthorizationSettings, true
 	case 0x410a134e:
 		return LayerSemanticTypeChannelAdminLogEventActionExportedInviteRevoke, true
+	case 0x4119b95e:
+		return LayerSemanticTypeInputReplyToEphemeralMessage, true
 	case 0x41248786:
 		return LayerSemanticMethodPhoneSaveCallLog, true
 	case 0x413a3e73:
@@ -15504,6 +14185,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeChat, true
 	case 0x41df43fc:
 		return LayerSemanticTypeSavedStarGift, true
+	case 0x4203998f:
+		return LayerSemanticTypeMessagesTranslatedRichMessage, true
 	case 0x4203c5ef:
 		return LayerSemanticTypeHelpCountryCode, true
 	case 0x423ab3ad:
@@ -15664,10 +14347,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeReactionNotificationsFromAll, true
 	case 0x4ba3a95a:
 		return LayerSemanticTypeMessageReactor, true
+	case 0x4bbb8f01:
+		return LayerSemanticTypeUpdateEditEphemeralMessage, true
 	case 0x4bc6589a:
 		return LayerSemanticMethodMessagesSearchGlobal, true
-	case 0x4bd6e798:
-		return LayerSemanticTypeMessageMediaPoll, true
 	case 0x4bff8ea0:
 		return LayerSemanticTypeAccountAuthorizations, true
 	case 0x4c2985b6:
@@ -15676,6 +14359,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeTextSpoiler, true
 	case 0x4c3e069d:
 		return LayerSemanticTypeAccountAutoSaveSettings, true
+	case 0x4c4537c8:
+		return LayerSemanticTypeMessagesComposedRichMessageWithAI, true
 	case 0x4c4e743f:
 		return LayerSemanticTypeMessageEntityCashtag, true
 	case 0x4c9409f6:
@@ -15728,8 +14413,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePageBlockPullquote, true
 	case 0x4f47a016:
 		return LayerSemanticMethodMessagesSetDefaultReaction, true
-	case 0x4f607bef:
-		return LayerSemanticTypeChannelParticipantSelf, true
 	case 0x4f96cb18:
 		return LayerSemanticTypeInputPrivacyKeyStatusTimestamp, true
 	case 0x4fa417f2:
@@ -15772,8 +14455,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeStatsStoryStats, true
 	case 0x50f24105:
 		return LayerSemanticMethodChannelsToggleUsername, true
-	case 0x50f41ccf:
-		return LayerSemanticTypeKeyboardButtonGame, true
 	case 0x50f5c392:
 		return LayerSemanticTypeInputMessagesFilterVoice, true
 	case 0x512fe446:
@@ -15824,8 +14505,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeMessagesSearchResultsPositions, true
 	case 0x53bc0020:
 		return LayerSemanticMethodAccountDeleteAutoSaveExceptions, true
-	case 0x53d7bfd8:
-		return LayerSemanticTypeKeyboardButtonRequestPeer, true
 	case 0x53e6f1ec:
 		return LayerSemanticTypeUpdateDeleteQuickReply, true
 	case 0x541a1d1a:
@@ -15878,16 +14557,14 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPhoneStartScheduledGroupCall, true
 	case 0x56987bd5:
 		return LayerSemanticMethodMessagesDeleteRevokedExportedChatInvites, true
-	case 0x569d64c9:
-		return LayerSemanticTypeStarGiftUnique, true
 	case 0x56d6a247:
 		return LayerSemanticTypeChannelAdminLogEventActionToggleGroupCallSetting, true
 	case 0x56da0b3f:
 		return LayerSemanticMethodAccountGetAutoDownloadSettings, true
+	case 0x56dbfcf8:
+		return LayerSemanticTypeUpdateDeleteEphemeralMessages, true
 	case 0x56e0d474:
 		return LayerSemanticTypeMessageMediaGeo, true
-	case 0x56e34970:
-		return LayerSemanticTypeReactionsNotifySettings, true
 	case 0x56e59f9c:
 		return LayerSemanticMethodAuthCheckPaidAuth, true
 	case 0x56e9f0e4:
@@ -15932,8 +14609,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPaymentsGetConnectedStarRefBots, true
 	case 0x58707d28:
 		return LayerSemanticTypeChannelAdminLogEventActionCreateTopic, true
-	case 0x58747131:
-		return LayerSemanticTypePoll, true
 	case 0x5881323a:
 		return LayerSemanticTypeInputReplyToStory, true
 	case 0x58943ee2:
@@ -16002,6 +14677,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePopularContact, true
 	case 0x5cf09635:
 		return LayerSemanticMethodMessagesGetSavedGifs, true
+	case 0x5d20bae8:
+		return LayerSemanticTypeMessageActionChangeCommunity, true
 	case 0x5d75a138:
 		return LayerSemanticTypeUpdatesDifferenceEmpty, true
 	case 0x5d8d353b:
@@ -16072,10 +14749,14 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPremiumGetBoostsList, true
 	case 0x60fe3294:
 		return LayerSemanticTypeDraftMessage, true
+	case 0x6126a43c:
+		return LayerSemanticMethodMessagesSearchGlobal, true
 	case 0x61695cb0:
 		return LayerSemanticTypeChatInvitePeek, true
 	case 0x616f7fe8:
 		return LayerSemanticTypeInputStorePaymentGiftPremium, true
+	case 0x61ca29d3:
+		return LayerSemanticTypeMessagesChatInviteJoinResultWebView, true
 	case 0x61e3f854:
 		return LayerSemanticMethodHelpGetAppConfig, true
 	case 0x61f0d4c7:
@@ -16096,8 +14777,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUsersUsers, true
 	case 0x62dc8b48:
 		return LayerSemanticTypeInputFileStoryDocument, true
-	case 0x63183030:
-		return LayerSemanticMethodMessagesTranslateText, true
 	case 0x6319d612:
 		return LayerSemanticTypeDocumentAttributeSticker, true
 	case 0x6334ee9a:
@@ -16154,6 +14833,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePageBlockCollage, true
 	case 0x65ad71dc:
 		return LayerSemanticMethodAccountGetMultiWallPapers, true
+	case 0x65efe954:
+		return LayerSemanticTypeCommunity, true
 	case 0x65f00ce3:
 		return LayerSemanticTypeInputInvoiceStars, true
 	case 0x661d4037:
@@ -16206,16 +14887,14 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUpdateNewStickerSet, true
 	case 0x68cb6283:
 		return LayerSemanticTypeMessageMediaStory, true
+	case 0x68cbd09f:
+		return LayerSemanticMethodEphemeralSendMessage, true
 	case 0x68f3e4eb:
 		return LayerSemanticMethodChannelsToggleAntiSpam, true
-	case 0x6917560b:
-		return LayerSemanticTypeMessageReplyHeader, true
 	case 0x691e9052:
 		return LayerSemanticTypeUpdateInlineBotCallbackQuery, true
 	case 0x69279795:
 		return LayerSemanticTypeInputSavedStarGiftUser, true
-	case 0x695150d7:
-		return LayerSemanticTypeMessageMediaPhoto, true
 	case 0x695c9e7c:
 		return LayerSemanticTypeUpdateReadChannelDiscussionOutbox, true
 	case 0x69d66c45:
@@ -16224,6 +14903,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPaymentsGetStarsTransactions, true
 	case 0x69ec56a3:
 		return LayerSemanticTypePrivacyKeyForwards, true
+	case 0x69ef72c4:
+		return LayerSemanticTypeInputDialogPeerCommunity, true
 	case 0x69f59d69:
 		return LayerSemanticMethodMessagesToggleBotInAttachMenu, true
 	case 0x69f916f8:
@@ -16254,6 +14935,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPremiumApplyBoost, true
 	case 0x6ba2cbec:
 		return LayerSemanticMethodPaymentsGetStarGiftAuctionAcquiredGifts, true
+	case 0x6c0d8e23:
+		return LayerSemanticTypeUpdateBotStarsSubscription, true
 	case 0x6c207376:
 		return LayerSemanticTypePaymentsStarsRevenueStats, true
 	case 0x6c24f3dd:
@@ -16284,8 +14967,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPaymentsGetStarGiftUpgradeAttributes, true
 	case 0x6d5f77ee:
 		return LayerSemanticTypeBaseThemeTinted, true
-	case 0x6df8014e:
-		return LayerSemanticTypeChannelParticipantBanned, true
 	case 0x6dfa0622:
 		return LayerSemanticMethodPaymentsBotCancelStarsSubscription, true
 	case 0x6e153f16:
@@ -16384,20 +15065,18 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodHelpGetCountriesList, true
 	case 0x73665bc2:
 		return LayerSemanticMethodAccountGetSecureValue, true
+	case 0x736dcfea:
+		return LayerSemanticMethodCommunitiesTogglePeerLink, true
 	case 0x73746f5c:
 		return LayerSemanticMethodMessagesGetExportedChatInvite, true
 	case 0x73783ffd:
 		return LayerSemanticMethodMessagesEditChatTitle, true
-	case 0x737fc2ec:
-		return LayerSemanticMethodStoriesSendStory, true
 	case 0x73924be0:
 		return LayerSemanticTypeMessageEntityPre, true
 	case 0x73a379eb:
 		return LayerSemanticTypeHighScore, true
 	case 0x73ada76b:
 		return LayerSemanticTypeMessageActionStarGiftPurchaseOfferDeclined, true
-	case 0x73bb643b:
-		return LayerSemanticMethodMessagesGetPollResults, true
 	case 0x741cd3e3:
 		return LayerSemanticTypeAuthCodeTypeCall, true
 	case 0x744694e0:
@@ -16432,10 +15111,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUpdateStory, true
 	case 0x75c78e60:
 		return LayerSemanticTypePhotoSize, true
-	case 0x75d2698e:
-		return LayerSemanticTypeKeyboardButtonCopy, true
 	case 0x7600b9d3:
 		return LayerSemanticTypeMessage, true
+	case 0x76141ebd:
+		return LayerSemanticTypeCommunityPeer, true
 	case 0x761e6af4:
 		return LayerSemanticTypeMessageEntityBankCard, true
 	case 0x764cf810:
@@ -16542,8 +15221,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputStarGiftAuctionSlug, true
 	case 0x7adc669d:
 		return LayerSemanticMethodContactsGetContactIDs, true
-	case 0x7adf2420:
-		return LayerSemanticTypePollResults, true
 	case 0x7b197dc8:
 		return LayerSemanticTypeUserStatusRecently, true
 	case 0x7b393160:
@@ -16556,6 +15233,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodStoriesExportStoryLink, true
 	case 0x7b9e1801:
 		return LayerSemanticTypeTextCashtag, true
+	case 0x7beafa85:
+		return LayerSemanticTypeCommunityPeerRequest, true
 	case 0x7bf6b15c:
 		return LayerSemanticTypePaymentsPaymentFormStars, true
 	case 0x7bfbdefc:
@@ -16744,8 +15423,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeSecureValueErrorReverseSide, true
 	case 0x869d758f:
 		return LayerSemanticTypeSecureValueError, true
-	case 0x869fbe10:
-		return LayerSemanticTypeInputReplyToMessage, true
 	case 0x86a0765d:
 		return LayerSemanticMethodAccountDeleteWebBrowserSettingsExceptions, true
 	case 0x86b40b08:
@@ -16754,6 +15431,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePremiumBoostsList, true
 	case 0x86fccf85:
 		return LayerSemanticTypeUpdateMoveStickerSetToTop, true
+	case 0x8704f2bf:
+		return LayerSemanticMethodEphemeralReportMessage, true
 	case 0x871fb939:
 		return LayerSemanticTypeUpdateGeoLiveViewed, true
 	case 0x8763d3e1:
@@ -16862,6 +15541,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeMessagePeerReaction, true
 	case 0x8c7f65e2:
 		return LayerSemanticTypeBotInlineMessageText, true
+	case 0x8c8219a8:
+		return LayerSemanticMethodCommunitiesTogglePeerLinkRequestApproval, true
 	case 0x8c88c923:
 		return LayerSemanticTypeUpdateChannelUserTyping, true
 	case 0x8c92b098:
@@ -16878,6 +15559,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodAuthSignIn, true
 	case 0x8d595cd6:
 		return LayerSemanticTypeStoryViews, true
+	case 0x8d78512a:
+		return LayerSemanticTypeCommunitiesParticipantJoinedChats, true
+	case 0x8d7ae6af:
+		return LayerSemanticMethodMessagesComposeRichMessageWithAI, true
 	case 0x8d9692a3:
 		return LayerSemanticMethodMessagesGetWebPage, true
 	case 0x8db33c4b:
@@ -16908,10 +15593,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeChannelAdminLogEventActionStopPoll, true
 	case 0x8f34b2f5:
 		return LayerSemanticTypeBotBusinessConnection, true
-	case 0x8f38cd1f:
-		return LayerSemanticMethodChannelsEditCreator, true
-	case 0x8f8c0e4e:
-		return LayerSemanticTypeURLAuthResultAccepted, true
 	case 0x8f9e6898:
 		return LayerSemanticMethodStoriesSendStory, true
 	case 0x8fb53057:
@@ -16962,8 +15643,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodUploadGetFileHashes, true
 	case 0x915860ae:
 		return LayerSemanticMethodAccountGetDefaultGroupPhotoEmojis, true
-	case 0x91b2d060:
-		return LayerSemanticMethodMessagesSendBotRequestedPeer, true
 	case 0x91cd32a8:
 		return LayerSemanticMethodPhotosGetUserPhotos, true
 	case 0x91dc3f31:
@@ -16980,8 +15659,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesSearchEmojiStickerSets, true
 	case 0x92ceddd4:
 		return LayerSemanticMethodMessagesCreateChat, true
-	case 0x92d33a0e:
-		return LayerSemanticTypeURLAuthResultRequest, true
 	case 0x93037e20:
 		return LayerSemanticTypeStatsPublicForwards, true
 	case 0x9308ce1b:
@@ -16994,10 +15671,10 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesGetBotCallbackAnswer, true
 	case 0x9375341e:
 		return LayerSemanticTypeUpdateSavedGifs, true
+	case 0x93773344:
+		return LayerSemanticMethodCommunitiesGetPeerLinkRequests, true
 	case 0x93b31848:
 		return LayerSemanticTypeMessageActionRequestedPeerSentMe, true
-	case 0x93b9fbb5:
-		return LayerSemanticTypeKeyboardButtonSwitchInline, true
 	case 0x93bd878d:
 		return LayerSemanticTypeChatlistsChatlistUpdates, true
 	case 0x93bf667f:
@@ -17020,8 +15697,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeStarsGiveawayOption, true
 	case 0x94d42ee7:
 		return LayerSemanticTypeChannelMessagesFilterEmpty, true
-	case 0x95728543:
-		return LayerSemanticTypeMessageActionStarGiftUnique, true
 	case 0x957b50fb:
 		return LayerSemanticTypeAccountPassword, true
 	case 0x95ac5ce4:
@@ -17052,6 +15727,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePoll, true
 	case 0x967a462e:
 		return LayerSemanticTypeInputWallPaperNoFile, true
+	case 0x9686cb50:
+		return LayerSemanticTypeTextDiff, true
 	case 0x96929a85:
 		return LayerSemanticTypeInputBotInlineMessageMediaGeo, true
 	case 0x96d074fd:
@@ -17080,6 +15757,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeDocumentAttributeHasStickers, true
 	case 0x981b91dd:
 		return LayerSemanticMethodPaymentsGetStarGiftCollections, true
+	case 0x9852d6d2:
+		return LayerSemanticTypeBotCommand, true
 	case 0x9852f9c6:
 		return LayerSemanticTypeDocumentAttributeAudio, true
 	case 0x9857ad07:
@@ -17112,6 +15791,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeKeyboardButtonSwitchInline, true
 	case 0x99622c0c:
 		return LayerSemanticTypePeerNotifySettings, true
+	case 0x9967ad0f:
+		return LayerSemanticMethodCommunitiesToggleParticipantBanned, true
 	case 0x997275b5:
 		return LayerSemanticTypeBoolTrue, true
 	case 0x998ab009:
@@ -17188,8 +15869,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesGetSearchResultsPositions, true
 	case 0x9c9abcb1:
 		return LayerSemanticMethodPaymentsGetStarGiftUpgradePreview, true
-	case 0x9cb490e9:
-		return LayerSemanticTypeMessage, true
 	case 0x9cc123c7:
 		return LayerSemanticTypePhoneConnection, true
 	case 0x9cd4eaf9:
@@ -17208,8 +15887,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeSecureValueTypePersonalDetails, true
 	case 0x9d2eac97:
 		return LayerSemanticTypeTextMath, true
-	case 0x9d4104e2:
-		return LayerSemanticMethodMessagesSummarizeText, true
 	case 0x9d6b13b0:
 		return LayerSemanticTypeStarGiftCollection, true
 	case 0x9d84f3db:
@@ -17270,24 +15947,18 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeNotifyPeer, true
 	case 0xa0058751:
 		return LayerSemanticTypePaymentsPaymentForm, true
-	case 0xa00918af:
-		return LayerSemanticMethodChannelsGetFutureCreatorAfterLeave, true
 	case 0xa00e67d6:
 		return LayerSemanticTypeTheme, true
 	case 0xa00f32b0:
 		return LayerSemanticMethodMessagesEditChatParticipantRank, true
 	case 0xa02a982e:
 		return LayerSemanticTypeUpdateBotDeleteBusinessMessage, true
-	case 0xa02bc13e:
-		return LayerSemanticTypeUserFull, true
 	case 0xa03e5b85:
 		return LayerSemanticTypeReplyKeyboardHide, true
 	case 0xa04e8d3a:
 		return LayerSemanticTypeChannelFull, true
 	case 0xa0624cf7:
 		return LayerSemanticTypeBusinessBotRights, true
-	case 0xa0933f5b:
-		return LayerSemanticTypeChatParticipantAdmin, true
 	case 0xa098d6af:
 		return LayerSemanticTypeHelpPassportConfig, true
 	case 0xa0ab6cc6:
@@ -17296,8 +15967,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesDeleteParticipantReactions, true
 	case 0xa0ba4f17:
 		return LayerSemanticTypePaymentsStarGiftCollectionsNotModified, true
-	case 0xa0c0505c:
-		return LayerSemanticTypeKeyboardButtonSimpleWebView, true
 	case 0xa0d0744b:
 		return LayerSemanticTypeSecureValueTypeIdentityCard, true
 	case 0xa0f4cb4f:
@@ -17344,8 +16013,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeSendMessageRichMessageDraftAction, true
 	case 0xa2e214a4:
 		return LayerSemanticTypeInputCollectiblePhone, true
-	case 0xa2fa4880:
-		return LayerSemanticTypeKeyboardButton, true
 	case 0xa319e569:
 		return LayerSemanticMethodPaymentsGetSavedStarGifts, true
 	case 0xa36396e5:
@@ -17356,6 +16023,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePaymentsStarGiftsNotModified, true
 	case 0xa3b54985:
 		return LayerSemanticTypeChannelParticipantsKicked, true
+	case 0xa3c0d511:
+		return LayerSemanticMethodEphemeralDeleteMessage, true
 	case 0xa3d1cb80:
 		return LayerSemanticTypeReactionCount, true
 	case 0xa416ac81:
@@ -17416,8 +16085,12 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodAccountUpdateBusinessIntro, true
 	case 0xa6341782:
 		return LayerSemanticTypeMessagesDiscussionMessage, true
+	case 0xa63859ec:
+		return LayerSemanticMethodCommunitiesCreate, true
 	case 0xa6437ef6:
 		return LayerSemanticMethodStatsGetStoryPublicForwards, true
+	case 0xa663e830:
+		return LayerSemanticMethodCommunitiesGetJoinedCommunities, true
 	case 0xa6751e66:
 		return LayerSemanticTypeInputStorePaymentPremiumSubscription, true
 	case 0xa676a322:
@@ -17526,8 +16199,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesToggleSavedDialogPin, true
 	case 0xac8505a5:
 		return LayerSemanticMethodMessagesDeletePollAnswer, true
-	case 0xaca1657b:
-		return LayerSemanticTypeUpdateMessagePoll, true
 	case 0xaca9fd2e:
 		return LayerSemanticMethodInvokeWithTakeout, true
 	case 0xacfa1a7e:
@@ -17586,8 +16257,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesGetForumTopicsByID, true
 	case 0xafb6144a:
 		return LayerSemanticTypeChannelAdminLogEventActionParticipantJoinByRequest, true
-	case 0xafd93fbb:
-		return LayerSemanticTypeKeyboardButtonBuy, true
 	case 0xafe5623f:
 		return LayerSemanticTypePhoneJoinAsPeers, true
 	case 0xaff56398:
@@ -17618,12 +16287,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPaymentsCraftStarGift, true
 	case 0xb106e66c:
 		return LayerSemanticMethodMessagesEditMessage, true
-	case 0xb11eafa2:
-		return LayerSemanticMethodMessagesToggleNoForwards, true
-	case 0xb12c7125:
-		return LayerSemanticMethodMessagesAcceptURLAuth, true
-	case 0xb16a6c29:
-		return LayerSemanticTypeKeyboardButtonRequestPhone, true
+	case 0xb1b8cc83:
+		return LayerSemanticTypeUser, true
 	case 0xb1c3caa7:
 		return LayerSemanticTypeChannelAdminLogEventActionChangeStickerSet, true
 	case 0xb1d11410:
@@ -17670,8 +16335,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypePageRelatedArticle, true
 	case 0xb3a07661:
 		return LayerSemanticTypeMessageActionGroupCallScheduled, true
-	case 0xb3ba0635:
-		return LayerSemanticTypeInputMediaPhoto, true
 	case 0xb3cea0e4:
 		return LayerSemanticTypeStorageFileMp4, true
 	case 0xb3fb5361:
@@ -17730,8 +16393,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInlineBotWebView, true
 	case 0xb574b16b:
 		return LayerSemanticMethodAccountSetContentSettings, true
-	case 0xb583ba46:
-		return LayerSemanticMethodStoriesEditStory, true
 	case 0xb59cf977:
 		return LayerSemanticMethodPhoneCheckGroupCall, true
 	case 0xb5a1ce5a:
@@ -17788,8 +16449,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeSendAsPeer, true
 	case 0xb826e150:
 		return LayerSemanticTypeStoryFwdHeader, true
-	case 0xb8425be9:
-		return LayerSemanticTypePoll, true
 	case 0xb86e380e:
 		return LayerSemanticMethodMessagesGetPollVotes, true
 	case 0xb880bc4b:
@@ -17814,8 +16473,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeMessageActionSetChatTheme, true
 	case 0xb92c09e2:
 		return LayerSemanticTypeRecentMeURLUser, true
-	case 0xb92f76cf:
-		return LayerSemanticTypeMessage, true
 	case 0xb92fb6cd:
 		return LayerSemanticTypePageListItemText, true
 	case 0xb940c666:
@@ -17846,6 +16503,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodContactsEditCloseFriends, true
 	case 0xba7bb15e:
 		return LayerSemanticTypePollResults, true
+	case 0xba9ee679:
+		return LayerSemanticMethodMessagesRequestChatJoinWebView, true
 	case 0xbaa57628:
 		return LayerSemanticTypeAutoDownloadSettings, true
 	case 0xbaafe5e0:
@@ -17876,8 +16535,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeStoryReactionPublicForward, true
 	case 0xbbb6b4a3:
 		return LayerSemanticTypeStarsAmount, true
-	case 0xbbc7515d:
-		return LayerSemanticTypeKeyboardButtonRequestPoll, true
 	case 0xbbf2dda0:
 		return LayerSemanticTypeSecurePasswordKdfAlgoPBKDF2HMACSHA512iter100000, true
 	case 0xbbf51685:
@@ -17942,6 +16599,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeAccountChatThemes, true
 	case 0xbe1e85ba:
 		return LayerSemanticMethodFragmentGetCollectibleInfo, true
+	case 0xbe376999:
+		return LayerSemanticTypeNotifyCommunity, true
 	case 0xbe382906:
 		return LayerSemanticTypeMessagesFeaturedStickers, true
 	case 0xbe4e0ef8:
@@ -17972,6 +16631,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeHelpPassportConfigNotModified, true
 	case 0xbfd064ec:
 		return LayerSemanticTypePageBlockHeader, true
+	case 0xbfe3dd3d:
+		return LayerSemanticMethodCommunitiesToggleAllPeerLinkRequestApproval, true
 	case 0xc000bba2:
 		return LayerSemanticTypeAuthSentCodeTypeSMS, true
 	case 0xc007cec3:
@@ -17982,8 +16643,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodChannelsDeleteChannel, true
 	case 0xc01f6fe8:
 		return LayerSemanticTypeMessagesSavedDialogsNotModified, true
-	case 0xc02d4007:
-		return LayerSemanticTypeChatParticipant, true
 	case 0xc070d93e:
 		return LayerSemanticTypePageBlockPreformatted, true
 	case 0xc077ec01:
@@ -18146,8 +16805,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputChatTheme, true
 	case 0xc957a766:
 		return LayerSemanticTypeUpdateGroupCallEncryptedMessage, true
-	case 0xc9662d05:
-		return LayerSemanticTypeInputKeyboardButtonRequestPeer, true
 	case 0xc982eaba:
 		return LayerSemanticTypeCDNPublicKey, true
 	case 0xc99b1950:
@@ -18188,8 +16845,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeLabeledPrice, true
 	case 0xcb2ac766:
 		return LayerSemanticTypeChannelAdminLogEventActionToggleNoForwards, true
-	case 0xcb397619:
-		return LayerSemanticTypeChannelParticipant, true
 	case 0xcb43acde:
 		return LayerSemanticTypeStatsAbsValueAndPrev, true
 	case 0xcb6ff828:
@@ -18200,6 +16855,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodInvokeAfterMsg, true
 	case 0xcba9a52f:
 		return LayerSemanticTypeTodoItem, true
+	case 0xcbb7a507:
+		return LayerSemanticTypeCommunityFull, true
 	case 0xcbc6d107:
 		return LayerSemanticMethodMessagesAddChatUser, true
 	case 0xcbc7ee28:
@@ -18248,8 +16905,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUpdateBotGuestChatQuery, true
 	case 0xcdd42a05:
 		return LayerSemanticMethodAuthBindTempAuthKey, true
-	case 0xcdff0eca:
-		return LayerSemanticTypeForumTopic, true
 	case 0xce03da83:
 		return LayerSemanticMethodChatlistsGetExportedInvites, true
 	case 0xce0d37b0:
@@ -18274,8 +16929,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodAccountSetContactSignUpNotification, true
 	case 0xcff63ea9:
 		return LayerSemanticTypeAiComposeTone, true
-	case 0xd02e7fd4:
-		return LayerSemanticTypeInputKeyboardButtonURLAuth, true
 	case 0xd069ccde:
 		return LayerSemanticMethodStoriesStartLive, true
 	case 0xd06e93a8:
@@ -18322,8 +16975,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesSendReaction, true
 	case 0xd31bc45d:
 		return LayerSemanticTypeStarGiftActiveAuctionState, true
-	case 0xd33c8902:
-		return LayerSemanticMethodChannelsEditAdmin, true
 	case 0xd33f43f3:
 		return LayerSemanticTypeInputMediaGame, true
 	case 0xd348bc44:
@@ -18348,12 +16999,12 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesDeleteExportedChatInvite, true
 	case 0xd483f2a8:
 		return LayerSemanticMethodMessagesGetQuickReplies, true
+	case 0xd49f34c6:
+		return LayerSemanticTypeChannel, true
 	case 0xd52f73f7:
 		return LayerSemanticTypeSendMessageRecordAudioAction, true
 	case 0xd5676710:
 		return LayerSemanticTypeChannelAdminLogEventActionParticipantToggleAdmin, true
-	case 0xd58a08c6:
-		return LayerSemanticTypeDialog, true
 	case 0xd58f130a:
 		return LayerSemanticMethodMessagesSetBotCallbackAnswer, true
 	case 0xd5a41724:
@@ -18398,6 +17049,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeStatsGroupTopAdmin, true
 	case 0xd766c50a:
 		return LayerSemanticTypeInlineQueryPeerTypeChat, true
+	case 0xd766e3ea:
+		return LayerSemanticMethodCommunitiesToggleCommunityCollapsedInDialogs, true
 	case 0xd7ca61a2:
 		return LayerSemanticTypeUpdateChatParticipantAdmin, true
 	case 0xd7e78225:
@@ -18432,8 +17085,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodPaymentsGetStarsRevenueStats, true
 	case 0xd92c2285:
 		return LayerSemanticTypeSpeakingInGroupCallAction, true
-	case 0xd93d859c:
-		return LayerSemanticTypeStarGiftAttributeBackdrop, true
 	case 0xd94305e0:
 		return LayerSemanticMethodAccountUpdatePersonalChannel, true
 	case 0xd9565c39:
@@ -18444,6 +17095,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodMessagesGetCustomEmojiDocuments, true
 	case 0xd9ba2e54:
 		return LayerSemanticMethodContactsAddContact, true
+	case 0xd9c6dc1a:
+		return LayerSemanticTypeEphemeralMessage, true
 	case 0xda2ad647:
 		return LayerSemanticTypeMessagesEmojiGameOutcome, true
 	case 0xda80f42f:
@@ -18648,8 +17301,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodAccountGetUniqueGiftChatThemes, true
 	case 0xe4621141:
 		return LayerSemanticTypePrivacyValueDisallowUsers, true
-	case 0xe46bcee4:
-		return LayerSemanticTypeChatParticipantCreator, true
 	case 0xe470bcfd:
 		return LayerSemanticMethodMessagesGetPeerDialogs, true
 	case 0xe477092e:
@@ -18768,8 +17419,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeInputPrivacyValueDisallowChatParticipants, true
 	case 0xe9763aec:
 		return LayerSemanticTypeSendMessageUploadVideoAction, true
-	case 0xe988037b:
-		return LayerSemanticTypeInputKeyboardButtonUserProfile, true
 	case 0xe9baa668:
 		return LayerSemanticTypeFolderPeer, true
 	case 0xe9ce781c:
@@ -18798,8 +17447,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodChannelsReadMessageContents, true
 	case 0xeabbb94c:
 		return LayerSemanticMethodChannelsTogglePreHistoryHidden, true
-	case 0xead6805e:
-		return LayerSemanticTypeSavedStarGift, true
 	case 0xeae87e42:
 		return LayerSemanticTypeContactsContacts, true
 	case 0xeafc32bc:
@@ -18864,8 +17511,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodUpdatesGetState, true
 	case 0xedd49ef0:
 		return LayerSemanticMethodChannelsToggleSlowMode, true
-	case 0xedf164f1:
-		return LayerSemanticTypeStoryItem, true
 	case 0xedf3add0:
 		return LayerSemanticTypePublicForwardStory, true
 	case 0xedfc111e:
@@ -19064,6 +17709,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeUpdateReadStories, true
 	case 0xf7760f51:
 		return LayerSemanticMethodStickersRemoveStickerFromSet, true
+	case 0xf78a0973:
+		return LayerSemanticTypeDialogCommunity, true
 	case 0xf7c1b13f:
 		return LayerSemanticTypeInputUserSelf, true
 	case 0xf7e8d89b:
@@ -19080,6 +17727,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeVideoSizeEmojiMarkup, true
 	case 0xf8654027:
 		return LayerSemanticMethodContactsExportContactToken, true
+	case 0xf87eabab:
+		return LayerSemanticMethodCommunitiesGetParticipantJoinedChats, true
 	case 0xf8827ebf:
 		return LayerSemanticTypeAuthSentCodePaymentRequired, true
 	case 0xf888fa1a:
@@ -19096,8 +17745,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeAccountPasskeys, true
 	case 0xf8ec284b:
 		return LayerSemanticTypePeerSelfLocated, true
-	case 0xf8f8eb1e:
-		return LayerSemanticTypeURLAuthResultRequest, true
 	case 0xf92424d2:
 		return LayerSemanticTypeChannelAdminLogEventActionParticipantMute, true
 	case 0xf93cd45c:
@@ -19174,8 +17821,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodUsersSuggestBirthday, true
 	case 0xfc78af9b:
 		return LayerSemanticMethodMessagesReport, true
-	case 0xfc796b3f:
-		return LayerSemanticTypeKeyboardButtonRequestGeoLocation, true
 	case 0xfc878fc8:
 		return LayerSemanticTypePhoneCallProtocol, true
 	case 0xfc89f7f3:
@@ -19194,8 +17839,8 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticTypeDocumentAttributeCustomEmoji, true
 	case 0xfd2dda49:
 		return LayerSemanticMethodMessagesToggleDialogFilterTags, true
-	case 0xfd426afe:
-		return LayerSemanticMethodMessagesComposeMessageWithAI, true
+	case 0xfd3cdab8:
+		return LayerSemanticTypeCommunityForbidden, true
 	case 0xfd5e12bd:
 		return LayerSemanticTypeMessagesWebPage, true
 	case 0xfd5ec8f5:
@@ -19224,8 +17869,6 @@ func layerSemanticByWireID(id uint32) (LayerSemanticID, bool) {
 		return LayerSemanticMethodAccountInstallWallPaper, true
 	case 0xfef48f62:
 		return LayerSemanticMethodMessagesSendMessage, true
-	case 0xff16e2ca:
-		return LayerSemanticTypePollAnswer, true
 	case 0xff544e65:
 		return LayerSemanticTypeFolder, true
 	case 0xff57708d:

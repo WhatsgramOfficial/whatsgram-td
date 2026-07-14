@@ -228,10 +228,10 @@ func TestTelegramLayerObligationReport(t *testing.T) {
 	if counts[LayerObligationPrivate] != 0 {
 		t.Fatalf("official profiles produced private obligations: %v", counts)
 	}
-	if got, want := len(report.Unresolved()), 171; got != want {
+	if got, want := len(report.Unresolved()), 35; got != want {
 		t.Fatalf("blocking unresolved obligations = %d, want %d", got, want)
 	}
-	t.Logf("Telegram Layers 220-227 obligations: total=%d by_kind=%v", len(report.Obligations), counts)
+	t.Logf("Telegram Layers 225-228 obligations: total=%d by_kind=%v", len(report.Obligations), counts)
 }
 
 func obligationSchemaSet(t *testing.T) *SchemaSet {

@@ -759,21 +759,23 @@ func (e *layerCodecEmitter) buildProfileBody(wire *layerWirePlan, action *layerW
 	canonicalPrimitiveFastPath := action.Layer == e.wire.CanonicalLayer &&
 		action.Kind == layerWireDirect && layerCodecPrimitiveOnlyBody(wire.Canonical.Definition) &&
 		!layerRPCProfileHasAdmissionFields(admissionProfile)
-	preflight, err := e.emitPreflightBody(action.Layer, conversion, wire.Canonical)
-	if err != nil {
-		return body, err
-	}
-	body.Preflight = preflight
 	if reason, ok := layerCodecRejected(conversion, LayerDirectionCanonicalToProfile); ok {
 		body.EncodeReject = reason
-	} else if canonicalPrimitiveFastPath {
-		body.Encode = "return value.EncodeBare(b)\n"
 	} else {
-		encoded, err := e.emitEncodeBody(action.Layer, conversion, wire.Canonical, admissionProfile)
+		preflight, err := e.emitPreflightBody(action.Layer, conversion, wire.Canonical)
 		if err != nil {
 			return body, err
 		}
-		body.Encode = encoded
+		body.Preflight = preflight
+		if canonicalPrimitiveFastPath {
+			body.Encode = "return value.EncodeBare(b)\n"
+		} else {
+			encoded, err := e.emitEncodeBody(action.Layer, conversion, wire.Canonical, admissionProfile)
+			if err != nil {
+				return body, err
+			}
+			body.Encode = encoded
+		}
 	}
 
 	if reason, ok := layerCodecRejected(conversion, LayerDirectionProfileToCanonical); ok {

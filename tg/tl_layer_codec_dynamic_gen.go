@@ -574,6 +574,20 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyChatlistsExportedInvites(profile, value)
 	case *CodeSettings:
 		return layerProjectFamilyCodeSettings(profile, value)
+	case *CommunitiesParticipantJoinedChats:
+		return layerProjectFamilyCommunitiesParticipantJoinedChats(profile, value)
+	case *CommunitiesPeerLinkRequests:
+		return layerProjectFamilyCommunitiesPeerLinkRequests(profile, value)
+	case *Community:
+		return layerProjectFamilyCommunity(profile, value)
+	case *CommunityForbidden:
+		return layerProjectFamilyCommunityForbidden(profile, value)
+	case *CommunityFull:
+		return layerProjectFamilyCommunityFull(profile, value)
+	case *CommunityPeer:
+		return layerProjectFamilyCommunityPeer(profile, value)
+	case *CommunityPeerRequest:
+		return layerProjectFamilyCommunityPeerRequest(profile, value)
 	case *Config:
 		return layerProjectFamilyConfig(profile, value)
 	case *ConnectedBot:
@@ -620,6 +634,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyDefaultHistoryTTL(profile, value)
 	case *Dialog:
 		return layerProjectFamilyDialog(profile, value)
+	case *DialogCommunity:
+		return layerProjectFamilyDialogCommunity(profile, value)
 	case *DialogFilter:
 		return layerProjectFamilyDialogFilter(profile, value)
 	case *DialogFilterChatlist:
@@ -632,6 +648,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyDialogFolder(profile, value)
 	case *DialogPeer:
 		return layerProjectFamilyDialogPeer(profile, value)
+	case *DialogPeerCommunity:
+		return layerProjectFamilyDialogPeerCommunity(profile, value)
 	case *DialogPeerFolder:
 		return layerProjectFamilyDialogPeerFolder(profile, value)
 	case *DisallowedGiftsSettings:
@@ -718,6 +736,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyEncryptedMessage(profile, value)
 	case *EncryptedMessageService:
 		return layerProjectFamilyEncryptedMessageService(profile, value)
+	case *EphemeralMessage:
+		return layerProjectFamilyEphemeralMessage(profile, value)
 	case *Error:
 		return layerProjectFamilyError(profile, value)
 	case *ExportedChatlistInvite:
@@ -858,6 +878,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyInputAiComposeToneDefault(profile, value)
 	case *InputAiComposeToneID:
 		return layerProjectFamilyInputAiComposeToneID(profile, value)
+	case *InputAiComposeToneSingleUse:
+		return layerProjectFamilyInputAiComposeToneSingleUse(profile, value)
 	case *InputAiComposeToneSlug:
 		return layerProjectFamilyInputAiComposeToneSlug(profile, value)
 	case *InputAppEvent:
@@ -940,6 +962,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyInputCollectibleUsername(profile, value)
 	case *InputDialogPeer:
 		return layerProjectFamilyInputDialogPeer(profile, value)
+	case *InputDialogPeerCommunity:
+		return layerProjectFamilyInputDialogPeerCommunity(profile, value)
 	case *InputDialogPeerFolder:
 		return layerProjectFamilyInputDialogPeerFolder(profile, value)
 	case *InputDocument:
@@ -1120,6 +1144,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyInputNotifyBroadcasts(profile, value)
 	case *InputNotifyChats:
 		return layerProjectFamilyInputNotifyChats(profile, value)
+	case *InputNotifyCommunity:
+		return layerProjectFamilyInputNotifyCommunity(profile, value)
 	case *InputNotifyForumTopic:
 		return layerProjectFamilyInputNotifyForumTopic(profile, value)
 	case *InputNotifyPeer:
@@ -1236,6 +1262,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyInputQuickReplyShortcut(profile, value)
 	case *InputQuickReplyShortcutID:
 		return layerProjectFamilyInputQuickReplyShortcutID(profile, value)
+	case *InputReplyToEphemeralMessage:
+		return layerProjectFamilyInputReplyToEphemeralMessage(profile, value)
 	case *InputReplyToMessage:
 		return layerProjectFamilyInputReplyToMessage(profile, value)
 	case *InputReplyToMonoForum:
@@ -1478,6 +1506,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyMessageActionBoostApply(profile, value)
 	case *MessageActionBotAllowed:
 		return layerProjectFamilyMessageActionBotAllowed(profile, value)
+	case *MessageActionChangeCommunity:
+		return layerProjectFamilyMessageActionChangeCommunity(profile, value)
 	case *MessageActionChangeCreator:
 		return layerProjectFamilyMessageActionChangeCreator(profile, value)
 	case *MessageActionChannelCreate:
@@ -1776,6 +1806,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyMessagesCheckedHistoryImportPeer(profile, value)
 	case *MessagesComposedMessageWithAI:
 		return layerProjectFamilyMessagesComposedMessageWithAI(profile, value)
+	case *MessagesComposedRichMessageWithAI:
+		return layerProjectFamilyMessagesComposedRichMessageWithAI(profile, value)
 	case *MessagesDhConfig:
 		return layerProjectFamilyMessagesDhConfig(profile, value)
 	case *MessagesDhConfigNotModified:
@@ -1910,6 +1942,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyMessagesTranscribedAudio(profile, value)
 	case *MessagesTranslateResult:
 		return layerProjectFamilyMessagesTranslateResult(profile, value)
+	case *MessagesTranslatedRichMessage:
+		return layerProjectFamilyMessagesTranslatedRichMessage(profile, value)
 	case *MessagesVotesList:
 		return layerProjectFamilyMessagesVotesList(profile, value)
 	case *MessagesWebPage:
@@ -1936,6 +1970,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyNotifyBroadcasts(profile, value)
 	case *NotifyChats:
 		return layerProjectFamilyNotifyChats(profile, value)
+	case *NotifyCommunity:
+		return layerProjectFamilyNotifyCommunity(profile, value)
 	case *NotifyForumTopic:
 		return layerProjectFamilyNotifyForumTopic(profile, value)
 	case *NotifyPeer:
@@ -2774,6 +2810,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyTextCustomEmoji(profile, value)
 	case *TextDate:
 		return layerProjectFamilyTextDate(profile, value)
+	case *TextDiff:
+		return layerProjectFamilyTextDiff(profile, value)
 	case *TextEmail:
 		return layerProjectFamilyTextEmail(profile, value)
 	case *TextEmpty:
@@ -2890,6 +2928,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyUpdateBotPurchasedPaidMedia(profile, value)
 	case *UpdateBotShippingQuery:
 		return layerProjectFamilyUpdateBotShippingQuery(profile, value)
+	case *UpdateBotStarsSubscription:
+		return layerProjectFamilyUpdateBotStarsSubscription(profile, value)
 	case *UpdateBotStopped:
 		return layerProjectFamilyUpdateBotStopped(profile, value)
 	case *UpdateBotWebhookJSON:
@@ -2944,6 +2984,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyUpdateDCOptions(profile, value)
 	case *UpdateDeleteChannelMessages:
 		return layerProjectFamilyUpdateDeleteChannelMessages(profile, value)
+	case *UpdateDeleteEphemeralMessages:
+		return layerProjectFamilyUpdateDeleteEphemeralMessages(profile, value)
 	case *UpdateDeleteGroupCallMessages:
 		return layerProjectFamilyUpdateDeleteGroupCallMessages(profile, value)
 	case *UpdateDeleteMessages:
@@ -2968,6 +3010,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyUpdateDraftMessage(profile, value)
 	case *UpdateEditChannelMessage:
 		return layerProjectFamilyUpdateEditChannelMessage(profile, value)
+	case *UpdateEditEphemeralMessage:
+		return layerProjectFamilyUpdateEditEphemeralMessage(profile, value)
 	case *UpdateEditMessage:
 		return layerProjectFamilyUpdateEditMessage(profile, value)
 	case *UpdateEmojiGameInfo:
@@ -3030,6 +3074,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyUpdateNewChannelMessage(profile, value)
 	case *UpdateNewEncryptedMessage:
 		return layerProjectFamilyUpdateNewEncryptedMessage(profile, value)
+	case *UpdateNewEphemeralMessage:
+		return layerProjectFamilyUpdateNewEphemeralMessage(profile, value)
 	case *UpdateNewMessage:
 		return layerProjectFamilyUpdateNewMessage(profile, value)
 	case *UpdateNewQuickReply:
@@ -3832,6 +3878,24 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyChatlistsJoinChatlistUpdatesRequest(profile, value)
 	case *ChatlistsLeaveChatlistRequest:
 		return layerProjectFamilyChatlistsLeaveChatlistRequest(profile, value)
+	case *CommunitiesCreateRequest:
+		return layerProjectFamilyCommunitiesCreateRequest(profile, value)
+	case *CommunitiesGetJoinedCommunitiesRequest:
+		return layerProjectFamilyCommunitiesGetJoinedCommunitiesRequest(profile, value)
+	case *CommunitiesGetParticipantJoinedChatsRequest:
+		return layerProjectFamilyCommunitiesGetParticipantJoinedChatsRequest(profile, value)
+	case *CommunitiesGetPeerLinkRequestsRequest:
+		return layerProjectFamilyCommunitiesGetPeerLinkRequestsRequest(profile, value)
+	case *CommunitiesToggleAllPeerLinkRequestApprovalRequest:
+		return layerProjectFamilyCommunitiesToggleAllPeerLinkRequestApprovalRequest(profile, value)
+	case *CommunitiesToggleCommunityCollapsedInDialogsRequest:
+		return layerProjectFamilyCommunitiesToggleCommunityCollapsedInDialogsRequest(profile, value)
+	case *CommunitiesToggleParticipantBannedRequest:
+		return layerProjectFamilyCommunitiesToggleParticipantBannedRequest(profile, value)
+	case *CommunitiesTogglePeerLinkRequest:
+		return layerProjectFamilyCommunitiesTogglePeerLinkRequest(profile, value)
+	case *CommunitiesTogglePeerLinkRequestApprovalRequest:
+		return layerProjectFamilyCommunitiesTogglePeerLinkRequestApprovalRequest(profile, value)
 	case *ContactsAcceptContactRequest:
 		return layerProjectFamilyContactsAcceptContactRequest(profile, value)
 	case *ContactsAddContactRequest:
@@ -3888,6 +3952,14 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyContactsUnblockRequest(profile, value)
 	case *ContactsUpdateContactNoteRequest:
 		return layerProjectFamilyContactsUpdateContactNoteRequest(profile, value)
+	case *EphemeralDeleteMessageRequest:
+		return layerProjectFamilyEphemeralDeleteMessageRequest(profile, value)
+	case *EphemeralGetCallbackAnswerRequest:
+		return layerProjectFamilyEphemeralGetCallbackAnswerRequest(profile, value)
+	case *EphemeralReportMessageRequest:
+		return layerProjectFamilyEphemeralReportMessageRequest(profile, value)
+	case *EphemeralSendMessageRequest:
+		return layerProjectFamilyEphemeralSendMessageRequest(profile, value)
 	case *FoldersEditPeerFoldersRequest:
 		return layerProjectFamilyFoldersEditPeerFoldersRequest(profile, value)
 	case *FragmentGetCollectibleInfoRequest:
@@ -4004,6 +4076,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyMessagesClickSponsoredMessageRequest(profile, value)
 	case *MessagesComposeMessageWithAIRequest:
 		return layerProjectFamilyMessagesComposeMessageWithAIRequest(profile, value)
+	case *MessagesComposeRichMessageWithAIRequest:
+		return layerProjectFamilyMessagesComposeRichMessageWithAIRequest(profile, value)
 	case *MessagesCreateChatRequest:
 		return layerProjectFamilyMessagesCreateChatRequest(profile, value)
 	case *MessagesCreateForumTopicRequest:
@@ -4338,6 +4412,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyMessagesReportSponsoredMessageRequest(profile, value)
 	case *MessagesRequestAppWebViewRequest:
 		return layerProjectFamilyMessagesRequestAppWebViewRequest(profile, value)
+	case *MessagesRequestChatJoinWebViewRequest:
+		return layerProjectFamilyMessagesRequestChatJoinWebViewRequest(profile, value)
 	case *MessagesRequestEncryptionRequest:
 		return layerProjectFamilyMessagesRequestEncryptionRequest(profile, value)
 	case *MessagesRequestMainWebViewRequest:
@@ -4462,6 +4538,8 @@ func layerProjectObject(profile LayerProfile, value bin.Object) (bin.Object, boo
 		return layerProjectFamilyMessagesToggleTodoCompletedRequest(profile, value)
 	case *MessagesTranscribeAudioRequest:
 		return layerProjectFamilyMessagesTranscribeAudioRequest(profile, value)
+	case *MessagesTranslateRichMessageRequest:
+		return layerProjectFamilyMessagesTranslateRichMessageRequest(profile, value)
 	case *MessagesTranslateTextRequest:
 		return layerProjectFamilyMessagesTranslateTextRequest(profile, value)
 	case *MessagesUninstallStickerSetRequest:
@@ -5428,6 +5506,20 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyChatlistsExportedInvites(profile, value, state)
 	case *CodeSettings:
 		return layerPreflightFamilyCodeSettings(profile, value, state)
+	case *CommunitiesParticipantJoinedChats:
+		return layerPreflightFamilyCommunitiesParticipantJoinedChats(profile, value, state)
+	case *CommunitiesPeerLinkRequests:
+		return layerPreflightFamilyCommunitiesPeerLinkRequests(profile, value, state)
+	case *Community:
+		return layerPreflightFamilyCommunity(profile, value, state)
+	case *CommunityForbidden:
+		return layerPreflightFamilyCommunityForbidden(profile, value, state)
+	case *CommunityFull:
+		return layerPreflightFamilyCommunityFull(profile, value, state)
+	case *CommunityPeer:
+		return layerPreflightFamilyCommunityPeer(profile, value, state)
+	case *CommunityPeerRequest:
+		return layerPreflightFamilyCommunityPeerRequest(profile, value, state)
 	case *Config:
 		return layerPreflightFamilyConfig(profile, value, state)
 	case *ConnectedBot:
@@ -5474,6 +5566,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyDefaultHistoryTTL(profile, value, state)
 	case *Dialog:
 		return layerPreflightFamilyDialog(profile, value, state)
+	case *DialogCommunity:
+		return layerPreflightFamilyDialogCommunity(profile, value, state)
 	case *DialogFilter:
 		return layerPreflightFamilyDialogFilter(profile, value, state)
 	case *DialogFilterChatlist:
@@ -5486,6 +5580,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyDialogFolder(profile, value, state)
 	case *DialogPeer:
 		return layerPreflightFamilyDialogPeer(profile, value, state)
+	case *DialogPeerCommunity:
+		return layerPreflightFamilyDialogPeerCommunity(profile, value, state)
 	case *DialogPeerFolder:
 		return layerPreflightFamilyDialogPeerFolder(profile, value, state)
 	case *DisallowedGiftsSettings:
@@ -5572,6 +5668,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyEncryptedMessage(profile, value, state)
 	case *EncryptedMessageService:
 		return layerPreflightFamilyEncryptedMessageService(profile, value, state)
+	case *EphemeralMessage:
+		return layerPreflightFamilyEphemeralMessage(profile, value, state)
 	case *Error:
 		return layerPreflightFamilyError(profile, value, state)
 	case *ExportedChatlistInvite:
@@ -5712,6 +5810,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyInputAiComposeToneDefault(profile, value, state)
 	case *InputAiComposeToneID:
 		return layerPreflightFamilyInputAiComposeToneID(profile, value, state)
+	case *InputAiComposeToneSingleUse:
+		return layerPreflightFamilyInputAiComposeToneSingleUse(profile, value, state)
 	case *InputAiComposeToneSlug:
 		return layerPreflightFamilyInputAiComposeToneSlug(profile, value, state)
 	case *InputAppEvent:
@@ -5794,6 +5894,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyInputCollectibleUsername(profile, value, state)
 	case *InputDialogPeer:
 		return layerPreflightFamilyInputDialogPeer(profile, value, state)
+	case *InputDialogPeerCommunity:
+		return layerPreflightFamilyInputDialogPeerCommunity(profile, value, state)
 	case *InputDialogPeerFolder:
 		return layerPreflightFamilyInputDialogPeerFolder(profile, value, state)
 	case *InputDocument:
@@ -5974,6 +6076,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyInputNotifyBroadcasts(profile, value, state)
 	case *InputNotifyChats:
 		return layerPreflightFamilyInputNotifyChats(profile, value, state)
+	case *InputNotifyCommunity:
+		return layerPreflightFamilyInputNotifyCommunity(profile, value, state)
 	case *InputNotifyForumTopic:
 		return layerPreflightFamilyInputNotifyForumTopic(profile, value, state)
 	case *InputNotifyPeer:
@@ -6090,6 +6194,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyInputQuickReplyShortcut(profile, value, state)
 	case *InputQuickReplyShortcutID:
 		return layerPreflightFamilyInputQuickReplyShortcutID(profile, value, state)
+	case *InputReplyToEphemeralMessage:
+		return layerPreflightFamilyInputReplyToEphemeralMessage(profile, value, state)
 	case *InputReplyToMessage:
 		return layerPreflightFamilyInputReplyToMessage(profile, value, state)
 	case *InputReplyToMonoForum:
@@ -6332,6 +6438,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyMessageActionBoostApply(profile, value, state)
 	case *MessageActionBotAllowed:
 		return layerPreflightFamilyMessageActionBotAllowed(profile, value, state)
+	case *MessageActionChangeCommunity:
+		return layerPreflightFamilyMessageActionChangeCommunity(profile, value, state)
 	case *MessageActionChangeCreator:
 		return layerPreflightFamilyMessageActionChangeCreator(profile, value, state)
 	case *MessageActionChannelCreate:
@@ -6630,6 +6738,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyMessagesCheckedHistoryImportPeer(profile, value, state)
 	case *MessagesComposedMessageWithAI:
 		return layerPreflightFamilyMessagesComposedMessageWithAI(profile, value, state)
+	case *MessagesComposedRichMessageWithAI:
+		return layerPreflightFamilyMessagesComposedRichMessageWithAI(profile, value, state)
 	case *MessagesDhConfig:
 		return layerPreflightFamilyMessagesDhConfig(profile, value, state)
 	case *MessagesDhConfigNotModified:
@@ -6764,6 +6874,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyMessagesTranscribedAudio(profile, value, state)
 	case *MessagesTranslateResult:
 		return layerPreflightFamilyMessagesTranslateResult(profile, value, state)
+	case *MessagesTranslatedRichMessage:
+		return layerPreflightFamilyMessagesTranslatedRichMessage(profile, value, state)
 	case *MessagesVotesList:
 		return layerPreflightFamilyMessagesVotesList(profile, value, state)
 	case *MessagesWebPage:
@@ -6790,6 +6902,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyNotifyBroadcasts(profile, value, state)
 	case *NotifyChats:
 		return layerPreflightFamilyNotifyChats(profile, value, state)
+	case *NotifyCommunity:
+		return layerPreflightFamilyNotifyCommunity(profile, value, state)
 	case *NotifyForumTopic:
 		return layerPreflightFamilyNotifyForumTopic(profile, value, state)
 	case *NotifyPeer:
@@ -7628,6 +7742,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyTextCustomEmoji(profile, value, state)
 	case *TextDate:
 		return layerPreflightFamilyTextDate(profile, value, state)
+	case *TextDiff:
+		return layerPreflightFamilyTextDiff(profile, value, state)
 	case *TextEmail:
 		return layerPreflightFamilyTextEmail(profile, value, state)
 	case *TextEmpty:
@@ -7744,6 +7860,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyUpdateBotPurchasedPaidMedia(profile, value, state)
 	case *UpdateBotShippingQuery:
 		return layerPreflightFamilyUpdateBotShippingQuery(profile, value, state)
+	case *UpdateBotStarsSubscription:
+		return layerPreflightFamilyUpdateBotStarsSubscription(profile, value, state)
 	case *UpdateBotStopped:
 		return layerPreflightFamilyUpdateBotStopped(profile, value, state)
 	case *UpdateBotWebhookJSON:
@@ -7798,6 +7916,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyUpdateDCOptions(profile, value, state)
 	case *UpdateDeleteChannelMessages:
 		return layerPreflightFamilyUpdateDeleteChannelMessages(profile, value, state)
+	case *UpdateDeleteEphemeralMessages:
+		return layerPreflightFamilyUpdateDeleteEphemeralMessages(profile, value, state)
 	case *UpdateDeleteGroupCallMessages:
 		return layerPreflightFamilyUpdateDeleteGroupCallMessages(profile, value, state)
 	case *UpdateDeleteMessages:
@@ -7822,6 +7942,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyUpdateDraftMessage(profile, value, state)
 	case *UpdateEditChannelMessage:
 		return layerPreflightFamilyUpdateEditChannelMessage(profile, value, state)
+	case *UpdateEditEphemeralMessage:
+		return layerPreflightFamilyUpdateEditEphemeralMessage(profile, value, state)
 	case *UpdateEditMessage:
 		return layerPreflightFamilyUpdateEditMessage(profile, value, state)
 	case *UpdateEmojiGameInfo:
@@ -7884,6 +8006,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyUpdateNewChannelMessage(profile, value, state)
 	case *UpdateNewEncryptedMessage:
 		return layerPreflightFamilyUpdateNewEncryptedMessage(profile, value, state)
+	case *UpdateNewEphemeralMessage:
+		return layerPreflightFamilyUpdateNewEphemeralMessage(profile, value, state)
 	case *UpdateNewMessage:
 		return layerPreflightFamilyUpdateNewMessage(profile, value, state)
 	case *UpdateNewQuickReply:
@@ -8686,6 +8810,24 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyChatlistsJoinChatlistUpdatesRequest(profile, value, state)
 	case *ChatlistsLeaveChatlistRequest:
 		return layerPreflightFamilyChatlistsLeaveChatlistRequest(profile, value, state)
+	case *CommunitiesCreateRequest:
+		return layerPreflightFamilyCommunitiesCreateRequest(profile, value, state)
+	case *CommunitiesGetJoinedCommunitiesRequest:
+		return layerPreflightFamilyCommunitiesGetJoinedCommunitiesRequest(profile, value, state)
+	case *CommunitiesGetParticipantJoinedChatsRequest:
+		return layerPreflightFamilyCommunitiesGetParticipantJoinedChatsRequest(profile, value, state)
+	case *CommunitiesGetPeerLinkRequestsRequest:
+		return layerPreflightFamilyCommunitiesGetPeerLinkRequestsRequest(profile, value, state)
+	case *CommunitiesToggleAllPeerLinkRequestApprovalRequest:
+		return layerPreflightFamilyCommunitiesToggleAllPeerLinkRequestApprovalRequest(profile, value, state)
+	case *CommunitiesToggleCommunityCollapsedInDialogsRequest:
+		return layerPreflightFamilyCommunitiesToggleCommunityCollapsedInDialogsRequest(profile, value, state)
+	case *CommunitiesToggleParticipantBannedRequest:
+		return layerPreflightFamilyCommunitiesToggleParticipantBannedRequest(profile, value, state)
+	case *CommunitiesTogglePeerLinkRequest:
+		return layerPreflightFamilyCommunitiesTogglePeerLinkRequest(profile, value, state)
+	case *CommunitiesTogglePeerLinkRequestApprovalRequest:
+		return layerPreflightFamilyCommunitiesTogglePeerLinkRequestApprovalRequest(profile, value, state)
 	case *ContactsAcceptContactRequest:
 		return layerPreflightFamilyContactsAcceptContactRequest(profile, value, state)
 	case *ContactsAddContactRequest:
@@ -8742,6 +8884,14 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyContactsUnblockRequest(profile, value, state)
 	case *ContactsUpdateContactNoteRequest:
 		return layerPreflightFamilyContactsUpdateContactNoteRequest(profile, value, state)
+	case *EphemeralDeleteMessageRequest:
+		return layerPreflightFamilyEphemeralDeleteMessageRequest(profile, value, state)
+	case *EphemeralGetCallbackAnswerRequest:
+		return layerPreflightFamilyEphemeralGetCallbackAnswerRequest(profile, value, state)
+	case *EphemeralReportMessageRequest:
+		return layerPreflightFamilyEphemeralReportMessageRequest(profile, value, state)
+	case *EphemeralSendMessageRequest:
+		return layerPreflightFamilyEphemeralSendMessageRequest(profile, value, state)
 	case *FoldersEditPeerFoldersRequest:
 		return layerPreflightFamilyFoldersEditPeerFoldersRequest(profile, value, state)
 	case *FragmentGetCollectibleInfoRequest:
@@ -8858,6 +9008,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyMessagesClickSponsoredMessageRequest(profile, value, state)
 	case *MessagesComposeMessageWithAIRequest:
 		return layerPreflightFamilyMessagesComposeMessageWithAIRequest(profile, value, state)
+	case *MessagesComposeRichMessageWithAIRequest:
+		return layerPreflightFamilyMessagesComposeRichMessageWithAIRequest(profile, value, state)
 	case *MessagesCreateChatRequest:
 		return layerPreflightFamilyMessagesCreateChatRequest(profile, value, state)
 	case *MessagesCreateForumTopicRequest:
@@ -9192,6 +9344,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyMessagesReportSponsoredMessageRequest(profile, value, state)
 	case *MessagesRequestAppWebViewRequest:
 		return layerPreflightFamilyMessagesRequestAppWebViewRequest(profile, value, state)
+	case *MessagesRequestChatJoinWebViewRequest:
+		return layerPreflightFamilyMessagesRequestChatJoinWebViewRequest(profile, value, state)
 	case *MessagesRequestEncryptionRequest:
 		return layerPreflightFamilyMessagesRequestEncryptionRequest(profile, value, state)
 	case *MessagesRequestMainWebViewRequest:
@@ -9316,6 +9470,8 @@ func layerPreflightDynamicObject(profile LayerProfile, value bin.Object, state *
 		return layerPreflightFamilyMessagesToggleTodoCompletedRequest(profile, value, state)
 	case *MessagesTranscribeAudioRequest:
 		return layerPreflightFamilyMessagesTranscribeAudioRequest(profile, value, state)
+	case *MessagesTranslateRichMessageRequest:
+		return layerPreflightFamilyMessagesTranslateRichMessageRequest(profile, value, state)
 	case *MessagesTranslateTextRequest:
 		return layerPreflightFamilyMessagesTranslateTextRequest(profile, value, state)
 	case *MessagesUninstallStickerSetRequest:
@@ -10294,6 +10450,20 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyChatlistsExportedInvitesBody(profile, value, b, state)
 	case *CodeSettings:
 		return layerEncodeFamilyCodeSettingsBody(profile, value, b, state)
+	case *CommunitiesParticipantJoinedChats:
+		return layerEncodeFamilyCommunitiesParticipantJoinedChatsBody(profile, value, b, state)
+	case *CommunitiesPeerLinkRequests:
+		return layerEncodeFamilyCommunitiesPeerLinkRequestsBody(profile, value, b, state)
+	case *Community:
+		return layerEncodeFamilyCommunityBody(profile, value, b, state)
+	case *CommunityForbidden:
+		return layerEncodeFamilyCommunityForbiddenBody(profile, value, b, state)
+	case *CommunityFull:
+		return layerEncodeFamilyCommunityFullBody(profile, value, b, state)
+	case *CommunityPeer:
+		return layerEncodeFamilyCommunityPeerBody(profile, value, b, state)
+	case *CommunityPeerRequest:
+		return layerEncodeFamilyCommunityPeerRequestBody(profile, value, b, state)
 	case *Config:
 		return layerEncodeFamilyConfigBody(profile, value, b, state)
 	case *ConnectedBot:
@@ -10340,6 +10510,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyDefaultHistoryTTLBody(profile, value, b, state)
 	case *Dialog:
 		return layerEncodeFamilyDialogBody(profile, value, b, state)
+	case *DialogCommunity:
+		return layerEncodeFamilyDialogCommunityBody(profile, value, b, state)
 	case *DialogFilter:
 		return layerEncodeFamilyDialogFilterBody(profile, value, b, state)
 	case *DialogFilterChatlist:
@@ -10352,6 +10524,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyDialogFolderBody(profile, value, b, state)
 	case *DialogPeer:
 		return layerEncodeFamilyDialogPeerBody(profile, value, b, state)
+	case *DialogPeerCommunity:
+		return layerEncodeFamilyDialogPeerCommunityBody(profile, value, b, state)
 	case *DialogPeerFolder:
 		return layerEncodeFamilyDialogPeerFolderBody(profile, value, b, state)
 	case *DisallowedGiftsSettings:
@@ -10438,6 +10612,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyEncryptedMessageBody(profile, value, b, state)
 	case *EncryptedMessageService:
 		return layerEncodeFamilyEncryptedMessageServiceBody(profile, value, b, state)
+	case *EphemeralMessage:
+		return layerEncodeFamilyEphemeralMessageBody(profile, value, b, state)
 	case *Error:
 		return layerEncodeFamilyErrorBody(profile, value, b, state)
 	case *ExportedChatlistInvite:
@@ -10578,6 +10754,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyInputAiComposeToneDefaultBody(profile, value, b, state)
 	case *InputAiComposeToneID:
 		return layerEncodeFamilyInputAiComposeToneIDBody(profile, value, b, state)
+	case *InputAiComposeToneSingleUse:
+		return layerEncodeFamilyInputAiComposeToneSingleUseBody(profile, value, b, state)
 	case *InputAiComposeToneSlug:
 		return layerEncodeFamilyInputAiComposeToneSlugBody(profile, value, b, state)
 	case *InputAppEvent:
@@ -10660,6 +10838,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyInputCollectibleUsernameBody(profile, value, b, state)
 	case *InputDialogPeer:
 		return layerEncodeFamilyInputDialogPeerBody(profile, value, b, state)
+	case *InputDialogPeerCommunity:
+		return layerEncodeFamilyInputDialogPeerCommunityBody(profile, value, b, state)
 	case *InputDialogPeerFolder:
 		return layerEncodeFamilyInputDialogPeerFolderBody(profile, value, b, state)
 	case *InputDocument:
@@ -10840,6 +11020,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyInputNotifyBroadcastsBody(profile, value, b, state)
 	case *InputNotifyChats:
 		return layerEncodeFamilyInputNotifyChatsBody(profile, value, b, state)
+	case *InputNotifyCommunity:
+		return layerEncodeFamilyInputNotifyCommunityBody(profile, value, b, state)
 	case *InputNotifyForumTopic:
 		return layerEncodeFamilyInputNotifyForumTopicBody(profile, value, b, state)
 	case *InputNotifyPeer:
@@ -10956,6 +11138,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyInputQuickReplyShortcutBody(profile, value, b, state)
 	case *InputQuickReplyShortcutID:
 		return layerEncodeFamilyInputQuickReplyShortcutIDBody(profile, value, b, state)
+	case *InputReplyToEphemeralMessage:
+		return layerEncodeFamilyInputReplyToEphemeralMessageBody(profile, value, b, state)
 	case *InputReplyToMessage:
 		return layerEncodeFamilyInputReplyToMessageBody(profile, value, b, state)
 	case *InputReplyToMonoForum:
@@ -11198,6 +11382,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyMessageActionBoostApplyBody(profile, value, b, state)
 	case *MessageActionBotAllowed:
 		return layerEncodeFamilyMessageActionBotAllowedBody(profile, value, b, state)
+	case *MessageActionChangeCommunity:
+		return layerEncodeFamilyMessageActionChangeCommunityBody(profile, value, b, state)
 	case *MessageActionChangeCreator:
 		return layerEncodeFamilyMessageActionChangeCreatorBody(profile, value, b, state)
 	case *MessageActionChannelCreate:
@@ -11496,6 +11682,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyMessagesCheckedHistoryImportPeerBody(profile, value, b, state)
 	case *MessagesComposedMessageWithAI:
 		return layerEncodeFamilyMessagesComposedMessageWithAIBody(profile, value, b, state)
+	case *MessagesComposedRichMessageWithAI:
+		return layerEncodeFamilyMessagesComposedRichMessageWithAIBody(profile, value, b, state)
 	case *MessagesDhConfig:
 		return layerEncodeFamilyMessagesDhConfigBody(profile, value, b, state)
 	case *MessagesDhConfigNotModified:
@@ -11630,6 +11818,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyMessagesTranscribedAudioBody(profile, value, b, state)
 	case *MessagesTranslateResult:
 		return layerEncodeFamilyMessagesTranslateResultBody(profile, value, b, state)
+	case *MessagesTranslatedRichMessage:
+		return layerEncodeFamilyMessagesTranslatedRichMessageBody(profile, value, b, state)
 	case *MessagesVotesList:
 		return layerEncodeFamilyMessagesVotesListBody(profile, value, b, state)
 	case *MessagesWebPage:
@@ -11656,6 +11846,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyNotifyBroadcastsBody(profile, value, b, state)
 	case *NotifyChats:
 		return layerEncodeFamilyNotifyChatsBody(profile, value, b, state)
+	case *NotifyCommunity:
+		return layerEncodeFamilyNotifyCommunityBody(profile, value, b, state)
 	case *NotifyForumTopic:
 		return layerEncodeFamilyNotifyForumTopicBody(profile, value, b, state)
 	case *NotifyPeer:
@@ -12494,6 +12686,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyTextCustomEmojiBody(profile, value, b, state)
 	case *TextDate:
 		return layerEncodeFamilyTextDateBody(profile, value, b, state)
+	case *TextDiff:
+		return layerEncodeFamilyTextDiffBody(profile, value, b, state)
 	case *TextEmail:
 		return layerEncodeFamilyTextEmailBody(profile, value, b, state)
 	case *TextEmpty:
@@ -12610,6 +12804,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyUpdateBotPurchasedPaidMediaBody(profile, value, b, state)
 	case *UpdateBotShippingQuery:
 		return layerEncodeFamilyUpdateBotShippingQueryBody(profile, value, b, state)
+	case *UpdateBotStarsSubscription:
+		return layerEncodeFamilyUpdateBotStarsSubscriptionBody(profile, value, b, state)
 	case *UpdateBotStopped:
 		return layerEncodeFamilyUpdateBotStoppedBody(profile, value, b, state)
 	case *UpdateBotWebhookJSON:
@@ -12664,6 +12860,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyUpdateDCOptionsBody(profile, value, b, state)
 	case *UpdateDeleteChannelMessages:
 		return layerEncodeFamilyUpdateDeleteChannelMessagesBody(profile, value, b, state)
+	case *UpdateDeleteEphemeralMessages:
+		return layerEncodeFamilyUpdateDeleteEphemeralMessagesBody(profile, value, b, state)
 	case *UpdateDeleteGroupCallMessages:
 		return layerEncodeFamilyUpdateDeleteGroupCallMessagesBody(profile, value, b, state)
 	case *UpdateDeleteMessages:
@@ -12688,6 +12886,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyUpdateDraftMessageBody(profile, value, b, state)
 	case *UpdateEditChannelMessage:
 		return layerEncodeFamilyUpdateEditChannelMessageBody(profile, value, b, state)
+	case *UpdateEditEphemeralMessage:
+		return layerEncodeFamilyUpdateEditEphemeralMessageBody(profile, value, b, state)
 	case *UpdateEditMessage:
 		return layerEncodeFamilyUpdateEditMessageBody(profile, value, b, state)
 	case *UpdateEmojiGameInfo:
@@ -12750,6 +12950,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyUpdateNewChannelMessageBody(profile, value, b, state)
 	case *UpdateNewEncryptedMessage:
 		return layerEncodeFamilyUpdateNewEncryptedMessageBody(profile, value, b, state)
+	case *UpdateNewEphemeralMessage:
+		return layerEncodeFamilyUpdateNewEphemeralMessageBody(profile, value, b, state)
 	case *UpdateNewMessage:
 		return layerEncodeFamilyUpdateNewMessageBody(profile, value, b, state)
 	case *UpdateNewQuickReply:
@@ -13552,6 +13754,24 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyChatlistsJoinChatlistUpdatesRequestBody(profile, value, b, state)
 	case *ChatlistsLeaveChatlistRequest:
 		return layerEncodeFamilyChatlistsLeaveChatlistRequestBody(profile, value, b, state)
+	case *CommunitiesCreateRequest:
+		return layerEncodeFamilyCommunitiesCreateRequestBody(profile, value, b, state)
+	case *CommunitiesGetJoinedCommunitiesRequest:
+		return layerEncodeFamilyCommunitiesGetJoinedCommunitiesRequestBody(profile, value, b, state)
+	case *CommunitiesGetParticipantJoinedChatsRequest:
+		return layerEncodeFamilyCommunitiesGetParticipantJoinedChatsRequestBody(profile, value, b, state)
+	case *CommunitiesGetPeerLinkRequestsRequest:
+		return layerEncodeFamilyCommunitiesGetPeerLinkRequestsRequestBody(profile, value, b, state)
+	case *CommunitiesToggleAllPeerLinkRequestApprovalRequest:
+		return layerEncodeFamilyCommunitiesToggleAllPeerLinkRequestApprovalRequestBody(profile, value, b, state)
+	case *CommunitiesToggleCommunityCollapsedInDialogsRequest:
+		return layerEncodeFamilyCommunitiesToggleCommunityCollapsedInDialogsRequestBody(profile, value, b, state)
+	case *CommunitiesToggleParticipantBannedRequest:
+		return layerEncodeFamilyCommunitiesToggleParticipantBannedRequestBody(profile, value, b, state)
+	case *CommunitiesTogglePeerLinkRequest:
+		return layerEncodeFamilyCommunitiesTogglePeerLinkRequestBody(profile, value, b, state)
+	case *CommunitiesTogglePeerLinkRequestApprovalRequest:
+		return layerEncodeFamilyCommunitiesTogglePeerLinkRequestApprovalRequestBody(profile, value, b, state)
 	case *ContactsAcceptContactRequest:
 		return layerEncodeFamilyContactsAcceptContactRequestBody(profile, value, b, state)
 	case *ContactsAddContactRequest:
@@ -13608,6 +13828,14 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyContactsUnblockRequestBody(profile, value, b, state)
 	case *ContactsUpdateContactNoteRequest:
 		return layerEncodeFamilyContactsUpdateContactNoteRequestBody(profile, value, b, state)
+	case *EphemeralDeleteMessageRequest:
+		return layerEncodeFamilyEphemeralDeleteMessageRequestBody(profile, value, b, state)
+	case *EphemeralGetCallbackAnswerRequest:
+		return layerEncodeFamilyEphemeralGetCallbackAnswerRequestBody(profile, value, b, state)
+	case *EphemeralReportMessageRequest:
+		return layerEncodeFamilyEphemeralReportMessageRequestBody(profile, value, b, state)
+	case *EphemeralSendMessageRequest:
+		return layerEncodeFamilyEphemeralSendMessageRequestBody(profile, value, b, state)
 	case *FoldersEditPeerFoldersRequest:
 		return layerEncodeFamilyFoldersEditPeerFoldersRequestBody(profile, value, b, state)
 	case *FragmentGetCollectibleInfoRequest:
@@ -13724,6 +13952,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyMessagesClickSponsoredMessageRequestBody(profile, value, b, state)
 	case *MessagesComposeMessageWithAIRequest:
 		return layerEncodeFamilyMessagesComposeMessageWithAIRequestBody(profile, value, b, state)
+	case *MessagesComposeRichMessageWithAIRequest:
+		return layerEncodeFamilyMessagesComposeRichMessageWithAIRequestBody(profile, value, b, state)
 	case *MessagesCreateChatRequest:
 		return layerEncodeFamilyMessagesCreateChatRequestBody(profile, value, b, state)
 	case *MessagesCreateForumTopicRequest:
@@ -14058,6 +14288,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyMessagesReportSponsoredMessageRequestBody(profile, value, b, state)
 	case *MessagesRequestAppWebViewRequest:
 		return layerEncodeFamilyMessagesRequestAppWebViewRequestBody(profile, value, b, state)
+	case *MessagesRequestChatJoinWebViewRequest:
+		return layerEncodeFamilyMessagesRequestChatJoinWebViewRequestBody(profile, value, b, state)
 	case *MessagesRequestEncryptionRequest:
 		return layerEncodeFamilyMessagesRequestEncryptionRequestBody(profile, value, b, state)
 	case *MessagesRequestMainWebViewRequest:
@@ -14182,6 +14414,8 @@ func layerEncodeObjectBody(profile LayerProfile, value bin.Object, b *bin.Buffer
 		return layerEncodeFamilyMessagesToggleTodoCompletedRequestBody(profile, value, b, state)
 	case *MessagesTranscribeAudioRequest:
 		return layerEncodeFamilyMessagesTranscribeAudioRequestBody(profile, value, b, state)
+	case *MessagesTranslateRichMessageRequest:
+		return layerEncodeFamilyMessagesTranslateRichMessageRequestBody(profile, value, b, state)
 	case *MessagesTranslateTextRequest:
 		return layerEncodeFamilyMessagesTranslateTextRequestBody(profile, value, b, state)
 	case *MessagesUninstallStickerSetRequest:
@@ -14867,6 +15101,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire0dbaeae9(profile, b, state)
 	case 0x0e0310d7:
 		return layerDecodeWire0e0310d7(profile, b, state)
+	case 0x0e0c35af:
+		return layerDecodeWire0e0c35af(profile, b, state)
 	case 0x0e17e23c:
 		return layerDecodeWire0e17e23c(profile, b, state)
 	case 0x0e306d3a:
@@ -14897,8 +15133,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire0f635e1b(profile, b, state)
 	case 0x0f91b065:
 		return layerDecodeWire0f91b065(profile, b, state)
-	case 0x0f94e5f1:
-		return layerDecodeWire0f94e5f1(profile, b, state)
 	case 0x1013fd9e:
 		return layerDecodeWire1013fd9e(profile, b, state)
 	case 0x107e31a0:
@@ -14911,8 +15145,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire10a698e8(profile, b, state)
 	case 0x10ab6dc7:
 		return layerDecodeWire10ab6dc7(profile, b, state)
-	case 0x10b78d29:
-		return layerDecodeWire10b78d29(profile, b, state)
 	case 0x10cf3123:
 		return layerDecodeWire10cf3123(profile, b, state)
 	case 0x10e6bd2c:
@@ -14967,14 +15199,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire13659eb0(profile, b, state)
 	case 0x13704a7c:
 		return layerDecodeWire13704a7c(profile, b, state)
-	case 0x13767230:
-		return layerDecodeWire13767230(profile, b, state)
 	case 0x137948a5:
 		return layerDecodeWire137948a5(profile, b, state)
 	case 0x139f63fb:
 		return layerDecodeWire139f63fb(profile, b, state)
-	case 0x13acff19:
-		return layerDecodeWire13acff19(profile, b, state)
 	case 0x140502d1:
 		return layerDecodeWire140502d1(profile, b, state)
 	case 0x1427a5e1:
@@ -15091,8 +15319,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire19360dc0(profile, b, state)
 	case 0x193b4417:
 		return layerDecodeWire193b4417(profile, b, state)
-	case 0x198fb446:
-		return layerDecodeWire198fb446(profile, b, state)
 	case 0x1991b13b:
 		return layerDecodeWire1991b13b(profile, b, state)
 	case 0x199fed96:
@@ -15107,6 +15333,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire19c2f763(profile, b, state)
 	case 0x19d8eb45:
 		return layerDecodeWire19d8eb45(profile, b, state)
+	case 0x1a542004:
+		return layerDecodeWire1a542004(profile, b, state)
 	case 0x1a8afc7e:
 		return layerDecodeWire1a8afc7e(profile, b, state)
 	case 0x1ab21940:
@@ -15201,8 +15429,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire1e22c78d(profile, b, state)
 	case 0x1e251c95:
 		return layerDecodeWire1e251c95(profile, b, state)
-	case 0x1e287d04:
-		return layerDecodeWire1e287d04(profile, b, state)
 	case 0x1e297bfa:
 		return layerDecodeWire1e297bfa(profile, b, state)
 	case 0x1e36fded:
@@ -15261,6 +15487,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire208e68c9(profile, b, state)
 	case 0x209b82db:
 		return layerDecodeWire209b82db(profile, b, state)
+	case 0x20bcbba1:
+		return layerDecodeWire20bcbba1(profile, b, state)
 	case 0x21108ff7:
 		return layerDecodeWire21108ff7(profile, b, state)
 	case 0x211a1788:
@@ -15289,6 +15517,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire221bb5e4(profile, b, state)
 	case 0x222600ef:
 		return layerDecodeWire222600ef(profile, b, state)
+	case 0x2244afad:
+		return layerDecodeWire2244afad(profile, b, state)
 	case 0x22567115:
 		return layerDecodeWire22567115(profile, b, state)
 	case 0x226ccefb:
@@ -15329,14 +15559,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire24c26789(profile, b, state)
 	case 0x24e6818d:
 		return layerDecodeWire24e6818d(profile, b, state)
-	case 0x24f40e77:
-		return layerDecodeWire24f40e77(profile, b, state)
 	case 0x250dbaf8:
 		return layerDecodeWire250dbaf8(profile, b, state)
 	case 0x257e962b:
 		return layerDecodeWire257e962b(profile, b, state)
-	case 0x258aff05:
-		return layerDecodeWire258aff05(profile, b, state)
 	case 0x25972bcb:
 		return layerDecodeWire25972bcb(profile, b, state)
 	case 0x25a71742:
@@ -15379,6 +15605,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire277add7e(profile, b, state)
 	case 0x278f2868:
 		return layerDecodeWire278f2868(profile, b, state)
+	case 0x27bb1adc:
+		return layerDecodeWire27bb1adc(profile, b, state)
 	case 0x27bcbbfc:
 		return layerDecodeWire27bcbbfc(profile, b, state)
 	case 0x27d69997:
@@ -15509,6 +15737,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire2f51c337(profile, b, state)
 	case 0x2f58683c:
 		return layerDecodeWire2f58683c(profile, b, state)
+	case 0x2f65c8e4:
+		return layerDecodeWire2f65c8e4(profile, b, state)
 	case 0x2f6cb2ab:
 		return layerDecodeWire2f6cb2ab(profile, b, state)
 	case 0x2f98c3d5:
@@ -15521,8 +15751,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire30535af5(profile, b, state)
 	case 0x3081ed9d:
 		return layerDecodeWire3081ed9d(profile, b, state)
-	case 0x308660c1:
-		return layerDecodeWire308660c1(profile, b, state)
 	case 0x30a6ec7e:
 		return layerDecodeWire30a6ec7e(profile, b, state)
 	case 0x30eb63f0:
@@ -15569,8 +15797,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire32d439a4(profile, b, state)
 	case 0x32da9e9c:
 		return layerDecodeWire32da9e9c(profile, b, state)
-	case 0x32fabf1a:
-		return layerDecodeWire32fabf1a(profile, b, state)
 	case 0x3334b0f0:
 		return layerDecodeWire3334b0f0(profile, b, state)
 	case 0x3354678f:
@@ -15627,8 +15853,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire35a95cb9(profile, b, state)
 	case 0x35a9e0d5:
 		return layerDecodeWire35a9e0d5(profile, b, state)
-	case 0x35bbdb6b:
-		return layerDecodeWire35bbdb6b(profile, b, state)
 	case 0x35ddd674:
 		return layerDecodeWire35ddd674(profile, b, state)
 	case 0x35e410a8:
@@ -15715,8 +15939,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire39a51dfb(profile, b, state)
 	case 0x39c67432:
 		return layerDecodeWire39c67432(profile, b, state)
-	case 0x39d99013:
-		return layerDecodeWire39d99013(profile, b, state)
 	case 0x39f23300:
 		return layerDecodeWire39f23300(profile, b, state)
 	case 0x3a20ecb8:
@@ -15727,14 +15949,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire3a912d4a(profile, b, state)
 	case 0x3aae0528:
 		return layerDecodeWire3aae0528(profile, b, state)
-	case 0x3ae56482:
-		return layerDecodeWire3ae56482(profile, b, state)
 	case 0x3b1adf37:
 		return layerDecodeWire3b1adf37(profile, b, state)
 	case 0x3b6d152e:
 		return layerDecodeWire3b6d152e(profile, b, state)
-	case 0x3b6ddad2:
-		return layerDecodeWire3b6ddad2(profile, b, state)
 	case 0x3b7d0ea6:
 		return layerDecodeWire3b7d0ea6(profile, b, state)
 	case 0x3ba47bff:
@@ -15835,8 +16053,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire3f64c076(profile, b, state)
 	case 0x3f6d7b68:
 		return layerDecodeWire3f6d7b68(profile, b, state)
-	case 0x3f7ee58b:
-		return layerDecodeWire3f7ee58b(profile, b, state)
+	case 0x3fa464c8:
+		return layerDecodeWire3fa464c8(profile, b, state)
 	case 0x3fa53905:
 		return layerDecodeWire3fa53905(profile, b, state)
 	case 0x3fc18057:
@@ -15869,6 +16087,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire40f48462(profile, b, state)
 	case 0x410a134e:
 		return layerDecodeWire410a134e(profile, b, state)
+	case 0x4119b95e:
+		return layerDecodeWire4119b95e(profile, b, state)
 	case 0x41248786:
 		return layerDecodeWire41248786(profile, b, state)
 	case 0x413a3e73:
@@ -15895,6 +16115,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire41cbf256(profile, b, state)
 	case 0x41df43fc:
 		return layerDecodeWire41df43fc(profile, b, state)
+	case 0x4203998f:
+		return layerDecodeWire4203998f(profile, b, state)
 	case 0x4203c5ef:
 		return layerDecodeWire4203c5ef(profile, b, state)
 	case 0x423ab3ad:
@@ -16055,10 +16277,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire4b9e22a0(profile, b, state)
 	case 0x4ba3a95a:
 		return layerDecodeWire4ba3a95a(profile, b, state)
+	case 0x4bbb8f01:
+		return layerDecodeWire4bbb8f01(profile, b, state)
 	case 0x4bc6589a:
 		return layerDecodeWire4bc6589a(profile, b, state)
-	case 0x4bd6e798:
-		return layerDecodeWire4bd6e798(profile, b, state)
 	case 0x4bff8ea0:
 		return layerDecodeWire4bff8ea0(profile, b, state)
 	case 0x4c2985b6:
@@ -16067,6 +16289,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire4c2a5d62(profile, b, state)
 	case 0x4c3e069d:
 		return layerDecodeWire4c3e069d(profile, b, state)
+	case 0x4c4537c8:
+		return layerDecodeWire4c4537c8(profile, b, state)
 	case 0x4c4e743f:
 		return layerDecodeWire4c4e743f(profile, b, state)
 	case 0x4c9409f6:
@@ -16119,8 +16343,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire4f4456d3(profile, b, state)
 	case 0x4f47a016:
 		return layerDecodeWire4f47a016(profile, b, state)
-	case 0x4f607bef:
-		return layerDecodeWire4f607bef(profile, b, state)
 	case 0x4f96cb18:
 		return layerDecodeWire4f96cb18(profile, b, state)
 	case 0x4fa417f2:
@@ -16163,8 +16385,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire50cd067c(profile, b, state)
 	case 0x50f24105:
 		return layerDecodeWire50f24105(profile, b, state)
-	case 0x50f41ccf:
-		return layerDecodeWire50f41ccf(profile, b, state)
 	case 0x50f5c392:
 		return layerDecodeWire50f5c392(profile, b, state)
 	case 0x512fe446:
@@ -16215,8 +16435,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire53b22baf(profile, b, state)
 	case 0x53bc0020:
 		return layerDecodeWire53bc0020(profile, b, state)
-	case 0x53d7bfd8:
-		return layerDecodeWire53d7bfd8(profile, b, state)
 	case 0x53e6f1ec:
 		return layerDecodeWire53e6f1ec(profile, b, state)
 	case 0x541a1d1a:
@@ -16269,16 +16487,14 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire5680e342(profile, b, state)
 	case 0x56987bd5:
 		return layerDecodeWire56987bd5(profile, b, state)
-	case 0x569d64c9:
-		return layerDecodeWire569d64c9(profile, b, state)
 	case 0x56d6a247:
 		return layerDecodeWire56d6a247(profile, b, state)
 	case 0x56da0b3f:
 		return layerDecodeWire56da0b3f(profile, b, state)
+	case 0x56dbfcf8:
+		return layerDecodeWire56dbfcf8(profile, b, state)
 	case 0x56e0d474:
 		return layerDecodeWire56e0d474(profile, b, state)
-	case 0x56e34970:
-		return layerDecodeWire56e34970(profile, b, state)
 	case 0x56e59f9c:
 		return layerDecodeWire56e59f9c(profile, b, state)
 	case 0x56e9f0e4:
@@ -16323,8 +16539,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire5869a553(profile, b, state)
 	case 0x58707d28:
 		return layerDecodeWire58707d28(profile, b, state)
-	case 0x58747131:
-		return layerDecodeWire58747131(profile, b, state)
 	case 0x5881323a:
 		return layerDecodeWire5881323a(profile, b, state)
 	case 0x58943ee2:
@@ -16393,6 +16607,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire5ce14175(profile, b, state)
 	case 0x5cf09635:
 		return layerDecodeWire5cf09635(profile, b, state)
+	case 0x5d20bae8:
+		return layerDecodeWire5d20bae8(profile, b, state)
 	case 0x5d75a138:
 		return layerDecodeWire5d75a138(profile, b, state)
 	case 0x5d8d353b:
@@ -16463,10 +16679,14 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire60f67660(profile, b, state)
 	case 0x60fe3294:
 		return layerDecodeWire60fe3294(profile, b, state)
+	case 0x6126a43c:
+		return layerDecodeWire6126a43c(profile, b, state)
 	case 0x61695cb0:
 		return layerDecodeWire61695cb0(profile, b, state)
 	case 0x616f7fe8:
 		return layerDecodeWire616f7fe8(profile, b, state)
+	case 0x61ca29d3:
+		return layerDecodeWire61ca29d3(profile, b, state)
 	case 0x61e3f854:
 		return layerDecodeWire61e3f854(profile, b, state)
 	case 0x61f0d4c7:
@@ -16487,8 +16707,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire62d706b8(profile, b, state)
 	case 0x62dc8b48:
 		return layerDecodeWire62dc8b48(profile, b, state)
-	case 0x63183030:
-		return layerDecodeWire63183030(profile, b, state)
 	case 0x6319d612:
 		return layerDecodeWire6319d612(profile, b, state)
 	case 0x6334ee9a:
@@ -16545,6 +16763,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire65a0fa4d(profile, b, state)
 	case 0x65ad71dc:
 		return layerDecodeWire65ad71dc(profile, b, state)
+	case 0x65efe954:
+		return layerDecodeWire65efe954(profile, b, state)
 	case 0x65f00ce3:
 		return layerDecodeWire65f00ce3(profile, b, state)
 	case 0x661d4037:
@@ -16597,16 +16817,14 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire688a30aa(profile, b, state)
 	case 0x68cb6283:
 		return layerDecodeWire68cb6283(profile, b, state)
+	case 0x68cbd09f:
+		return layerDecodeWire68cbd09f(profile, b, state)
 	case 0x68f3e4eb:
 		return layerDecodeWire68f3e4eb(profile, b, state)
-	case 0x6917560b:
-		return layerDecodeWire6917560b(profile, b, state)
 	case 0x691e9052:
 		return layerDecodeWire691e9052(profile, b, state)
 	case 0x69279795:
 		return layerDecodeWire69279795(profile, b, state)
-	case 0x695150d7:
-		return layerDecodeWire695150d7(profile, b, state)
 	case 0x695c9e7c:
 		return layerDecodeWire695c9e7c(profile, b, state)
 	case 0x69d66c45:
@@ -16615,6 +16833,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire69da4557(profile, b, state)
 	case 0x69ec56a3:
 		return layerDecodeWire69ec56a3(profile, b, state)
+	case 0x69ef72c4:
+		return layerDecodeWire69ef72c4(profile, b, state)
 	case 0x69f59d69:
 		return layerDecodeWire69f59d69(profile, b, state)
 	case 0x69f916f8:
@@ -16645,6 +16865,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire6b7da746(profile, b, state)
 	case 0x6ba2cbec:
 		return layerDecodeWire6ba2cbec(profile, b, state)
+	case 0x6c0d8e23:
+		return layerDecodeWire6c0d8e23(profile, b, state)
 	case 0x6c207376:
 		return layerDecodeWire6c207376(profile, b, state)
 	case 0x6c24f3dd:
@@ -16675,8 +16897,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire6d038b58(profile, b, state)
 	case 0x6d5f77ee:
 		return layerDecodeWire6d5f77ee(profile, b, state)
-	case 0x6df8014e:
-		return layerDecodeWire6df8014e(profile, b, state)
 	case 0x6dfa0622:
 		return layerDecodeWire6dfa0622(profile, b, state)
 	case 0x6e153f16:
@@ -16775,20 +16995,18 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire735787a8(profile, b, state)
 	case 0x73665bc2:
 		return layerDecodeWire73665bc2(profile, b, state)
+	case 0x736dcfea:
+		return layerDecodeWire736dcfea(profile, b, state)
 	case 0x73746f5c:
 		return layerDecodeWire73746f5c(profile, b, state)
 	case 0x73783ffd:
 		return layerDecodeWire73783ffd(profile, b, state)
-	case 0x737fc2ec:
-		return layerDecodeWire737fc2ec(profile, b, state)
 	case 0x73924be0:
 		return layerDecodeWire73924be0(profile, b, state)
 	case 0x73a379eb:
 		return layerDecodeWire73a379eb(profile, b, state)
 	case 0x73ada76b:
 		return layerDecodeWire73ada76b(profile, b, state)
-	case 0x73bb643b:
-		return layerDecodeWire73bb643b(profile, b, state)
 	case 0x741cd3e3:
 		return layerDecodeWire741cd3e3(profile, b, state)
 	case 0x744694e0:
@@ -16823,10 +17041,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire75b3b798(profile, b, state)
 	case 0x75c78e60:
 		return layerDecodeWire75c78e60(profile, b, state)
-	case 0x75d2698e:
-		return layerDecodeWire75d2698e(profile, b, state)
 	case 0x7600b9d3:
 		return layerDecodeWire7600b9d3(profile, b, state)
+	case 0x76141ebd:
+		return layerDecodeWire76141ebd(profile, b, state)
 	case 0x761e6af4:
 		return layerDecodeWire761e6af4(profile, b, state)
 	case 0x764cf810:
@@ -16933,8 +17151,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire7ab58308(profile, b, state)
 	case 0x7adc669d:
 		return layerDecodeWire7adc669d(profile, b, state)
-	case 0x7adf2420:
-		return layerDecodeWire7adf2420(profile, b, state)
 	case 0x7b197dc8:
 		return layerDecodeWire7b197dc8(profile, b, state)
 	case 0x7b393160:
@@ -16947,6 +17163,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire7b8def20(profile, b, state)
 	case 0x7b9e1801:
 		return layerDecodeWire7b9e1801(profile, b, state)
+	case 0x7beafa85:
+		return layerDecodeWire7beafa85(profile, b, state)
 	case 0x7bf6b15c:
 		return layerDecodeWire7bf6b15c(profile, b, state)
 	case 0x7bfbdefc:
@@ -17135,8 +17353,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire868a2aa5(profile, b, state)
 	case 0x869d758f:
 		return layerDecodeWire869d758f(profile, b, state)
-	case 0x869fbe10:
-		return layerDecodeWire869fbe10(profile, b, state)
 	case 0x86a0765d:
 		return layerDecodeWire86a0765d(profile, b, state)
 	case 0x86b40b08:
@@ -17145,6 +17361,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire86f8613c(profile, b, state)
 	case 0x86fccf85:
 		return layerDecodeWire86fccf85(profile, b, state)
+	case 0x8704f2bf:
+		return layerDecodeWire8704f2bf(profile, b, state)
 	case 0x871fb939:
 		return layerDecodeWire871fb939(profile, b, state)
 	case 0x8763d3e1:
@@ -17253,6 +17471,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire8c79b63c(profile, b, state)
 	case 0x8c7f65e2:
 		return layerDecodeWire8c7f65e2(profile, b, state)
+	case 0x8c8219a8:
+		return layerDecodeWire8c8219a8(profile, b, state)
 	case 0x8c88c923:
 		return layerDecodeWire8c88c923(profile, b, state)
 	case 0x8c92b098:
@@ -17269,6 +17489,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire8d52a951(profile, b, state)
 	case 0x8d595cd6:
 		return layerDecodeWire8d595cd6(profile, b, state)
+	case 0x8d78512a:
+		return layerDecodeWire8d78512a(profile, b, state)
+	case 0x8d7ae6af:
+		return layerDecodeWire8d7ae6af(profile, b, state)
 	case 0x8d9692a3:
 		return layerDecodeWire8d9692a3(profile, b, state)
 	case 0x8db33c4b:
@@ -17299,10 +17523,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire8f079643(profile, b, state)
 	case 0x8f34b2f5:
 		return layerDecodeWire8f34b2f5(profile, b, state)
-	case 0x8f38cd1f:
-		return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "profile-only method has no canonical object"}
-	case 0x8f8c0e4e:
-		return layerDecodeWire8f8c0e4e(profile, b, state)
 	case 0x8f9e6898:
 		return layerDecodeWire8f9e6898(profile, b, state)
 	case 0x8fb53057:
@@ -17353,8 +17573,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire9156982a(profile, b, state)
 	case 0x915860ae:
 		return layerDecodeWire915860ae(profile, b, state)
-	case 0x91b2d060:
-		return layerDecodeWire91b2d060(profile, b, state)
 	case 0x91cd32a8:
 		return layerDecodeWire91cd32a8(profile, b, state)
 	case 0x91dc3f31:
@@ -17371,8 +17589,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire92b4494c(profile, b, state)
 	case 0x92ceddd4:
 		return layerDecodeWire92ceddd4(profile, b, state)
-	case 0x92d33a0e:
-		return layerDecodeWire92d33a0e(profile, b, state)
 	case 0x93037e20:
 		return layerDecodeWire93037e20(profile, b, state)
 	case 0x9308ce1b:
@@ -17385,10 +17601,10 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire9342ca07(profile, b, state)
 	case 0x9375341e:
 		return layerDecodeWire9375341e(profile, b, state)
+	case 0x93773344:
+		return layerDecodeWire93773344(profile, b, state)
 	case 0x93b31848:
 		return layerDecodeWire93b31848(profile, b, state)
-	case 0x93b9fbb5:
-		return layerDecodeWire93b9fbb5(profile, b, state)
 	case 0x93bd878d:
 		return layerDecodeWire93bd878d(profile, b, state)
 	case 0x93bf667f:
@@ -17411,8 +17627,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire94ce852a(profile, b, state)
 	case 0x94d42ee7:
 		return layerDecodeWire94d42ee7(profile, b, state)
-	case 0x95728543:
-		return layerDecodeWire95728543(profile, b, state)
 	case 0x957b50fb:
 		return layerDecodeWire957b50fb(profile, b, state)
 	case 0x95ac5ce4:
@@ -17443,6 +17657,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire966e2dbf(profile, b, state)
 	case 0x967a462e:
 		return layerDecodeWire967a462e(profile, b, state)
+	case 0x9686cb50:
+		return layerDecodeWire9686cb50(profile, b, state)
 	case 0x96929a85:
 		return layerDecodeWire96929a85(profile, b, state)
 	case 0x96d074fd:
@@ -17471,6 +17687,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire9801d2f7(profile, b, state)
 	case 0x981b91dd:
 		return layerDecodeWire981b91dd(profile, b, state)
+	case 0x9852d6d2:
+		return layerDecodeWire9852d6d2(profile, b, state)
 	case 0x9852f9c6:
 		return layerDecodeWire9852f9c6(profile, b, state)
 	case 0x9857ad07:
@@ -17503,6 +17721,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire991399fc(profile, b, state)
 	case 0x99622c0c:
 		return layerDecodeWire99622c0c(profile, b, state)
+	case 0x9967ad0f:
+		return layerDecodeWire9967ad0f(profile, b, state)
 	case 0x997275b5:
 		return layerDecodeWire997275b5(profile, b, state)
 	case 0x998ab009:
@@ -17579,8 +17799,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire9c7f2f10(profile, b, state)
 	case 0x9c9abcb1:
 		return layerDecodeWire9c9abcb1(profile, b, state)
-	case 0x9cb490e9:
-		return layerDecodeWire9cb490e9(profile, b, state)
 	case 0x9cc123c7:
 		return layerDecodeWire9cc123c7(profile, b, state)
 	case 0x9cd4eaf9:
@@ -17599,8 +17817,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire9d2a81e3(profile, b, state)
 	case 0x9d2eac97:
 		return layerDecodeWire9d2eac97(profile, b, state)
-	case 0x9d4104e2:
-		return layerDecodeWire9d4104e2(profile, b, state)
 	case 0x9d6b13b0:
 		return layerDecodeWire9d6b13b0(profile, b, state)
 	case 0x9d84f3db:
@@ -17661,24 +17877,18 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWire9fd40bd8(profile, b, state)
 	case 0xa0058751:
 		return layerDecodeWirea0058751(profile, b, state)
-	case 0xa00918af:
-		return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "profile-only method has no canonical object"}
 	case 0xa00e67d6:
 		return layerDecodeWirea00e67d6(profile, b, state)
 	case 0xa00f32b0:
 		return layerDecodeWirea00f32b0(profile, b, state)
 	case 0xa02a982e:
 		return layerDecodeWirea02a982e(profile, b, state)
-	case 0xa02bc13e:
-		return layerDecodeWirea02bc13e(profile, b, state)
 	case 0xa03e5b85:
 		return layerDecodeWirea03e5b85(profile, b, state)
 	case 0xa04e8d3a:
 		return layerDecodeWirea04e8d3a(profile, b, state)
 	case 0xa0624cf7:
 		return layerDecodeWirea0624cf7(profile, b, state)
-	case 0xa0933f5b:
-		return layerDecodeWirea0933f5b(profile, b, state)
 	case 0xa098d6af:
 		return layerDecodeWirea098d6af(profile, b, state)
 	case 0xa0ab6cc6:
@@ -17687,8 +17897,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirea0b80cf8(profile, b, state)
 	case 0xa0ba4f17:
 		return layerDecodeWirea0ba4f17(profile, b, state)
-	case 0xa0c0505c:
-		return layerDecodeWirea0c0505c(profile, b, state)
 	case 0xa0d0744b:
 		return layerDecodeWirea0d0744b(profile, b, state)
 	case 0xa0f4cb4f:
@@ -17735,8 +17943,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirea2cb24f9(profile, b, state)
 	case 0xa2e214a4:
 		return layerDecodeWirea2e214a4(profile, b, state)
-	case 0xa2fa4880:
-		return layerDecodeWirea2fa4880(profile, b, state)
 	case 0xa319e569:
 		return layerDecodeWirea319e569(profile, b, state)
 	case 0xa36396e5:
@@ -17747,6 +17953,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirea388a368(profile, b, state)
 	case 0xa3b54985:
 		return layerDecodeWirea3b54985(profile, b, state)
+	case 0xa3c0d511:
+		return layerDecodeWirea3c0d511(profile, b, state)
 	case 0xa3d1cb80:
 		return layerDecodeWirea3d1cb80(profile, b, state)
 	case 0xa416ac81:
@@ -17807,8 +18015,12 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirea614d034(profile, b, state)
 	case 0xa6341782:
 		return layerDecodeWirea6341782(profile, b, state)
+	case 0xa63859ec:
+		return layerDecodeWirea63859ec(profile, b, state)
 	case 0xa6437ef6:
 		return layerDecodeWirea6437ef6(profile, b, state)
+	case 0xa663e830:
+		return layerDecodeWirea663e830(profile, b, state)
 	case 0xa6751e66:
 		return layerDecodeWirea6751e66(profile, b, state)
 	case 0xa676a322:
@@ -17917,8 +18129,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireac81bbde(profile, b, state)
 	case 0xac8505a5:
 		return layerDecodeWireac8505a5(profile, b, state)
-	case 0xaca1657b:
-		return layerDecodeWireaca1657b(profile, b, state)
 	case 0xaca9fd2e:
 		return layerDecodeWireaca9fd2e(profile, b, state)
 	case 0xacfa1a7e:
@@ -17977,8 +18187,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireaf0a4a08(profile, b, state)
 	case 0xafb6144a:
 		return layerDecodeWireafb6144a(profile, b, state)
-	case 0xafd93fbb:
-		return layerDecodeWireafd93fbb(profile, b, state)
 	case 0xafe5623f:
 		return layerDecodeWireafe5623f(profile, b, state)
 	case 0xaff56398:
@@ -18009,12 +18217,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireb0f9684f(profile, b, state)
 	case 0xb106e66c:
 		return layerDecodeWireb106e66c(profile, b, state)
-	case 0xb11eafa2:
-		return layerDecodeWireb11eafa2(profile, b, state)
-	case 0xb12c7125:
-		return layerDecodeWireb12c7125(profile, b, state)
-	case 0xb16a6c29:
-		return layerDecodeWireb16a6c29(profile, b, state)
+	case 0xb1b8cc83:
+		return layerDecodeWireb1b8cc83(profile, b, state)
 	case 0xb1c3caa7:
 		return layerDecodeWireb1c3caa7(profile, b, state)
 	case 0xb1d11410:
@@ -18061,8 +18265,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireb390dc08(profile, b, state)
 	case 0xb3a07661:
 		return layerDecodeWireb3a07661(profile, b, state)
-	case 0xb3ba0635:
-		return layerDecodeWireb3ba0635(profile, b, state)
 	case 0xb3cea0e4:
 		return layerDecodeWireb3cea0e4(profile, b, state)
 	case 0xb3fb5361:
@@ -18121,8 +18323,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireb57295d5(profile, b, state)
 	case 0xb574b16b:
 		return layerDecodeWireb574b16b(profile, b, state)
-	case 0xb583ba46:
-		return layerDecodeWireb583ba46(profile, b, state)
 	case 0xb59cf977:
 		return layerDecodeWireb59cf977(profile, b, state)
 	case 0xb5a1ce5a:
@@ -18179,8 +18379,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireb81c7034(profile, b, state)
 	case 0xb826e150:
 		return layerDecodeWireb826e150(profile, b, state)
-	case 0xb8425be9:
-		return layerDecodeWireb8425be9(profile, b, state)
 	case 0xb86e380e:
 		return layerDecodeWireb86e380e(profile, b, state)
 	case 0xb880bc4b:
@@ -18205,8 +18403,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireb91bbd3a(profile, b, state)
 	case 0xb92c09e2:
 		return layerDecodeWireb92c09e2(profile, b, state)
-	case 0xb92f76cf:
-		return layerDecodeWireb92f76cf(profile, b, state)
 	case 0xb92fb6cd:
 		return layerDecodeWireb92fb6cd(profile, b, state)
 	case 0xb940c666:
@@ -18237,6 +18433,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireba6705f0(profile, b, state)
 	case 0xba7bb15e:
 		return layerDecodeWireba7bb15e(profile, b, state)
+	case 0xba9ee679:
+		return layerDecodeWireba9ee679(profile, b, state)
 	case 0xbaa57628:
 		return layerDecodeWirebaa57628(profile, b, state)
 	case 0xbaafe5e0:
@@ -18267,8 +18465,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirebbab2643(profile, b, state)
 	case 0xbbb6b4a3:
 		return layerDecodeWirebbb6b4a3(profile, b, state)
-	case 0xbbc7515d:
-		return layerDecodeWirebbc7515d(profile, b, state)
 	case 0xbbf2dda0:
 		return layerDecodeWirebbf2dda0(profile, b, state)
 	case 0xbbf51685:
@@ -18333,6 +18529,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirebe098173(profile, b, state)
 	case 0xbe1e85ba:
 		return layerDecodeWirebe1e85ba(profile, b, state)
+	case 0xbe376999:
+		return layerDecodeWirebe376999(profile, b, state)
 	case 0xbe382906:
 		return layerDecodeWirebe382906(profile, b, state)
 	case 0xbe4e0ef8:
@@ -18363,6 +18561,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirebfb9f457(profile, b, state)
 	case 0xbfd064ec:
 		return layerDecodeWirebfd064ec(profile, b, state)
+	case 0xbfe3dd3d:
+		return layerDecodeWirebfe3dd3d(profile, b, state)
 	case 0xc000bba2:
 		return layerDecodeWirec000bba2(profile, b, state)
 	case 0xc007cec3:
@@ -18373,8 +18573,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirec0111fe3(profile, b, state)
 	case 0xc01f6fe8:
 		return layerDecodeWirec01f6fe8(profile, b, state)
-	case 0xc02d4007:
-		return layerDecodeWirec02d4007(profile, b, state)
 	case 0xc070d93e:
 		return layerDecodeWirec070d93e(profile, b, state)
 	case 0xc077ec01:
@@ -18537,8 +18735,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirec93de95c(profile, b, state)
 	case 0xc957a766:
 		return layerDecodeWirec957a766(profile, b, state)
-	case 0xc9662d05:
-		return layerDecodeWirec9662d05(profile, b, state)
 	case 0xc982eaba:
 		return layerDecodeWirec982eaba(profile, b, state)
 	case 0xc99b1950:
@@ -18579,8 +18775,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirecb296bf8(profile, b, state)
 	case 0xcb2ac766:
 		return layerDecodeWirecb2ac766(profile, b, state)
-	case 0xcb397619:
-		return layerDecodeWirecb397619(profile, b, state)
 	case 0xcb43acde:
 		return layerDecodeWirecb43acde(profile, b, state)
 	case 0xcb6ff828:
@@ -18591,6 +18785,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirecb9f372d(profile, b, state)
 	case 0xcba9a52f:
 		return layerDecodeWirecba9a52f(profile, b, state)
+	case 0xcbb7a507:
+		return layerDecodeWirecbb7a507(profile, b, state)
 	case 0xcbc6d107:
 		return layerDecodeWirecbc6d107(profile, b, state)
 	case 0xcbc7ee28:
@@ -18639,8 +18835,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirecdd4093d(profile, b, state)
 	case 0xcdd42a05:
 		return layerDecodeWirecdd42a05(profile, b, state)
-	case 0xcdff0eca:
-		return layerDecodeWirecdff0eca(profile, b, state)
 	case 0xce03da83:
 		return layerDecodeWirece03da83(profile, b, state)
 	case 0xce0d37b0:
@@ -18665,8 +18859,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirecff43f61(profile, b, state)
 	case 0xcff63ea9:
 		return layerDecodeWirecff63ea9(profile, b, state)
-	case 0xd02e7fd4:
-		return layerDecodeWired02e7fd4(profile, b, state)
 	case 0xd069ccde:
 		return layerDecodeWired069ccde(profile, b, state)
 	case 0xd06e93a8:
@@ -18713,8 +18905,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWired30d78d4(profile, b, state)
 	case 0xd31bc45d:
 		return layerDecodeWired31bc45d(profile, b, state)
-	case 0xd33c8902:
-		return layerDecodeWired33c8902(profile, b, state)
 	case 0xd33f43f3:
 		return layerDecodeWired33f43f3(profile, b, state)
 	case 0xd348bc44:
@@ -18739,12 +18929,12 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWired464a42b(profile, b, state)
 	case 0xd483f2a8:
 		return layerDecodeWired483f2a8(profile, b, state)
+	case 0xd49f34c6:
+		return layerDecodeWired49f34c6(profile, b, state)
 	case 0xd52f73f7:
 		return layerDecodeWired52f73f7(profile, b, state)
 	case 0xd5676710:
 		return layerDecodeWired5676710(profile, b, state)
-	case 0xd58a08c6:
-		return layerDecodeWired58a08c6(profile, b, state)
 	case 0xd58f130a:
 		return layerDecodeWired58f130a(profile, b, state)
 	case 0xd5a41724:
@@ -18789,6 +18979,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWired7584c87(profile, b, state)
 	case 0xd766c50a:
 		return layerDecodeWired766c50a(profile, b, state)
+	case 0xd766e3ea:
+		return layerDecodeWired766e3ea(profile, b, state)
 	case 0xd7ca61a2:
 		return layerDecodeWired7ca61a2(profile, b, state)
 	case 0xd7e78225:
@@ -18823,8 +19015,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWired91ffad6(profile, b, state)
 	case 0xd92c2285:
 		return layerDecodeWired92c2285(profile, b, state)
-	case 0xd93d859c:
-		return layerDecodeWired93d859c(profile, b, state)
 	case 0xd94305e0:
 		return layerDecodeWired94305e0(profile, b, state)
 	case 0xd9565c39:
@@ -18835,6 +19025,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWired9ab0f54(profile, b, state)
 	case 0xd9ba2e54:
 		return layerDecodeWired9ba2e54(profile, b, state)
+	case 0xd9c6dc1a:
+		return layerDecodeWired9c6dc1a(profile, b, state)
 	case 0xda2ad647:
 		return layerDecodeWireda2ad647(profile, b, state)
 	case 0xda80f42f:
@@ -19039,8 +19231,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWiree42ce9c9(profile, b, state)
 	case 0xe4621141:
 		return layerDecodeWiree4621141(profile, b, state)
-	case 0xe46bcee4:
-		return layerDecodeWiree46bcee4(profile, b, state)
 	case 0xe470bcfd:
 		return layerDecodeWiree470bcfd(profile, b, state)
 	case 0xe477092e:
@@ -19159,8 +19349,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWiree94f0f86(profile, b, state)
 	case 0xe9763aec:
 		return layerDecodeWiree9763aec(profile, b, state)
-	case 0xe988037b:
-		return layerDecodeWiree988037b(profile, b, state)
 	case 0xe9baa668:
 		return layerDecodeWiree9baa668(profile, b, state)
 	case 0xe9ce781c:
@@ -19189,8 +19377,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireeab5dc38(profile, b, state)
 	case 0xeabbb94c:
 		return layerDecodeWireeabbb94c(profile, b, state)
-	case 0xead6805e:
-		return layerDecodeWireead6805e(profile, b, state)
 	case 0xeae87e42:
 		return layerDecodeWireeae87e42(profile, b, state)
 	case 0xeafc32bc:
@@ -19255,8 +19441,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWireedd4882a(profile, b, state)
 	case 0xedd49ef0:
 		return layerDecodeWireedd49ef0(profile, b, state)
-	case 0xedf164f1:
-		return layerDecodeWireedf164f1(profile, b, state)
 	case 0xedf3add0:
 		return layerDecodeWireedf3add0(profile, b, state)
 	case 0xedfc111e:
@@ -19455,6 +19639,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWiref74e932b(profile, b, state)
 	case 0xf7760f51:
 		return layerDecodeWiref7760f51(profile, b, state)
+	case 0xf78a0973:
+		return layerDecodeWiref78a0973(profile, b, state)
 	case 0xf7c1b13f:
 		return layerDecodeWiref7c1b13f(profile, b, state)
 	case 0xf7e8d89b:
@@ -19471,6 +19657,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWiref85c413c(profile, b, state)
 	case 0xf8654027:
 		return layerDecodeWiref8654027(profile, b, state)
+	case 0xf87eabab:
+		return layerDecodeWiref87eabab(profile, b, state)
 	case 0xf8827ebf:
 		return layerDecodeWiref8827ebf(profile, b, state)
 	case 0xf888fa1a:
@@ -19487,8 +19675,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWiref8e0aa1c(profile, b, state)
 	case 0xf8ec284b:
 		return layerDecodeWiref8ec284b(profile, b, state)
-	case 0xf8f8eb1e:
-		return layerDecodeWiref8f8eb1e(profile, b, state)
 	case 0xf92424d2:
 		return layerDecodeWiref92424d2(profile, b, state)
 	case 0xf93cd45c:
@@ -19565,8 +19751,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirefc533372(profile, b, state)
 	case 0xfc78af9b:
 		return layerDecodeWirefc78af9b(profile, b, state)
-	case 0xfc796b3f:
-		return layerDecodeWirefc796b3f(profile, b, state)
 	case 0xfc878fc8:
 		return layerDecodeWirefc878fc8(profile, b, state)
 	case 0xfc89f7f3:
@@ -19585,8 +19769,8 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirefd149899(profile, b, state)
 	case 0xfd2dda49:
 		return layerDecodeWirefd2dda49(profile, b, state)
-	case 0xfd426afe:
-		return layerDecodeWirefd426afe(profile, b, state)
+	case 0xfd3cdab8:
+		return layerDecodeWirefd3cdab8(profile, b, state)
 	case 0xfd5e12bd:
 		return layerDecodeWirefd5e12bd(profile, b, state)
 	case 0xfd5ec8f5:
@@ -19615,8 +19799,6 @@ func layerDecodeObject(profile LayerProfile, b *bin.Buffer, state *layerCodecSta
 		return layerDecodeWirefeed5769(profile, b, state)
 	case 0xfef48f62:
 		return layerDecodeWirefef48f62(profile, b, state)
-	case 0xff16e2ca:
-		return layerDecodeWireff16e2ca(profile, b, state)
 	case 0xff544e65:
 		return layerDecodeWireff544e65(profile, b, state)
 	case 0xff57708d:

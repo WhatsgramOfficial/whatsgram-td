@@ -18,11 +18,44 @@ import (
 
 // Manifest locks all schema inputs and their upstream provenance.
 type Manifest struct {
-	CanonicalLayer int               `json:"canonical_layer"`
-	Repository     string            `json:"repository"`
-	SourcePath     string            `json:"source_path"`
-	Overlays       []ManifestOverlay `json:"overlays"`
-	Layers         []ManifestLayer   `json:"layers"`
+	CanonicalLayer    int                        `json:"canonical_layer"`
+	Repository        string                     `json:"repository"`
+	SourcePath        string                     `json:"source_path"`
+	Overlays          []ManifestOverlay          `json:"overlays"`
+	ClientRPCOverlays []ManifestClientRPCOverlay `json:"client_rpc_overlays,omitempty"`
+	Layers            []ManifestLayer            `json:"layers"`
+}
+
+// ManifestClientRPCOverlay is one explicitly audited client-private method
+// schema. Unlike an ordinary overlay, these definitions are not merged into
+// any official Layer profile. gotdgen compiles them into a separate static
+// unknown-method adapter which targets the current canonical method by
+// semantic name.
+type ManifestClientRPCOverlay struct {
+	Name       string                             `json:"name"`
+	File       string                             `json:"file"`
+	SHA256     string                             `json:"sha256"`
+	Repository string                             `json:"repository"`
+	Commit     string                             `json:"commit"`
+	Sources    []ManifestClientRPCOverlaySource   `json:"sources"`
+	Methods    map[string]ManifestClientRPCMethod `json:"methods"`
+}
+
+// ManifestClientRPCOverlaySource locks one upstream source file from which
+// the derived TL declarations were audited.
+type ManifestClientRPCOverlaySource struct {
+	Path string `json:"path"`
+	Blob string `json:"blob"`
+}
+
+// ManifestClientRPCMethod declares the non-structural decisions which schema
+// comparison cannot infer. Rename keys are canonical target fields and values
+// are client-source fields. Converter keys are canonical target fields.
+type ManifestClientRPCMethod struct {
+	Target     string            `json:"target,omitempty"`
+	Renames    map[string]string `json:"renames,omitempty"`
+	Converters map[string]string `json:"converters,omitempty"`
+	Drops      []string          `json:"drops,omitempty"`
 }
 
 // ManifestOverlay is one immutable schema overlay and its exact artifact
@@ -147,6 +180,79 @@ func validateManifest(manifest Manifest) error {
 			return err
 		}
 	}
+	seenClientOverlays := make(map[string]struct{}, len(manifest.ClientRPCOverlays))
+	seenClientFiles := make(map[string]struct{}, len(manifest.ClientRPCOverlays))
+	for i, overlay := range manifest.ClientRPCOverlays {
+		prefix := fmt.Sprintf("client_rpc_overlays[%d]", i)
+		if strings.TrimSpace(overlay.Name) == "" {
+			return fmt.Errorf("semantic: %s name is empty", prefix)
+		}
+		if _, duplicate := seenClientOverlays[overlay.Name]; duplicate {
+			return fmt.Errorf("semantic: %s repeats name %q", prefix, overlay.Name)
+		}
+		seenClientOverlays[overlay.Name] = struct{}{}
+		if strings.TrimSpace(overlay.File) == "" {
+			return fmt.Errorf("semantic: %s file is empty", prefix)
+		}
+		if _, duplicate := seenClientFiles[overlay.File]; duplicate {
+			return fmt.Errorf("semantic: %s repeats file %q", prefix, overlay.File)
+		}
+		seenClientFiles[overlay.File] = struct{}{}
+		if strings.TrimSpace(overlay.Repository) == "" {
+			return fmt.Errorf("semantic: %s repository is empty", prefix)
+		}
+		if err := validateHexValue(prefix+" commit", overlay.Commit, 20); err != nil {
+			return err
+		}
+		if err := validateHexValue(prefix+" sha256", overlay.SHA256, sha256.Size); err != nil {
+			return err
+		}
+		if len(overlay.Sources) == 0 {
+			return fmt.Errorf("semantic: %s has no upstream sources", prefix)
+		}
+		seenSources := make(map[string]struct{}, len(overlay.Sources))
+		for sourceIndex, source := range overlay.Sources {
+			sourcePrefix := fmt.Sprintf("%s sources[%d]", prefix, sourceIndex)
+			if strings.TrimSpace(source.Path) == "" {
+				return fmt.Errorf("semantic: %s path is empty", sourcePrefix)
+			}
+			if _, duplicate := seenSources[source.Path]; duplicate {
+				return fmt.Errorf("semantic: %s repeats path %q", sourcePrefix, source.Path)
+			}
+			seenSources[source.Path] = struct{}{}
+			if err := validateHexValue(sourcePrefix+" blob", source.Blob, 20); err != nil {
+				return err
+			}
+		}
+		if len(overlay.Methods) == 0 {
+			return fmt.Errorf("semantic: %s has no audited methods", prefix)
+		}
+		for method, rule := range overlay.Methods {
+			if strings.TrimSpace(method) == "" {
+				return fmt.Errorf("semantic: %s contains an empty method name", prefix)
+			}
+			for target, source := range rule.Renames {
+				if strings.TrimSpace(target) == "" || strings.TrimSpace(source) == "" {
+					return fmt.Errorf("semantic: %s method %q contains an empty field rename", prefix, method)
+				}
+			}
+			for target, converter := range rule.Converters {
+				if strings.TrimSpace(target) == "" || strings.TrimSpace(converter) == "" {
+					return fmt.Errorf("semantic: %s method %q contains an empty converter", prefix, method)
+				}
+			}
+			seenDrops := make(map[string]struct{}, len(rule.Drops))
+			for _, source := range rule.Drops {
+				if strings.TrimSpace(source) == "" {
+					return fmt.Errorf("semantic: %s method %q contains an empty dropped field", prefix, method)
+				}
+				if _, duplicate := seenDrops[source]; duplicate {
+					return fmt.Errorf("semantic: %s method %q repeats dropped field %q", prefix, method, source)
+				}
+				seenDrops[source] = struct{}{}
+			}
+		}
+	}
 	return nil
 }
 
@@ -242,7 +348,15 @@ func LoadManifestUniverse(manifest Manifest, root string, overrides map[string][
 		}
 		schemas = append(schemas, model)
 	}
-	return NewUniverse(manifest.CanonicalLayer, schemas...)
+	universe, err := NewUniverse(manifest.CanonicalLayer, schemas...)
+	if err != nil {
+		return nil, err
+	}
+	universe.ClientRPCOverlays, err = loadClientRPCOverlays(manifest, root, overrides, universe)
+	if err != nil {
+		return nil, err
+	}
+	return universe, nil
 }
 
 func readManifestSchemaInput(root, file string, overrides map[string][]byte) ([]byte, error) {

@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestTelegramLayers220Through227(t *testing.T) {
+func TestTelegramLayers225Through228(t *testing.T) {
 	universe, err := LoadUniverse("../../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got, want := universe.Layers(), []int{220, 221, 222, 223, 224, 225, 226, 227}; !equalInts(got, want) {
+	if got, want := universe.Layers(), []int{225, 226, 227, 228}; !equalInts(got, want) {
 		t.Fatalf("layers = %v, want %v", got, want)
 	}
 
@@ -41,10 +41,10 @@ func TestTelegramLayers220Through227(t *testing.T) {
 		}
 	}
 
-	assertKeyCount(t, "signature changes", signature, 95)
-	assertKeyCount(t, "same-ID signature changes", sameWire, 12)
+	assertKeyCount(t, "signature changes", signature, 35)
+	assertKeyCount(t, "same-ID signature changes", sameWire, 8)
 	assertKeyCount(t, "result-only changes", resultOnly, 4)
-	assertKeyCount(t, "old-only definitions", oldOnly, 2)
+	assertKeyCount(t, "old-only definitions", oldOnly, 0)
 
 	semanticVariants := make([]string, 0)
 	wireConflicts := 0
@@ -63,16 +63,16 @@ func TestTelegramLayers220Through227(t *testing.T) {
 	if wireConflicts != 0 {
 		t.Fatalf("cross-profile wire conflicts = %d, want 0", wireConflicts)
 	}
-	if got, want := len(semanticVariants), 14; got != want {
+	if got, want := len(semanticVariants), 9; got != want {
 		sort.Strings(semanticVariants)
 		t.Fatalf("same-ID semantic variants = %d, want %d:\n%s", got, want, semanticVariants)
 	}
 
 	for _, key := range []DefinitionKey{
 		{Category: CategoryType, QName: "chatAdminRights"},
-		{Category: CategoryType, QName: "pollResults"},
 		{Category: CategoryFunction, QName: "contacts.getTopPeers"},
-		{Category: CategoryFunction, QName: "payments.getResaleStarGifts"},
+		{Category: CategoryType, QName: "pageBlockPhoto"},
+		{Category: CategoryType, QName: "webViewResultUrl"},
 	} {
 		if _, ok := sameWire[key]; !ok {
 			t.Errorf("same-ID changes missing %s", key)
@@ -88,27 +88,18 @@ func TestTelegramLayers220Through227(t *testing.T) {
 			t.Errorf("result-only changes missing %s", key)
 		}
 	}
-	for _, key := range []DefinitionKey{
-		{Category: CategoryFunction, QName: "channels.editCreator"},
-		{Category: CategoryFunction, QName: "channels.getFutureCreatorAfterLeave"},
-	} {
-		if _, ok := oldOnly[key]; !ok {
-			t.Errorf("old-only definitions missing %s", key)
-		}
-	}
-
-	diff220, err := universe.Diff(220)
+	diff225, err := universe.Diff(225)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got, want := len(diff220.SignatureChanges()), 90; got != want {
-		t.Fatalf("layer 220 signature changes = %d, want %d", got, want)
+	if got, want := len(diff225.SignatureChanges()), 33; got != want {
+		t.Fatalf("layer 225 signature changes = %d, want %d", got, want)
 	}
-	if got, want := len(diff220.SameWireSignatureChanges()), 10; got != want {
-		t.Fatalf("layer 220 same-ID changes = %d, want %d", got, want)
+	if got, want := len(diff225.SameWireSignatureChanges()), 8; got != want {
+		t.Fatalf("layer 225 same-ID changes = %d, want %d", got, want)
 	}
-	if got, want := len(diff220.ResultOnlyChanges()), 2; got != want {
-		t.Fatalf("layer 220 result-only changes = %d, want %d", got, want)
+	if got, want := len(diff225.ResultOnlyChanges()), 3; got != want {
+		t.Fatalf("layer 225 result-only changes = %d, want %d", got, want)
 	}
 }
 

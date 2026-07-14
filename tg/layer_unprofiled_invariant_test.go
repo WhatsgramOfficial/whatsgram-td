@@ -68,17 +68,17 @@ func TestLayerUnprofiledInvariantAuthBindTempAuthKey(t *testing.T) {
 func TestLayerUnprofiledProfileEvidenceAndInvariantReplayIdentity(t *testing.T) {
 	var wrapped bin.Buffer
 	wrapped.PutID(InvokeWithLayerRequestTypeID)
-	wrapped.PutInt(220)
+	wrapped.PutInt(225)
 	wrapped.PutID(HelpGetConfigRequestTypeID)
 	wrappedAdmission, err := NewServerDispatcher(nil).AdmitUnprofiled(&wrapped)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if evidence, ok := wrappedAdmission.ProfileEvidence(); !ok || evidence != LayerProfile220 {
-		t.Fatalf("invokeWithLayer profile evidence = %d/%v, want 220/true", evidence, ok)
+	if evidence, ok := wrappedAdmission.ProfileEvidence(); !ok || evidence != LayerProfile225 {
+		t.Fatalf("invokeWithLayer profile evidence = %d/%v, want 225/true", evidence, ok)
 	}
-	if effective, ok := wrappedAdmission.EffectiveProfile(); !ok || effective != LayerProfile220 {
-		t.Fatalf("invokeWithLayer effective profile = %d/%v, want 220/true", effective, ok)
+	if effective, ok := wrappedAdmission.EffectiveProfile(); !ok || effective != LayerProfile225 {
+		t.Fatalf("invokeWithLayer effective profile = %d/%v, want 225/true", effective, ok)
 	}
 
 	request := &AuthBindTempAuthKeyRequest{
@@ -99,15 +99,15 @@ func TestLayerUnprofiledProfileEvidenceAndInvariantReplayIdentity(t *testing.T) 
 	if err := request.Encode(&profiledBody); err != nil {
 		t.Fatal(err)
 	}
-	profiled, err := NewServerDispatcher(nil).AdmitLayer(LayerProfile220, &profiledBody)
+	profiled, err := NewServerDispatcher(nil).AdmitLayer(LayerProfile225, &profiledBody)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if evidence, ok := profiled.ProfileEvidence(); !ok || evidence != LayerProfile220 {
-		t.Fatalf("frozen-profile admission evidence = %d/%v, want 220/true", evidence, ok)
+	if evidence, ok := profiled.ProfileEvidence(); !ok || evidence != LayerProfile225 {
+		t.Fatalf("frozen-profile admission evidence = %d/%v, want 225/true", evidence, ok)
 	}
-	if effective, ok := profiled.EffectiveProfile(); !ok || effective != LayerProfile220 {
-		t.Fatalf("frozen-profile effective profile = %d/%v, want 220/true", effective, ok)
+	if effective, ok := profiled.EffectiveProfile(); !ok || effective != LayerProfile225 {
+		t.Fatalf("frozen-profile effective profile = %d/%v, want 225/true", effective, ok)
 	}
 	var canonicalBody bin.Buffer
 	if err := request.Encode(&canonicalBody); err != nil {
@@ -118,13 +118,13 @@ func TestLayerUnprofiledProfileEvidenceAndInvariantReplayIdentity(t *testing.T) 
 		t.Fatal(err)
 	}
 	if !profiled.Call().WireInvariant() || !canonical.Call().WireInvariant() {
-		t.Fatal("auth.bindTempAuthKey Layer 220/227 routes do not share wire-invariant proof")
+		t.Fatal("auth.bindTempAuthKey Layer 225/227 routes do not share wire-invariant proof")
 	}
 	if unprofiled.Call().Profile() == profiled.Call().Profile() {
-		t.Fatal("test did not exercise canonical representative followed by Layer 220")
+		t.Fatal("test did not exercise canonical representative followed by Layer 225")
 	}
 	if unprofiled.Prepared().Identity() != profiled.Prepared().Identity() {
-		t.Fatal("invariant auth.bindTempAuthKey replay identity changed after Layer 220 freeze")
+		t.Fatal("invariant auth.bindTempAuthKey replay identity changed after Layer 225 freeze")
 	}
 	prepared, err := unprofiled.Call().prepareResult(true)
 	if err != nil {
@@ -132,7 +132,7 @@ func TestLayerUnprofiledProfileEvidenceAndInvariantReplayIdentity(t *testing.T) 
 	}
 	var replayed bin.Buffer
 	if err := prepared.Encode(profiled.Call(), &replayed); err != nil {
-		t.Fatalf("reuse invariant result after Layer 220 freeze: %v", err)
+		t.Fatalf("reuse invariant result after Layer 225 freeze: %v", err)
 	}
 }
 
@@ -156,7 +156,7 @@ func TestLayerDefaultAdmissionExplicitOverride(t *testing.T) {
 	wrapped.PutID(InvokeAfterMsgRequestTypeID)
 	wrapped.PutLong(99)
 	wrapped.PutID(InvokeWithLayerRequestTypeID)
-	wrapped.PutInt(220)
+	wrapped.PutInt(225)
 	wrapped.PutID(HelpGetConfigRequestTypeID)
 	strict := bin.Buffer{Buf: wrapped.Copy()}
 	strictBefore := strict.Copy()
@@ -164,13 +164,13 @@ func TestLayerDefaultAdmissionExplicitOverride(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if effective, ok := admitted.EffectiveProfile(); !ok || effective != LayerProfile220 {
-		t.Fatalf("explicit override effective profile = %d/%v, want 220/true", effective, ok)
+	if effective, ok := admitted.EffectiveProfile(); !ok || effective != LayerProfile225 {
+		t.Fatalf("explicit override effective profile = %d/%v, want 225/true", effective, ok)
 	}
-	if evidence, ok := admitted.ProfileEvidence(); !ok || evidence != LayerProfile220 {
-		t.Fatalf("explicit override evidence = %d/%v, want 220/true", evidence, ok)
+	if evidence, ok := admitted.ProfileEvidence(); !ok || evidence != LayerProfile225 {
+		t.Fatalf("explicit override evidence = %d/%v, want 225/true", evidence, ok)
 	}
-	if admitted.Call().Profile() != LayerProfile220 || admitted.WrapperCount() != 2 {
+	if admitted.Call().Profile() != LayerProfile225 || admitted.WrapperCount() != 2 {
 		t.Fatalf("explicit override call profile/wrappers = %d/%d", admitted.Call().Profile(), admitted.WrapperCount())
 	}
 	if _, err := dispatcher.AdmitLayer(LayerProfile227, &strict); err == nil {
@@ -183,6 +183,18 @@ func TestLayerDefaultAdmissionExplicitOverride(t *testing.T) {
 
 func TestLayerUnprofiledErrorClassification(t *testing.T) {
 	dispatcher := NewServerDispatcher(nil)
+
+	var unsupported bin.Buffer
+	unsupported.PutID(InvokeWithLayerRequestTypeID)
+	unsupported.PutInt(224)
+	unsupported.PutID(HelpGetConfigRequestTypeID)
+	unsupportedBefore := unsupported.Copy()
+	if _, err := dispatcher.AdmitUnprofiled(&unsupported); err == nil {
+		t.Fatal("Layer 224 was accepted outside the maintained profile window")
+	}
+	if !bytes.Equal(unsupported.Raw(), unsupportedBefore) {
+		t.Fatal("unsupported Layer 224 admission mutated caller input")
+	}
 
 	var known bin.Buffer
 	known.PutID(MessagesGetHistoryRequestTypeID)
