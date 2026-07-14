@@ -1306,11 +1306,17 @@ func (e *layerRPCSourceEmitter) buildWrapperRoute(route *layerRPCRoutePlan, refP
 			continue
 		}
 		if field.Ordinal == wrapper.QueryFieldOrdinal {
-			body.WriteString("admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)\n")
-			body.WriteString("if err != nil { return layerDecodedRPCRequest{}, err }\n")
-			fmt.Fprintf(&body, "bindingSnapshot, err := state.bind(%d, admitted.call.result)\n", wrapper.QuerySlot.Ordinal)
-			body.WriteString("if err != nil { return layerDecodedRPCRequest{}, fmt.Errorf(\"bind RPC wrapper result: %w\", err) }\n")
-			body.WriteString("defer state.restore(bindingSnapshot)\n")
+			body.WriteString("admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)\n")
+			body.WriteString("var rpcUnknownTerminal *LayerRPCUnknownTerminalError\n")
+			body.WriteString("if rpcNestedErr != nil {\n")
+			body.WriteString("\tvar ok bool\n")
+			body.WriteString("\trpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)\n")
+			body.WriteString("\tif !ok || !rpcUnknownTerminal.generatedProof() { return layerDecodedRPCRequest{}, rpcNestedErr }\n")
+			body.WriteString("} else {\n")
+			fmt.Fprintf(&body, "\tbindingSnapshot, err := state.bind(%d, admitted.call.result)\n", wrapper.QuerySlot.Ordinal)
+			body.WriteString("\tif err != nil { return layerDecodedRPCRequest{}, fmt.Errorf(\"bind RPC wrapper result: %w\", err) }\n")
+			body.WriteString("\tdefer state.restore(bindingSnapshot)\n")
+			body.WriteString("}\n")
 			querySeen = true
 			bound = true
 			continue
@@ -1444,6 +1450,9 @@ func (e *layerRPCSourceEmitter) buildWrapperRoute(route *layerRPCRoutePlan, refP
 		}
 		body.WriteString("\t},\n")
 	}
+	body.WriteString("}\n")
+	body.WriteString("if rpcUnknownTerminal != nil {\n")
+	fmt.Fprintf(&body, "\treturn layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, %s, 0x%08x)\n", route.Method.Constant, route.WireID)
 	body.WriteString("}\n")
 	body.WriteString("admitted.wrappers = append(admitted.wrappers, wrapperFrame)\n")
 	body.WriteString("return admitted, nil\n")

@@ -120,6 +120,15 @@ selection in this path.
   exact result `TypeRef`, wire ID and request digest.
 - Wrapper metadata is preserved outer-to-inner. Wrappers with session,
   ordering or update-suppression meaning must be consumed explicitly.
+- If at least one generated wrapper is completely decoded but its innermost
+  constructor misses the exact-profile RPC switch, admission may return
+  `LayerRPCUnknownTerminalError`. It carries the exact profile, terminal wire
+  ID and complete remaining terminal size plus a private immutable
+  outer-to-inner wrapper identity chain. Naked unknown constructors and
+  malformed wrappers never receive this proof. The proof is not admission:
+  an edge consumer must whitelist both a closed terminal schema and every
+  wrapper semantic before handling a non-API service terminal; otherwise it
+  must fail closed. No decoder cursor or runtime TL walker is exposed.
 - Flags are rebuilt by `(flags word, bit)` groups. Present-empty slices remain
   present; every value-bearing member of a set bit is encoded atomically.
 - Encoding is transactional. Rejected adapters, partial projections, malformed

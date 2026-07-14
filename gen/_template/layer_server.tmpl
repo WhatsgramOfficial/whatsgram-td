@@ -532,7 +532,10 @@ type layerRPCUnknownMethodResult struct {
 
 type layerRPCUnknownMethodAdapter func(LayerRPCUnknownMethodView) (layerRPCUnknownMethodResult, bool, error)
 
-func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32) error {
+func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32, wireSize, depth int) error {
+    if depth > 0 {
+        return newLayerRPCUnknownTerminalError(profile, wireID, wireSize)
+    }
     return &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: wireID, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 }
 
@@ -540,7 +543,9 @@ func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32) error {
 // default. Every official constructor, including wrappers, therefore wins
 // before a private extension can observe the innermost terminal body.
 func (p *layerRPCAdmissionPreflightRunner) adaptUnknown(profile LayerProfile, b *bin.Buffer, state *layerCodecState, depth int, wireID uint32) (layerDecodedRPCRequest, error) {
-    unknown := layerRPCUnknownMethodError(profile, wireID)
+    wireSize := 0
+    if b != nil { wireSize = b.Len() }
+    unknown := layerRPCUnknownMethodError(profile, wireID, wireSize, depth)
     if p == nil || p.unknownAdapter == nil || atomic.LoadUint32(&p.unknownAdapterDisabled) != 0 {
         return layerDecodedRPCRequest{}, unknown
     }

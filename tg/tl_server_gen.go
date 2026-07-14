@@ -39422,7 +39422,10 @@ type layerRPCUnknownMethodResult struct {
 
 type layerRPCUnknownMethodAdapter func(LayerRPCUnknownMethodView) (layerRPCUnknownMethodResult, bool, error)
 
-func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32) error {
+func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32, wireSize, depth int) error {
+	if depth > 0 {
+		return newLayerRPCUnknownTerminalError(profile, wireID, wireSize)
+	}
 	return &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: wireID, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 }
 
@@ -39430,7 +39433,11 @@ func layerRPCUnknownMethodError(profile LayerProfile, wireID uint32) error {
 // default. Every official constructor, including wrappers, therefore wins
 // before a private extension can observe the innermost terminal body.
 func (p *layerRPCAdmissionPreflightRunner) adaptUnknown(profile LayerProfile, b *bin.Buffer, state *layerCodecState, depth int, wireID uint32) (layerDecodedRPCRequest, error) {
-	unknown := layerRPCUnknownMethodError(profile, wireID)
+	wireSize := 0
+	if b != nil {
+		wireSize = b.Len()
+	}
+	unknown := layerRPCUnknownMethodError(profile, wireID, wireSize, depth)
 	if p == nil || p.unknownAdapter == nil || atomic.LoadUint32(&p.unknownAdapterDisabled) != 0 {
 		return layerDecodedRPCRequest{}, unknown
 	}
@@ -43314,15 +43321,21 @@ func layerAdmitRPC225_0dae54f8(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field secret: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithApnsSecret,
@@ -43331,6 +43344,9 @@ func layerAdmitRPC225_0dae54f8(profile LayerProfile, inheritedProfile LayerProfi
 			rpcWrapperFrozenField0,
 			rpcWrapperFrozenField1,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithApnsSecret, 0x0dae54f8)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -45228,15 +45244,21 @@ func layerAdmitRPC225_1df92984(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field token: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithGooglePlayIntegrity,
@@ -45245,6 +45267,9 @@ func layerAdmitRPC225_1df92984(profile LayerProfile, inheritedProfile LayerProfi
 			rpcWrapperFrozenField0,
 			rpcWrapperFrozenField1,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithGooglePlayIntegrity, 0x1df92984)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -47760,15 +47785,21 @@ func layerAdmitRPC225_365275f2(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field range: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithMessagesRange,
@@ -47776,6 +47807,9 @@ func layerAdmitRPC225_365275f2(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithMessagesRange, 0x365275f2)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -48661,15 +48695,21 @@ func layerAdmitRPC225_3dc4b4f0(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field msg_ids: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeAfterMsgs,
@@ -48677,6 +48717,9 @@ func layerAdmitRPC225_3dc4b4f0(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeAfterMsgs, 0x3dc4b4f0)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -60406,15 +60449,21 @@ func layerAdmitRPC225_aca9fd2e(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field takeout_id: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithTakeout,
@@ -60422,6 +60471,9 @@ func layerAdmitRPC225_aca9fd2e(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithTakeout, 0xaca9fd2e)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -60581,15 +60633,21 @@ func layerAdmitRPC225_adbb0f94(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field token: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithReCaptcha,
@@ -60597,6 +60655,9 @@ func layerAdmitRPC225_adbb0f94(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithReCaptcha, 0xadbb0f94)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -62712,19 +62773,28 @@ func layerAdmitRPC225_bf9459b7(profile LayerProfile, inheritedProfile LayerProfi
 		return layerDecodedRPCRequest{}, fmt.Errorf("consume RPC wrapper 0xbf9459b7: %w", err)
 	}
 	nestedProfile := inheritedProfile
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithoutUpdates,
 		wireID:   0xbf9459b7,
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithoutUpdates, 0xbf9459b7)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -63098,15 +63168,21 @@ func layerAdmitRPC225_c1cd5ea9(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field params: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInitConnection,
@@ -63123,6 +63199,9 @@ func layerAdmitRPC225_c1cd5ea9(profile LayerProfile, inheritedProfile LayerProfi
 			rpcWrapperFrozenField8,
 			rpcWrapperFrozenField9,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInitConnection, 0xc1cd5ea9)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -63941,15 +64020,21 @@ func layerAdmitRPC225_cb9f372d(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field msg_id: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeAfterMsg,
@@ -63957,6 +64042,9 @@ func layerAdmitRPC225_cb9f372d(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeAfterMsg, 0xcb9f372d)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -65649,15 +65737,21 @@ func layerAdmitRPC225_da9b0d0d(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field layer: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithLayer,
@@ -65665,6 +65759,9 @@ func layerAdmitRPC225_da9b0d0d(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithLayer, 0xda9b0d0d)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil
@@ -65961,15 +66058,21 @@ func layerAdmitRPC225_dd289f8e(profile LayerProfile, inheritedProfile LayerProfi
 	if err != nil {
 		return layerDecodedRPCRequest{}, fmt.Errorf("freeze canonical RPC wrapper field connection_id: %w", err)
 	}
-	admitted, err := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
-	if err != nil {
-		return layerDecodedRPCRequest{}, err
+	admitted, rpcNestedErr := decodeLayerRPCRequestState(nestedProfile, b, state, preflight, depth+1)
+	var rpcUnknownTerminal *LayerRPCUnknownTerminalError
+	if rpcNestedErr != nil {
+		var ok bool
+		rpcUnknownTerminal, ok = rpcNestedErr.(*LayerRPCUnknownTerminalError)
+		if !ok || !rpcUnknownTerminal.generatedProof() {
+			return layerDecodedRPCRequest{}, rpcNestedErr
+		}
+	} else {
+		bindingSnapshot, err := state.bind(0, admitted.call.result)
+		if err != nil {
+			return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
+		}
+		defer state.restore(bindingSnapshot)
 	}
-	bindingSnapshot, err := state.bind(0, admitted.call.result)
-	if err != nil {
-		return layerDecodedRPCRequest{}, fmt.Errorf("bind RPC wrapper result: %w", err)
-	}
-	defer state.restore(bindingSnapshot)
 	wrapperFrame := LayerRPCWrapper{
 		profile:  profile,
 		semantic: LayerSemanticMethodInvokeWithBusinessConnection,
@@ -65977,6 +66080,9 @@ func layerAdmitRPC225_dd289f8e(profile LayerProfile, inheritedProfile LayerProfi
 		fields: []layerRPCWrapperField{
 			rpcWrapperFrozenField0,
 		},
+	}
+	if rpcUnknownTerminal != nil {
+		return layerDecodedRPCRequest{}, rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithBusinessConnection, 0xdd289f8e)
 	}
 	admitted.wrappers = append(admitted.wrappers, wrapperFrame)
 	return admitted, nil

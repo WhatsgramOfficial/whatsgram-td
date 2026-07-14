@@ -168,6 +168,7 @@ func TestLayerRPCSourceModelStaticAdmissionAndFrozenResult(t *testing.T) {
 		"state.bind(0, admitted.call.result)",
 		"defer state.restore(bindingSnapshot)",
 		"layerFreezeRPCWrapperField(LayerProfileCanonical, \"layer\"",
+		"rpcUnknownTerminal.withOuterWrapper(profile, LayerSemanticMethodInvokeWithLayer, 0xda9b0d0d)",
 		"admitted.wrappers = append(admitted.wrappers, wrapperFrame)",
 	} {
 		if !strings.Contains(withLayer.Body, want) {
@@ -401,6 +402,7 @@ func TestLayerRPCServerSourceIsSyntacticallyCompilable(t *testing.T) {
 		"func (s *ServerDispatcher) AdmitLayer(",
 		"func (s *ServerDispatcher) AdmitDefaultLayer(",
 		"func (s *ServerDispatcher) AdmitUnprofiled(",
+		"return newLayerRPCUnknownTerminalError(profile, wireID, wireSize)",
 		"func (s *ServerDispatcher) DispatchAdmitted(ctx context.Context, admitted LayerRequest) (LayerRPCResult, error)",
 		"func (s *ServerDispatcher) HasLayerRPCHandler(semantic LayerSemanticID) bool",
 		"func (s *ServerDispatcher) HandleUnprofiled(",
@@ -620,6 +622,9 @@ func TestSchemaSetWriteSourceSelectsStaticLayerServer(t *testing.T) {
 		"func (r LayerRequest) EffectiveProfile() (LayerProfile, bool)",
 		"var ErrLayerProfileRequired = errors.New(\"layer profile required\")",
 		"var ErrLayerProfileAmbiguous = errors.New(\"ambiguous layer profile evidence\")",
+		"type LayerRPCUnknownTerminalWrapper struct",
+		"func (e *LayerRPCUnknownTerminalError) WrapperCount() int",
+		"func (e *LayerRPCUnknownTerminalError) Wrapper(index int) (LayerRPCUnknownTerminalWrapper, bool)",
 	} {
 		if !strings.Contains(codecAPI, want) {
 			t.Errorf("integrated layer codec API is missing %q", want)
@@ -715,6 +720,85 @@ func canonicalRequest(wireID uint32, values ...int) *bin.Buffer {
 	encoded.PutID(wireID)
 	for _, value := range values { encoded.PutInt(value) }
 	return &encoded
+}
+
+func TestGeneratedUnknownTerminalEvidenceRequiresDecodedWrapper(t *testing.T) {
+	dispatcher := NewServerDispatcher(nil)
+	for _, profile := range []LayerProfile{LayerProfile1, LayerProfile2} {
+		wrapped := bin.Buffer{}
+		wrapped.PutID(0xda9b0d0d)
+		wrapped.PutInt(int(profile))
+		wrapped.PutID(0xfeedbeef)
+		before := wrapped.Copy()
+		_, err := dispatcher.AdmitLayer(profile, &wrapped)
+		if !errors.Is(err, ErrLayerUnknownRPCMethod) {
+			t.Fatalf("profile %d wrapped unknown classification = %v", profile, err)
+		}
+		var terminal *LayerRPCUnknownTerminalError
+		if !errors.As(err, &terminal) {
+			t.Fatalf("profile %d wrapped unknown type = %T, want *LayerRPCUnknownTerminalError", profile, err)
+		}
+		if terminal.Profile != profile || terminal.WireID != 0xfeedbeef || terminal.WireSize != 4 {
+			t.Fatalf("profile %d wrapped unknown evidence = %+v", profile, terminal)
+		}
+		wrapper, ok := terminal.Wrapper(0)
+		if terminal.WrapperCount() != 1 || !ok || wrapper.Profile() != profile ||
+			wrapper.Semantic() != LayerSemanticMethodInvokeWithLayer || wrapper.WireID() != 0xda9b0d0d {
+			t.Fatalf("profile %d wrapped unknown chain = count:%d wrapper:%v/%+v", profile, terminal.WrapperCount(), ok, wrapper)
+		}
+		if _, ok := terminal.Wrapper(1); ok { t.Fatalf("profile %d exposed wrapper outside chain", profile) }
+		if !bytes.Equal(wrapped.Raw(), before) { t.Fatalf("profile %d wrapped unknown consumed caller input", profile) }
+	}
+
+	other := bin.Buffer{}
+	other.PutID(0xcb9f372d)
+	other.PutLong(99)
+	other.PutID(0xda9b0d0d)
+	other.PutInt(2)
+	other.PutID(0xfeedbeef)
+	_, err := dispatcher.AdmitLayer(LayerProfile2, &other)
+	var otherTerminal *LayerRPCUnknownTerminalError
+	if !errors.As(err, &otherTerminal) || otherTerminal.WrapperCount() != 2 {
+		t.Fatalf("distinct wrapper chain = %#v / %v", otherTerminal, err)
+	}
+	outer, outerOK := otherTerminal.Wrapper(0)
+	inner, innerOK := otherTerminal.Wrapper(1)
+	if !outerOK || !innerOK || outer.Semantic() != LayerSemanticMethodInvokeAfterMsg || outer.WireID() != 0xcb9f372d ||
+		inner.Semantic() != LayerSemanticMethodInvokeWithLayer || inner.WireID() != 0xda9b0d0d {
+		t.Fatalf("distinct wrapper identities = outer:%v/%+v inner:%v/%+v", outerOK, outer, innerOK, inner)
+	}
+
+	trailing := bin.Buffer{}
+	trailing.PutID(0xda9b0d0d)
+	trailing.PutInt(2)
+	trailing.PutID(0xfeedbeef)
+	trailing.PutInt(7)
+	_, err = dispatcher.AdmitLayer(LayerProfile2, &trailing)
+	var terminal *LayerRPCUnknownTerminalError
+	if !errors.As(err, &terminal) || terminal.WireSize != 8 {
+		t.Fatalf("wrapped unknown trailing evidence = %#v / %v, want 8 bytes", terminal, err)
+	}
+
+	naked := canonicalRequest(0xfeedbeef)
+	_, err = dispatcher.AdmitLayer(LayerProfile2, naked)
+	terminal = nil
+	if !errors.Is(err, ErrLayerUnknownRPCMethod) || errors.As(err, &terminal) {
+		t.Fatalf("naked unknown was classified as decoded wrapper terminal: %#v / %v", terminal, err)
+	}
+
+	malformed := canonicalRequest(0xda9b0d0d, 2)
+	_, err = dispatcher.AdmitLayer(LayerProfile2, malformed)
+	terminal = nil
+	if err == nil || errors.As(err, &terminal) {
+		t.Fatalf("malformed wrapper was classified as decoded terminal: %#v / %v", terminal, err)
+	}
+
+	malformedOther := canonicalRequest(0xcb9f372d, 1)
+	_, err = dispatcher.AdmitLayer(LayerProfile2, malformedOther)
+	terminal = nil
+	if err == nil || errors.As(err, &terminal) {
+		t.Fatalf("malformed non-selector wrapper was classified as decoded terminal: %#v / %v", terminal, err)
+	}
 }
 
 func TestGeneratedCanonicalHandleCompatibility(t *testing.T) {

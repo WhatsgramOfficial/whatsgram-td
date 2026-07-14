@@ -339,6 +339,112 @@ type LayerCodecError struct {
 // parsing LayerCodecError.Reason text.
 var ErrLayerUnknownRPCMethod = errors.New("unknown generated layer RPC method")
 
+// LayerRPCUnknownTerminalWrapper is one immutable generated wrapper identity
+// proven complete on the path to an unknown innermost terminal.
+type LayerRPCUnknownTerminalWrapper struct {
+	profile  LayerProfile
+	semantic LayerSemanticID
+	wireID   uint32
+}
+
+// Profile returns the exact profile which decoded this wrapper.
+func (w LayerRPCUnknownTerminalWrapper) Profile() LayerProfile { return w.profile }
+
+// Semantic returns the generated wrapper method identity.
+func (w LayerRPCUnknownTerminalWrapper) Semantic() LayerSemanticID { return w.semantic }
+
+// WireID returns the exact-profile constructor used on the wire.
+func (w LayerRPCUnknownTerminalWrapper) WireID() uint32 { return w.wireID }
+
+type layerRPCUnknownTerminalWrapperNode struct {
+	wrapper LayerRPCUnknownTerminalWrapper
+	next    *layerRPCUnknownTerminalWrapperNode
+}
+
+// LayerRPCUnknownTerminalError is emitted only after generated exact-profile
+// admission has successfully decoded at least one generated RPC wrapper and
+// the innermost constructor misses that profile's generated method switch.
+// WireSize is the complete remaining terminal subtree, including WireID, so a
+// caller can reject trailing bytes without observing a mutable decoder cursor.
+type LayerRPCUnknownTerminalError struct {
+	Profile  LayerProfile
+	WireID   uint32
+	WireSize int
+	proof    uint8
+	outer    *layerRPCUnknownTerminalWrapperNode
+}
+
+const layerRPCUnknownTerminalGeneratedProof = uint8(0xa7)
+
+func newLayerRPCUnknownTerminalError(profile LayerProfile, wireID uint32, wireSize int) *LayerRPCUnknownTerminalError {
+	return &LayerRPCUnknownTerminalError{Profile: profile, WireID: wireID, WireSize: wireSize, proof: layerRPCUnknownTerminalGeneratedProof}
+}
+
+func (e *LayerRPCUnknownTerminalError) generatedProof() bool {
+	return e != nil && e.proof == layerRPCUnknownTerminalGeneratedProof
+}
+
+func (e *LayerRPCUnknownTerminalError) withOuterWrapper(profile LayerProfile, semantic LayerSemanticID, wireID uint32) *LayerRPCUnknownTerminalError {
+	if !e.generatedProof() {
+		return nil
+	}
+	return &LayerRPCUnknownTerminalError{
+		Profile:  e.Profile,
+		WireID:   e.WireID,
+		WireSize: e.WireSize,
+		proof:    e.proof,
+		outer: &layerRPCUnknownTerminalWrapperNode{
+			wrapper: LayerRPCUnknownTerminalWrapper{profile: profile, semantic: semantic, wireID: wireID},
+			next:    e.outer,
+		},
+	}
+}
+
+// WrapperCount returns the number of generated wrappers proven complete before
+// the terminal switch miss. Wrapper order is outermost to innermost.
+func (e *LayerRPCUnknownTerminalError) WrapperCount() int {
+	count := 0
+	if e == nil {
+		return count
+	}
+	for current := e.outer; current != nil; current = current.next {
+		count++
+	}
+	return count
+}
+
+// Wrapper returns one immutable wrapper identity in outermost-to-innermost
+// order. It never exposes the private linked proof chain or a mutable slice.
+func (e *LayerRPCUnknownTerminalError) Wrapper(index int) (LayerRPCUnknownTerminalWrapper, bool) {
+	if e == nil || index < 0 {
+		return LayerRPCUnknownTerminalWrapper{}, false
+	}
+	current := e.outer
+	for current != nil && index > 0 {
+		current = current.next
+		index--
+	}
+	if current == nil {
+		return LayerRPCUnknownTerminalWrapper{}, false
+	}
+	return current.wrapper, true
+}
+
+func (e *LayerRPCUnknownTerminalError) Error() string {
+	if e == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("layer %d admitted RPC wrapper terminal (%#08x, %d bytes): unknown RPC method in exact profile", e.Profile, e.WireID, e.WireSize)
+}
+
+// Unwrap preserves the established unknown-method classification.
+func (e *LayerRPCUnknownTerminalError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return ErrLayerUnknownRPCMethod
+}
+
 // ErrLayerProfileRequired classifies a known generated RPC which cannot be
 // decoded before the caller supplies a default profile or invokeWithLayer
 // supplies explicit profile evidence. Unknown constructors use
