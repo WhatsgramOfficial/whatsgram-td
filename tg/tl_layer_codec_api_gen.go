@@ -182,6 +182,11 @@ type LayerCodecError struct {
 	Cause     error
 }
 
+// ErrLayerUnknownRPCMethod classifies an exact-profile constructor that is not
+// present in the generated RPC universe. Callers must use errors.Is instead of
+// parsing LayerCodecError.Reason text.
+var ErrLayerUnknownRPCMethod = errors.New("unknown generated layer RPC method")
+
 // Unwrap preserves typed policy/adapter failures across the generated codec
 // boundary. Callers may classify a failure without parsing Reason.
 func (e *LayerCodecError) Unwrap() error {

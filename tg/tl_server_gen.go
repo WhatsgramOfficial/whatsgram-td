@@ -19750,7 +19750,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC220_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile221:
 		switch id {
@@ -21261,7 +21261,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC221_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile222:
 		switch id {
@@ -22778,7 +22778,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC222_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile223:
 		switch id {
@@ -24301,7 +24301,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC223_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile224:
 		switch id {
@@ -25848,7 +25848,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC224_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile225:
 		switch id {
@@ -27421,7 +27421,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC225_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile226:
 		switch id {
@@ -29008,7 +29008,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC226_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	case LayerProfile227:
 		switch id {
@@ -30597,7 +30597,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
 		case 0xffb6d4ca:
 			return layerAdmitRPC227_ffb6d4ca(profile, b, state, preflight, depth)
 		default:
-			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+			return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
 		}
 	default:
 		return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
@@ -229372,7 +229372,7 @@ func (s *ServerDispatcher) HandleLayer(profile LayerProfile, ctx context.Context
 	}
 	if _, ok := LayerSemanticForWireID(profile, id); !ok {
 		if s.fallback == nil {
-			return nil, &LayerCodecError{Operation: "decode request", Profile: profile, WireID: id, Reason: "unknown RPC method"}
+			return nil, &LayerCodecError{Operation: "decode request", Profile: profile, WireID: id, Reason: "unknown RPC method", Cause: ErrLayerUnknownRPCMethod}
 		}
 		return s.fallback(ctx, b)
 	}

@@ -143,7 +143,7 @@ func decodeLayerRPCRequestState(profile LayerProfile, b *bin.Buffer, state *laye
             return {{ $route.Admit }}(profile, b, state, preflight, depth)
         {{- end }}
         default:
-            return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile"}
+            return layerDecodedRPCRequest{}, &LayerCodecError{Operation: "admit RPC request", Profile: profile, WireID: id, Reason: "unknown RPC method in exact profile", Cause: ErrLayerUnknownRPCMethod}
         }
     {{- end }}
     default:
@@ -623,7 +623,7 @@ func (s *ServerDispatcher) HandleLayer(profile LayerProfile, ctx context.Context
     }
     if _, ok := LayerSemanticForWireID(profile, id); !ok {
         if s.fallback == nil {
-            return nil, &LayerCodecError{Operation: "decode request", Profile: profile, WireID: id, Reason: "unknown RPC method"}
+            return nil, &LayerCodecError{Operation: "decode request", Profile: profile, WireID: id, Reason: "unknown RPC method", Cause: ErrLayerUnknownRPCMethod}
         }
         return s.fallback(ctx, b)
     }
