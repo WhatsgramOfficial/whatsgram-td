@@ -546,14 +546,21 @@ func schemaGitLocation(sourcePath string) (root, relative string, err error) {
 	if err != nil {
 		return "", "", err
 	}
-	root, err = runGit(filepath.Dir(abs), "rev-parse", "--show-toplevel")
+	sourceDir := filepath.Dir(abs)
+	root, err = runGit(sourceDir, "rev-parse", "--show-toplevel")
 	if err != nil {
 		return "", "", err
 	}
-	relative, err = filepath.Rel(root, abs)
+	// Ask Git for the repository-relative directory instead of combining
+	// filepath.Abs and Git's canonical root. Those paths can name the same
+	// directory differently: macOS resolves /var to /private/var, while Windows
+	// runners may mix long paths with their 8.3 aliases. Git already owns the
+	// tracked-path identity needed by the provenance check.
+	prefix, err := runGit(sourceDir, "rev-parse", "--show-prefix")
 	if err != nil {
 		return "", "", err
 	}
+	relative = filepath.Clean(filepath.Join(filepath.FromSlash(prefix), filepath.Base(abs)))
 	return root, relative, nil
 }
 
