@@ -573,6 +573,7 @@ type Result interface {
 	bin.Encoder
 	Prepared() PreparedCall
 	WireInvariant() bool
+	CanonicalValue() any
 }
 
 type result struct {
@@ -583,6 +584,12 @@ type result struct {
 
 func (r *result) Prepared() PreparedCall { return r.prepared }
 func (r *result) WireInvariant() bool    { return r.call.WireInvariant() }
+func (r *result) CanonicalValue() any {
+	if r == nil {
+		return nil
+	}
+	return r.value
+}
 func (r *result) Encode(out *bin.Buffer) error {
 	if r == nil {
 		return errors.New("tlprofile: encode nil result")
