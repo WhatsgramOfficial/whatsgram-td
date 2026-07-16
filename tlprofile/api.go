@@ -403,5 +403,36 @@ func DecodeObject(profile Profile, in *bin.Buffer, limits Limits) (bin.Object, e
 	if err := tlScanExact(profile, in, limits); err != nil {
 		return nil, err
 	}
+	wireID, err := in.PeekID()
+	if err != nil {
+		return nil, err
+	}
+	route, ok := tlLookupRoute(profile, wireID)
+	if !ok {
+		return nil, fmt.Errorf("tlprofile: scanned wire %#08x has no exact route in profile %d", wireID, profile)
+	}
+	if route.mode == tlRouteDirect || route.mode == tlRouteRetag {
+		value, ok := tlNewCanonical(route.canonicalWireID)
+		if !ok {
+			return nil, fmt.Errorf("tlprofile: direct semantic %#016x has no canonical factory", route.semantic)
+		}
+		cursor := &bin.Buffer{Buf: in.Raw()}
+		if route.mode == tlRouteDirect {
+			err = value.Decode(cursor)
+		} else {
+			if err = cursor.ConsumeID(wireID); err == nil {
+				bare, bareOK := value.(bin.BareDecoder)
+				if !bareOK {
+					return nil, fmt.Errorf("tlprofile: retag canonical value %T has no bare decoder", value)
+				}
+				err = bare.DecodeBare(cursor)
+			}
+		}
+		if err != nil {
+			return nil, fmt.Errorf("tlprofile: decode validated direct route: %w", err)
+		}
+		in.ResetTo(cursor.Raw())
+		return value, nil
+	}
 	return tg.DecodeLayerWithLimits(tg.LayerProfile(profile), tg.LayerObjectType(), in, limits.legacy())
 }

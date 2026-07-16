@@ -50,3 +50,23 @@ func TestStaticScannerRejectsVectorBeforeMaterialization(t *testing.T) {
 		t.Fatal("non-materializing scanner consumed the caller buffer")
 	}
 }
+
+func TestSparseRouteRetagsWithoutHistoricalStruct(t *testing.T) {
+	request := &tg.ChannelsJoinChannelRequest{Channel: &tg.InputChannelEmpty{}}
+	var wire bin.Buffer
+	wire.PutID(0x24b524c5) // exact Layer 225 channels.joinChannel
+	if err := request.EncodeBare(&wire); err != nil {
+		t.Fatal(err)
+	}
+	decoded, err := DecodeObject(Profile225, &wire, Limits{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	got, ok := decoded.(*tg.ChannelsJoinChannelRequest)
+	if !ok {
+		t.Fatalf("decoded retag type = %T", decoded)
+	}
+	if _, ok := got.Channel.(*tg.InputChannelEmpty); !ok {
+		t.Fatalf("decoded retag channel = %T", got.Channel)
+	}
+}

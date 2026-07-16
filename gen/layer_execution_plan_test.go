@@ -46,6 +46,15 @@ func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 			t.Errorf("tlprofile static scanner contains runtime catalog machinery %q", forbidden)
 		}
 	}
+	routes := string(result["tl_profile_route_gen.go"])
+	for _, want := range []string{"func tlLookupRoute", "func tlNewCanonical", "tlRouteDirect", "tlRouteRetag"} {
+		if !strings.Contains(routes, want) {
+			t.Errorf("tlprofile sparse routes are missing %q", want)
+		}
+	}
+	if strings.Contains(routes, "map[") || strings.Contains(routes, "reflect.") {
+		t.Fatal("tlprofile sparse routes contain a runtime registry or reflection")
+	}
 }
 
 func TestLayerExecutionPlanDeduplicatesRoutesByBehavior(t *testing.T) {
