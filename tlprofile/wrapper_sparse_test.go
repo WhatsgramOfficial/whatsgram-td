@@ -173,6 +173,41 @@ func TestSparseUnprofiledAdmission(t *testing.T) {
 	})
 }
 
+func TestSparseUnknownWrappedTerminalEvidence(t *testing.T) {
+	const unknown = uint32(0xd1435160)
+	for _, profile := range []Profile{Profile225, Profile226, Profile227, Profile228} {
+		var body bin.Buffer
+		putInvokeWithLayer(&body, int(profile))
+		body.PutID(tg.InitConnectionRequestTypeID)
+		body.PutUint32(0)
+		body.PutInt(1)
+		for _, value := range []string{"device", "system", "app", "en", "", "en"} {
+			body.PutString(value)
+		}
+		body.PutID(unknown)
+		before := body.Copy()
+		_, err := NewDispatcher().Admit(profile, &body, Limits{})
+		if !errors.Is(err, ErrUnknownRPCMethod) {
+			t.Fatalf("profile %d error = %v", profile, err)
+		}
+		var terminal *UnknownTerminalError
+		if !errors.As(err, &terminal) {
+			t.Fatalf("profile %d error type = %T", profile, err)
+		}
+		if terminal.Profile != profile || terminal.WireID != unknown || terminal.WireSize != 4 || terminal.WrapperCount() != 2 {
+			t.Fatalf("profile %d terminal = %+v wrappers=%d", profile, terminal, terminal.WrapperCount())
+		}
+		outer, outerOK := terminal.Wrapper(0)
+		inner, innerOK := terminal.Wrapper(1)
+		if !outerOK || !innerOK || outer.Semantic() != SemanticMethodInvokeWithLayer || inner.Semantic() != SemanticMethodInitConnection {
+			t.Fatalf("profile %d wrapper chain = %#v/%v %#v/%v", profile, outer, outerOK, inner, innerOK)
+		}
+		if !bytes.Equal(body.Raw(), before) {
+			t.Fatalf("profile %d failed admission consumed input", profile)
+		}
+	}
+}
+
 func int64SliceBytes(values []int64) []byte {
 	var b bin.Buffer
 	for _, value := range values {

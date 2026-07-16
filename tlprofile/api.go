@@ -590,6 +590,45 @@ var (
 	ErrUnknownRPCMethod = errors.New("tlprofile: unknown RPC method")
 )
 
+// UnknownTerminalError proves that exact static wrapper parsers reached an
+// unknown terminal without reinterpreting the request at runtime. It is
+// emitted only for a non-empty, fully decoded wrapper chain.
+type UnknownTerminalError struct {
+	Profile  Profile
+	WireID   uint32
+	WireSize int
+	wrappers []sparseWrapper
+	cause    error
+}
+
+func (e *UnknownTerminalError) Error() string {
+	if e == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("tlprofile: unknown wrapped terminal profile=%d wire=%#08x size=%d", e.Profile, e.WireID, e.WireSize)
+}
+
+func (e *UnknownTerminalError) Unwrap() error {
+	if e == nil {
+		return nil
+	}
+	return e.cause
+}
+
+func (e *UnknownTerminalError) WrapperCount() int {
+	if e == nil {
+		return 0
+	}
+	return len(e.wrappers)
+}
+
+func (e *UnknownTerminalError) Wrapper(index int) (Wrapper, bool) {
+	if e == nil || index < 0 || index >= len(e.wrappers) {
+		return Wrapper{}, false
+	}
+	return Wrapper{sparse: &e.wrappers[index]}, true
+}
+
 // Dispatcher is the compact semantic handler registry plus exact admission
 // boundary. Codec routing remains generated static code; this map contains
 // application callbacks, never schema or codec programs.
@@ -759,6 +798,13 @@ func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAd
 			admission, handled, err = adaptSparseUnknown(profile, working, limits, preflight, fields, unknown)
 		}
 		if !handled || err != nil {
+			if err != nil && len(wrappers) != 0 && errors.Is(err, ErrUnknownRPCMethod) {
+				wireID, _ := working.PeekID()
+				return Admission{}, true, &UnknownTerminalError{
+					Profile: profile, WireID: wireID, WireSize: working.Len(),
+					wrappers: wrappers, cause: err,
+				}
+			}
 			return admission, handled, err
 		}
 		if working.Len() != 0 {
