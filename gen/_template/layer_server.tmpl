@@ -1255,6 +1255,20 @@ func layerValidateRPCRequestLease(admitted LayerRequest, operation string) (*lay
     return lease, nil
 }
 
+// TakeCanonicalForTLProfile transfers the one-shot canonical request to the
+// generated tlprofile sidecar. It exists only while the sparse sidecar replaces
+// this package's first-generation dense dispatcher; consumers must use
+// tlprofile.Dispatcher rather than calling this bridge directly.
+func (r LayerRequest) TakeCanonicalForTLProfile() (bin.Object, error) {
+    call := r.Call()
+    lease, err := layerValidateRPCRequestLease(r, "transfer admitted RPC to tlprofile")
+    if err != nil { return nil, err }
+    if !atomic.CompareAndSwapUint32(&lease.consumed, 0, 1) {
+        return nil, &LayerCodecError{Operation: "transfer admitted RPC to tlprofile", Profile: call.Profile(), Semantic: call.Method(), WireID: call.WireID(), Reason: "admission lease was already consumed"}
+    }
+    return lease.request, nil
+}
+
 {{- if .LayerRPCSource.ClientBridge }}
 // PrepareOutbound atomically converts an admitted terminal canonical request
 // into one opaque exact-profile outbound call. It never exposes the canonical
