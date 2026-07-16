@@ -223,3 +223,26 @@ func TestLayerSparseCodecModelRealSchemaStaysCompact(t *testing.T) {
 			wires, len(model.FamilyDeclarations), len(model.ClassDeclarations), len(model.SparseResultPlans))
 	}
 }
+
+func TestLayerWrapperModelRealSchemaStaysCompact(t *testing.T) {
+	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	model, err := generator.buildLayerWrapperModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Logf("sparse wrappers bodies=%d unprofiled_invariants=%d known_rpc_ids=%d", len(model.Bodies), len(model.UnprofiledInvariants), len(model.KnownRPCWireIDs))
+	if len(model.Bodies) != 11 || len(model.UnprofiledInvariants) != 422 || len(model.KnownRPCWireIDs) < 800 {
+		t.Fatalf("sparse wrapper/invariant surface drifted: bodies=%d invariants=%d known=%d", len(model.Bodies), len(model.UnprofiledInvariants), len(model.KnownRPCWireIDs))
+	}
+}

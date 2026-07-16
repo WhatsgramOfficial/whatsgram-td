@@ -199,3 +199,49 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 }
 {{ end }}
 {{ end }}
+
+{{ define "tlprofile_wrapper" }}
+{{ template "tlprofile_sparse_header" . }}
+
+type tlWrapperParser func(Profile, *bin.Buffer, Limits) (sparseWrapper, Profile, bool, error)
+
+func tlLookupWrapperParser(profile Profile, wireID uint32) (tlWrapperParser, bool) {
+    switch profile {
+    {{- range .LayerWrapper.Profiles }}
+    case Profile{{ .Layer }}:
+        switch wireID {
+        {{- range .Routes }}
+        case 0x{{ .Hex }}: return tlParseWrapperBody{{ .Body }}, true
+        {{- end }}
+        }
+    {{- end }}
+    }
+    return nil, false
+}
+
+const tlUnprofiledSelectorWireID uint32 = 0x{{ .LayerWrapper.UnprofiledSelectorHex }}
+
+func tlUnprofiledInvariant(wireID uint32) bool {
+    switch wireID {
+    {{- range .LayerWrapper.UnprofiledInvariants }}
+    case 0x{{ .Hex }}: return true
+    {{- end }}
+    default: return false
+    }
+}
+
+func tlKnownRPCWireID(wireID uint32) bool {
+    switch wireID {
+    {{- range .LayerWrapper.KnownRPCWireIDs }}
+    case 0x{{ printf "%08x" . }}: return true
+    {{- end }}
+    default: return false
+    }
+}
+
+{{ range .LayerWrapper.Bodies }}
+func tlParseWrapperBody{{ .ID }}(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+    {{ .Source }}
+}
+{{ end }}
+{{ end }}

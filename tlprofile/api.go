@@ -325,12 +325,41 @@ func (c Call) EncodeResult(value any, out *bin.Buffer) error {
 // Wrapper is immutable metadata for one transparently consumed RPC envelope.
 type Wrapper struct {
 	legacy tg.LayerRPCWrapper
+	sparse *sparseWrapper
 }
 
-func (w Wrapper) Profile() Profile     { return Profile(w.legacy.Profile()) }
-func (w Wrapper) Semantic() SemanticID { return SemanticID(w.legacy.Semantic()) }
-func (w Wrapper) WireID() uint32       { return w.legacy.WireID() }
+func (w Wrapper) Profile() Profile {
+	if w.sparse != nil {
+		return w.sparse.profile
+	}
+	return Profile(w.legacy.Profile())
+}
+func (w Wrapper) Semantic() SemanticID {
+	if w.sparse != nil {
+		return w.sparse.semantic
+	}
+	return SemanticID(w.legacy.Semantic())
+}
+func (w Wrapper) WireID() uint32 {
+	if w.sparse != nil {
+		return w.sparse.wireID
+	}
+	return w.legacy.WireID()
+}
 func (w Wrapper) Value(name string) (value any, present bool, ok bool, err error) {
+	if w.sparse != nil {
+		for index := range w.sparse.fields {
+			field := &w.sparse.fields[index]
+			if field.name == name {
+				if !field.present {
+					return nil, false, true, nil
+				}
+				value, err := cloneSparseWrapperValue(field.value)
+				return value, true, true, err
+			}
+		}
+		return nil, false, false, nil
+	}
 	return w.legacy.Value(name)
 }
 
@@ -355,6 +384,9 @@ func (a Admission) Call() Call {
 }
 func (a Admission) EffectiveProfile() (Profile, bool) {
 	if a.sparse != nil {
+		if !a.sparse.effectiveProfile {
+			return 0, false
+		}
 		return a.sparse.prepared.call.profile, true
 	}
 	profile, ok := a.legacy.EffectiveProfile()
@@ -362,20 +394,73 @@ func (a Admission) EffectiveProfile() (Profile, bool) {
 }
 func (a Admission) ProfileEvidence() (Profile, bool) {
 	if a.sparse != nil {
-		return a.sparse.prepared.call.profile, a.sparse.profileEvidence
+		if !a.sparse.profileEvidence {
+			return 0, false
+		}
+		return a.sparse.prepared.call.profile, true
 	}
 	profile, ok := a.legacy.ProfileEvidence()
 	return Profile(profile), ok
 }
 func (a Admission) WrapperCount() int {
 	if a.sparse != nil {
-		return 0
+		return len(a.sparse.wrappers)
 	}
 	return a.legacy.WrapperCount()
 }
 func (a Admission) Wrapper(index int) (Wrapper, bool) {
+	if a.sparse != nil {
+		if index < 0 || index >= len(a.sparse.wrappers) {
+			return Wrapper{}, false
+		}
+		return Wrapper{sparse: &a.sparse.wrappers[index]}, true
+	}
 	wrapper, ok := a.legacy.Wrapper(index)
 	return Wrapper{legacy: wrapper}, ok
+}
+
+type sparseWrapperField struct {
+	name    string
+	present bool
+	value   any
+}
+
+type sparseWrapper struct {
+	profile  Profile
+	semantic SemanticID
+	wireID   uint32
+	fields   []sparseWrapperField
+}
+
+func cloneSparseWrapperValue(value any) (any, error) {
+	switch typed := value.(type) {
+	case []byte:
+		return append([]byte(nil), typed...), nil
+	case []int64:
+		return append([]int64(nil), typed...), nil
+	case bin.Object:
+		var encoded bin.Buffer
+		if err := typed.Encode(&encoded); err != nil {
+			return nil, fmt.Errorf("tlprofile: freeze wrapper object %T: %w", typed, err)
+		}
+		wireID, err := encoded.PeekID()
+		if err != nil {
+			return nil, err
+		}
+		clone, ok := tlNewCanonical(wireID)
+		if !ok {
+			return nil, fmt.Errorf("tlprofile: wrapper object wire %#08x has no canonical factory", wireID)
+		}
+		if err := clone.Decode(&encoded); err != nil {
+			return nil, err
+		}
+		if encoded.Len() != 0 {
+			return nil, fmt.Errorf("tlprofile: wrapper object clone left %d bytes", encoded.Len())
+		}
+		return clone, nil
+	default:
+		return value, nil
+	}
 }
 
 type sparsePreparedIdentity struct {
@@ -410,10 +495,12 @@ type sparsePreparedCall struct {
 }
 
 type sparseAdmission struct {
-	prepared        sparsePreparedCall
-	request         bin.Object
-	profileEvidence bool
-	claimed         atomic.Bool
+	prepared         sparsePreparedCall
+	request          bin.Object
+	profileEvidence  bool
+	effectiveProfile bool
+	wrappers         []sparseWrapper
+	claimed          atomic.Bool
 }
 
 func (a *sparseAdmission) take() (bin.Object, error) {
@@ -460,6 +547,12 @@ type Next func(context.Context) error
 type WrapperConsumer func(context.Context, Admission, Next) error
 
 var ErrHandlerNotRegistered = errors.New("tlprofile: semantic handler is not registered")
+
+var (
+	ErrProfileRequired  = errors.New("tlprofile: exact client profile is required")
+	ErrProfileConflict  = errors.New("tlprofile: invokeWithLayer conflicts with the frozen profile")
+	ErrUnknownRPCMethod = errors.New("tlprofile: unknown RPC method")
+)
 
 // Dispatcher is the compact semantic handler registry plus exact admission
 // boundary. Codec routing remains generated static code; this map contains
@@ -568,9 +661,6 @@ func (d *Dispatcher) OnUnknownMethod(callback UnknownMethodAdapter) {
 		call, handled, err := callback(UnknownMethodView{legacy: view})
 		return call.legacy, handled, err
 	})
-	d.mu.Lock()
-	d.legacyAdmission = true
-	d.mu.Unlock()
 }
 
 func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Admission, error) {
@@ -580,7 +670,7 @@ func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Ad
 	d.mu.RLock()
 	legacy := d.legacyAdmission
 	if !legacy {
-		if admission, handled, err := admitSparseOrdinary(profile, body, limits, true, d.preflight, d.fieldPreflights); handled || err != nil {
+		if admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights); handled || err != nil {
 			d.mu.RUnlock()
 			return admission, err
 		}
@@ -588,6 +678,74 @@ func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Ad
 	d.mu.RUnlock()
 	request, err := d.admitter.AdmitLayerWithLimits(tg.LayerProfile(profile), body, limits.legacy())
 	return Admission{legacy: request}, err
+}
+
+type sparseAdmissionMode uint8
+
+const (
+	sparseAdmissionExact sparseAdmissionMode = iota
+	sparseAdmissionDefault
+)
+
+func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAdmissionMode, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight) (Admission, bool, error) {
+	if body == nil {
+		return Admission{}, true, errors.New("tlprofile: admit nil body")
+	}
+	if _, ok := ResolveProfile(int(initial)); !ok {
+		return Admission{}, true, fmt.Errorf("tlprofile: unsupported exact profile %d", initial)
+	}
+	// Validate the complete generic wire graph and all allocation budgets before
+	// any wrapper metadata or terminal request is materialized.
+	if err := tlScanExact(initial, body, limits); err != nil {
+		return Admission{}, false, nil
+	}
+	fullWire := body.Raw()
+	working := &bin.Buffer{Buf: fullWire}
+	profile := initial
+	explicitProfile := Profile(0)
+	var wrappers []sparseWrapper
+	for depth := 0; depth < tlScanMaxDepth; depth++ {
+		wireID, err := working.PeekID()
+		if err != nil {
+			return Admission{}, true, err
+		}
+		if parser, ok := tlLookupWrapperParser(profile, wireID); ok {
+			frame, nested, explicit, err := parser(profile, working, limits)
+			if err != nil {
+				return Admission{}, true, err
+			}
+			wrappers = append(wrappers, frame)
+			if explicit {
+				if mode == sparseAdmissionExact && nested != initial {
+					return Admission{}, true, fmt.Errorf("%w: inherited=%d selected=%d", ErrProfileConflict, initial, nested)
+				}
+				if explicitProfile != 0 && explicitProfile != nested {
+					return Admission{}, true, fmt.Errorf("%w: previous=%d selected=%d", ErrProfileConflict, explicitProfile, nested)
+				}
+				explicitProfile = nested
+				profile = nested
+			}
+			continue
+		}
+		admission, handled, err := admitSparseOrdinary(profile, working, limits, false, preflight, fields)
+		if !handled || err != nil {
+			return admission, handled, err
+		}
+		if working.Len() != 0 {
+			return Admission{}, true, fmt.Errorf("tlprofile: wrapped terminal left %d bytes", working.Len())
+		}
+		wireDigest := sha256.Sum256(fullWire)
+		admission.sparse.prepared.wireSize = len(fullWire)
+		admission.sparse.prepared.wireDigest = wireDigest
+		admission.sparse.prepared.identity.wireSize = len(fullWire)
+		admission.sparse.prepared.identity.wireDigest = wireDigest
+		admission.sparse.wrappers = wrappers
+		admission.sparse.effectiveProfile = true
+		admission.sparse.profileEvidence = mode == sparseAdmissionExact || explicitProfile != 0
+		body.ResetTo(working.Raw())
+		return admission, true, nil
+	}
+	return Admission{}, true, fmt.Errorf("tlprofile: wrapper nesting exceeds %d", tlScanMaxDepth)
 }
 
 func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evidence bool, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight) (Admission, bool, error) {
@@ -654,13 +812,22 @@ func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evide
 		call: call, wireSize: wireSize, wireDigest: wireDigest, identity: identity,
 		semanticIdentity: sparseSemanticIdentity{method: route.semantic, canonicalSize: canonical.Len(), canonicalDigest: canonicalDigest},
 	}
-	return Admission{sparse: &sparseAdmission{prepared: prepared, request: request, profileEvidence: evidence}}, true, nil
+	return Admission{sparse: &sparseAdmission{prepared: prepared, request: request, profileEvidence: evidence, effectiveProfile: true}}, true, nil
 }
 
 func (d *Dispatcher) AdmitDefault(profile Profile, body *bin.Buffer, limits Limits) (Admission, error) {
 	if d == nil || d.admitter == nil {
 		return Admission{}, errors.New("tlprofile: default admit on nil dispatcher")
 	}
+	d.mu.RLock()
+	legacy := d.legacyAdmission
+	if !legacy {
+		if admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionDefault, d.preflight, d.fieldPreflights); handled || err != nil {
+			d.mu.RUnlock()
+			return admission, err
+		}
+	}
+	d.mu.RUnlock()
 	request, err := d.admitter.AdmitDefaultLayerWithLimits(tg.LayerProfile(profile), body, limits.legacy())
 	return Admission{legacy: request}, err
 }
@@ -668,6 +835,64 @@ func (d *Dispatcher) AdmitDefault(profile Profile, body *bin.Buffer, limits Limi
 func (d *Dispatcher) AdmitUnprofiled(body *bin.Buffer, limits Limits) (Admission, error) {
 	if d == nil || d.admitter == nil {
 		return Admission{}, errors.New("tlprofile: unprofiled admit on nil dispatcher")
+	}
+	if body == nil {
+		return Admission{}, errors.New("tlprofile: unprofiled admit nil body")
+	}
+	wireID, err := body.PeekID()
+	if err != nil {
+		return Admission{}, err
+	}
+	d.mu.RLock()
+	legacy := d.legacyAdmission
+	if wireID == tlUnprofiledSelectorWireID {
+		probe := &bin.Buffer{Buf: body.Raw()}
+		if err := probe.ConsumeID(tlUnprofiledSelectorWireID); err != nil {
+			d.mu.RUnlock()
+			return Admission{}, err
+		}
+		layer, err := probe.Int()
+		if err != nil {
+			d.mu.RUnlock()
+			return Admission{}, err
+		}
+		profile, ok := ResolveProfile(layer)
+		if !ok {
+			d.mu.RUnlock()
+			return Admission{}, fmt.Errorf("tlprofile: invokeWithLayer selected unsupported exact profile %d", layer)
+		}
+		if !legacy {
+			admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights)
+			d.mu.RUnlock()
+			if handled || err != nil {
+				return admission, err
+			}
+		} else {
+			d.mu.RUnlock()
+		}
+	} else if tlUnprofiledInvariant(wireID) {
+		if !legacy {
+			admission, handled, err := admitSparse(ProfileCanonical, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights)
+			d.mu.RUnlock()
+			if handled || err != nil {
+				if err == nil {
+					admission.sparse.profileEvidence = false
+					admission.sparse.effectiveProfile = false
+					admission.sparse.prepared.call.wireInvariant = true
+				}
+				return admission, err
+			}
+		} else {
+			d.mu.RUnlock()
+		}
+	} else {
+		d.mu.RUnlock()
+		if tlKnownRPCWireID(wireID) {
+			return Admission{}, fmt.Errorf("%w: wire %#08x", ErrProfileRequired, wireID)
+		}
+		if !legacy {
+			return Admission{}, fmt.Errorf("%w: wire %#08x", ErrUnknownRPCMethod, wireID)
+		}
 	}
 	request, err := d.admitter.AdmitUnprofiledWithLimits(body, limits.legacy())
 	return Admission{legacy: request}, err
@@ -784,12 +1009,16 @@ func EncodeObject(profile Profile, value bin.Object, out *bin.Buffer) error {
 }
 
 func DecodeObject(profile Profile, in *bin.Buffer, limits Limits) (bin.Object, error) {
-	// The generated scanner validates the complete exact-profile wire graph and
-	// all allocation budgets before the temporary dense bridge materializes a
-	// canonical value. This call remains after the bridge is deleted.
 	if err := tlScanExact(profile, in, limits); err != nil {
 		return nil, err
 	}
+	return tlDecodeObjectPrefixScanned(profile, in, limits)
+}
+
+// tlDecodeObjectPrefixScanned materializes one boxed value after an enclosing
+// static scanner has already proved its exact TypeRef and allocation bounds.
+// It intentionally permits trailing bytes for wrapper-prefix parsing.
+func tlDecodeObjectPrefixScanned(profile Profile, in *bin.Buffer, limits Limits) (bin.Object, error) {
 	wireID, err := in.PeekID()
 	if err != nil {
 		return nil, err

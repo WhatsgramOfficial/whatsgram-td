@@ -30,6 +30,7 @@ type config struct {
 	LayerRPC              *layerRPCModel
 	LayerScan             *layerScanModel
 	LayerRoute            *layerRouteModel
+	LayerWrapper          *layerWrapperModel
 }
 
 // FileSystem represents a directory of generated package.
@@ -438,6 +439,13 @@ func (g *Generator) WriteTLProfileSource(fs FileSystem, pkgName string, t *templ
 	}
 	if err := w.Generate("tlprofile_sparse_entry", "tl_profile_sparse_entry_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
 		return errors.Wrap(err, "tlprofile sparse codec entry")
+	}
+	wrapper, err := g.buildLayerWrapperModel()
+	if err != nil {
+		return errors.Wrap(err, "tlprofile wrapper parser")
+	}
+	if err := w.Generate("tlprofile_wrapper", "tl_profile_wrapper_gen.go", config{Package: pkgName, LayerWrapper: wrapper}); err != nil {
+		return errors.Wrap(err, "tlprofile wrapper parser source")
 	}
 	return nil
 }
