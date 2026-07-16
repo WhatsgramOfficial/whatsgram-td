@@ -11,7 +11,7 @@ import (
 
 func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 	set := layerRPCSyntheticSchemaSet(t)
-	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerClientSyntheticPolicy(t, set)})
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerSparseSyntheticPolicy(t, set)})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,6 +55,36 @@ func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 	if strings.Contains(routes, "map[") || strings.Contains(routes, "reflect.") {
 		t.Fatal("tlprofile sparse routes contain a runtime registry or reflection")
 	}
+}
+
+func layerSparseSyntheticPolicy(t *testing.T, set *SchemaSet) LayerObligationPolicy {
+	t.Helper()
+	initial, err := NewSchemaSetGenerator(set, GeneratorOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy := LayerObligationPolicy{}
+	for _, obligation := range initial.LayerConversionPlan().Report.Unresolved() {
+		resolution := LayerObligationResolution{Action: LayerResolveReject}
+		switch obligation.Kind {
+		case LayerObligationRequired:
+			resolution.Action = LayerResolveDefault
+		case LayerObligationDiscard, LayerObligationUpdateProjection:
+			resolution.Action = LayerResolveDrop
+		case LayerObligationPrivate:
+			resolution.Action = LayerResolveAllow
+		case LayerObligationResult:
+			if obligation.Semantic.QName == "join" {
+				hook := "adaptOldJoinResult"
+				if obligation.Direction == LayerDirectionProfileToCanonical {
+					hook = "adaptNewJoinResult"
+				}
+				resolution = LayerObligationResolution{Action: LayerResolveAdapter, Hook: hook}
+			}
+		}
+		policy.Entries = append(policy.Entries, LayerObligationPolicyEntry{Key: obligation.Key, Resolution: resolution})
+	}
+	return policy
 }
 
 func TestLayerExecutionPlanDeduplicatesRoutesByBehavior(t *testing.T) {

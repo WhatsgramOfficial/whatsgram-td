@@ -13,24 +13,20 @@ import (
 
 // config is input data for templates.
 type config struct {
-	Layer                 int
-	Flags                 GenerateFlags
-	Package               string
-	Structs               []structDef
-	Interfaces            []interfaceDef
-	Mappings              map[string][]constructorMapping
-	Registry              []bindingDef
-	Errors                []errCheckDef
-	LayerMetadata         *layerMetadata
-	LayerCodec            *layerCodecModel
-	LayerTypeRefs         *layerTypeRefModel
-	LayerRPCSource        *layerRPCSourceModel
-	LayerClientSource     *layerClientSourceModel
-	LayerClientRPCOverlay *layerClientRPCOverlaySourceModel
-	LayerRPC              *layerRPCModel
-	LayerScan             *layerScanModel
-	LayerRoute            *layerRouteModel
-	LayerWrapper          *layerWrapperModel
+	Layer         int
+	Flags         GenerateFlags
+	Package       string
+	Structs       []structDef
+	Interfaces    []interfaceDef
+	Mappings      map[string][]constructorMapping
+	Registry      []bindingDef
+	Errors        []errCheckDef
+	LayerMetadata *layerMetadata
+	LayerCodec    *layerCodecModel
+	LayerRPC      *layerRPCModel
+	LayerScan     *layerScanModel
+	LayerRoute    *layerRouteModel
+	LayerWrapper  *layerWrapperModel
 }
 
 // FileSystem represents a directory of generated package.
@@ -183,7 +179,7 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 	if err := w.WriteStructs(g.structs, g.mappings); err != nil {
 		return errors.Wrap(err, "structs")
 	}
-	if g.generateFlags.Server && g.schemaSet == nil {
+	if g.generateFlags.Server {
 		if err := w.Generate("server", "tl_server_gen.go", config{
 			Structs: g.structs,
 		}); err != nil {
@@ -232,130 +228,6 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 			return err
 		}
 	}
-	if g.schemaSet != nil {
-		typeRefs, err := g.buildLayerTypeRefModel()
-		if err != nil {
-			return errors.Wrap(err, "layer TypeRefs")
-		}
-		var (
-			rpc          *layerRPCModel
-			rpcSource    *layerRPCSourceModel
-			clientSource *layerClientSourceModel
-		)
-		if g.generateFlags.Server || g.generateFlags.Client {
-			rpc, err = g.buildLayerRPCModel()
-			if err != nil {
-				return errors.Wrap(err, "layer RPC model")
-			}
-			if g.generateFlags.Server {
-				rpcSource, err = g.buildLayerRPCSourceModel(rpc, typeRefs)
-				if err != nil {
-					return errors.Wrap(err, "layer RPC source")
-				}
-			}
-			if g.generateFlags.Client {
-				clientSource, err = g.buildLayerClientSourceModel(rpc, typeRefs)
-				if err != nil {
-					return errors.Wrap(err, "layer client source")
-				}
-			}
-		}
-		var codecRPC *layerRPCModel
-		if g.generateFlags.Server {
-			codecRPC = rpc
-		}
-		codec, err := g.buildLayerCodecModel(pkgName, codecRPC)
-		if err != nil {
-			return errors.Wrap(err, "layer codec")
-		}
-		metadata, err := g.buildLayerMetadata()
-		if err != nil {
-			return errors.Wrap(err, "layer metadata")
-		}
-		if err := w.Generate("layer_metadata", "tl_layer_metadata_gen.go", config{
-			Package:       pkgName,
-			LayerMetadata: metadata,
-		}); err != nil {
-			return errors.Wrap(err, "layer metadata")
-		}
-		clientRPCOverlay, err := g.buildLayerClientRPCOverlaySourceModel(pkgName)
-		if err != nil {
-			return errors.Wrap(err, "client RPC overlay")
-		}
-		if err := w.Generate("layer_client_rpc_overlay", "tl_layer_client_rpc_overlay_gen.go", config{
-			Package:               pkgName,
-			LayerClientRPCOverlay: clientRPCOverlay,
-		}); err != nil {
-			return errors.Wrap(err, "client RPC overlay source")
-		}
-		if err := w.Generate("layer_codec_api", "tl_layer_codec_api_gen.go", config{
-			Package: pkgName,
-		}); err != nil {
-			return errors.Wrap(err, "layer codec api")
-		}
-		if err := w.Generate("layer_typeref", "tl_layer_typeref_gen.go", config{
-			Package:       pkgName,
-			LayerTypeRefs: typeRefs,
-		}); err != nil {
-			return errors.Wrap(err, "layer TypeRefs")
-		}
-		if err := w.Generate("layer_codec_runtime_file", "tl_layer_codec_runtime_gen.go", config{
-			Package:    pkgName,
-			LayerCodec: codec,
-		}); err != nil {
-			return errors.Wrap(err, "layer codec runtime")
-		}
-		for _, bucket := range codec.WireBuckets {
-			if len(bucket.Wires) == 0 {
-				continue
-			}
-			bucketCodec := *codec
-			bucketCodec.Wires = bucket.Wires
-			if err := w.Generate("layer_codec_wires_file", fmt.Sprintf("tl_layer_codec_wire_%02d_gen.go", bucket.Index), config{
-				Package:    pkgName,
-				LayerCodec: &bucketCodec,
-			}); err != nil {
-				return errors.Wrapf(err, "layer codec wire bucket %d", bucket.Index)
-			}
-		}
-		if err := w.Generate("layer_codec_families_file", "tl_layer_codec_families_gen.go", config{
-			Package:    pkgName,
-			LayerCodec: codec,
-		}); err != nil {
-			return errors.Wrap(err, "layer codec families")
-		}
-		if err := w.Generate("layer_codec_classes_file", "tl_layer_codec_classes_gen.go", config{
-			Package:    pkgName,
-			LayerCodec: codec,
-		}); err != nil {
-			return errors.Wrap(err, "layer codec classes")
-		}
-		if err := w.Generate("layer_codec_dynamic_file", "tl_layer_codec_dynamic_gen.go", config{
-			Package:    pkgName,
-			LayerCodec: codec,
-		}); err != nil {
-			return errors.Wrap(err, "layer codec dynamic dispatch")
-		}
-		if rpcSource != nil {
-			if err := w.Generate("layer_server", "tl_server_gen.go", config{
-				Package:        pkgName,
-				Flags:          g.generateFlags,
-				LayerRPCSource: rpcSource,
-			}); err != nil {
-				return errors.Wrap(err, "layer RPC server")
-			}
-		}
-		if clientSource != nil {
-			if err := w.Generate("layer_client", "tl_layer_client_gen.go", config{
-				Package:           pkgName,
-				Flags:             g.generateFlags,
-				LayerClientSource: clientSource,
-			}); err != nil {
-				return errors.Wrap(err, "layer RPC client")
-			}
-		}
-	}
-
 	return nil
 }
 

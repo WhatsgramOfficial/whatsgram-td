@@ -156,6 +156,7 @@ func (g *Generator) buildLayerSparseCodecModel(pkg string) (*layerCodecModel, er
 	for index := range model.Hooks {
 		model.Hooks[index].Signature = qualifyLayerSparseIdentifiers(model.Hooks[index].Signature, canonicalNames)
 	}
+	sort.Slice(model.Hooks, func(i, j int) bool { return model.Hooks[i].Name < model.Hooks[j].Name })
 	model.Declarations = nil
 	model.WireBuckets = nil
 	const bucketCount = 64

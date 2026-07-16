@@ -2762,6 +2762,21 @@ func layerCodecEncodeAtomic(profile LayerProfile, b *bin.Buffer, encode func() e
 	return encode()
 }
 
+// Static policy contract for layerAdaptBotGuestChatResult. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, tg.InputBotInlineMessageIDClass) (bool, error) = layerAdaptBotGuestChatResult
+
+// Static policy contract for layerAdaptChatInviteJoinResultToUpdates. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, tg.MessagesChatInviteJoinResultClass) (tg.UpdatesClass, error) = layerAdaptChatInviteJoinResultToUpdates
+
+// Static policy contract for layerAdaptWebBrowserSettingsExceptionResult. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, tg.UpdatesClass) (bool, error) = layerAdaptWebBrowserSettingsExceptionResult
+
 // Static policy contract for layerCaptureChatInviteJoinQueryIDFromWebViewDecode. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.

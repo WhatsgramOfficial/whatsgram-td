@@ -159,7 +159,7 @@ func (g *Generator) buildLayerCodecModel(pkg string, rpcModels ...*layerRPCModel
 	}
 	if len(rpcModels) == 1 {
 		rpc = rpcModels[0]
-		if rpc != nil && (rpc.CanonicalLayer != wire.CanonicalLayer || !equalLayerRPCSourceProfiles(rpc.Profiles, wire.Profiles)) {
+		if rpc != nil && (rpc.CanonicalLayer != wire.CanonicalLayer || !equalLayerProfiles(rpc.Profiles, wire.Profiles)) {
 			return nil, fmt.Errorf("gen: layer codec RPC model does not share the exact profile universe")
 		}
 	}
@@ -198,6 +198,18 @@ func (g *Generator) buildLayerCodecModel(pkg string, rpcModels ...*layerRPCModel
 		return emitter.model.Hooks[i].Name < emitter.model.Hooks[j].Name
 	})
 	return emitter.model, nil
+}
+
+func equalLayerProfiles(left, right []int) bool {
+	if len(left) != len(right) {
+		return false
+	}
+	for index := range left {
+		if left[index] != right[index] {
+			return false
+		}
+	}
+	return true
 }
 
 func (e *layerCodecEmitter) buildWireBuckets(count int) {

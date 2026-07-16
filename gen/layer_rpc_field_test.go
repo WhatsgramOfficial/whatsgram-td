@@ -2,11 +2,6 @@ package gen
 
 import (
 	"bytes"
-	"fmt"
-	"go/format"
-	"os"
-	"os/exec"
-	"path/filepath"
 	"strings"
 	"testing"
 
@@ -330,118 +325,6 @@ func TestLayerRPCAdmissionFieldOldOnlyTargetAdapterIsUnproven(t *testing.T) {
 	plan := findLayerRPCAdmissionFieldPlan(t, model, "modern", "value")
 	if plan.Complete || plan.Coverage[0].Status != layerRPCAdmissionCoverageAdapterUnproven {
 		t.Fatalf("old-only adapter target coverage = %+v", plan)
-	}
-}
-
-func TestLayerRPCAdmissionFieldPureRenameBypassesMutationHook(t *testing.T) {
-	set := layerRPCFieldSyntheticSchemaSet(t)
-	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{
-		LayerPolicy:   layerRPCFieldSyntheticPolicy(t, set),
-		GenerateFlags: GenerateFlags{Server: true},
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	sources := sourceSnapshot{}
-	if err := generator.WriteSource(sources, "fieldfixture", Template()); err != nil {
-		t.Fatal(err)
-	}
-	dir := t.TempDir()
-	root, err := filepath.Abs("..")
-	if err != nil {
-		t.Fatal(err)
-	}
-	goMod := fmt.Sprintf("module fieldfixture\n\ngo 1.25\n\nrequire github.com/iamxvbaba/td v0.0.0\nreplace github.com/iamxvbaba/td => %s\n", filepath.ToSlash(root))
-	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte(goMod), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	for name, source := range sources {
-		formatted, err := format.Source(source)
-		if err != nil {
-			t.Fatalf("format %s: %v\n%s", name, err, source)
-		}
-		if err := os.WriteFile(filepath.Join(dir, name), formatted, 0o600); err != nil {
-			t.Fatal(err)
-		}
-	}
-	runtimeTest := []byte(`package fieldfixture
-
-import (
-    "bytes"
-    "context"
-    "testing"
-
-    "github.com/iamxvbaba/td/bin"
-)
-
-var payloadAliasCalls, optionalAliasCalls int
-
-func aliasMetricPayloadEncode(_ LayerProfile, _ *MetricRequest, value []byte) ([]byte, error) {
-    payloadAliasCalls++
-    return append([]byte("mutated:"), value...), nil
-}
-
-func aliasMetricPayloadDecode(_ LayerProfile, _ *MetricRequest, _ bool, value []byte) ([]byte, error) {
-    payloadAliasCalls++
-    return append([]byte("mutated:"), value...), nil
-}
-
-func aliasMetricOptionalEncode(_ LayerProfile, _ *MetricRequest, _ bool, value int) (int, bool, error) {
-    optionalAliasCalls++
-    return value + 100, false, nil
-}
-
-func aliasMetricOptionalDecode(_ LayerProfile, _ *MetricRequest, _ bool, value int) (int, bool, error) {
-    optionalAliasCalls++
-    return value + 100, false, nil
-}
-
-func TestPureRenameIsMechanical(t *testing.T) {
-    dispatcher := NewServerDispatcher(nil)
-    dispatcher.OnMetric(func(_ context.Context, request *MetricRequest) (*Pong, error) {
-        if !bytes.Equal(request.Payload, []byte("abc")) {
-            t.Fatalf("canonical payload = %q", request.Payload)
-        }
-        if !request.Flags.Has(2) || request.Optional != 7 {
-            t.Fatalf("canonical optional = (%d,%v)", request.Optional, request.Flags.Has(2))
-        }
-        return &Pong{}, nil
-    })
-    if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldMetricPayload, func(view LayerRPCAdmissionFieldView) error {
-        length, ok := view.BytesLength()
-        if !ok || length != 3 { t.Fatalf("payload metric = (%d,%v)", length, ok) }
-        return nil
-    }); err != nil { t.Fatal(err) }
-    if err := dispatcher.OnLayerRPCAdmissionFieldPreflight(LayerRPCFieldMetricOptional, func(view LayerRPCAdmissionFieldView) error {
-        value, ok := view.Int32()
-        if !ok || value != 7 || !view.Present() { t.Fatalf("optional metric = (%d,%v,%v)", value, ok, view.Present()) }
-        return nil
-    }); err != nil { t.Fatal(err) }
-
-    var wire bin.Buffer
-    wire.PutID(0x51000010)
-    wire.PutInt(1)
-    wire.PutInt(11)
-    wire.PutVectorHeader(1)
-    wire.PutInt(12)
-    if err := wire.PutBytesChecked([]byte("abc")); err != nil { t.Fatal(err) }
-    wire.PutInt(7)
-    admitted, err := dispatcher.AdmitLayer(LayerProfile227, &wire)
-    if err != nil { t.Fatal(err) }
-    if _, err := dispatcher.DispatchAdmitted(context.Background(), admitted); err != nil { t.Fatal(err) }
-    if payloadAliasCalls != 0 || optionalAliasCalls != 0 {
-        t.Fatalf("mutable alias hooks ran: payload=%d optional=%d", payloadAliasCalls, optionalAliasCalls)
-    }
-}
-`)
-	if err := os.WriteFile(filepath.Join(dir, "field_runtime_test.go"), runtimeTest, 0o600); err != nil {
-		t.Fatal(err)
-	}
-	command := exec.Command("go", "test", "-mod=mod", "./...")
-	command.Dir = dir
-	output, err := command.CombinedOutput()
-	if err != nil {
-		t.Fatalf("compile/run generated field admission package: %v\n%s", err, output)
 	}
 }
 

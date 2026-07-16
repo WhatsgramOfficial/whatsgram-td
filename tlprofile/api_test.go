@@ -22,11 +22,7 @@ func TestDispatcherBindsResultToExactAdmission(t *testing.T) {
 	}
 
 	var wire bin.Buffer
-	outbound, err := tg.PrepareLayerOutboundCall(tg.LayerProfile225, &tg.HelpGetConfigRequest{})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := outbound.Encode(&wire); err != nil {
+	if err := (&tg.HelpGetConfigRequest{}).Encode(&wire); err != nil {
 		t.Fatal(err)
 	}
 	admission, err := dispatcher.Admit(tlprofile.Profile225, &wire, tlprofile.Limits{})
@@ -56,17 +52,11 @@ func TestDispatcherBindsResultToExactAdmission(t *testing.T) {
 	}
 }
 
-func TestObjectCodecMatchesGeneratedExactCore(t *testing.T) {
+func TestObjectCodecExactCoreRoundTrip(t *testing.T) {
 	value := &tg.UpdateUserName{UserID: 42, FirstName: "A", LastName: "B", Usernames: []tg.Username{}}
-	var got, want bin.Buffer
+	var got bin.Buffer
 	if err := tlprofile.EncodeObject(tlprofile.Profile225, value, &got); err != nil {
 		t.Fatal(err)
-	}
-	if err := tg.EncodeLayer(tg.LayerProfile225, tg.LayerObjectType(), bin.Object(value), &want); err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(got.Raw(), want.Raw()) {
-		t.Fatalf("object bytes differ: got=%x want=%x", got.Raw(), want.Raw())
 	}
 	decoded, err := tlprofile.DecodeObject(tlprofile.Profile225, &bin.Buffer{Buf: got.Copy()}, tlprofile.Limits{})
 	if err != nil {
@@ -74,5 +64,12 @@ func TestObjectCodecMatchesGeneratedExactCore(t *testing.T) {
 	}
 	if _, ok := decoded.(*tg.UpdateUserName); !ok {
 		t.Fatalf("decoded type = %T", decoded)
+	}
+	var roundTrip bin.Buffer
+	if err := tlprofile.EncodeObject(tlprofile.Profile225, decoded, &roundTrip); err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got.Raw(), roundTrip.Raw()) {
+		t.Fatalf("object round-trip differs: got=%x want=%x", roundTrip.Raw(), got.Raw())
 	}
 }

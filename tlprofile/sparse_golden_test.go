@@ -2,6 +2,7 @@ package tlprofile
 
 import (
 	"bytes"
+	"encoding/hex"
 	"strconv"
 	"testing"
 
@@ -9,41 +10,55 @@ import (
 	"github.com/iamxvbaba/td/tg"
 )
 
-func TestSparseCodecMatchesDenseOracleAcrossProfiles(t *testing.T) {
+func mustGolden(t *testing.T, value string) []byte {
+	t.Helper()
+	decoded, err := hex.DecodeString(value)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return decoded
+}
+
+func TestSparseCodecExactWireGoldenAcrossProfiles(t *testing.T) {
+	const (
+		direct     = "def8bde52a000000000000004939b9ed00b33f71"
+		rights     = "d524b25f00000000"
+		channel225 = "1cb1321c000000000000000064000000000000000b6c617965722070726f6f661c01c13701000000"
+		channel228 = "c6349fd4000000000000000064000000000000000b6c617965722070726f6f661c01c13701000000"
+		updates225 = "4042ae7415c4b51c0000000015c4b51c0000000015c4b51c000000000100000001000000"
+		updates228 = "4042ae7415c4b51c01000000a1bbbc201adcc6d9000000000100000022175159010000000000000022175159020000000000000002000000000000000100000009657068656d6572616c000015c4b51c0000000015c4b51c000000000100000001000000"
+	)
 	cases := []struct {
 		name  string
 		value bin.Object
+		wire  map[Profile]string
 	}{
-		{"direct", &tg.UpdateUserStatus{UserID: 42, Status: &tg.UserStatusOnline{Expires: 1_900_000_000}}},
-		{"same-crc-flags", &tg.ChatAdminRights{}},
-		{"changed-id-and-shape", &tg.Channel{ID: 100, Title: "layer proof", Photo: &tg.ChatPhotoEmpty{}, Date: 1}},
-		{"nested-vector-projection", &tg.Updates{Updates: []tg.UpdateClass{&tg.UpdateNewEphemeralMessage{Message: tg.EphemeralMessage{ID: 1, FromID: &tg.PeerUser{UserID: 1}, PeerID: &tg.PeerUser{UserID: 2}, ReceiverID: 2, Date: 1, Message: "ephemeral"}}}, Users: []tg.UserClass{}, Chats: []tg.ChatClass{}, Date: 1, Seq: 1}},
+		{"direct", &tg.UpdateUserStatus{UserID: 42, Status: &tg.UserStatusOnline{Expires: 1_900_000_000}}, map[Profile]string{Profile225: direct, Profile226: direct, Profile227: direct, Profile228: direct}},
+		{"same-crc-flags", &tg.ChatAdminRights{}, map[Profile]string{Profile225: rights, Profile226: rights, Profile227: rights, Profile228: rights}},
+		{"changed-id-and-shape", &tg.Channel{ID: 100, Title: "layer proof", Photo: &tg.ChatPhotoEmpty{}, Date: 1}, map[Profile]string{Profile225: channel225, Profile226: channel225, Profile227: channel225, Profile228: channel228}},
+		{"nested-vector-projection", &tg.Updates{Updates: []tg.UpdateClass{&tg.UpdateNewEphemeralMessage{Message: tg.EphemeralMessage{ID: 1, FromID: &tg.PeerUser{UserID: 1}, PeerID: &tg.PeerUser{UserID: 2}, ReceiverID: 2, Date: 1, Message: "ephemeral"}}}, Users: []tg.UserClass{}, Chats: []tg.ChatClass{}, Date: 1, Seq: 1}, map[Profile]string{Profile225: updates225, Profile226: updates225, Profile227: updates225, Profile228: updates228}},
 	}
 	for _, profile := range []Profile{Profile225, Profile226, Profile227, Profile228} {
 		for _, test := range cases {
 			t.Run(test.name+"/layer"+strconv.Itoa(int(profile)), func(t *testing.T) {
-				var got, want bin.Buffer
-				gotErr := EncodeObject(profile, test.value, &got)
-				wantErr := tg.EncodeLayer(tg.LayerProfile(profile), tg.LayerObjectType(), test.value, &want)
-				if (gotErr == nil) != (wantErr == nil) {
-					t.Fatalf("encode success differs: sparse=%v dense=%v", gotErr, wantErr)
+				var got bin.Buffer
+				if err := EncodeObject(profile, test.value, &got); err != nil {
+					t.Fatal(err)
 				}
-				if gotErr != nil {
-					return
+				want := mustGolden(t, test.wire[profile])
+				if !bytes.Equal(got.Raw(), want) {
+					t.Fatalf("wire differs:\ngot =%x\nwant=%x", got.Raw(), want)
 				}
-				if !bytes.Equal(got.Raw(), want.Raw()) {
-					t.Fatalf("wire differs:\nsparse=%x\ndense =%x", got.Raw(), want.Raw())
-				}
-				decoded, err := DecodeObject(profile, &bin.Buffer{Buf: got.Copy()}, Limits{})
+				decoded, err := DecodeObject(profile, &bin.Buffer{Buf: append([]byte(nil), want...)}, Limits{})
 				if err != nil {
 					t.Fatal(err)
 				}
-				var roundtrip bin.Buffer
-				if err := EncodeObject(profile, decoded, &roundtrip); err != nil {
+				var roundTrip bin.Buffer
+				if err := EncodeObject(profile, decoded, &roundTrip); err != nil {
 					t.Fatal(err)
 				}
-				if !bytes.Equal(roundtrip.Raw(), got.Raw()) {
-					t.Fatalf("roundtrip differs: got=%x want=%x", roundtrip.Raw(), got.Raw())
+				if !bytes.Equal(roundTrip.Raw(), want) {
+					t.Fatalf("round-trip differs: got=%x want=%x", roundTrip.Raw(), want)
 				}
 			})
 		}
@@ -70,45 +85,49 @@ func TestSparseCodecHistoricalPolicyAdapter(t *testing.T) {
 	}
 }
 
-func TestSparseResultPlansMatchDenseOracle(t *testing.T) {
+func TestSparseResultExactWireGoldenAcrossProfiles(t *testing.T) {
+	const (
+		config      = "1e241acc000000000100000002000000379779bc0100000015c4b51c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+		emptyVector = "15c4b51c00000000"
+		join225     = "4042ae7415c4b51c0000000015c4b51c0000000015c4b51c000000000000000000000000"
+		join226     = "a76356444042ae7415c4b51c0000000015c4b51c0000000015c4b51c000000000000000000000000"
+	)
 	cases := []struct {
 		name    string
 		request bin.Object
 		result  any
+		wire    map[Profile]string
 	}{
-		{"boxed-concrete", &tg.HelpGetConfigRequest{}, &tg.Config{Date: 1, Expires: 2, ThisDC: 1}},
-		{"vector-class", &tg.UsersGetUsersRequest{ID: []tg.InputUserClass{}}, []tg.UserClass{}},
-		{"boxed-abstract", &tg.ChannelsJoinChannelRequest{Channel: &tg.InputChannelEmpty{}}, &tg.Updates{Users: []tg.UserClass{}, Chats: []tg.ChatClass{}, Updates: []tg.UpdateClass{}}},
-		{"result-adapter", &tg.MessagesImportChatInviteRequest{Hash: "x"}, &tg.MessagesChatInviteJoinResultOk{Updates: &tg.Updates{Users: []tg.UserClass{}, Chats: []tg.ChatClass{}, Updates: []tg.UpdateClass{}}}},
+		{"boxed-concrete", &tg.HelpGetConfigRequest{}, &tg.Config{Date: 1, Expires: 2, ThisDC: 1}, map[Profile]string{Profile225: config, Profile226: config, Profile227: config, Profile228: config}},
+		{"vector-class", &tg.UsersGetUsersRequest{ID: []tg.InputUserClass{}}, []tg.UserClass{}, map[Profile]string{Profile225: emptyVector, Profile226: emptyVector, Profile227: emptyVector, Profile228: emptyVector}},
+		{"result-adapter", &tg.MessagesImportChatInviteRequest{Hash: "x"}, &tg.MessagesChatInviteJoinResultOk{Updates: &tg.Updates{Users: []tg.UserClass{}, Chats: []tg.ChatClass{}, Updates: []tg.UpdateClass{}}}, map[Profile]string{Profile225: join225, Profile226: join226, Profile227: join226, Profile228: join226}},
 	}
 	for _, profile := range []Profile{Profile225, Profile226, Profile227, Profile228} {
 		for _, test := range cases {
 			t.Run(test.name+"/layer"+strconv.Itoa(int(profile)), func(t *testing.T) {
-				outbound, err := tg.PrepareLayerOutboundCall(tg.LayerProfile(profile), test.request)
+				var canonical bin.Buffer
+				if err := test.request.Encode(&canonical); err != nil {
+					t.Fatal(err)
+				}
+				outbound, err := prepareSparseOutbound(profile, &canonical, Limits{})
 				if err != nil {
-					t.Skipf("request unavailable: %v", err)
+					t.Fatal(err)
 				}
 				var requestWire bin.Buffer
 				if err := outbound.Encode(&requestWire); err != nil {
 					t.Fatal(err)
 				}
-				admission, err := tg.NewServerDispatcher(nil).AdmitLayer(tg.LayerProfile(profile), &requestWire)
+				admission, err := NewDispatcher().Admit(profile, &requestWire, Limits{})
 				if err != nil {
 					t.Fatal(err)
 				}
-				semantic := SemanticID(admission.Call().Method())
-				plan, ok := tlLookupResultPlan(profile, semantic)
-				if !ok {
-					t.Fatalf("no sparse result plan for %#016x", semantic)
+				var got bin.Buffer
+				if err := admission.Call().EncodeResult(test.result, &got); err != nil {
+					t.Fatal(err)
 				}
-				var got, want bin.Buffer
-				gotErr := tlEncodeResultPlan(plan, profile, test.result, &got)
-				wantErr := admission.Call().EncodeResult(test.result, &want)
-				if (gotErr == nil) != (wantErr == nil) {
-					t.Fatalf("result success differs: sparse=%v dense=%v", gotErr, wantErr)
-				}
-				if gotErr == nil && !bytes.Equal(got.Raw(), want.Raw()) {
-					t.Fatalf("result wire differs:\nsparse=%x\ndense =%x", got.Raw(), want.Raw())
+				want := mustGolden(t, test.wire[profile])
+				if !bytes.Equal(got.Raw(), want) {
+					t.Fatalf("result wire differs:\ngot =%x\nwant=%x", got.Raw(), want)
 				}
 			})
 		}

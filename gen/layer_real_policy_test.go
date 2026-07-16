@@ -67,26 +67,18 @@ func TestRealLayerPolicy(t *testing.T) {
 	// required-field policy rejects every profile-to-canonical projection. Keep
 	// that all-reject shape explicit so the template cannot emit a dead boxed
 	// decode tail after a terminating switch (go vet must remain clean).
-	paymentAuthCode := findLayerCodecWire(t, codec, 0x9bb2636d)
+	paymentAuthCode := findRealLayerCodecWire(t, codec, 0x9bb2636d)
 	if !paymentAuthCode.Encodable || paymentAuthCode.Decodable {
 		t.Fatalf("inputStorePaymentAuthCode codec capability = encode:%v decode:%v, want true/false", paymentAuthCode.Encodable, paymentAuthCode.Decodable)
 	}
-	rpc, err := resolved.buildLayerRPCModel()
+	sparse, err := resolved.buildLayerSparseCodecModel("tlprofile")
 	if err != nil {
 		t.Fatal(err)
 	}
-	refs, err := resolved.buildLayerTypeRefModel()
-	if err != nil {
-		t.Fatal(err)
-	}
-	source, err := resolved.buildLayerRPCSourceModel(rpc, refs)
-	if err != nil {
-		t.Fatal(err)
-	}
-	assertRealLayerHookContracts(t, codec.Hooks, source.HookChecks)
+	assertRealLayerHookContracts(t, codec.Hooks, sparse.Hooks)
 }
 
-func assertRealLayerHookContracts(t *testing.T, codec []layerCodecHookContract, rpc []layerRPCSourceHookCheck) {
+func assertRealLayerHookContracts(t *testing.T, codec, sparse []layerCodecHookContract) {
 	t.Helper()
 	wantCodec := map[string]string{
 		"layerCaptureChatInviteJoinQueryIDFromWebViewDecode": "func(LayerProfile, *MessagesChatInviteJoinResultWebView, WebViewResultURL) error",
@@ -101,17 +93,31 @@ func assertRealLayerHookContracts(t *testing.T, codec []layerCodecHookContract, 
 	}
 
 	wantRPC := map[string]string{
-		"layerAdaptBotGuestChatResult":                "func(LayerProfile, InputBotInlineMessageIDClass) (bool, error)",
-		"layerAdaptChatInviteJoinResultToUpdates":     "func(LayerProfile, MessagesChatInviteJoinResultClass) (UpdatesClass, error)",
-		"layerAdaptWebBrowserSettingsExceptionResult": "func(LayerProfile, UpdatesClass) (bool, error)",
+		"layerAdaptBotGuestChatResult":                "func(LayerProfile, tg.InputBotInlineMessageIDClass) (bool, error)",
+		"layerAdaptChatInviteJoinResultToUpdates":     "func(LayerProfile, tg.MessagesChatInviteJoinResultClass) (tg.UpdatesClass, error)",
+		"layerAdaptWebBrowserSettingsExceptionResult": "func(LayerProfile, tg.UpdatesClass) (bool, error)",
 	}
-	gotRPC := make(map[string]string, len(rpc))
-	for _, hook := range rpc {
+	gotRPC := make(map[string]string, len(sparse))
+	for _, hook := range sparse {
+		if _, objectHook := wantCodec[hook.Name]; objectHook {
+			continue
+		}
 		gotRPC[hook.Name] = hook.Signature
 	}
 	if !maps.Equal(gotRPC, wantRPC) {
 		t.Fatalf("real RPC hook contracts changed\ngot:  %v\nwant: %v", gotRPC, wantRPC)
 	}
+}
+
+func findRealLayerCodecWire(t *testing.T, model *layerCodecModel, id uint32) *layerCodecWire {
+	t.Helper()
+	for index := range model.Wires {
+		if model.Wires[index].WireID == id {
+			return &model.Wires[index]
+		}
+	}
+	t.Fatalf("wire %#08x is absent", id)
+	return nil
 }
 
 func buildRealLayerPolicy(report LayerObligationReport) (LayerPolicyDocument, error) {

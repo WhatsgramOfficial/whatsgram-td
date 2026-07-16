@@ -105,6 +105,17 @@ func emitLayerSparseResultPlan(emitter *layerCodecEmitter, profile *layerRPCMeth
 		if hook == "" {
 			return "", fmt.Errorf("result adapter has no hook")
 		}
+		canonicalHookType := canonicalType
+		if layerSparseResultAcceptPointer(canonical) {
+			canonicalHookType = "*" + canonicalHookType
+		}
+		wireHookType := wireType
+		if layerSparseResultAcceptPointer(wire) {
+			wireHookType = "*" + wireHookType
+		}
+		if err := emitter.addHook(hook, fmt.Sprintf("func(LayerProfile, %s) (%s, error)", canonicalHookType, wireHookType)); err != nil {
+			return "", err
+		}
 		fmt.Fprintf(&source, "adapted, err := %s(profile, %s)\nif err != nil { return fmt.Errorf(\"adapt RPC result: %%w\", err) }\n", hook, canonicalHookExpression)
 		expression = "adapted"
 		if layerSparseResultAcceptPointer(wire) {

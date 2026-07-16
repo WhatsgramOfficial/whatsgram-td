@@ -2,7 +2,6 @@ package gen
 
 import (
 	"bytes"
-	"go/format"
 	"strings"
 	"testing"
 
@@ -196,7 +195,7 @@ func TestLayerRPCModelGenericSlotsAndRecursiveFreeze(t *testing.T) {
 		{wireID: 0x43000001, layers: []int{1, 2}, method: "profileEnvelope"},
 	} {
 		fallback := model.defaultWrapper(fallbackCase.wireID)
-		if fallback == nil || fallback.Key.QName != fallbackCase.method || !equalLayerRPCSourceProfiles(fallback.Layers, fallbackCase.layers) {
+		if fallback == nil || fallback.Key.QName != fallbackCase.method || !equalLayerProfiles(fallback.Layers, fallbackCase.layers) {
 			t.Fatalf("default wrapper %#08x = %+v, want profiles %v", fallbackCase.wireID, fallback, fallbackCase.layers)
 		}
 		for _, layer := range fallback.Layers {
@@ -374,58 +373,6 @@ func TestLayerRPCModelTelegram225Through228(t *testing.T) {
 		t.Fatalf("real RPC model counts: handlers=%d wrappers=%d routes=%d", handlers, wrappers, len(model.Routes))
 	}
 	t.Logf("Telegram Layers 225-228 RPC model: semantic_methods=%d handlers=%d wrappers=%d exact_routes=%d", len(model.Methods), handlers, wrappers, len(model.Routes))
-}
-
-func TestLayerRPCServerTemplateKeepsOneOnFacadePerSemanticMethod(t *testing.T) {
-	set := layerRPCSourceSyntheticSchemaSet(t)
-	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerRPCSyntheticPolicy(t, set)})
-	if err != nil {
-		t.Fatal(err)
-	}
-	model, err := generator.buildLayerRPCModel()
-	if err != nil {
-		t.Fatal(err)
-	}
-	refs, err := generator.buildLayerTypeRefModel()
-	if err != nil {
-		t.Fatal(err)
-	}
-	sourceModel, err := generator.buildLayerRPCSourceModel(model, refs)
-	if err != nil {
-		t.Fatal(err)
-	}
-	data := struct {
-		Package        string
-		LayerRPCSource *layerRPCSourceModel
-	}{Package: "layerfixture", LayerRPCSource: sourceModel}
-	var rendered bytes.Buffer
-	if err := Template().ExecuteTemplate(&rendered, "layer_server", data); err != nil {
-		t.Fatal(err)
-	}
-	source := rendered.Bytes()
-	if _, err := format.Source(source); err != nil {
-		t.Fatalf("layer server template is not syntactically valid: %v\n%s", err, source)
-	}
-	text := rendered.String()
-	if count := strings.Count(text, "func (s *ServerDispatcher) OnJoin("); count != 1 {
-		t.Fatalf("OnJoin facade count = %d, want one\n%s", count, text)
-	}
-	if count := strings.Count(text, "s.register(LayerSemanticMethodJoin,"); count != 1 {
-		t.Fatalf("semantic Join registration count = %d, want one", count)
-	}
-	if strings.Contains(text, "OnInvokeWithLayer") || strings.Contains(text, "handlers[JoinRequestTypeID]") {
-		t.Fatal("generic wrappers or individual wire IDs leaked into handler registration")
-	}
-	for _, required := range []string{
-		"HandleLayer(profile LayerProfile",
-		"decodeLayerRPCRequest(profile, &working, limits, callback, fieldCallbacks, unknownAdapter, profileAdmission)",
-		"r.prepared.Call().EncodeResult(r.value, b)",
-		"duplicate layer RPC handler",
-	} {
-		if !strings.Contains(text, required) {
-			t.Fatalf("rendered layer server is missing %q", required)
-		}
-	}
 }
 
 func layerRPCSyntheticSchemaSet(t *testing.T) *SchemaSet {
