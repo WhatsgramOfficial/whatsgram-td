@@ -30,6 +30,11 @@ upstream base becomes the documented baseline only after deterministic
 generation, fork tests, downstream `telesrv` validation, and publication of a
 new immutable tag.
 
+Fork CI deliberately has no scheduled schema updater and does not upload to the
+upstream Codecov project. Coverage is still generated and retained as a workflow
+artifact. Schema updates must use the reviewed local import and policy-audit
+workflow; they are never opened automatically by a credentialed GitHub Action.
+
 Telegram MTProto API client in Go for users and bots.
 
 [![Telegram: English chat](https://api.go-faster.org/badge/telegram/gotd_en?title=EN&v=1)](https://t.me/gotd_en) [![Telegram: Russian chat](https://api.go-faster.org/badge/telegram/gotd_ru?title=RU&v=1)](https://t.me/gotd_ru) [![Telegram: Chinese chat](https://api.go-faster.org/badge/telegram/gotd_zhcn?title=CN&v=1)](https://t.me/gotd_zhcn) [![Telegram: Online count](https://api.go-faster.org/badge/telegram/online?groups=gotd_ru&groups=gotd_en&groups=gotd_zhcn)](https://t.me/gotd_en)
