@@ -1,0 +1,200 @@
+{{- /*gotype: github.com/iamxvbaba/td/gen.config*/ -}}
+{{ define "tlprofile_scan" }}
+{{ template "header" . }}
+{{ with .LayerScan }}
+const (
+    tlScanMaxWireBytes = {{ .MaxWireBytes }}
+    tlScanMaxDepth = {{ .MaxDepth }}
+    tlScanMaxVectorElements = {{ .MaxVectorElements }}
+    tlScanMaxAggregateElements = {{ .MaxAggregateElements }}
+    tlScanDefaultWireBytes = {{ .DefaultWireBytes }}
+    tlScanDefaultDepth = {{ .DefaultDepth }}
+    tlScanDefaultVectorElements = {{ .DefaultVectorElements }}
+    tlScanDefaultAggregateElements = {{ .DefaultAggregateElements }}
+)
+
+type tlScanState struct {
+    depth int
+    maxDepth int
+    maxVectorElements int
+    remainingElements int
+}
+
+func tlScanLimit(value, fallback, hard int) (int, error) {
+    if value < 0 { return 0, fmt.Errorf("negative scan limit %d", value) }
+    if value == 0 { value = fallback }
+    if value > hard { value = hard }
+    return value, nil
+}
+
+func tlNewScanState(profile Profile, wireBytes int, limits Limits) (*tlScanState, error) {
+    if _, ok := ResolveProfile(int(profile)); !ok {
+        return nil, fmt.Errorf("tlprofile: unsupported exact profile %d", profile)
+    }
+    maxWireBytes, err := tlScanLimit(limits.MaxWireBytes, tlScanDefaultWireBytes, tlScanMaxWireBytes)
+    if err != nil { return nil, err }
+    if wireBytes < 0 || wireBytes > maxWireBytes {
+        return nil, fmt.Errorf("tlprofile: wire byte length %d exceeds limit %d", wireBytes, maxWireBytes)
+    }
+    maxVectorElements, err := tlScanLimit(limits.MaxVectorElements, tlScanDefaultVectorElements, tlScanMaxVectorElements)
+    if err != nil { return nil, err }
+    maxAggregateElements, err := tlScanLimit(limits.MaxAggregateElements, tlScanDefaultAggregateElements, tlScanMaxAggregateElements)
+    if err != nil { return nil, err }
+    maxDepth, err := tlScanLimit(limits.MaxDepth, tlScanDefaultDepth, tlScanMaxDepth)
+    if err != nil { return nil, err }
+    return &tlScanState{maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements}, nil
+}
+
+func (s *tlScanState) enter(profile Profile) error {
+    if s == nil { return fmt.Errorf("tlprofile: nil scan state") }
+    if _, ok := ResolveProfile(int(profile)); !ok { return fmt.Errorf("tlprofile: unsupported nested exact profile %d", profile) }
+    if s.depth >= s.maxDepth { return fmt.Errorf("tlprofile: maximum scan depth %d exceeded", s.maxDepth) }
+    s.depth++
+    return nil
+}
+
+func (s *tlScanState) leave() {
+    if s != nil && s.depth > 0 { s.depth-- }
+}
+
+func (s *tlScanState) consumeVector(length int) error {
+    if length < 0 { return fmt.Errorf("tlprofile: negative vector length %d", length) }
+    if length > tlScanMaxVectorElements { return fmt.Errorf("tlprofile: vector length %d exceeds hard limit %d", length, tlScanMaxVectorElements) }
+    if length > s.maxVectorElements { return fmt.Errorf("tlprofile: vector length %d exceeds configured limit %d", length, s.maxVectorElements) }
+    if length > s.remainingElements { return fmt.Errorf("tlprofile: vector length %d exceeds remaining aggregate budget %d", length, s.remainingElements) }
+    s.remainingElements -= length
+    return nil
+}
+
+func tlScanTake(b *bin.Buffer, length int) error {
+    if b == nil { return fmt.Errorf("tlprofile: nil scan buffer") }
+    if length < 0 || b.Len() < length { return fmt.Errorf("tlprofile: truncated payload: need %d bytes, have %d", length, b.Len()) }
+    b.Skip(length)
+    return nil
+}
+
+func tlScanBytes(b *bin.Buffer) error {
+    if b == nil || b.Len() < 1 { return fmt.Errorf("tlprofile: truncated TL bytes header") }
+    raw := b.Raw()
+    header, length := 1, int(raw[0])
+    switch raw[0] {
+    case 254:
+        if len(raw) < 4 { return fmt.Errorf("tlprofile: truncated long TL bytes header") }
+        header = 4
+        length = int(raw[1]) | int(raw[2])<<8 | int(raw[3])<<16
+    case 255:
+        return fmt.Errorf("tlprofile: invalid TL bytes header 255")
+    }
+    total := header + length
+    total += (-total) & 3
+    return tlScanTake(b, total)
+}
+
+func tlScanVector(profile Profile, b *bin.Buffer, state *tlScanState, boxed bool) (int, error) {
+    if err := state.enter(profile); err != nil { return 0, err }
+    if boxed {
+        if err := b.ConsumeID(bin.TypeVector); err != nil { state.leave(); return 0, err }
+    }
+    length, err := b.Int()
+    if err != nil { state.leave(); return 0, err }
+    if err := state.consumeVector(length); err != nil { state.leave(); return 0, err }
+    return length, nil
+}
+
+// tlScanExact validates one complete request/object without materializing any
+// generated Go value and without consuming the caller's buffer.
+func tlScanExact(profile Profile, body *bin.Buffer, limits Limits) error {
+    if body == nil { return fmt.Errorf("tlprofile: nil exact-profile body") }
+    state, err := tlNewScanState(profile, body.Len(), limits)
+    if err != nil { return err }
+    cursor := &bin.Buffer{Buf: body.Raw()}
+    if err := tlScanDynamic(profile, cursor, state); err != nil { return err }
+    if cursor.Len() != 0 { return fmt.Errorf("tlprofile: %d trailing bytes after exact-profile value", cursor.Len()) }
+    return nil
+}
+
+func tlScanDynamic(profile Profile, b *bin.Buffer, state *tlScanState) error {
+    id, err := b.ID()
+    if err != nil { return err }
+    return tlScanWire(profile, id, b, state)
+}
+
+func tlScanWire(profile Profile, id uint32, b *bin.Buffer, state *tlScanState) error {
+    if _, ok := ResolveProfile(int(profile)); !ok {
+        return fmt.Errorf("tlprofile: unsupported nested exact profile %d", profile)
+    }
+    switch id % {{ len .WireBuckets }} {
+    {{- range .WireBuckets }}
+    case {{ .Index }}:
+        return tlScanWireBucket{{ .Index }}(profile, id, b, state)
+    {{- end }}
+    default:
+        return fmt.Errorf("tlprofile: invalid scanner bucket for wire %#08x", id)
+    }
+}
+
+{{ range .Bodies }}
+func tlScanBody{{ .ID }}(profile Profile, b *bin.Buffer, state *tlScanState) error {
+    if err := state.enter(profile); err != nil { return err }
+    defer state.leave()
+    {{ .Source }}
+    return nil
+}
+{{ end }}
+
+{{ range .WireBuckets }}
+func tlScanWireBucket{{ .Index }}(profile Profile, id uint32, b *bin.Buffer, state *tlScanState) error {
+    switch id {
+    {{- range .Wires }}
+    case 0x{{ .Hex }}:
+        switch profile {
+        {{- range .Groups }}
+        case {{ range $index, $layer := .Layers }}{{ if $index }}, {{ end }}Profile{{ $layer }}{{ end }}:
+            return tlScanBody{{ .Body }}(profile, b, state)
+        {{- end }}
+        default:
+            return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
+        }
+    {{- end }}
+    default:
+        return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+    }
+}
+{{ end }}
+
+{{ range .Classes }}{{ $class := . }}
+func tlScanClass{{ .Suffix }}(profile Profile, b *bin.Buffer, state *tlScanState) error {
+    id, err := b.PeekID()
+    if err != nil { return err }
+    switch profile {
+    {{- range .Groups }}
+    case {{ range $index, $layer := .Layers }}{{ if $index }}, {{ end }}Profile{{ $layer }}{{ end }}:
+        switch id {
+        {{- if .WireIDs }}
+        case {{ range $index, $id := .WireIDs }}{{ if $index }}, {{ end }}0x{{ printf "%08x" $id }}{{ end }}:
+            return tlScanDynamic(profile, b, state)
+        {{- end }}
+        default:
+            return fmt.Errorf("tlprofile: wire %#08x is not a member of class {{ $class.QName }} in exact profile %d", id, profile)
+        }
+    {{- end }}
+    default:
+        return fmt.Errorf("tlprofile: class {{ .QName }} is unavailable in exact profile %d", profile)
+    }
+}
+{{ end }}
+
+{{ range .Bares }}
+func tlScanBare{{ .Suffix }}(profile Profile, b *bin.Buffer, state *tlScanState) error {
+    switch profile {
+    {{- range .Groups }}
+    case {{ range $index, $layer := .Layers }}{{ if $index }}, {{ end }}Profile{{ $layer }}{{ end }}:
+        return tlScanBody{{ .Body }}(profile, b, state)
+    {{- end }}
+    default:
+        return fmt.Errorf("tlprofile: bare constructor {{ .QName }} is unavailable in exact profile %d", profile)
+    }
+}
+{{ end }}
+{{ end }}
+{{ end }}

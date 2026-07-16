@@ -28,6 +28,7 @@ type config struct {
 	LayerClientSource     *layerClientSourceModel
 	LayerClientRPCOverlay *layerClientRPCOverlaySourceModel
 	LayerRPC              *layerRPCModel
+	LayerScan             *layerScanModel
 }
 
 // FileSystem represents a directory of generated package.
@@ -386,6 +387,16 @@ func (g *Generator) WriteTLProfileSource(fs FileSystem, pkgName string, t *templ
 		LayerRPC:      rpc,
 	}); err != nil {
 		return errors.Wrap(err, "tlprofile metadata source")
+	}
+	scan, err := g.buildLayerScanModel()
+	if err != nil {
+		return errors.Wrap(err, "tlprofile static scanner")
+	}
+	if err := w.Generate("tlprofile_scan", "tl_profile_scan_gen.go", config{
+		Package:   pkgName,
+		LayerScan: scan,
+	}); err != nil {
+		return errors.Wrap(err, "tlprofile static scanner source")
 	}
 	return nil
 }

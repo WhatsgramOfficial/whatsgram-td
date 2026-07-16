@@ -397,5 +397,11 @@ func EncodeObject(profile Profile, value bin.Object, out *bin.Buffer) error {
 }
 
 func DecodeObject(profile Profile, in *bin.Buffer, limits Limits) (bin.Object, error) {
+	// The generated scanner validates the complete exact-profile wire graph and
+	// all allocation budgets before the temporary dense bridge materializes a
+	// canonical value. This call remains after the bridge is deleted.
+	if err := tlScanExact(profile, in, limits); err != nil {
+		return nil, err
+	}
 	return tg.DecodeLayerWithLimits(tg.LayerProfile(profile), tg.LayerObjectType(), in, limits.legacy())
 }

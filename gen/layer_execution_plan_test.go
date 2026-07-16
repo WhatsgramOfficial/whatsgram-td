@@ -35,6 +35,17 @@ func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 	if strings.Contains(text, "LayerProfile") || strings.Contains(text, "LayerSemanticID") {
 		t.Fatal("tlprofile metadata retained the old dense public API names")
 	}
+	scanner := string(result["tl_profile_scan_gen.go"])
+	for _, want := range []string{"func tlScanExact", "func tlScanDynamic", "func tlScanWire", "remainingElements"} {
+		if !strings.Contains(scanner, want) {
+			t.Errorf("tlprofile static scanner is missing %q", want)
+		}
+	}
+	for _, forbidden := range []string{"reflect.", "semantic.TypeRef", "map[uint32]", "LayerTypeRef"} {
+		if strings.Contains(scanner, forbidden) {
+			t.Errorf("tlprofile static scanner contains runtime catalog machinery %q", forbidden)
+		}
+	}
 }
 
 func TestLayerExecutionPlanDeduplicatesRoutesByBehavior(t *testing.T) {
@@ -142,5 +153,35 @@ func TestLayerExecutionPlanRealSchemaIsSparse(t *testing.T) {
 	}
 	if len(model.BodyPlans) > 800 || len(model.PreflightPlans) > 1000 || len(model.ResultPlans) > 650 {
 		t.Fatalf("sparse plan budget regressed: body=%d preflight=%d result=%d", len(model.BodyPlans), len(model.PreflightPlans), len(model.ResultPlans))
+	}
+}
+
+func TestLayerScanModelRealSchemaStaysCompact(t *testing.T) {
+	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	model, err := generator.buildLayerScanModel()
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wires int
+	for _, bucket := range model.WireBuckets {
+		wires += len(bucket.Wires)
+	}
+	t.Logf("static scanner bodies=%d wires=%d classes=%d bare=%d", len(model.Bodies), wires, len(model.Classes), len(model.Bares))
+	if wires < 2000 {
+		t.Fatalf("scanner wire universe is incomplete: %d", wires)
+	}
+	if len(model.Bodies) > 1500 {
+		t.Fatalf("scanner body deduplication regressed: %d", len(model.Bodies))
 	}
 }
