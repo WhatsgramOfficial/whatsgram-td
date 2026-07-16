@@ -1,7 +1,8 @@
 # Sparse AOT multi-layer architecture
 
-Status: implementation contract for the replacement of the dense Layer
-225--228 backend. This document is normative for generated code. The schema
+Status: implemented in the v1.1 protocol line. The dense Layer 225--228
+backend and its public `tg.Layer*` surface have been deleted. This document is
+normative for generated code. The schema
 manifest and policy remain the normative wire inputs.
 
 ## 1. Goal and compatibility boundary
@@ -31,18 +32,16 @@ github.com/iamxvbaba/td/tg
 
 github.com/iamxvbaba/td/tlprofile
     public Profile, Admission, Call and object/result encoding API
-    generated compact route and metadata switches
+    handwritten bounded dispatcher/runtime plus generated sparse scanners,
+    projections, historical codecs, route metadata and semantic constants
 
-github.com/iamxvbaba/td/internal/tlplan
-    handwritten bounded runtime primitives; no schema catalog
-
-github.com/iamxvbaba/td/internal/tlprofilegen
-    generated sparse scanners, projections and historical codecs
+github.com/iamxvbaba/td/gen
+    generation-time semantic closure, execution-plan construction and emitters
 ```
 
-The final package split may merge the two internal packages when that produces
-a smaller import graph. Their visibility boundary is normative: consumers may
-only import `tg` and `tlprofile`.
+Consumers import `tg` for canonical values and `tlprofile` for all exact-profile
+operations. No runtime package contains the input schema, a general TypeRef
+walker or a mutable schema registry.
 
 ## 3. Generation-time IR
 
@@ -110,26 +109,31 @@ collections. Preflight plans are also deduplicated by execution-plan digest.
 general proactive-update/object encoder. Both fail closed when the target
 profile cannot represent the canonical value.
 
-## 5. Public API direction
+## 5. Public API
 
-The intended small surface is:
+The stable entry points are intentionally capability-oriented:
 
 ```go
 type Profile int
 type Limits struct { /* bounded decode limits */ }
 type Admission struct { /* immutable, opaque */ }
 type Call struct { /* immutable, opaque */ }
+type Result interface { bin.Encoder /* plus immutable call metadata */ }
+type Dispatcher struct { /* semantic handlers and bounded hooks */ }
 
-func Admit(profile Profile, body *bin.Buffer, limits Limits) (Admission, error)
-func AdmitDefault(profile Profile, body *bin.Buffer, limits Limits) (Admission, error)
-func AdmitUnprofiled(body *bin.Buffer, limits Limits) (Admission, error)
+func NewDispatcher() *Dispatcher
+func (d *Dispatcher) Register(method SemanticID, handler Handler) error
+func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Admission, error)
+func (d *Dispatcher) AdmitDefault(profile Profile, body *bin.Buffer, limits Limits) (Admission, error)
+func (d *Dispatcher) AdmitUnprofiled(body *bin.Buffer, limits Limits) (Admission, error)
+func (d *Dispatcher) Dispatch(ctx context.Context, admission Admission) (Result, error)
 
-func (a Admission) Request() bin.Object
 func (a Admission) Call() Call
 func (c Call) EncodeResult(value any, out *bin.Buffer) error
 
 func EncodeObject(profile Profile, value bin.Object, out *bin.Buffer) error
-func DecodeObject(profile Profile, in *bin.Buffer) (bin.Object, error)
+func DecodeObject(profile Profile, in *bin.Buffer, limits Limits) (bin.Object, error)
+func FreezeObject(value bin.Object) (*FrozenObject, error)
 ```
 
 Wrapper inspection, request identity and preflight hooks remain available as
@@ -167,3 +171,9 @@ Required gates:
    paths;
 7. telesrv contains no import-time or identifier dependency on `tg.Layer*`.
 
+The Layer 225--228 implementation currently emits 74 generated `tlprofile`
+files, 12,776,924 bytes and about 336k lines. The hard source budget is 16 MiB
+and 400k lines. The generation audit currently records 9,638 routes sharing
+763 body plans, 928 preflight plans and 599 result plans; 8,517 routes reuse
+the canonical implementation directly. `tg/tl_layer*_gen.go` must remain
+empty. These numbers are evidence and regression bounds, not an API promise.

@@ -10,12 +10,13 @@ The maintained exact-profile window starts at Layer 225. Layers below 225 are
 intentionally absent from the manifest and fail closed at runtime; extending
 the window requires importing the exact schema and reviewing its obligations.
 
-The generated `tg` package has one stable canonical Go model (the manifest's
-canonical Layer) and static wire codecs for every unique constructor or method
-ID present in the universe. Exact profiles map a semantic name to its wire ID
-and body variant. RPC results, active updates and difference responses all use
-the same `EncodeLayer` / `DecodeLayer` machinery; there is no push-specific
-codec and no fallback to canonical bytes when a projection fails.
+The generated `tg` package has exactly one stable canonical Go model (the
+manifest's canonical Layer). Historical schemas exist only while gotdgen builds
+the transitive semantic closure. The generated `tlprofile` sidecar maps an
+exact profile and wire ID to a deduplicated static execution plan. RPC results,
+active updates and difference responses all use `Call.EncodeResult`,
+`EncodeObject` or `FrozenObject.Encode`; there is no push-specific codec and no
+fallback to canonical bytes when a projection fails.
 
 ## Adding a Layer
 
@@ -67,7 +68,7 @@ codec and no fallback to canonical bytes when a projection fails.
 
    ```powershell
    go generate .
-   go test ./gen ./cmd/gotdgen ./tg
+   go test ./gen ./cmd/gotdgen ./tg ./tlprofile
    go vet ./gen ./cmd/gotdgen
    git diff --check
    ```
@@ -95,18 +96,19 @@ import and regeneration when the comparison remains mechanical; otherwise the
 generator stops for an explicit review instead of guessing.
 
 The current DrKLO inputs keep the 15 long-lived core private RPCs and four
-theme RPCs in separate overlays. They generate into
-`tg/tl_layer_client_rpc_overlay_gen.go`. Production adapters call
-`LayerRPCUnknownMethodView.AdaptClientRPCOverlay`, which shares the outer
-request decode budget and authoritative canonical admission bridge. There is
-no runtime TL parser, schema map, reflection walker, or client-driven Layer
-selection in this path.
+theme RPCs in separate overlays. They generate into the `tlprofile` sidecar.
+Production adapters call `UnknownMethodView.AdaptClientRPCOverlay`, which
+shares the outer request decode budget and authoritative canonical admission
+bridge. Overlay IDs are classified per exact profile, so a private ID that
+collides with a historical official constructor is never globally stolen.
+There is no runtime TL parser, schema map, reflection walker, or client-driven
+Layer selection in this path.
 
 ## Runtime invariants
 
-- `AdmitLayer` preserves a caller-frozen exact profile and rejects a conflicting
-  inner `invokeWithLayer`. `AdmitDefaultLayer` instead treats the caller profile
-  as inherited fallback state for naked RPCs: the first `invokeWithLayer`
+- `Dispatcher.Admit` preserves a caller-frozen exact profile and rejects a
+  conflicting inner `invokeWithLayer`. `Dispatcher.AdmitDefault` instead
+  treats the caller profile as inherited fallback state for naked RPCs: the first `invokeWithLayer`
   anywhere in the transparent wrapper chain may replace it, after which
   repeated selectors must agree. The admitted request reports the effective
   profile separately from explicit profile evidence.
@@ -122,7 +124,7 @@ selection in this path.
   ordering or update-suppression meaning must be consumed explicitly.
 - If at least one generated wrapper is completely decoded but its innermost
   constructor misses the exact-profile RPC switch, admission may return
-  `LayerRPCUnknownTerminalError`. It carries the exact profile, terminal wire
+  `UnknownTerminalError`. It carries the exact profile, terminal wire
   ID and complete remaining terminal size plus a private immutable
   outer-to-inner wrapper identity chain. Naked unknown constructors and
   malformed wrappers never receive this proof. The proof is not admission:
@@ -142,11 +144,11 @@ selection in this path.
   evidence exists; the exception cannot be used as a generic unknown-profile
   fallback.
 
-The source emitter coalesces identical codec profile bodies and keeps one
-static codec family per unique wire ID. Server dispatch still has an exact
-switch for every `(profile, wire ID)` route, but routes with byte-identical
-admission descriptors/bodies share one generated admit helper; identical
-wrapper probes share one probe helper as well. Source-budget tests scale with
-the emitted unique RPC syntax plus the small exact-route/coverage tables, so
-adding an unchanged future Layer does not clone every server body. None of
-these paths uses reflection, a runtime schema walker or a dynamic schema map.
+The source emitter coalesces identical body, preflight and result execution
+plans. Dispatch still has an exact switch for every `(profile, wire ID)` route,
+but byte-identical routes share generated helpers; identical wrapper probes
+share one probe helper as well. The current source gate rejects any regenerated
+`tg/tl_layer*_gen.go` and caps the complete generated `tlprofile` sidecar at
+16 MiB / 400k lines. Adding an unchanged future Layer therefore grows route
+metadata instead of cloning the full TL catalog. None of these paths uses
+reflection, a runtime schema walker or a dynamic schema map.
