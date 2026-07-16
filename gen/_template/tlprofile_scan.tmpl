@@ -18,7 +18,19 @@ type tlScanState struct {
     maxDepth int
     maxVectorElements int
     remainingElements int
+    fieldPlan int
+    fieldObserver tlFieldObserver
 }
+
+type tlFieldMetric uint8
+const (
+    tlFieldMetricInvalid tlFieldMetric = iota
+    tlFieldMetricVectorLength
+    tlFieldMetricBytesLength
+    tlFieldMetricInt32
+)
+
+type tlFieldObserver func(FieldID, bool, tlFieldMetric, int64) error
 
 func tlScanLimit(value, fallback, hard int) (int, error) {
     if value < 0 { return 0, fmt.Errorf("negative scan limit %d", value) }
@@ -42,7 +54,7 @@ func tlNewScanState(profile Profile, wireBytes int, limits Limits) (*tlScanState
     if err != nil { return nil, err }
     maxDepth, err := tlScanLimit(limits.MaxDepth, tlScanDefaultDepth, tlScanMaxDepth)
     if err != nil { return nil, err }
-    return &tlScanState{maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements}, nil
+    return &tlScanState{maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements, fieldPlan: -1}, nil
 }
 
 func (s *tlScanState) enter(profile Profile) error {
@@ -66,6 +78,19 @@ func (s *tlScanState) consumeVector(length int) error {
     return nil
 }
 
+func (s *tlScanState) observe(ordinal int, metric tlFieldMetric, present bool, value int64) error {
+    if s == nil || s.fieldObserver == nil || s.fieldPlan < 0 { return nil }
+    rootDepth := 1
+    if metric == tlFieldMetricVectorLength && present { rootDepth = 2 }
+    if s.depth != rootDepth { return nil }
+    field, expected, ok := tlLookupFieldSlot(s.fieldPlan, ordinal)
+    if !ok { return nil }
+    if expected != metric {
+        return fmt.Errorf("tlprofile: generated field metric mismatch for plan %d ordinal %d", s.fieldPlan, ordinal)
+    }
+    return s.fieldObserver(field, present, metric, value)
+}
+
 func tlScanTake(b *bin.Buffer, length int) error {
     if b == nil { return fmt.Errorf("tlprofile: nil scan buffer") }
     if length < 0 || b.Len() < length { return fmt.Errorf("tlprofile: truncated payload: need %d bytes, have %d", length, b.Len()) }
@@ -73,21 +98,27 @@ func tlScanTake(b *bin.Buffer, length int) error {
     return nil
 }
 
-func tlScanBytes(b *bin.Buffer) error {
-    if b == nil || b.Len() < 1 { return fmt.Errorf("tlprofile: truncated TL bytes header") }
+func tlScanBytesLength(b *bin.Buffer) (int, error) {
+    if b == nil || b.Len() < 1 { return 0, fmt.Errorf("tlprofile: truncated TL bytes header") }
     raw := b.Raw()
     header, length := 1, int(raw[0])
     switch raw[0] {
     case 254:
-        if len(raw) < 4 { return fmt.Errorf("tlprofile: truncated long TL bytes header") }
+        if len(raw) < 4 { return 0, fmt.Errorf("tlprofile: truncated long TL bytes header") }
         header = 4
         length = int(raw[1]) | int(raw[2])<<8 | int(raw[3])<<16
     case 255:
-        return fmt.Errorf("tlprofile: invalid TL bytes header 255")
+        return 0, fmt.Errorf("tlprofile: invalid TL bytes header 255")
     }
     total := header + length
     total += (-total) & 3
-    return tlScanTake(b, total)
+    if err := tlScanTake(b, total); err != nil { return 0, err }
+    return length, nil
+}
+
+func tlScanBytes(b *bin.Buffer) error {
+    _, err := tlScanBytesLength(b)
+    return err
 }
 
 func tlScanVector(profile Profile, b *bin.Buffer, state *tlScanState, boxed bool) (int, error) {
@@ -104,13 +135,60 @@ func tlScanVector(profile Profile, b *bin.Buffer, state *tlScanState, boxed bool
 // tlScanExact validates one complete request/object without materializing any
 // generated Go value and without consuming the caller's buffer.
 func tlScanExact(profile Profile, body *bin.Buffer, limits Limits) error {
+    return tlScanExactObserved(profile, body, limits, nil)
+}
+
+func tlScanExactObserved(profile Profile, body *bin.Buffer, limits Limits, observer tlFieldObserver) error {
     if body == nil { return fmt.Errorf("tlprofile: nil exact-profile body") }
     state, err := tlNewScanState(profile, body.Len(), limits)
     if err != nil { return err }
+    wireID, err := body.PeekID()
+    if err != nil { return err }
+    state.fieldPlan = tlLookupFieldPlan(profile, wireID)
+    state.fieldObserver = observer
     cursor := &bin.Buffer{Buf: body.Raw()}
     if err := tlScanDynamic(profile, cursor, state); err != nil { return err }
     if cursor.Len() != 0 { return fmt.Errorf("tlprofile: %d trailing bytes after exact-profile value", cursor.Len()) }
     return nil
+}
+
+func tlFieldRegistration(field FieldID) error {
+    switch field {
+    {{- range .AdmissionFields }}
+    case FieldID(0x{{ printf "%016x" .ID }}):
+        {{- if .Complete }}return nil{{ else }}return fmt.Errorf("tlprofile: field %#016x is not observable across every routable profile: %s", uint64(field), {{ printf "%q" .Failure }}){{ end }}
+    {{- end }}
+    default:
+        return fmt.Errorf("tlprofile: unknown admission field %#016x", uint64(field))
+    }
+}
+
+func tlLookupFieldPlan(profile Profile, wireID uint32) int {
+    switch profile {
+    {{- range .FieldProfiles }}
+    case Profile{{ .Layer }}:
+        switch wireID {
+        {{- range .Routes }}
+        case 0x{{ .Hex }}: return {{ .Plan }}
+        {{- end }}
+        }
+    {{- end }}
+    }
+    return -1
+}
+
+func tlLookupFieldSlot(plan, ordinal int) (FieldID, tlFieldMetric, bool) {
+    switch plan {
+    {{- range .FieldPlans }}
+    case {{ .ID }}:
+        switch ordinal {
+        {{- range .Slots }}
+        case {{ .Ordinal }}: return FieldID(0x{{ printf "%016x" .ID }}), {{ .Metric }}, true
+        {{- end }}
+        }
+    {{- end }}
+    }
+    return 0, tlFieldMetricInvalid, false
 }
 
 func tlScanDynamic(profile Profile, b *bin.Buffer, state *tlScanState) error {

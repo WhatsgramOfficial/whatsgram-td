@@ -25,6 +25,9 @@ type layerScanModel struct {
 	WireBuckets              []layerScanWireBucket
 	Classes                  []layerScanClass
 	Bares                    []layerScanBare
+	FieldPlans               []layerScanFieldPlan
+	FieldProfiles            []layerScanFieldProfile
+	AdmissionFields          []layerScanAdmissionField
 }
 
 type layerScanBody struct {
@@ -63,6 +66,34 @@ type layerScanBare struct {
 	QName  string
 	Suffix string
 	Groups []layerScanProfileBody
+}
+
+type layerScanFieldSlot struct {
+	Ordinal int
+	ID      uint64
+	Metric  string
+}
+
+type layerScanFieldPlan struct {
+	ID    int
+	Slots []layerScanFieldSlot
+}
+
+type layerScanFieldRoute struct {
+	WireID uint32
+	Hex    string
+	Plan   int
+}
+
+type layerScanFieldProfile struct {
+	Layer  int
+	Routes []layerScanFieldRoute
+}
+
+type layerScanAdmissionField struct {
+	ID       uint64
+	Complete bool
+	Failure  string
 }
 
 type layerScanEmitter struct {
@@ -124,6 +155,13 @@ func (g *Generator) buildLayerScanModel() (*layerScanModel, error) {
 		DefaultVectorElements:    layerCodecDefaultVectorSize,
 		DefaultAggregateElements: layerCodecDefaultAggregateElements,
 		Bodies:                   emitter.bodies,
+	}
+	rpc, err := g.buildLayerRPCModel()
+	if err != nil {
+		return nil, fmt.Errorf("gen: layer scanner RPC field plans: %w", err)
+	}
+	if err := buildLayerScanFieldPlans(model, rpc); err != nil {
+		return nil, err
 	}
 
 	wireIDs := make([]uint32, 0, len(wireRoutes))
@@ -193,6 +231,79 @@ func (g *Generator) buildLayerScanModel() (*layerScanModel, error) {
 	return model, nil
 }
 
+func buildLayerScanFieldPlans(model *layerScanModel, rpc *layerRPCModel) error {
+	if model == nil || rpc == nil {
+		return fmt.Errorf("gen: nil scanner or RPC model for field plans")
+	}
+	for _, field := range rpc.AdmissionFields {
+		model.AdmissionFields = append(model.AdmissionFields, layerScanAdmissionField{
+			ID: field.ID, Complete: field.Complete, Failure: field.Failure,
+		})
+	}
+	planByKey := make(map[string]int)
+	routesByLayer := make(map[int][]layerScanFieldRoute)
+	seenRoute := make(map[string]int)
+	for methodIndex := range rpc.Methods {
+		method := &rpc.Methods[methodIndex]
+		for profileIndex := range method.Profiles {
+			profile := &method.Profiles[profileIndex]
+			if !layerRPCAdmissionProfileRoutable(method, profile) {
+				continue
+			}
+			var slots []layerScanFieldSlot
+			for ordinal := range profile.Fields {
+				admission := profile.Fields[ordinal].Admission
+				if admission == nil {
+					continue
+				}
+				slots = append(slots, layerScanFieldSlot{
+					Ordinal: ordinal, ID: admission.ID, Metric: layerScanMetricConstant(admission.Metric),
+				})
+			}
+			if len(slots) == 0 {
+				continue
+			}
+			var key strings.Builder
+			for _, slot := range slots {
+				fmt.Fprintf(&key, "%d:%016x:%s;", slot.Ordinal, slot.ID, slot.Metric)
+			}
+			plan, ok := planByKey[key.String()]
+			if !ok {
+				plan = len(model.FieldPlans)
+				planByKey[key.String()] = plan
+				model.FieldPlans = append(model.FieldPlans, layerScanFieldPlan{ID: plan, Slots: slots})
+			}
+			routeKey := fmt.Sprintf("%d:%08x", profile.Layer, profile.WireID)
+			if previous, duplicate := seenRoute[routeKey]; duplicate && previous != plan {
+				return fmt.Errorf("gen: scanner field route profile %d wire %#08x has conflicting plans %d and %d", profile.Layer, profile.WireID, previous, plan)
+			}
+			seenRoute[routeKey] = plan
+			routesByLayer[profile.Layer] = append(routesByLayer[profile.Layer], layerScanFieldRoute{
+				WireID: profile.WireID, Hex: fmt.Sprintf("%08x", profile.WireID), Plan: plan,
+			})
+		}
+	}
+	for _, layer := range rpc.Profiles {
+		routes := routesByLayer[layer]
+		sort.Slice(routes, func(i, j int) bool { return routes[i].WireID < routes[j].WireID })
+		model.FieldProfiles = append(model.FieldProfiles, layerScanFieldProfile{Layer: layer, Routes: routes})
+	}
+	return nil
+}
+
+func layerScanMetricConstant(metric layerRPCAdmissionMetricKind) string {
+	switch metric {
+	case layerRPCAdmissionMetricVectorLength:
+		return "tlFieldMetricVectorLength"
+	case layerRPCAdmissionMetricBytesLength:
+		return "tlFieldMetricBytesLength"
+	case layerRPCAdmissionMetricInt32:
+		return "tlFieldMetricInt32"
+	default:
+		return "tlFieldMetricInvalid"
+	}
+}
+
 type layerScanDefinitionKey struct {
 	Layer int
 	Key   semantic.SemanticKey
@@ -213,7 +324,8 @@ func (e *layerScanEmitter) definition(definition *semantic.Definition, bare, cla
 	var out strings.Builder
 	flags := make(map[string]string)
 	profileVariable := "profile"
-	for _, field := range definition.Fields {
+	for fieldIndex := range definition.Fields {
+		field := &definition.Fields[fieldIndex]
 		if field.Kind == semantic.FieldFlagsWord {
 			name := e.next("flags")
 			fmt.Fprintf(&out, "%s, err := b.Uint32()\nif err != nil { return err }\n_ = %s\n", name, name)
@@ -236,17 +348,59 @@ func (e *layerScanEmitter) definition(definition *semantic.Definition, bare, cla
 			fmt.Fprintf(target, "%s, err := b.Int32()\nif err != nil { return err }\n", name)
 			profileVariable = "Profile(" + name + ")"
 		} else {
-			source, err := e.typeRef(&field.Type, profileVariable, bare, classes)
+			metric, observed := layerRPCAdmissionMetric(&field.Type, field.Kind)
+			if definition.Key.Category != semantic.CategoryFunction {
+				observed = false
+			}
+			var source string
+			var err error
+			if observed {
+				source, err = e.metricTypeRef(&field.Type, profileVariable, bare, classes, fieldIndex, metric)
+			} else {
+				source, err = e.typeRef(&field.Type, profileVariable, bare, classes)
+			}
 			if err != nil {
 				return "", fmt.Errorf("field %q TypeRef %s: %w", field.Name, field.Type.String(), err)
 			}
 			target.WriteString(source)
 		}
 		if field.Condition != nil {
-			out.WriteString("}\n")
+			if metric, observed := layerRPCAdmissionMetric(&field.Type, field.Kind); observed && definition.Key.Category == semantic.CategoryFunction {
+				fmt.Fprintf(&out, "} else {\nif err := state.observe(%d, %s, false, 0); err != nil { return err }\n}\n", fieldIndex, layerScanMetricConstant(metric))
+			} else {
+				out.WriteString("}\n")
+			}
 		}
 	}
 	return out.String(), nil
+}
+
+func (e *layerScanEmitter) metricTypeRef(ref *semantic.TypeRef, profile string, bare, classes map[string]struct{}, ordinal int, metric layerRPCAdmissionMetricKind) (string, error) {
+	if ref == nil {
+		return "", fmt.Errorf("nil observed TypeRef")
+	}
+	switch metric {
+	case layerRPCAdmissionMetricInt32:
+		name := e.next("value")
+		return fmt.Sprintf("%s, err := b.Int32()\nif err != nil { return err }\nif err := state.observe(%d, tlFieldMetricInt32, true, int64(%s)); err != nil { return err }\n", name, ordinal, name), nil
+	case layerRPCAdmissionMetricBytesLength:
+		name := e.next("length")
+		return fmt.Sprintf("%s, err := tlScanBytesLength(b)\nif err != nil { return err }\nif err := state.observe(%d, tlFieldMetricBytesLength, true, int64(%s)); err != nil { return err }\n", name, ordinal, name), nil
+	case layerRPCAdmissionMetricVectorLength:
+		if ref.Kind != semantic.TypeVector || ref.Arg == nil {
+			return "", fmt.Errorf("observed vector metric has non-vector TypeRef %s", ref.String())
+		}
+		body, err := e.typeRef(ref.Arg, profile, bare, classes)
+		if err != nil {
+			return "", err
+		}
+		length := e.next("length")
+		index := e.next("i")
+		boxed := ref.QName == "Vector" && !ref.Bare && !ref.Percent
+		return fmt.Sprintf("%s, err := tlScanVector(%s, b, state, %t)\nif err != nil { return err }\nif err := state.observe(%d, tlFieldMetricVectorLength, true, int64(%s)); err != nil { state.leave(); return err }\nfor %s := 0; %s < %s; %s++ {\n%s}\nstate.leave()\n", length, profile, boxed, ordinal, length, index, index, length, index, body), nil
+	default:
+		return "", fmt.Errorf("unsupported observed metric %s", metric)
+	}
 }
 
 func (e *layerScanEmitter) typeRef(ref *semantic.TypeRef, profile string, bare, classes map[string]struct{}) (string, error) {

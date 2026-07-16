@@ -3,6 +3,7 @@ package tlprofile
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"sync"
@@ -27,33 +28,128 @@ type FieldID uint64
 // FieldView is an immutable scalar observation made before typed request
 // materialization.
 type FieldView struct {
-	legacy tg.LayerRPCAdmissionFieldView
+	legacy   tg.LayerRPCAdmissionFieldView
+	profile  Profile
+	semantic SemanticID
+	wireID   uint32
+	fieldID  FieldID
+	present  bool
+	metric   tlFieldMetric
+	value    int64
+	sparse   bool
 }
 
-func (v FieldView) Profile() Profile          { return Profile(v.legacy.Profile()) }
-func (v FieldView) Semantic() SemanticID      { return SemanticID(v.legacy.Semantic()) }
-func (v FieldView) WireID() uint32            { return v.legacy.WireID() }
-func (v FieldView) FieldID() FieldID          { return FieldID(v.legacy.FieldID()) }
-func (v FieldView) Present() bool             { return v.legacy.Present() }
-func (v FieldView) VectorLength() (int, bool) { return v.legacy.VectorLength() }
-func (v FieldView) BytesLength() (int, bool)  { return v.legacy.BytesLength() }
-func (v FieldView) Int32() (int32, bool)      { return v.legacy.Int32() }
+func (v FieldView) Profile() Profile {
+	if v.sparse {
+		return v.profile
+	}
+	return Profile(v.legacy.Profile())
+}
+func (v FieldView) Semantic() SemanticID {
+	if v.sparse {
+		return v.semantic
+	}
+	return SemanticID(v.legacy.Semantic())
+}
+func (v FieldView) WireID() uint32 {
+	if v.sparse {
+		return v.wireID
+	}
+	return v.legacy.WireID()
+}
+func (v FieldView) FieldID() FieldID {
+	if v.sparse {
+		return v.fieldID
+	}
+	return FieldID(v.legacy.FieldID())
+}
+func (v FieldView) Present() bool {
+	if v.sparse {
+		return v.present
+	}
+	return v.legacy.Present()
+}
+func (v FieldView) VectorLength() (int, bool) {
+	if v.sparse {
+		return int(v.value), v.present && v.metric == tlFieldMetricVectorLength
+	}
+	return v.legacy.VectorLength()
+}
+func (v FieldView) BytesLength() (int, bool) {
+	if v.sparse {
+		return int(v.value), v.present && v.metric == tlFieldMetricBytesLength
+	}
+	return v.legacy.BytesLength()
+}
+func (v FieldView) Int32() (int32, bool) {
+	if v.sparse {
+		return int32(v.value), v.present && v.metric == tlFieldMetricInt32
+	}
+	return v.legacy.Int32()
+}
 
 type FieldPreflight func(FieldView) error
 
 // AdmissionView exposes a bounded immutable prefix view before an ordinary
 // terminal request is consumed.
 type AdmissionView struct {
-	legacy tg.LayerRPCAdmissionView
+	legacy   tg.LayerRPCAdmissionView
+	profile  Profile
+	semantic SemanticID
+	wireID   uint32
+	raw      []byte
+	sparse   bool
 }
 
-func (v AdmissionView) Profile() Profile                    { return Profile(v.legacy.Profile()) }
-func (v AdmissionView) Semantic() SemanticID                { return SemanticID(v.legacy.Semantic()) }
-func (v AdmissionView) WireID() uint32                      { return v.legacy.WireID() }
-func (v AdmissionView) WireSize() int                       { return v.legacy.WireSize() }
-func (v AdmissionView) ByteAt(offset int) (byte, error)     { return v.legacy.ByteAt(offset) }
-func (v AdmissionView) Uint32At(offset int) (uint32, error) { return v.legacy.Uint32At(offset) }
+func (v AdmissionView) Profile() Profile {
+	if v.sparse {
+		return v.profile
+	}
+	return Profile(v.legacy.Profile())
+}
+func (v AdmissionView) Semantic() SemanticID {
+	if v.sparse {
+		return v.semantic
+	}
+	return SemanticID(v.legacy.Semantic())
+}
+func (v AdmissionView) WireID() uint32 {
+	if v.sparse {
+		return v.wireID
+	}
+	return v.legacy.WireID()
+}
+func (v AdmissionView) WireSize() int {
+	if v.sparse {
+		return len(v.raw)
+	}
+	return v.legacy.WireSize()
+}
+func (v AdmissionView) ByteAt(offset int) (byte, error) {
+	if !v.sparse {
+		return v.legacy.ByteAt(offset)
+	}
+	if offset < 0 || offset >= len(v.raw) {
+		return 0, fmt.Errorf("tlprofile: byte offset %d outside wire size %d", offset, len(v.raw))
+	}
+	return v.raw[offset], nil
+}
+func (v AdmissionView) Uint32At(offset int) (uint32, error) {
+	if !v.sparse {
+		return v.legacy.Uint32At(offset)
+	}
+	if offset < 0 || offset > len(v.raw)-4 {
+		return 0, fmt.Errorf("tlprofile: uint32 offset %d outside wire size %d", offset, len(v.raw))
+	}
+	return binary.LittleEndian.Uint32(v.raw[offset:]), nil
+}
 func (v AdmissionView) ReadAt(offset, length int) ([]byte, error) {
+	if v.sparse {
+		if offset < 0 || length < 0 || offset > len(v.raw)-length {
+			return nil, fmt.Errorf("tlprofile: range [%d,%d) outside wire size %d", offset, offset+length, len(v.raw))
+		}
+		return append([]byte(nil), v.raw[offset:offset+length]...), nil
+	}
 	return v.legacy.ReadAt(offset, length)
 }
 
@@ -374,6 +470,8 @@ type Dispatcher struct {
 	mu              sync.RWMutex
 	handlers        map[SemanticID]Handler
 	wrappers        WrapperConsumer
+	preflight       AdmissionPreflight
+	fieldPreflights map[FieldID]FieldPreflight
 	legacyAdmission bool
 }
 
@@ -431,21 +529,33 @@ func (d *Dispatcher) OnAdmissionPreflight(callback AdmissionPreflight) {
 		return callback(AdmissionView{legacy: view})
 	})
 	d.mu.Lock()
-	d.legacyAdmission = true
-	d.mu.Unlock()
+	defer d.mu.Unlock()
+	if d.preflight != nil {
+		panic("tlprofile: duplicate admission preflight")
+	}
+	d.preflight = callback
 }
 
 func (d *Dispatcher) OnFieldPreflight(field FieldID, callback FieldPreflight) error {
 	if d == nil || d.admitter == nil || callback == nil {
 		return errors.New("tlprofile: register nil field preflight or dispatcher")
 	}
+	if err := tlFieldRegistration(field); err != nil {
+		return err
+	}
 	err := d.admitter.OnLayerRPCAdmissionFieldPreflight(tg.LayerRPCFieldID(field), func(view tg.LayerRPCAdmissionFieldView) error {
 		return callback(FieldView{legacy: view})
 	})
 	if err == nil {
 		d.mu.Lock()
-		d.legacyAdmission = true
-		d.mu.Unlock()
+		defer d.mu.Unlock()
+		if d.fieldPreflights == nil {
+			d.fieldPreflights = make(map[FieldID]FieldPreflight)
+		}
+		if d.fieldPreflights[field] != nil {
+			return fmt.Errorf("tlprofile: duplicate field preflight for %#016x", uint64(field))
+		}
+		d.fieldPreflights[field] = callback
 	}
 	return err
 }
@@ -469,17 +579,18 @@ func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Ad
 	}
 	d.mu.RLock()
 	legacy := d.legacyAdmission
-	d.mu.RUnlock()
 	if !legacy {
-		if admission, handled, err := admitSparseOrdinary(profile, body, limits, true); handled || err != nil {
+		if admission, handled, err := admitSparseOrdinary(profile, body, limits, true, d.preflight, d.fieldPreflights); handled || err != nil {
+			d.mu.RUnlock()
 			return admission, err
 		}
 	}
+	d.mu.RUnlock()
 	request, err := d.admitter.AdmitLayerWithLimits(tg.LayerProfile(profile), body, limits.legacy())
 	return Admission{legacy: request}, err
 }
 
-func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evidence bool) (Admission, bool, error) {
+func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evidence bool, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight) (Admission, bool, error) {
 	if body == nil {
 		return Admission{}, true, errors.New("tlprofile: admit nil body")
 	}
@@ -502,6 +613,24 @@ func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evide
 		return Admission{}, false, nil
 	}
 	wireBytes := body.Raw()
+	if preflight != nil {
+		if err := preflight(AdmissionView{profile: profile, semantic: route.semantic, wireID: wireID, raw: wireBytes, sparse: true}); err != nil {
+			return Admission{}, true, err
+		}
+	}
+	var observer tlFieldObserver
+	if len(fields) != 0 {
+		observer = func(field FieldID, present bool, metric tlFieldMetric, value int64) error {
+			callback := fields[field]
+			if callback == nil {
+				return nil
+			}
+			return callback(FieldView{profile: profile, semantic: route.semantic, wireID: wireID, fieldID: field, present: present, metric: metric, value: value, sparse: true})
+		}
+	}
+	if err := tlScanExactObserved(profile, body, limits, observer); err != nil {
+		return Admission{}, true, err
+	}
 	wireSize := len(wireBytes)
 	wireDigest := sha256.Sum256(wireBytes)
 	request, err := DecodeObject(profile, body, limits)
