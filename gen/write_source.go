@@ -409,5 +409,35 @@ func (g *Generator) WriteTLProfileSource(fs FileSystem, pkgName string, t *templ
 	}); err != nil {
 		return errors.Wrap(err, "tlprofile sparse route source")
 	}
+	sparse, err := g.buildLayerSparseCodecModel(pkgName)
+	if err != nil {
+		return errors.Wrap(err, "tlprofile sparse codec")
+	}
+	if err := w.Generate("tlprofile_sparse_runtime", "tl_profile_sparse_runtime_gen.go", config{
+		Package: pkgName, LayerMetadata: metadata, LayerCodec: sparse,
+	}); err != nil {
+		return errors.Wrap(err, "tlprofile sparse codec runtime")
+	}
+	for _, bucket := range sparse.WireBuckets {
+		part := *sparse
+		part.Wires = bucket.Wires
+		if err := w.Generate("tlprofile_sparse_wires", fmt.Sprintf("tl_profile_sparse_wire_%02d_gen.go", bucket.Index), config{
+			Package: pkgName, LayerCodec: &part,
+		}); err != nil {
+			return errors.Wrapf(err, "tlprofile sparse codec wire bucket %d", bucket.Index)
+		}
+	}
+	if err := w.Generate("tlprofile_sparse_families", "tl_profile_sparse_families_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
+		return errors.Wrap(err, "tlprofile sparse codec families")
+	}
+	if err := w.Generate("tlprofile_sparse_classes", "tl_profile_sparse_classes_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
+		return errors.Wrap(err, "tlprofile sparse codec classes")
+	}
+	if err := w.Generate("tlprofile_sparse_dynamic", "tl_profile_sparse_dynamic_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
+		return errors.Wrap(err, "tlprofile sparse codec dynamic")
+	}
+	if err := w.Generate("tlprofile_sparse_entry", "tl_profile_sparse_entry_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
+		return errors.Wrap(err, "tlprofile sparse codec entry")
+	}
 	return nil
 }

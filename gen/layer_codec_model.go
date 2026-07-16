@@ -26,6 +26,7 @@ const (
 // generated package contains no schema walker, reflection, or runtime map.
 type layerCodecModel struct {
 	Package                  string
+	Sparse                   bool
 	MaxWireBytes             int
 	MaxDepth                 int
 	MaxVectorSize            int
@@ -41,6 +42,37 @@ type layerCodecModel struct {
 	ClassDeclarations        []string
 	DynamicDeclarations      []string
 	Hooks                    []layerCodecHookContract
+	SparseDecode             []layerSparseDecodeEntry
+	SparseEncode             []layerSparseEncodeEntry
+	SparseResultPlans        []layerSparseResultPlan
+	SparseResultMethods      []layerSparseResultMethod
+}
+
+type layerSparseDecodeEntry struct {
+	WireID uint32
+	Hex    string
+	Decode string
+}
+
+type layerSparseEncodeEntry struct {
+	Semantic string
+	GoType   string
+	Family   string
+}
+
+type layerSparseResultPlan struct {
+	ID     int
+	Source string
+}
+
+type layerSparseResultMethod struct {
+	Semantic string
+	Groups   []layerSparseResultGroup
+}
+
+type layerSparseResultGroup struct {
+	Layers []int
+	Plan   int
 }
 
 type layerCodecWireBucket struct {
@@ -67,6 +99,7 @@ type layerCodecWire struct {
 	ProfileOnly    bool
 	Encodable      bool
 	Decodable      bool
+	SparseDirect   bool
 	Profiles       []layerCodecProfileBody
 	ProfileGroups  []layerCodecProfileBody
 	RejectProfiles []int

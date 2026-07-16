@@ -11,7 +11,7 @@ import (
 
 func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 	set := layerRPCSyntheticSchemaSet(t)
-	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerRPCSyntheticPolicy(t, set)})
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerClientSyntheticPolicy(t, set)})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -192,5 +192,34 @@ func TestLayerScanModelRealSchemaStaysCompact(t *testing.T) {
 	}
 	if len(model.Bodies) > 1500 {
 		t.Fatalf("scanner body deduplication regressed: %d", len(model.Bodies))
+	}
+}
+
+func TestLayerSparseCodecModelRealSchemaStaysCompact(t *testing.T) {
+	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	model, err := generator.buildLayerSparseCodecModel("tlprofile")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var wires int
+	for _, bucket := range model.WireBuckets {
+		wires += len(bucket.Wires)
+	}
+	t.Logf("sparse typed codec wires=%d families=%d classes=%d result_plans=%d",
+		wires, len(model.FamilyDeclarations), len(model.ClassDeclarations), len(model.SparseResultPlans))
+	if wires > 1500 || len(model.FamilyDeclarations) > 4000 || len(model.ClassDeclarations) > 1000 || len(model.SparseResultPlans) > 350 {
+		t.Fatalf("sparse typed codec budget regressed: wires=%d families=%d classes=%d result_plans=%d",
+			wires, len(model.FamilyDeclarations), len(model.ClassDeclarations), len(model.SparseResultPlans))
 	}
 }

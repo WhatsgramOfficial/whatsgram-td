@@ -212,9 +212,38 @@ var _ {{ .Signature }} = {{ .Name }}
 {{ end }}
 {{ end }}{{ end }}
 
-{{ define "layer_codec_wires" }}{{ with .LayerCodec }}
+{{ define "layer_codec_wires" }}{{ with .LayerCodec }}{{ $codec := . }}
 {{ range .Wires }}{{ $wire := . }}
-{{ if .ProfileOnly }}
+{{ if .SparseDirect }}
+// Canonical-direct exact wire. The allocation-free scanner has already
+// proven the complete transitive wire graph, so no historical field program
+// is emitted here.
+func {{ .EncodeName }}(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
+    if value == nil { return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"} }
+    return value.Encode(b)
+}
+func {{ .EncodeBareName }}(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
+    if value == nil { return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"} }
+    return value.EncodeBare(b)
+}
+func {{ .EncodeBareName }}Body(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
+    return {{ .EncodeBareName }}(profile, value, b, state)
+}
+{{ if not $codec.Sparse }}func {{ .PreflightName }}(profile LayerProfile, value *{{ .CanonicalType }}, state *layerCodecState) (int, error) {
+    if value == nil { return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"} }
+    return 1, nil
+}{{ end }}
+func {{ .DecodeName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*{{ .CanonicalType }}, error) {
+    value := new({{ .CanonicalType }})
+    if err := value.Decode(b); err != nil { return nil, err }
+    return value, nil
+}
+func {{ .DecodeBareName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*{{ .CanonicalType }}, error) {
+    value := new({{ .CanonicalType }})
+    if err := value.DecodeBare(b); err != nil { return nil, err }
+    return value, nil
+}
+{{ else if .ProfileOnly }}
 // {{ .EncodeName }} is an admission-only stub for historical-only wire ID
 // 0x{{ .Hex }}. RPC admission rejects or statically aliases/adapts it before
 // object codec dispatch; this stub cannot pretend to return a canonical value.
@@ -226,9 +255,9 @@ func {{ .EncodeBareName }}(profile LayerProfile, b *bin.Buffer, state *layerCode
     return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "profile-only method must be rejected or adapted at RPC admission"}
 }
 
-func {{ .PreflightName }}(profile LayerProfile, state *layerCodecState) (int, error) {
+{{ if not $codec.Sparse }}func {{ .PreflightName }}(profile LayerProfile, state *layerCodecState) (int, error) {
     return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "profile-only method must be handled at RPC admission"}
-}
+}{{ end }}
 
 func {{ .DecodeName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) error {
     return &LayerCodecError{Operation: "decode", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "profile-only method must be handled at RPC admission"}
@@ -265,7 +294,7 @@ func {{ .EncodeBareName }}(profile LayerProfile, value *{{ .CanonicalType }}, b 
     })
 }
 
-func {{ .PreflightName }}(profile LayerProfile, value *{{ .CanonicalType }}, state *layerCodecState) (int, error) {
+{{ if not $codec.Sparse }}func {{ .PreflightName }}(profile LayerProfile, value *{{ .CanonicalType }}, state *layerCodecState) (int, error) {
     if value == nil {
         return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"}
     }
@@ -279,7 +308,7 @@ func {{ .PreflightName }}(profile LayerProfile, value *{{ .CanonicalType }}, sta
     {{ end }}default:
         return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "wire ID is unavailable in exact profile"}
     }
-}
+}{{ end }}
 
 func {{ .EncodeBareName }}Body(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
     child, err := layerCodecDescend(profile, "encode", state)
