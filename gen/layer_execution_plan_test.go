@@ -2,10 +2,40 @@ package gen
 
 import (
 	"bytes"
+	"go/format"
+	"strings"
 	"testing"
 
 	"github.com/iamxvbaba/td/gen/semantic"
 )
+
+func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
+	set := layerRPCSyntheticSchemaSet(t)
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: layerRPCSyntheticPolicy(t, set)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	result := sourceSnapshot{}
+	if err := generator.WriteTLProfileSource(result, "tlprofile", Template()); err != nil {
+		t.Fatal(err)
+	}
+	source := result["tl_profile_metadata_gen.go"]
+	if len(source) == 0 {
+		t.Fatal("tlprofile metadata source is absent")
+	}
+	if _, err := format.Source(source); err != nil {
+		t.Fatalf("format tlprofile metadata: %v", err)
+	}
+	text := string(source)
+	for _, want := range []string{"type Profile int", "func ResolveProfile", "type SemanticID uint64", "func WireID", "func SemanticForWireID"} {
+		if !strings.Contains(text, want) {
+			t.Errorf("tlprofile metadata is missing %q", want)
+		}
+	}
+	if strings.Contains(text, "LayerProfile") || strings.Contains(text, "LayerSemanticID") {
+		t.Fatal("tlprofile metadata retained the old dense public API names")
+	}
+}
 
 func TestLayerExecutionPlanDeduplicatesRoutesByBehavior(t *testing.T) {
 	set := layerRPCSyntheticSchemaSet(t)

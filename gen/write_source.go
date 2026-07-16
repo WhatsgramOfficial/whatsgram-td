@@ -354,3 +354,32 @@ func (g *Generator) WriteSource(fs FileSystem, pkgName string, t *template.Templ
 
 	return nil
 }
+
+// WriteTLProfileSource writes the public multi-layer sidecar. Canonical Go
+// bindings remain owned by WriteSource; this target contains only exact
+// profile metadata and, as later stages are enabled, sparse execution plans.
+func (g *Generator) WriteTLProfileSource(fs FileSystem, pkgName string, t *template.Template) error {
+	if g == nil || g.schemaSet == nil {
+		return errors.New("tlprofile source requires a schema-set generator")
+	}
+	w := &writer{
+		pkg:               pkgName,
+		fs:                fs,
+		t:                 t,
+		buf:               new(bytes.Buffer),
+		wrote:             map[string]bool{},
+		wroteConstructors: map[string]struct{}{},
+		generateFlags:     g.generateFlags,
+	}
+	metadata, err := g.buildLayerMetadata()
+	if err != nil {
+		return errors.Wrap(err, "tlprofile metadata")
+	}
+	if err := w.Generate("tlprofile_metadata", "tl_profile_metadata_gen.go", config{
+		Package:       pkgName,
+		LayerMetadata: metadata,
+	}); err != nil {
+		return errors.Wrap(err, "tlprofile metadata source")
+	}
+	return nil
+}

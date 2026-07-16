@@ -78,6 +78,8 @@ func main() {
 	layerPlanAudit := flag.String("layer-plan-audit", "", "Write deterministic sparse execution-plan audit JSON after successful generation")
 	targetDir := flag.String("target", "td", "Path to target dir")
 	packageName := flag.String("package", "td", "Target package name")
+	layerTargetDir := flag.String("layer-target", "", "Separate target directory for generated tlprofile sidecar")
+	layerPackageName := flag.String("layer-package", "", "Package name for generated tlprofile sidecar")
 	performFormat := flag.Bool("format", true, "Perform code formatting")
 	clean := flag.Bool("clean", false, "Clean generated files before generation")
 
@@ -87,6 +89,12 @@ func main() {
 	flag.Parse()
 	if (*schemaPath == "") == (*schemaManifest == "") {
 		panic("provide exactly one of -schema or -schema-manifest")
+	}
+	if (*layerTargetDir == "") != (*layerPackageName == "") {
+		panic("-layer-target and -layer-package must be provided together")
+	}
+	if *layerTargetDir != "" && *schemaManifest == "" {
+		panic("-layer-target requires -schema-manifest")
 	}
 	if *schemaImport != "" {
 		if *schemaManifest == "" {
@@ -220,12 +228,40 @@ func main() {
 		Format: *performFormat,
 		files:  make(map[string][]byte),
 	}
+	var layerFS *formattedSource
+	var layerFiles []os.DirEntry
+	if *layerTargetDir != "" {
+		layerFiles, err = os.ReadDir(*layerTargetDir)
+		if err != nil && !os.IsNotExist(err) {
+			panic(err)
+		}
+		if os.IsNotExist(err) {
+			if err := os.MkdirAll(*layerTargetDir, 0o750); err != nil {
+				panic(err)
+			}
+		}
+		layerFS = &formattedSource{
+			Root:   *layerTargetDir,
+			Format: *performFormat,
+			files:  make(map[string][]byte),
+		}
+	}
 	start = time.Now()
 	if err := g.WriteSource(fs, *packageName, gen.Template()); err != nil {
 		panic(fmt.Sprintf("%+v", err))
 	}
+	if layerFS != nil {
+		if err := g.WriteTLProfileSource(layerFS, *layerPackageName, gen.Template()); err != nil {
+			panic(fmt.Sprintf("%+v", err))
+		}
+	}
 	if err := fs.Commit(); err != nil {
 		panic(fmt.Sprintf("%+v", err))
+	}
+	if layerFS != nil {
+		if err := layerFS.Commit(); err != nil {
+			panic(fmt.Sprintf("%+v", err))
+		}
 	}
 	if *layerPlanAudit != "" {
 		data, err := g.MarshalLayerExecutionAudit()
@@ -250,6 +286,20 @@ func main() {
 			}
 			if err := os.Remove(filepath.Join(*targetDir, name)); err != nil {
 				panic(err)
+			}
+		}
+		if layerFS != nil {
+			for _, f := range layerFiles {
+				if f.IsDir() {
+					continue
+				}
+				name := f.Name()
+				if !strings.HasSuffix(name, "_gen.go") || !strings.HasPrefix(name, "tl_") || layerFS.Has(name) {
+					continue
+				}
+				if err := os.Remove(filepath.Join(*layerTargetDir, name)); err != nil {
+					panic(err)
+				}
 			}
 		}
 	}
