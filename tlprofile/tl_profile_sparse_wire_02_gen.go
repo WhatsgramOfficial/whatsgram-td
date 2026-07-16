@@ -1570,6 +1570,40 @@ func layerDecodeWirebf4dea82Bare(profile LayerProfile, b *bin.Buffer, state *lay
 // Canonical-direct exact wire. The allocation-free scanner has already
 // proven the complete transitive wire graph, so no historical field program
 // is emitted here.
+func layerEncodeWired27ff082(profile LayerProfile, value *tg.InputCheckPasswordSRP, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, WireID: 0xd27ff082, Reason: "nil canonical value"}
+	}
+	return value.Encode(b)
+}
+func layerEncodeWired27ff082Bare(profile LayerProfile, value *tg.InputCheckPasswordSRP, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, WireID: 0xd27ff082, Reason: "nil canonical value"}
+	}
+	return value.EncodeBare(b)
+}
+func layerEncodeWired27ff082BareBody(profile LayerProfile, value *tg.InputCheckPasswordSRP, b *bin.Buffer, state *layerCodecState) error {
+	return layerEncodeWired27ff082Bare(profile, value, b, state)
+}
+
+func layerDecodeWired27ff082(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputCheckPasswordSRP, error) {
+	value := new(tg.InputCheckPasswordSRP)
+	if err := value.Decode(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+func layerDecodeWired27ff082Bare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputCheckPasswordSRP, error) {
+	value := new(tg.InputCheckPasswordSRP)
+	if err := value.DecodeBare(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+// Canonical-direct exact wire. The allocation-free scanner has already
+// proven the complete transitive wire graph, so no historical field program
+// is emitted here.
 func layerEncodeWiree92fd902(profile LayerProfile, value *tg.StarsTransactionPeerFragment, b *bin.Buffer, state *layerCodecState) error {
 	if value == nil {
 		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStarsTransactionPeerFragment, WireID: 0xe92fd902, Reason: "nil canonical value"}

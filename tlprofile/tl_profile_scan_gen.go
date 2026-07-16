@@ -62,6 +62,18 @@ const (
 
 type tlFieldObserver func(FieldID, bool, tlFieldMetric, int64) error
 
+type tlScanUnknownWireError struct {
+	Profile Profile
+	WireID  uint32
+}
+
+func (e *tlScanUnknownWireError) Error() string {
+	if e == nil {
+		return "tlprofile: unknown generated wire"
+	}
+	return fmt.Sprintf("tlprofile: unknown generated wire %#08x in exact profile %d", e.WireID, e.Profile)
+}
+
 func tlScanLimit(value, fallback, hard int) (int, error) {
 	if value < 0 {
 		return 0, fmt.Errorf("negative scan limit %d", value)
@@ -50687,7 +50699,7 @@ func tlScanWireBucket0(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -50925,7 +50937,7 @@ func tlScanWireBucket1(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -51177,7 +51189,7 @@ func tlScanWireBucket2(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -51478,7 +51490,7 @@ func tlScanWireBucket3(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -51779,7 +51791,7 @@ func tlScanWireBucket4(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -52080,7 +52092,7 @@ func tlScanWireBucket5(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -52325,7 +52337,7 @@ func tlScanWireBucket6(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -52626,7 +52638,7 @@ func tlScanWireBucket7(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -53018,7 +53030,7 @@ func tlScanWireBucket8(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -53326,7 +53338,7 @@ func tlScanWireBucket9(profile Profile, id uint32, b *bin.Buffer, state *tlScanS
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -53578,7 +53590,7 @@ func tlScanWireBucket10(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -53788,7 +53800,7 @@ func tlScanWireBucket11(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -54019,7 +54031,7 @@ func tlScanWireBucket12(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -54334,7 +54346,7 @@ func tlScanWireBucket13(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -54565,7 +54577,7 @@ func tlScanWireBucket14(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -54866,7 +54878,7 @@ func tlScanWireBucket15(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -55174,7 +55186,7 @@ func tlScanWireBucket16(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -55454,7 +55466,7 @@ func tlScanWireBucket17(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -55720,7 +55732,7 @@ func tlScanWireBucket18(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -56007,7 +56019,7 @@ func tlScanWireBucket19(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -56322,7 +56334,7 @@ func tlScanWireBucket20(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -56595,7 +56607,7 @@ func tlScanWireBucket21(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -56910,7 +56922,7 @@ func tlScanWireBucket22(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -57225,7 +57237,7 @@ func tlScanWireBucket23(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -57498,7 +57510,7 @@ func tlScanWireBucket24(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -57813,7 +57825,7 @@ func tlScanWireBucket25(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -58079,7 +58091,7 @@ func tlScanWireBucket26(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -58352,7 +58364,7 @@ func tlScanWireBucket27(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -58688,7 +58700,7 @@ func tlScanWireBucket28(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -58975,7 +58987,7 @@ func tlScanWireBucket29(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -59192,7 +59204,7 @@ func tlScanWireBucket30(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -59409,7 +59421,7 @@ func tlScanWireBucket31(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -59752,7 +59764,7 @@ func tlScanWireBucket32(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -60081,7 +60093,7 @@ func tlScanWireBucket33(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -60333,7 +60345,7 @@ func tlScanWireBucket34(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -60557,7 +60569,7 @@ func tlScanWireBucket35(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -60830,7 +60842,7 @@ func tlScanWireBucket36(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -61061,7 +61073,7 @@ func tlScanWireBucket37(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -61369,7 +61381,7 @@ func tlScanWireBucket38(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -61565,7 +61577,7 @@ func tlScanWireBucket39(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -61922,7 +61934,7 @@ func tlScanWireBucket40(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -62146,7 +62158,7 @@ func tlScanWireBucket41(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -62426,7 +62438,7 @@ func tlScanWireBucket42(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -62734,7 +62746,7 @@ func tlScanWireBucket43(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -63077,7 +63089,7 @@ func tlScanWireBucket44(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -63399,7 +63411,7 @@ func tlScanWireBucket45(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -63644,7 +63656,7 @@ func tlScanWireBucket46(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -63994,7 +64006,7 @@ func tlScanWireBucket47(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -64260,7 +64272,7 @@ func tlScanWireBucket48(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -64470,7 +64482,7 @@ func tlScanWireBucket49(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -64687,7 +64699,7 @@ func tlScanWireBucket50(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -64932,7 +64944,7 @@ func tlScanWireBucket51(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -65163,7 +65175,7 @@ func tlScanWireBucket52(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -65436,7 +65448,7 @@ func tlScanWireBucket53(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -65690,7 +65702,7 @@ func tlScanWireBucket54(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -65970,7 +65982,7 @@ func tlScanWireBucket55(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -66306,7 +66318,7 @@ func tlScanWireBucket56(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -66621,7 +66633,7 @@ func tlScanWireBucket57(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -66894,7 +66906,7 @@ func tlScanWireBucket58(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -67188,7 +67200,7 @@ func tlScanWireBucket59(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -67468,7 +67480,7 @@ func tlScanWireBucket60(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -67699,7 +67711,7 @@ func tlScanWireBucket61(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -67958,7 +67970,7 @@ func tlScanWireBucket62(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 
@@ -68252,7 +68264,7 @@ func tlScanWireBucket63(profile Profile, id uint32, b *bin.Buffer, state *tlScan
 			return fmt.Errorf("tlprofile: wire %#08x is unavailable in exact profile %d", id, profile)
 		}
 	default:
-		return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+		return &tlScanUnknownWireError{Profile: profile, WireID: id}
 	}
 }
 

@@ -440,6 +440,9 @@ func (g *Generator) WriteTLProfileSource(fs FileSystem, pkgName string, t *templ
 	if err := w.Generate("tlprofile_sparse_entry", "tl_profile_sparse_entry_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
 		return errors.Wrap(err, "tlprofile sparse codec entry")
 	}
+	if err := w.Generate("tlprofile_overlay", "tl_profile_overlay_gen.go", config{Package: pkgName, LayerCodec: sparse}); err != nil {
+		return errors.Wrap(err, "tlprofile client RPC overlay")
+	}
 	wrapper, err := g.buildLayerWrapperModel()
 	if err != nil {
 		return errors.Wrap(err, "tlprofile wrapper parser")

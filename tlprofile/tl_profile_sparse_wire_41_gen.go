@@ -20,6 +20,40 @@ var (
 // Canonical-direct exact wire. The allocation-free scanner has already
 // proven the complete transitive wire graph, so no historical field program
 // is emitted here.
+func layerEncodeWire3c5693e9(profile LayerProfile, value *tg.InputTheme, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputTheme, WireID: 0x3c5693e9, Reason: "nil canonical value"}
+	}
+	return value.Encode(b)
+}
+func layerEncodeWire3c5693e9Bare(profile LayerProfile, value *tg.InputTheme, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeInputTheme, WireID: 0x3c5693e9, Reason: "nil canonical value"}
+	}
+	return value.EncodeBare(b)
+}
+func layerEncodeWire3c5693e9BareBody(profile LayerProfile, value *tg.InputTheme, b *bin.Buffer, state *layerCodecState) error {
+	return layerEncodeWire3c5693e9Bare(profile, value, b, state)
+}
+
+func layerDecodeWire3c5693e9(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputTheme, error) {
+	value := new(tg.InputTheme)
+	if err := value.Decode(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+func layerDecodeWire3c5693e9Bare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputTheme, error) {
+	value := new(tg.InputTheme)
+	if err := value.DecodeBare(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+// Canonical-direct exact wire. The allocation-free scanner has already
+// proven the complete transitive wire graph, so no historical field program
+// is emitted here.
 func layerEncodeWire666220e9(profile LayerProfile, value *tg.SecureValueErrorFiles, b *bin.Buffer, state *layerCodecState) error {
 	if value == nil {
 		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeSecureValueErrorFiles, WireID: 0x666220e9, Reason: "nil canonical value"}

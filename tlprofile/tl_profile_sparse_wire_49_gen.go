@@ -1032,6 +1032,40 @@ func layerDecodeWireea32b4b1Bare(profile LayerProfile, b *bin.Buffer, state *lay
 // Canonical-direct exact wire. The allocation-free scanner has already
 // proven the complete transitive wire graph, so no historical field program
 // is emitted here.
+func layerEncodeWiref5890df1(profile LayerProfile, value *tg.InputThemeSlug, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, WireID: 0xf5890df1, Reason: "nil canonical value"}
+	}
+	return value.Encode(b)
+}
+func layerEncodeWiref5890df1Bare(profile LayerProfile, value *tg.InputThemeSlug, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, WireID: 0xf5890df1, Reason: "nil canonical value"}
+	}
+	return value.EncodeBare(b)
+}
+func layerEncodeWiref5890df1BareBody(profile LayerProfile, value *tg.InputThemeSlug, b *bin.Buffer, state *layerCodecState) error {
+	return layerEncodeWiref5890df1Bare(profile, value, b, state)
+}
+
+func layerDecodeWiref5890df1(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputThemeSlug, error) {
+	value := new(tg.InputThemeSlug)
+	if err := value.Decode(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+func layerDecodeWiref5890df1Bare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputThemeSlug, error) {
+	value := new(tg.InputThemeSlug)
+	if err := value.DecodeBare(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+// Canonical-direct exact wire. The allocation-free scanner has already
+// proven the complete transitive wire graph, so no historical field program
+// is emitted here.
 func layerEncodeWirefbf6e8b1(profile LayerProfile, value *tg.AccountSavedRingtonesNotModified, b *bin.Buffer, state *layerCodecState) error {
 	if value == nil {
 		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAccountSavedRingtonesNotModified, WireID: 0xfbf6e8b1, Reason: "nil canonical value"}

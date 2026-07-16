@@ -608,6 +608,40 @@ func layerDecodeWire869d758fBare(profile LayerProfile, b *bin.Buffer, state *lay
 // Canonical-direct exact wire. The allocation-free scanner has already
 // proven the complete transitive wire graph, so no historical field program
 // is emitted here.
+func layerEncodeWire8fde504f(profile LayerProfile, value *tg.InputThemeSettings, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputThemeSettings, WireID: 0x8fde504f, Reason: "nil canonical value"}
+	}
+	return value.Encode(b)
+}
+func layerEncodeWire8fde504fBare(profile LayerProfile, value *tg.InputThemeSettings, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeInputThemeSettings, WireID: 0x8fde504f, Reason: "nil canonical value"}
+	}
+	return value.EncodeBare(b)
+}
+func layerEncodeWire8fde504fBareBody(profile LayerProfile, value *tg.InputThemeSettings, b *bin.Buffer, state *layerCodecState) error {
+	return layerEncodeWire8fde504fBare(profile, value, b, state)
+}
+
+func layerDecodeWire8fde504f(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputThemeSettings, error) {
+	value := new(tg.InputThemeSettings)
+	if err := value.Decode(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+func layerDecodeWire8fde504fBare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputThemeSettings, error) {
+	value := new(tg.InputThemeSettings)
+	if err := value.DecodeBare(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
+// Canonical-direct exact wire. The allocation-free scanner has already
+// proven the complete transitive wire graph, so no historical field program
+// is emitted here.
 func layerEncodeWirea477288f(profile LayerProfile, value *tg.UpdateGroupCallChainBlocks, b *bin.Buffer, state *layerCodecState) error {
 	if value == nil {
 		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdateGroupCallChainBlocks, WireID: 0xa477288f, Reason: "nil canonical value"}

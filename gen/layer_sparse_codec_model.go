@@ -123,7 +123,25 @@ func (g *Generator) buildLayerSparseCodecModel(pkg string) (*layerCodecModel, er
 	if err != nil {
 		return nil, err
 	}
-	if err := pruneLayerSparseClosure(model, dirty, dirtyFamilies, resultSources); err != nil {
+	overlay, err := g.buildLayerClientRPCOverlaySourceModel(pkg)
+	if err != nil {
+		return nil, fmt.Errorf("gen: sparse client RPC overlay: %w", err)
+	}
+	var overlaySources []string
+	for index := range overlay.Helpers {
+		overlay.Helpers[index] = qualifyLayerSparseIdentifiers(overlay.Helpers[index], canonicalNames)
+		overlaySources = append(overlaySources, overlay.Helpers[index])
+	}
+	for overlayIndex := range overlay.Overlays {
+		for methodIndex := range overlay.Overlays[overlayIndex].Methods {
+			method := &overlay.Overlays[overlayIndex].Methods[methodIndex]
+			method.Declaration = qualifyLayerSparseIdentifiers(method.Declaration, canonicalNames)
+			overlaySources = append(overlaySources, method.Declaration)
+		}
+	}
+	model.SparseOverlay = overlay
+	rootSources := append(resultSources, overlaySources...)
+	if err := pruneLayerSparseClosure(model, dirty, dirtyFamilies, rootSources); err != nil {
 		return nil, err
 	}
 	for index := range model.FamilyDeclarations {

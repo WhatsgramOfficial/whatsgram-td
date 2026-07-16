@@ -200,6 +200,61 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 {{ end }}
 {{ end }}
 
+{{ define "tlprofile_overlay" }}
+{{ template "tlprofile_sparse_header" . }}
+
+type ClientRPCOverlay uint8
+
+const (
+    ClientRPCOverlayInvalid ClientRPCOverlay = iota
+{{- range .LayerCodec.SparseOverlay.Overlays }}
+    {{ trimPrefix .Constant "Layer" }}
+{{- end }}
+)
+
+func ClientRPCOverlayMethodCount(overlay ClientRPCOverlay) int {
+    switch overlay {
+{{- range .LayerCodec.SparseOverlay.Overlays }}
+    case {{ trimPrefix .Constant "Layer" }}: return {{ .MethodCount }}
+{{- end }}
+    default: return 0
+    }
+}
+
+func adaptClientRPCOverlay(profile Profile, overlay ClientRPCOverlay, b *bin.Buffer, limits Limits) (*bin.Buffer, bool, error) {
+    if _, ok := ResolveProfile(int(profile)); !ok { return nil, false, fmt.Errorf("tlprofile: unsupported overlay profile %d", profile) }
+    if b == nil { return nil, false, fmt.Errorf("tlprofile: nil client RPC overlay buffer") }
+    state, err := newLayerCodecDecodeState(profile, b.Len(), layerCodecDecodeLimits{
+        maxWireBytes: limits.MaxWireBytes,
+        maxVectorElements: limits.MaxVectorElements,
+        maxAggregateElements: limits.MaxAggregateElements,
+        maxDepth: limits.MaxDepth,
+    })
+    if err != nil { return nil, false, err }
+    wireID, err := b.PeekID()
+    if err != nil { return nil, false, err }
+    switch overlay {
+{{- range .LayerCodec.SparseOverlay.Overlays }}
+    case {{ trimPrefix .Constant "Layer" }}:
+        switch wireID {
+{{- range .Methods }}
+        case 0x{{ printf "%08x" .WireID }}:
+            canonical, err := {{ .AdaptName }}(profile, b, state)
+            return canonical, true, err
+{{- end }}
+        }
+{{- end }}
+    }
+    return nil, false, nil
+}
+
+{{ range .LayerCodec.SparseOverlay.Helpers }}{{ . }}
+
+{{ end }}
+{{ range .LayerCodec.SparseOverlay.Overlays }}{{ range .Methods }}{{ .Declaration }}
+{{ end }}{{ end }}
+{{ end }}
+
 {{ define "tlprofile_wrapper" }}
 {{ template "tlprofile_sparse_header" . }}
 

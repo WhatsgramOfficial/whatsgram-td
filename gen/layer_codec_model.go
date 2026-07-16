@@ -46,6 +46,7 @@ type layerCodecModel struct {
 	SparseEncode             []layerSparseEncodeEntry
 	SparseResultPlans        []layerSparseResultPlan
 	SparseResultMethods      []layerSparseResultMethod
+	SparseOverlay            *layerClientRPCOverlaySourceModel
 }
 
 type layerSparseDecodeEntry struct {

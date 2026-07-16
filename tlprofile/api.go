@@ -159,39 +159,191 @@ type AdmissionPreflight func(AdmissionView) error
 // private-schema adapter.
 type OutboundCall struct {
 	legacy tg.LayerOutboundCall
+	sparse *sparseOutboundCall
 }
 
-func (c OutboundCall) Profile() Profile             { return Profile(c.legacy.Profile()) }
-func (c OutboundCall) Method() SemanticID           { return SemanticID(c.legacy.Method()) }
-func (c OutboundCall) WireID() uint32               { return c.legacy.WireID() }
-func (c OutboundCall) Encode(out *bin.Buffer) error { return c.legacy.Encode(out) }
-
-type ClientRPCOverlay uint8
-
-const (
-	ClientRPCOverlayDrkloAndroid      ClientRPCOverlay = ClientRPCOverlay(tg.LayerClientRPCOverlayDrkloAndroid)
-	ClientRPCOverlayDrkloAndroidTheme ClientRPCOverlay = ClientRPCOverlay(tg.LayerClientRPCOverlayDrkloAndroidTheme)
-)
+func (c OutboundCall) Profile() Profile {
+	if c.sparse != nil {
+		return c.sparse.profile
+	}
+	return Profile(c.legacy.Profile())
+}
+func (c OutboundCall) Method() SemanticID {
+	if c.sparse != nil {
+		return c.sparse.method
+	}
+	return SemanticID(c.legacy.Method())
+}
+func (c OutboundCall) WireID() uint32 {
+	if c.sparse != nil {
+		return c.sparse.wireID
+	}
+	return c.legacy.WireID()
+}
+func (c OutboundCall) Encode(out *bin.Buffer) error {
+	if c.sparse != nil {
+		return EncodeObject(c.sparse.profile, c.sparse.request, out)
+	}
+	return c.legacy.Encode(out)
+}
 
 // UnknownMethodView is a transactional view of an unknown innermost terminal.
 type UnknownMethodView struct {
 	legacy tg.LayerRPCUnknownMethodView
+	sparse *sparseUnknownMethodView
 }
 
-func (v UnknownMethodView) Profile() Profile             { return Profile(v.legacy.Profile()) }
-func (v UnknownMethodView) WireID() uint32               { return v.legacy.WireID() }
-func (v UnknownMethodView) WireSize() int                { return v.legacy.WireSize() }
-func (v UnknownMethodView) Buffer() (*bin.Buffer, error) { return v.legacy.Buffer() }
+func (v UnknownMethodView) Profile() Profile {
+	if v.sparse != nil {
+		return v.sparse.profile
+	}
+	return Profile(v.legacy.Profile())
+}
+func (v UnknownMethodView) WireID() uint32 {
+	if v.sparse != nil {
+		return v.sparse.wireID
+	}
+	return v.legacy.WireID()
+}
+func (v UnknownMethodView) WireSize() int {
+	if v.sparse != nil {
+		return len(v.sparse.raw)
+	}
+	return v.legacy.WireSize()
+}
+func (v UnknownMethodView) Buffer() (*bin.Buffer, error) {
+	if v.sparse != nil {
+		if !v.sparse.active.Load() {
+			return nil, errors.New("tlprofile: unknown-method view is no longer active")
+		}
+		return &bin.Buffer{Buf: append([]byte(nil), v.sparse.raw...)}, nil
+	}
+	return v.legacy.Buffer()
+}
 func (v UnknownMethodView) AdaptCanonical(canonical *bin.Buffer) (OutboundCall, error) {
+	if v.sparse != nil {
+		return v.sparse.adaptCanonical(canonical)
+	}
 	call, err := v.legacy.AdaptCanonical(canonical)
 	return OutboundCall{legacy: call}, err
 }
 func (v UnknownMethodView) AdaptClientRPCOverlay(overlay ClientRPCOverlay) (OutboundCall, bool, error) {
+	if v.sparse != nil {
+		return v.sparse.adaptOverlay(overlay)
+	}
 	call, handled, err := v.legacy.AdaptClientRPCOverlay(tg.LayerClientRPCOverlay(overlay))
 	return OutboundCall{legacy: call}, handled, err
 }
 
 type UnknownMethodAdapter func(UnknownMethodView) (OutboundCall, bool, error)
+
+type sparseOutboundCall struct {
+	profile Profile
+	method  SemanticID
+	wireID  uint32
+	request bin.Object
+}
+
+type sparseUnknownMethodView struct {
+	profile Profile
+	wireID  uint32
+	raw     []byte
+	limits  Limits
+	active  atomic.Bool
+	used    atomic.Bool
+}
+
+func (v *sparseUnknownMethodView) claim() error {
+	if v == nil || !v.active.Load() {
+		return errors.New("tlprofile: unknown-method view is no longer active")
+	}
+	if !v.used.CompareAndSwap(false, true) {
+		return errors.New("tlprofile: unknown-method adapter may produce only one outbound call")
+	}
+	return nil
+}
+
+func (v *sparseUnknownMethodView) adaptCanonical(canonical *bin.Buffer) (OutboundCall, error) {
+	if canonical == nil {
+		return OutboundCall{}, errors.New("tlprofile: adapt nil canonical request")
+	}
+	if err := v.claim(); err != nil {
+		return OutboundCall{}, err
+	}
+	return prepareSparseOutbound(v.profile, canonical, v.limits)
+}
+
+func (v *sparseUnknownMethodView) adaptOverlay(overlay ClientRPCOverlay) (OutboundCall, bool, error) {
+	if v == nil || !v.active.Load() {
+		return OutboundCall{}, true, errors.New("tlprofile: unknown-method view is no longer active")
+	}
+	cursor := &bin.Buffer{Buf: append([]byte(nil), v.raw...)}
+	canonical, handled, err := adaptClientRPCOverlay(v.profile, overlay, cursor, v.limits)
+	if !handled {
+		return OutboundCall{}, false, err
+	}
+	if err != nil {
+		return OutboundCall{}, true, err
+	}
+	if err := v.claim(); err != nil {
+		return OutboundCall{}, true, err
+	}
+	call, err := prepareSparseOutbound(v.profile, canonical, v.limits)
+	return call, true, err
+}
+
+func prepareSparseOutbound(profile Profile, canonical *bin.Buffer, limits Limits) (OutboundCall, error) {
+	if canonical == nil {
+		return OutboundCall{}, errors.New("tlprofile: prepare nil canonical outbound request")
+	}
+	cursor := &bin.Buffer{Buf: append([]byte(nil), canonical.Raw()...)}
+	request, err := DecodeObject(ProfileCanonical, cursor, limits)
+	if err != nil {
+		return OutboundCall{}, fmt.Errorf("tlprofile: decode canonical outbound request: %w", err)
+	}
+	if cursor.Len() != 0 {
+		return OutboundCall{}, fmt.Errorf("tlprofile: canonical outbound request left %d bytes", cursor.Len())
+	}
+	typed, ok := request.(interface{ TypeID() uint32 })
+	if !ok {
+		return OutboundCall{}, fmt.Errorf("tlprofile: canonical outbound request %T has no TypeID", request)
+	}
+	semantic, ok := SemanticForWireID(ProfileCanonical, typed.TypeID())
+	if !ok {
+		return OutboundCall{}, fmt.Errorf("tlprofile: canonical outbound wire %#08x has no semantic", typed.TypeID())
+	}
+	category, _, ok := SemanticName(semantic)
+	if !ok || category != "function" {
+		return OutboundCall{}, fmt.Errorf("tlprofile: canonical outbound semantic %#016x is not a method", semantic)
+	}
+	wireID, ok := WireID(profile, semantic)
+	if !ok {
+		return OutboundCall{}, fmt.Errorf("tlprofile: outbound semantic %#016x is unavailable in profile %d", semantic, profile)
+	}
+	if _, ordinary := tlLookupResultPlan(profile, semantic); !ordinary {
+		return OutboundCall{}, fmt.Errorf("tlprofile: outbound semantic %#016x is not an ordinary method", semantic)
+	}
+	var exact bin.Buffer
+	if err := EncodeObject(profile, request, &exact); err != nil {
+		return OutboundCall{}, err
+	}
+	return OutboundCall{sparse: &sparseOutboundCall{profile: profile, method: semantic, wireID: wireID, request: request}}, nil
+}
+
+// AdaptClientRPCOverlayWithLimits exposes the provenance-locked private-schema
+// adapter for tests and compatibility gates. Production admission should use
+// UnknownMethodView so the result is revalidated as one exact ordinary call.
+func AdaptClientRPCOverlayWithLimits(profile Profile, overlay ClientRPCOverlay, in *bin.Buffer, limits Limits) (*bin.Buffer, bool, error) {
+	if in == nil {
+		return nil, false, errors.New("tlprofile: adapt nil client RPC overlay")
+	}
+	cursor := &bin.Buffer{Buf: append([]byte(nil), in.Raw()...)}
+	canonical, handled, err := adaptClientRPCOverlay(profile, overlay, cursor, limits)
+	if err == nil && handled {
+		in.Skip(in.Len())
+	}
+	return canonical, handled, err
+}
 
 func (l Limits) legacy() tg.LayerDecodeLimits {
 	return tg.LayerDecodeLimits{
@@ -565,6 +717,7 @@ type Dispatcher struct {
 	wrappers        WrapperConsumer
 	preflight       AdmissionPreflight
 	fieldPreflights map[FieldID]FieldPreflight
+	unknown         UnknownMethodAdapter
 	legacyAdmission bool
 }
 
@@ -657,10 +810,12 @@ func (d *Dispatcher) OnUnknownMethod(callback UnknownMethodAdapter) {
 	if d == nil || d.admitter == nil || callback == nil {
 		panic("tlprofile: register nil unknown-method adapter or dispatcher")
 	}
-	d.admitter.OnLayerRPCUnknownMethod(func(view tg.LayerRPCUnknownMethodView) (tg.LayerOutboundCall, bool, error) {
-		call, handled, err := callback(UnknownMethodView{legacy: view})
-		return call.legacy, handled, err
-	})
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.unknown != nil {
+		panic("tlprofile: duplicate unknown-method adapter")
+	}
+	d.unknown = callback
 }
 
 func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Admission, error) {
@@ -670,7 +825,7 @@ func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Ad
 	d.mu.RLock()
 	legacy := d.legacyAdmission
 	if !legacy {
-		if admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights); handled || err != nil {
+		if admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights, d.unknown); handled || err != nil {
 			d.mu.RUnlock()
 			return admission, err
 		}
@@ -687,7 +842,7 @@ const (
 	sparseAdmissionDefault
 )
 
-func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAdmissionMode, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight) (Admission, bool, error) {
+func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAdmissionMode, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight, unknown UnknownMethodAdapter) (Admission, bool, error) {
 	if body == nil {
 		return Admission{}, true, errors.New("tlprofile: admit nil body")
 	}
@@ -697,7 +852,10 @@ func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAd
 	// Validate the complete generic wire graph and all allocation budgets before
 	// any wrapper metadata or terminal request is materialized.
 	if err := tlScanExact(initial, body, limits); err != nil {
-		return Admission{}, false, nil
+		var unknownWire *tlScanUnknownWireError
+		if !errors.As(err, &unknownWire) {
+			return Admission{}, true, err
+		}
 	}
 	fullWire := body.Raw()
 	working := &bin.Buffer{Buf: fullWire}
@@ -728,6 +886,9 @@ func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAd
 			continue
 		}
 		admission, handled, err := admitSparseOrdinary(profile, working, limits, false, preflight, fields)
+		if !handled {
+			admission, handled, err = adaptSparseUnknown(profile, working, limits, preflight, fields, unknown)
+		}
 		if !handled || err != nil {
 			return admission, handled, err
 		}
@@ -815,6 +976,48 @@ func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evide
 	return Admission{sparse: &sparseAdmission{prepared: prepared, request: request, profileEvidence: evidence, effectiveProfile: true}}, true, nil
 }
 
+func adaptSparseUnknown(profile Profile, body *bin.Buffer, limits Limits, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight, callback UnknownMethodAdapter) (Admission, bool, error) {
+	if body == nil {
+		return Admission{}, true, errors.New("tlprofile: adapt nil unknown terminal")
+	}
+	wireID, err := body.PeekID()
+	if err != nil {
+		return Admission{}, true, err
+	}
+	if callback == nil {
+		return Admission{}, true, fmt.Errorf("%w: profile=%d wire=%#08x", ErrUnknownRPCMethod, profile, wireID)
+	}
+	view := &sparseUnknownMethodView{profile: profile, wireID: wireID, raw: append([]byte(nil), body.Raw()...), limits: limits}
+	view.active.Store(true)
+	outbound, handled, callbackErr := callback(UnknownMethodView{sparse: view})
+	view.active.Store(false)
+	if callbackErr != nil {
+		return Admission{}, true, callbackErr
+	}
+	if !handled {
+		return Admission{}, true, fmt.Errorf("%w: profile=%d wire=%#08x", ErrUnknownRPCMethod, profile, wireID)
+	}
+	if outbound.sparse == nil || outbound.sparse.request == nil {
+		return Admission{}, true, errors.New("tlprofile: unknown-method adapter returned an invalid sparse outbound call")
+	}
+	if outbound.Profile() != profile {
+		return Admission{}, true, fmt.Errorf("tlprofile: unknown-method adapter changed profile %d to %d", profile, outbound.Profile())
+	}
+	var exact bin.Buffer
+	if err := outbound.Encode(&exact); err != nil {
+		return Admission{}, true, err
+	}
+	admission, ordinary, err := admitSparseOrdinary(profile, &exact, limits, false, preflight, fields)
+	if err != nil {
+		return Admission{}, true, err
+	}
+	if !ordinary || admission.Call().Method() != outbound.Method() || admission.Call().WireID() != outbound.WireID() {
+		return Admission{}, true, errors.New("tlprofile: adapted unknown method failed exact route revalidation")
+	}
+	body.Skip(body.Len())
+	return admission, true, nil
+}
+
 func (d *Dispatcher) AdmitDefault(profile Profile, body *bin.Buffer, limits Limits) (Admission, error) {
 	if d == nil || d.admitter == nil {
 		return Admission{}, errors.New("tlprofile: default admit on nil dispatcher")
@@ -822,7 +1025,7 @@ func (d *Dispatcher) AdmitDefault(profile Profile, body *bin.Buffer, limits Limi
 	d.mu.RLock()
 	legacy := d.legacyAdmission
 	if !legacy {
-		if admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionDefault, d.preflight, d.fieldPreflights); handled || err != nil {
+		if admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionDefault, d.preflight, d.fieldPreflights, d.unknown); handled || err != nil {
 			d.mu.RUnlock()
 			return admission, err
 		}
@@ -862,7 +1065,7 @@ func (d *Dispatcher) AdmitUnprofiled(body *bin.Buffer, limits Limits) (Admission
 			return Admission{}, fmt.Errorf("tlprofile: invokeWithLayer selected unsupported exact profile %d", layer)
 		}
 		if !legacy {
-			admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights)
+			admission, handled, err := admitSparse(profile, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights, d.unknown)
 			d.mu.RUnlock()
 			if handled || err != nil {
 				return admission, err
@@ -872,7 +1075,7 @@ func (d *Dispatcher) AdmitUnprofiled(body *bin.Buffer, limits Limits) (Admission
 		}
 	} else if tlUnprofiledInvariant(wireID) {
 		if !legacy {
-			admission, handled, err := admitSparse(ProfileCanonical, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights)
+			admission, handled, err := admitSparse(ProfileCanonical, body, limits, sparseAdmissionExact, d.preflight, d.fieldPreflights, d.unknown)
 			d.mu.RUnlock()
 			if handled || err != nil {
 				if err == nil {

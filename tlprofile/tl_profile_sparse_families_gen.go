@@ -8536,6 +8536,64 @@ func layerEncodeFamilyInputChannelFromMessageBody(profile LayerProfile, value *t
 	}
 }
 
+func layerProjectFamilyInputCheckPasswordEmpty(profile LayerProfile, value *tg.InputCheckPasswordEmpty) (bin.Object, bool, error) {
+	if value == nil {
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		return value, true, nil
+	default:
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerEncodeFamilyInputCheckPasswordEmpty(profile LayerProfile, value *tg.InputCheckPasswordEmpty, b *bin.Buffer, state *layerCodecState) error {
+	return layerCodecEncodeAtomic(profile, b, func() error { return layerEncodeFamilyInputCheckPasswordEmptyBody(profile, value, b, state) })
+}
+
+func layerEncodeFamilyInputCheckPasswordEmptyBody(profile LayerProfile, value *tg.InputCheckPasswordEmpty, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		b.PutID(0x9880f658)
+		return layerEncodeWire9880f658BareBody(profile, value, b, state)
+	default:
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerProjectFamilyInputCheckPasswordSRP(profile LayerProfile, value *tg.InputCheckPasswordSRP) (bin.Object, bool, error) {
+	if value == nil {
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		return value, true, nil
+	default:
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerEncodeFamilyInputCheckPasswordSRP(profile LayerProfile, value *tg.InputCheckPasswordSRP, b *bin.Buffer, state *layerCodecState) error {
+	return layerCodecEncodeAtomic(profile, b, func() error { return layerEncodeFamilyInputCheckPasswordSRPBody(profile, value, b, state) })
+}
+
+func layerEncodeFamilyInputCheckPasswordSRPBody(profile LayerProfile, value *tg.InputCheckPasswordSRP, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		b.PutID(0xd27ff082)
+		return layerEncodeWired27ff082BareBody(profile, value, b, state)
+	default:
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, Reason: "unsupported exact profile"}
+	}
+}
+
 func layerProjectFamilyInputDialogPeer(profile LayerProfile, value *tg.InputDialogPeer) (bin.Object, bool, error) {
 	if value == nil {
 		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputDialogPeer, Reason: "nil canonical value"}
@@ -12149,6 +12207,64 @@ func layerEncodeFamilyInputStorePaymentStarsTopupBody(profile LayerProfile, valu
 		return layerEncodeWiref9a2a6cbBareBody(profile, value, b, state)
 	default:
 		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputStorePaymentStarsTopup, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerProjectFamilyInputTheme(profile LayerProfile, value *tg.InputTheme) (bin.Object, bool, error) {
+	if value == nil {
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputTheme, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		return value, true, nil
+	default:
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputTheme, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerEncodeFamilyInputTheme(profile LayerProfile, value *tg.InputTheme, b *bin.Buffer, state *layerCodecState) error {
+	return layerCodecEncodeAtomic(profile, b, func() error { return layerEncodeFamilyInputThemeBody(profile, value, b, state) })
+}
+
+func layerEncodeFamilyInputThemeBody(profile LayerProfile, value *tg.InputTheme, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputTheme, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		b.PutID(0x3c5693e9)
+		return layerEncodeWire3c5693e9BareBody(profile, value, b, state)
+	default:
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputTheme, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerProjectFamilyInputThemeSlug(profile LayerProfile, value *tg.InputThemeSlug) (bin.Object, bool, error) {
+	if value == nil {
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		return value, true, nil
+	default:
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerEncodeFamilyInputThemeSlug(profile LayerProfile, value *tg.InputThemeSlug, b *bin.Buffer, state *layerCodecState) error {
+	return layerCodecEncodeAtomic(profile, b, func() error { return layerEncodeFamilyInputThemeSlugBody(profile, value, b, state) })
+}
+
+func layerEncodeFamilyInputThemeSlugBody(profile LayerProfile, value *tg.InputThemeSlug, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, Reason: "nil canonical value"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		b.PutID(0xf5890df1)
+		return layerEncodeWiref5890df1BareBody(profile, value, b, state)
+	default:
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, Reason: "unsupported exact profile"}
 	}
 }
 

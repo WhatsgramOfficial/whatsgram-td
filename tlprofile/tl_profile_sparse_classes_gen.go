@@ -7130,6 +7130,86 @@ func layerEncodeClassInputChannelBody(profile LayerProfile, value tg.InputChanne
 	}
 }
 
+func layerProjectClassInputCheckPasswordSRP(profile LayerProfile, value tg.InputCheckPasswordSRPClass) (tg.InputCheckPasswordSRPClass, bool, error) {
+	if value == nil {
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "nil class value"}
+	}
+	switch value := value.(type) {
+	case *tg.InputCheckPasswordEmpty:
+		projected, keep, err := layerProjectFamilyInputCheckPasswordEmpty(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(tg.InputCheckPasswordSRPClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, Reason: "project hook returned a constructor outside class InputCheckPasswordSRP"}
+		}
+		return result, true, nil
+	case *tg.InputCheckPasswordSRP:
+		projected, keep, err := layerProjectFamilyInputCheckPasswordSRP(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(tg.InputCheckPasswordSRPClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordSRP, Reason: "project hook returned a constructor outside class InputCheckPasswordSRP"}
+		}
+		return result, true, nil
+	default:
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "unknown canonical class constructor"}
+	}
+}
+
+func layerEncodeClassInputCheckPasswordSRP(profile LayerProfile, value tg.InputCheckPasswordSRPClass, b *bin.Buffer, state *layerCodecState) error {
+	return layerCodecEncodeAtomic(profile, b, func() error { return layerEncodeClassInputCheckPasswordSRPBody(profile, value, b, state) })
+}
+
+func layerDecodeClassInputCheckPasswordSRP(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (tg.InputCheckPasswordSRPClass, error) {
+	id, err := b.PeekID()
+	if err != nil {
+		return nil, fmt.Errorf("peek class constructor: %w", err)
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		switch id {
+		case 0x9880f658:
+			return layerDecodeWire9880f658(profile, b, state)
+		case 0xd27ff082:
+			return layerDecodeWired27ff082(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	default:
+		return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerEncodeClassInputCheckPasswordSRPBody(profile LayerProfile, value tg.InputCheckPasswordSRPClass, b *bin.Buffer, state *layerCodecState) error {
+	projected, keep, err := layerProjectClassInputCheckPasswordSRP(profile, value)
+	if err != nil {
+		return err
+	}
+	if !keep {
+		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		switch value := projected.(type) {
+		case *tg.InputCheckPasswordEmpty:
+			b.PutID(0x9880f658)
+			return layerEncodeWire9880f658BareBody(profile, value, b, state)
+		case *tg.InputCheckPasswordSRP:
+			b.PutID(0xd27ff082)
+			return layerEncodeWired27ff082BareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	default:
+		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
+	}
+}
+
 func layerProjectClassInputDialogPeer(profile LayerProfile, value tg.InputDialogPeerClass) (tg.InputDialogPeerClass, bool, error) {
 	if value == nil {
 		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "nil class value"}
@@ -9411,6 +9491,86 @@ func layerEncodeClassInputStorePaymentPurposeBody(profile LayerProfile, value tg
 		case *tg.InputStorePaymentStarsTopup:
 			b.PutID(0xf9a2a6cb)
 			return layerEncodeWiref9a2a6cbBareBody(profile, value, b, state)
+		default:
+			_ = value
+			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}
+		}
+	default:
+		return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerProjectClassInputTheme(profile LayerProfile, value tg.InputThemeClass) (tg.InputThemeClass, bool, error) {
+	if value == nil {
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "nil class value"}
+	}
+	switch value := value.(type) {
+	case *tg.InputTheme:
+		projected, keep, err := layerProjectFamilyInputTheme(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(tg.InputThemeClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputTheme, Reason: "project hook returned a constructor outside class InputTheme"}
+		}
+		return result, true, nil
+	case *tg.InputThemeSlug:
+		projected, keep, err := layerProjectFamilyInputThemeSlug(profile, value)
+		if err != nil || !keep {
+			return nil, keep, err
+		}
+		result, ok := projected.(tg.InputThemeClass)
+		if !ok {
+			return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputThemeSlug, Reason: "project hook returned a constructor outside class InputTheme"}
+		}
+		return result, true, nil
+	default:
+		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Reason: "unknown canonical class constructor"}
+	}
+}
+
+func layerEncodeClassInputTheme(profile LayerProfile, value tg.InputThemeClass, b *bin.Buffer, state *layerCodecState) error {
+	return layerCodecEncodeAtomic(profile, b, func() error { return layerEncodeClassInputThemeBody(profile, value, b, state) })
+}
+
+func layerDecodeClassInputTheme(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (tg.InputThemeClass, error) {
+	id, err := b.PeekID()
+	if err != nil {
+		return nil, fmt.Errorf("peek class constructor: %w", err)
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		switch id {
+		case 0x3c5693e9:
+			return layerDecodeWire3c5693e9(profile, b, state)
+		case 0xf5890df1:
+			return layerDecodeWiref5890df1(profile, b, state)
+		default:
+			return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "wire ID is not a constructor of exact class profile"}
+		}
+	default:
+		return nil, &LayerCodecError{Operation: "decode", Profile: profile, WireID: id, Reason: "unsupported exact profile"}
+	}
+}
+
+func layerEncodeClassInputThemeBody(profile LayerProfile, value tg.InputThemeClass, b *bin.Buffer, state *layerCodecState) error {
+	projected, keep, err := layerProjectClassInputTheme(profile, value)
+	if err != nil {
+		return err
+	}
+	if !keep {
+		return &LayerProjectionError{Profile: profile, Dropped: true, Reason: "class value was projected out before encoding"}
+	}
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		switch value := projected.(type) {
+		case *tg.InputTheme:
+			b.PutID(0x3c5693e9)
+			return layerEncodeWire3c5693e9BareBody(profile, value, b, state)
+		case *tg.InputThemeSlug:
+			b.PutID(0xf5890df1)
+			return layerEncodeWiref5890df1BareBody(profile, value, b, state)
 		default:
 			_ = value
 			return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "constructor is unavailable in exact class profile"}

@@ -32,6 +32,12 @@ const (
 
 type tlFieldObserver func(FieldID, bool, tlFieldMetric, int64) error
 
+type tlScanUnknownWireError struct { Profile Profile; WireID uint32 }
+func (e *tlScanUnknownWireError) Error() string {
+    if e == nil { return "tlprofile: unknown generated wire" }
+    return fmt.Sprintf("tlprofile: unknown generated wire %#08x in exact profile %d", e.WireID, e.Profile)
+}
+
 func tlScanLimit(value, fallback, hard int) (int, error) {
     if value < 0 { return 0, fmt.Errorf("negative scan limit %d", value) }
     if value == 0 { value = fallback }
@@ -235,7 +241,7 @@ func tlScanWireBucket{{ .Index }}(profile Profile, id uint32, b *bin.Buffer, sta
         }
     {{- end }}
     default:
-        return fmt.Errorf("tlprofile: unknown generated wire %#08x in exact profile %d", id, profile)
+        return &tlScanUnknownWireError{Profile: profile, WireID: id}
     }
 }
 {{ end }}

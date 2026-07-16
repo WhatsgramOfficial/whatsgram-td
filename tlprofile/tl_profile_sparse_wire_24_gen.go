@@ -1527,6 +1527,40 @@ func layerDecodeWire8fd4c4d8Bare(profile LayerProfile, b *bin.Buffer, state *lay
 	return value, nil
 }
 
+// Canonical-direct exact wire. The allocation-free scanner has already
+// proven the complete transitive wire graph, so no historical field program
+// is emitted here.
+func layerEncodeWire9880f658(profile LayerProfile, value *tg.InputCheckPasswordEmpty, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, WireID: 0x9880f658, Reason: "nil canonical value"}
+	}
+	return value.Encode(b)
+}
+func layerEncodeWire9880f658Bare(profile LayerProfile, value *tg.InputCheckPasswordEmpty, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeInputCheckPasswordEmpty, WireID: 0x9880f658, Reason: "nil canonical value"}
+	}
+	return value.EncodeBare(b)
+}
+func layerEncodeWire9880f658BareBody(profile LayerProfile, value *tg.InputCheckPasswordEmpty, b *bin.Buffer, state *layerCodecState) error {
+	return layerEncodeWire9880f658Bare(profile, value, b, state)
+}
+
+func layerDecodeWire9880f658(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputCheckPasswordEmpty, error) {
+	value := new(tg.InputCheckPasswordEmpty)
+	if err := value.Decode(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+func layerDecodeWire9880f658Bare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.InputCheckPasswordEmpty, error) {
+	value := new(tg.InputCheckPasswordEmpty)
+	if err := value.DecodeBare(b); err != nil {
+		return nil, err
+	}
+	return value, nil
+}
+
 func layerEncodeWire9f120418(profile LayerProfile, value *tg.ChatBannedRights, b *bin.Buffer, state *layerCodecState) error {
 	if value == nil {
 		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChatBannedRights, WireID: 0x9f120418, Reason: "nil canonical value"}
