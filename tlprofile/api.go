@@ -332,6 +332,16 @@ type ResultPlan struct {
 	sparse int
 }
 
+// CallIdentity is the comparable immutable codec/result-plan identity selected
+// by exact admission. It contains no runtime schema or TypeRef handle.
+type CallIdentity struct {
+	profile       Profile
+	method        SemanticID
+	wireID        uint32
+	resultPlan    int
+	wireInvariant bool
+}
+
 // Call freezes the exact profile, method route and result plan selected during
 // admission.
 type Call struct {
@@ -358,6 +368,15 @@ func (c Call) WireID() uint32 {
 }
 func (c Call) WireInvariant() bool {
 	return c.sparse != nil && c.sparse.wireInvariant
+}
+func (c Call) Identity() CallIdentity {
+	if c.sparse == nil {
+		return CallIdentity{}
+	}
+	return CallIdentity{
+		profile: c.sparse.profile, method: c.sparse.method, wireID: c.sparse.wireID,
+		resultPlan: c.sparse.resultPlan, wireInvariant: c.sparse.wireInvariant,
+	}
 }
 func (c Call) ResultPlan() ResultPlan {
 	if c.sparse == nil {
