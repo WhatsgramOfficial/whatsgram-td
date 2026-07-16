@@ -20,6 +20,82 @@ type Limits struct {
 	MaxDepth             int
 }
 
+// FieldID is the stable identity of one observable top-level request field.
+type FieldID uint64
+
+// FieldView is an immutable scalar observation made before typed request
+// materialization.
+type FieldView struct {
+	legacy tg.LayerRPCAdmissionFieldView
+}
+
+func (v FieldView) Profile() Profile          { return Profile(v.legacy.Profile()) }
+func (v FieldView) Semantic() SemanticID      { return SemanticID(v.legacy.Semantic()) }
+func (v FieldView) WireID() uint32            { return v.legacy.WireID() }
+func (v FieldView) FieldID() FieldID          { return FieldID(v.legacy.FieldID()) }
+func (v FieldView) Present() bool             { return v.legacy.Present() }
+func (v FieldView) VectorLength() (int, bool) { return v.legacy.VectorLength() }
+func (v FieldView) BytesLength() (int, bool)  { return v.legacy.BytesLength() }
+func (v FieldView) Int32() (int32, bool)      { return v.legacy.Int32() }
+
+type FieldPreflight func(FieldView) error
+
+// AdmissionView exposes a bounded immutable prefix view before an ordinary
+// terminal request is consumed.
+type AdmissionView struct {
+	legacy tg.LayerRPCAdmissionView
+}
+
+func (v AdmissionView) Profile() Profile                    { return Profile(v.legacy.Profile()) }
+func (v AdmissionView) Semantic() SemanticID                { return SemanticID(v.legacy.Semantic()) }
+func (v AdmissionView) WireID() uint32                      { return v.legacy.WireID() }
+func (v AdmissionView) WireSize() int                       { return v.legacy.WireSize() }
+func (v AdmissionView) ByteAt(offset int) (byte, error)     { return v.legacy.ByteAt(offset) }
+func (v AdmissionView) Uint32At(offset int) (uint32, error) { return v.legacy.Uint32At(offset) }
+func (v AdmissionView) ReadAt(offset, length int) ([]byte, error) {
+	return v.legacy.ReadAt(offset, length)
+}
+
+type AdmissionPreflight func(AdmissionView) error
+
+// OutboundCall is an opaque exact-profile request produced by an audited
+// private-schema adapter.
+type OutboundCall struct {
+	legacy tg.LayerOutboundCall
+}
+
+func (c OutboundCall) Profile() Profile             { return Profile(c.legacy.Profile()) }
+func (c OutboundCall) Method() SemanticID           { return SemanticID(c.legacy.Method()) }
+func (c OutboundCall) WireID() uint32               { return c.legacy.WireID() }
+func (c OutboundCall) Encode(out *bin.Buffer) error { return c.legacy.Encode(out) }
+
+type ClientRPCOverlay uint8
+
+const (
+	ClientRPCOverlayDrkloAndroid      ClientRPCOverlay = ClientRPCOverlay(tg.LayerClientRPCOverlayDrkloAndroid)
+	ClientRPCOverlayDrkloAndroidTheme ClientRPCOverlay = ClientRPCOverlay(tg.LayerClientRPCOverlayDrkloAndroidTheme)
+)
+
+// UnknownMethodView is a transactional view of an unknown innermost terminal.
+type UnknownMethodView struct {
+	legacy tg.LayerRPCUnknownMethodView
+}
+
+func (v UnknownMethodView) Profile() Profile             { return Profile(v.legacy.Profile()) }
+func (v UnknownMethodView) WireID() uint32               { return v.legacy.WireID() }
+func (v UnknownMethodView) WireSize() int                { return v.legacy.WireSize() }
+func (v UnknownMethodView) Buffer() (*bin.Buffer, error) { return v.legacy.Buffer() }
+func (v UnknownMethodView) AdaptCanonical(canonical *bin.Buffer) (OutboundCall, error) {
+	call, err := v.legacy.AdaptCanonical(canonical)
+	return OutboundCall{legacy: call}, err
+}
+func (v UnknownMethodView) AdaptClientRPCOverlay(overlay ClientRPCOverlay) (OutboundCall, bool, error) {
+	call, handled, err := v.legacy.AdaptClientRPCOverlay(tg.LayerClientRPCOverlay(overlay))
+	return OutboundCall{legacy: call}, handled, err
+}
+
+type UnknownMethodAdapter func(UnknownMethodView) (OutboundCall, bool, error)
+
 func (l Limits) legacy() tg.LayerDecodeLimits {
 	return tg.LayerDecodeLimits{
 		MaxWireBytes: l.MaxWireBytes, MaxVectorElements: l.MaxVectorElements,
@@ -203,6 +279,34 @@ func (d *Dispatcher) OnWrappers(consumer WrapperConsumer) {
 		panic("tlprofile: duplicate wrapper consumer")
 	}
 	d.wrappers = consumer
+}
+
+func (d *Dispatcher) OnAdmissionPreflight(callback AdmissionPreflight) {
+	if d == nil || d.admitter == nil || callback == nil {
+		panic("tlprofile: register nil admission preflight or dispatcher")
+	}
+	d.admitter.OnLayerRPCAdmissionPreflight(func(view tg.LayerRPCAdmissionView) error {
+		return callback(AdmissionView{legacy: view})
+	})
+}
+
+func (d *Dispatcher) OnFieldPreflight(field FieldID, callback FieldPreflight) error {
+	if d == nil || d.admitter == nil || callback == nil {
+		return errors.New("tlprofile: register nil field preflight or dispatcher")
+	}
+	return d.admitter.OnLayerRPCAdmissionFieldPreflight(tg.LayerRPCFieldID(field), func(view tg.LayerRPCAdmissionFieldView) error {
+		return callback(FieldView{legacy: view})
+	})
+}
+
+func (d *Dispatcher) OnUnknownMethod(callback UnknownMethodAdapter) {
+	if d == nil || d.admitter == nil || callback == nil {
+		panic("tlprofile: register nil unknown-method adapter or dispatcher")
+	}
+	d.admitter.OnLayerRPCUnknownMethod(func(view tg.LayerRPCUnknownMethodView) (tg.LayerOutboundCall, bool, error) {
+		call, handled, err := callback(UnknownMethodView{legacy: view})
+		return call.legacy, handled, err
+	})
 }
 
 func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Admission, error) {

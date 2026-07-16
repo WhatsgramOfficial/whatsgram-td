@@ -27,6 +27,7 @@ type config struct {
 	LayerRPCSource        *layerRPCSourceModel
 	LayerClientSource     *layerClientSourceModel
 	LayerClientRPCOverlay *layerClientRPCOverlaySourceModel
+	LayerRPC              *layerRPCModel
 }
 
 // FileSystem represents a directory of generated package.
@@ -375,9 +376,14 @@ func (g *Generator) WriteTLProfileSource(fs FileSystem, pkgName string, t *templ
 	if err != nil {
 		return errors.Wrap(err, "tlprofile metadata")
 	}
+	rpc, err := g.buildLayerRPCModel()
+	if err != nil {
+		return errors.Wrap(err, "tlprofile RPC metadata")
+	}
 	if err := w.Generate("tlprofile_metadata", "tl_profile_metadata_gen.go", config{
 		Package:       pkgName,
 		LayerMetadata: metadata,
+		LayerRPC:      rpc,
 	}); err != nil {
 		return errors.Wrap(err, "tlprofile metadata source")
 	}

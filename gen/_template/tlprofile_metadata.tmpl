@@ -35,6 +35,14 @@ const (
 {{- end }}
 )
 
+// Generated stable identities for request fields that may be inspected by a
+// bounded admission policy before typed materialization.
+const (
+{{- range .LayerRPC.AdmissionFields }}
+    {{ trimPrefix .Constant "LayerRPC" }} FieldID = 0x{{ printf "%016x" .ID }}
+{{- end }}
+)
+
 // SemanticName reports the TL category and qualified name.
 func SemanticName(id SemanticID) (category, qname string, ok bool) {
     switch id {
