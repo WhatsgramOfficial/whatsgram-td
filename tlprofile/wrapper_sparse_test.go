@@ -129,6 +129,16 @@ func TestSparseUnprofiledAdmission(t *testing.T) {
 		if evidence, ok := admitted.ProfileEvidence(); ok || evidence != 0 {
 			t.Fatalf("profile evidence = %d/%v", evidence, ok)
 		}
+
+		var exact bin.Buffer
+		exact.PutID(tg.HelpGetConfigRequestTypeID)
+		profiled, err := NewDispatcher().Admit(Profile225, &exact, Limits{})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if profiled.Prepared().Identity() != admitted.Prepared().Identity() {
+			t.Fatal("wire-invariant identity changed after exact profile admission")
+		}
 	})
 
 	t.Run("explicit selector", func(t *testing.T) {

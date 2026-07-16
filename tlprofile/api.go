@@ -905,9 +905,18 @@ func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evide
 		return Admission{}, true, fmt.Errorf("tlprofile: canonicalize admitted RPC: %w", err)
 	}
 	canonicalDigest := sha256.Sum256(canonical.Raw())
-	call := sparseCall{profile: profile, method: route.semantic, wireID: wireID, resultPlan: resultPlan}
+	wireInvariant := tlUnprofiledInvariant(wireID)
+	call := sparseCall{profile: profile, method: route.semantic, wireID: wireID, resultPlan: resultPlan, wireInvariant: wireInvariant}
+	identityProfile := profile
+	if wireInvariant {
+		// Wire-invariant RPCs have one replay/cache identity across every exact
+		// profile. Profile remains available on Call for request-bound encoding,
+		// but must not leak into equality or make an unprofiled admission appear
+		// different after the connection later proves a profile.
+		identityProfile = 0
+	}
 	identity := sparsePreparedIdentity{
-		profile: profile, method: route.semantic, wireID: wireID, wireSize: wireSize,
+		profile: identityProfile, method: route.semantic, wireID: wireID, wireSize: wireSize,
 		wireDigest: wireDigest, canonicalDigest: canonicalDigest,
 	}
 	prepared := sparsePreparedCall{
