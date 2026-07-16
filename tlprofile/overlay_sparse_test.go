@@ -2,6 +2,7 @@ package tlprofile
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/iamxvbaba/td/bin"
@@ -82,6 +83,40 @@ func TestSparseClientRPCOverlayInsideInvokeWithLayer(t *testing.T) {
 	}
 	if evidence, ok := admitted.ProfileEvidence(); !ok || evidence != Profile227 {
 		t.Fatalf("wrapped overlay evidence = %d/%v", evidence, ok)
+	}
+}
+
+func TestSparseClientRPCOverlayCanReuseHistoricalOfficialWireID(t *testing.T) {
+	// contacts.search#11f812d8 is official in Layers 225/226, while DrKLO keeps
+	// using that older shape as a private overlay on Layers 227/228. Admission
+	// must classify it against the effective profile before treating the global
+	// schema-set constructor as an ordinary method.
+	for _, profile := range []Profile{Profile227, Profile228} {
+		profile := profile
+		t.Run(fmt.Sprintf("layer_%d", profile), func(t *testing.T) {
+			var private bin.Buffer
+			private.PutID(0x11f812d8)
+			private.PutString("query")
+			private.PutInt(20)
+
+			d := NewDispatcher()
+			d.OnUnknownMethod(func(view UnknownMethodView) (OutboundCall, bool, error) {
+				return view.AdaptClientRPCOverlay(ClientRPCOverlayDrkloAndroid)
+			})
+			admitted, err := d.Admit(profile, &private, Limits{})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if private.Len() != 0 {
+				t.Fatalf("overlay admission left %d bytes", private.Len())
+			}
+			if got, want := admitted.Call().Method(), SemanticMethodContactsSearch; got != want {
+				t.Fatalf("adapted method = %#x, want %#x", got, want)
+			}
+			if got, want := admitted.Call().WireID(), uint32(0x05f58d0f); got != want {
+				t.Fatalf("adapted exact wire = %#08x, want %#08x", got, want)
+			}
+		})
 	}
 }
 

@@ -783,14 +783,14 @@ func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAd
 	if _, ok := ResolveProfile(int(initial)); !ok {
 		return Admission{}, true, fmt.Errorf("tlprofile: unsupported exact profile %d", initial)
 	}
-	// Validate the complete generic wire graph and all allocation budgets before
-	// any wrapper metadata or terminal request is materialized.
-	if err := tlScanExact(initial, body, limits); err != nil {
-		var unknownWire *tlScanUnknownWireError
-		if !errors.As(err, &unknownWire) {
-			return Admission{}, true, err
-		}
-	}
+	// Parse wrapper prefixes first, then validate the terminal against its
+	// effective profile. A constructor can be historical in the official schema
+	// set yet intentionally re-used by an audited client overlay (for example
+	// DrKLO contacts.search#11f812d8 on profiles 227/228). A whole-body scan at
+	// the inherited profile would reject that terminal before the unknown-method
+	// adapter can prove and rewrite it. Wrapper parsers and ordinary admission
+	// still apply the same generated scanners and allocation limits before any
+	// callback with business side effects runs.
 	fullWire := body.Raw()
 	working := &bin.Buffer{Buf: fullWire}
 	profile := initial
