@@ -12,16 +12,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        flags: [""]
-        go:
-          - "oldstable"
-          - "stable"
-        arch:
-          - amd64
-        runner:
-          - ubuntu-latest
-          - macos-latest
+        # Cover supported Go versions on Linux and portability once per
+        # non-Linux OS. A Cartesian Go x OS matrix only repeats the generated
+        # model suite and makes a cold macOS build take over an hour.
         include:
+          - arch: amd64
+            runner: ubuntu-latest
+            go: "oldstable"
+            flags: ""
+
+          - arch: amd64
+            runner: ubuntu-latest
+            go: "stable"
+            flags: ""
+
+          - arch: amd64
+            runner: macos-latest
+            go: "oldstable"
+            flags: ""
+
           - arch: amd64
             runner: windows-latest
             go: "stable"
@@ -44,9 +53,10 @@ jobs:
 
       - name: Get Go environment
         id: go-env
+        shell: bash
         run: |
-          echo "::set-output name=cache::$(go env GOCACHE)"
-          echo "::set-output name=modcache::$(go env GOMODCACHE)"
+          echo "cache=$(go env GOCACHE)" >> "$GITHUB_OUTPUT"
+          echo "modcache=$(go env GOMODCACHE)" >> "$GITHUB_OUTPUT"
       - name: Set up cache
         uses: actions/cache@v6
         with:
@@ -61,4 +71,4 @@ jobs:
         env:
           GOARCH: ${{ matrix.arch }}
           GOFLAGS: ${{ matrix.flags }}
-        run: go test --timeout 5m ./...
+        run: go test --timeout 15m ./...

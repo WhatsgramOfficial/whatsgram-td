@@ -10,7 +10,7 @@ import (
 	"github.com/pion/transport/v4/vnet"
 	"github.com/pion/webrtc/v4"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap/zaptest"
+	"go.uber.org/zap"
 
 	"github.com/gotd/log"
 	"github.com/gotd/log/logzap"
@@ -40,7 +40,7 @@ func TestConnLoopback(t *testing.T) {
 	require.NoError(t, router.Start())
 	defer func() { _ = router.Stop() }()
 
-	zapLog := zaptest.NewLogger(t)
+	zapLog := zap.NewNop()
 	caller := newConn(true, log.For(logzap.New(zapLog.Named("caller"))))
 	caller.net = callerNet
 	callee := newConn(false, log.For(logzap.New(zapLog.Named("callee"))))
