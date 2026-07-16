@@ -75,6 +75,7 @@ func main() {
 	layerPolicyTemplate := flag.String("layer-policy-template", "", "Write unresolved multi-layer policy skeleton to path (or - for stdout) and exit")
 	layerPolicyAudit := flag.String("layer-policy-audit", "", "Write retained/stale/new policy migration report to path (or - for stdout) and exit")
 	layerPolicyMerge := flag.String("layer-policy-merge", "", "Write retained plus unresolved skeleton policy to path (or - for stdout) and exit")
+	layerPlanAudit := flag.String("layer-plan-audit", "", "Write deterministic sparse execution-plan audit JSON after successful generation")
 	targetDir := flag.String("target", "td", "Path to target dir")
 	packageName := flag.String("package", "td", "Target package name")
 	performFormat := flag.Bool("format", true, "Perform code formatting")
@@ -116,6 +117,9 @@ func main() {
 	}
 	if *layerPolicy != "" && *schemaManifest == "" {
 		panic("-layer-policy requires -schema-manifest")
+	}
+	if *layerPlanAudit != "" && *schemaManifest == "" {
+		panic("-layer-plan-audit requires -schema-manifest")
 	}
 	if *layerPolicyTemplate != "" && *schemaManifest == "" {
 		panic("-layer-policy-template requires -schema-manifest")
@@ -222,6 +226,18 @@ func main() {
 	}
 	if err := fs.Commit(); err != nil {
 		panic(fmt.Sprintf("%+v", err))
+	}
+	if *layerPlanAudit != "" {
+		data, err := g.MarshalLayerExecutionAudit()
+		if err != nil {
+			panic(fmt.Sprintf("build layer plan audit: %+v", err))
+		}
+		if err := os.MkdirAll(filepath.Dir(*layerPlanAudit), 0o750); err != nil {
+			panic(fmt.Sprintf("create layer plan audit directory: %+v", err))
+		}
+		if err := writeFileAtomic(*layerPlanAudit, data, 0o600); err != nil {
+			panic(fmt.Sprintf("write layer plan audit: %+v", err))
+		}
 	}
 	if *clean {
 		for _, f := range files {

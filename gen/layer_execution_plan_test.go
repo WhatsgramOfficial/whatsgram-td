@@ -1,6 +1,7 @@
 package gen
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/iamxvbaba/td/gen/semantic"
@@ -39,6 +40,32 @@ func TestLayerExecutionPlanDeduplicatesRoutesByBehavior(t *testing.T) {
 	}
 	if len(model.BodyPlans) >= len(model.Routes) {
 		t.Fatalf("body plans were not deduplicated: plans=%d routes=%d", len(model.BodyPlans), len(model.Routes))
+	}
+}
+
+func TestLayerExecutionAuditDeterministic(t *testing.T) {
+	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
+	if err != nil {
+		t.Fatal(err)
+	}
+	first, err := generator.MarshalLayerExecutionAudit()
+	if err != nil {
+		t.Fatal(err)
+	}
+	second, err := generator.MarshalLayerExecutionAudit()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(first, second) {
+		t.Fatal("layer execution audit is not deterministic")
 	}
 }
 
@@ -82,5 +109,8 @@ func TestLayerExecutionPlanRealSchemaIsSparse(t *testing.T) {
 	}
 	if len(model.BodyPlans)*4 >= len(model.Routes) {
 		t.Fatalf("sparse body-plan ratio regressed: plans=%d routes=%d", len(model.BodyPlans), len(model.Routes))
+	}
+	if len(model.BodyPlans) > 800 || len(model.PreflightPlans) > 1000 || len(model.ResultPlans) > 650 {
+		t.Fatalf("sparse plan budget regressed: body=%d preflight=%d result=%d", len(model.BodyPlans), len(model.PreflightPlans), len(model.ResultPlans))
 	}
 }

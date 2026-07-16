@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"hash"
 	"sort"
@@ -93,6 +95,116 @@ type layerExecutionModel struct {
 	BodyPlans      []layerExecutionPlan
 	PreflightPlans []layerPreflightPlan
 	ResultPlans    []layerResultExecutionPlan
+}
+
+type layerExecutionAudit struct {
+	Version        int                        `json:"version"`
+	CanonicalLayer int                        `json:"canonical_layer"`
+	Profiles       []int                      `json:"profiles"`
+	Summary        layerExecutionAuditSummary `json:"summary"`
+	BodyPlans      []layerExecutionAuditPlan  `json:"body_plans"`
+	PreflightPlans []layerExecutionAuditPlan  `json:"preflight_plans"`
+	ResultPlans    []layerExecutionAuditPlan  `json:"result_plans"`
+	Routes         []layerExecutionAuditRoute `json:"non_direct_routes"`
+}
+
+type layerExecutionAuditSummary struct {
+	Routes         int    `json:"routes"`
+	Direct         int    `json:"direct"`
+	Retag          int    `json:"retag"`
+	Rewrite        int    `json:"rewrite"`
+	Policy         int    `json:"policy"`
+	ProfileOnly    int    `json:"profile_only"`
+	BodyPlans      int    `json:"body_plans"`
+	PreflightPlans int    `json:"preflight_plans"`
+	ResultPlans    int    `json:"result_plans"`
+	DirectDigest   string `json:"direct_routes_digest"`
+}
+
+type layerExecutionAuditPlan struct {
+	ID         int    `json:"id"`
+	Digest     string `json:"digest"`
+	Mode       string `json:"mode,omitempty"`
+	Semantic   string `json:"semantic,omitempty"`
+	RouteCount int    `json:"route_count"`
+}
+
+type layerExecutionAuditRoute struct {
+	Layer         int    `json:"layer"`
+	Category      string `json:"category"`
+	Name          string `json:"name"`
+	WireID        string `json:"wire_id"`
+	Mode          string `json:"mode"`
+	BodyPlan      int    `json:"body_plan,omitempty"`
+	PreflightPlan int    `json:"preflight_plan,omitempty"`
+	ResultPlan    int    `json:"result_plan,omitempty"`
+}
+
+// MarshalLayerExecutionAudit returns deterministic review evidence for the
+// sparse plan selection. The complete schema remains generation-only; this
+// document contains identities and route decisions, never runtime TypeRefs.
+func (g *Generator) MarshalLayerExecutionAudit() ([]byte, error) {
+	model, err := g.buildLayerExecutionModel()
+	if err != nil {
+		return nil, err
+	}
+	audit := layerExecutionAudit{
+		Version:        1,
+		CanonicalLayer: model.CanonicalLayer,
+		Profiles:       append([]int(nil), model.Profiles...),
+	}
+	directHasher := newLayerExecutionHasher("gotd.tlprofile.direct-routes.v1")
+	for _, plan := range model.BodyPlans {
+		audit.BodyPlans = append(audit.BodyPlans, layerExecutionAuditPlan{
+			ID: plan.ID, Digest: hex.EncodeToString(plan.Digest[:]), Mode: plan.Mode.String(),
+			Semantic: plan.Semantic.String(), RouteCount: len(plan.Routes),
+		})
+	}
+	for _, plan := range model.PreflightPlans {
+		audit.PreflightPlans = append(audit.PreflightPlans, layerExecutionAuditPlan{
+			ID: plan.ID, Digest: hex.EncodeToString(plan.Digest[:]), RouteCount: len(plan.Routes),
+		})
+	}
+	for _, plan := range model.ResultPlans {
+		audit.ResultPlans = append(audit.ResultPlans, layerExecutionAuditPlan{
+			ID: plan.ID, Digest: hex.EncodeToString(plan.Digest[:]), RouteCount: len(plan.Routes),
+		})
+	}
+	for _, route := range model.Routes {
+		switch route.Mode {
+		case layerExecutionDirect:
+			audit.Summary.Direct++
+			directHasher.uint64(uint64(route.Layer))
+			directHasher.string(route.Key.String())
+			directHasher.uint64(uint64(route.WireID))
+		case layerExecutionRetag:
+			audit.Summary.Retag++
+		case layerExecutionRewrite:
+			audit.Summary.Rewrite++
+		case layerExecutionPolicy:
+			audit.Summary.Policy++
+		case layerExecutionProfileOnly:
+			audit.Summary.ProfileOnly++
+		}
+		if route.Mode != layerExecutionDirect {
+			audit.Routes = append(audit.Routes, layerExecutionAuditRoute{
+				Layer: route.Layer, Category: route.Key.Category.String(), Name: route.Key.QName,
+				WireID: fmt.Sprintf("0x%08x", route.WireID), Mode: route.Mode.String(),
+				BodyPlan: route.BodyPlan, PreflightPlan: route.PreflightPlan, ResultPlan: route.ResultPlan,
+			})
+		}
+	}
+	audit.Summary.Routes = len(model.Routes)
+	audit.Summary.BodyPlans = len(model.BodyPlans)
+	audit.Summary.PreflightPlans = len(model.PreflightPlans)
+	audit.Summary.ResultPlans = len(model.ResultPlans)
+	directDigest := directHasher.sum()
+	audit.Summary.DirectDigest = hex.EncodeToString(directDigest[:])
+	data, err := json.MarshalIndent(audit, "", "  ")
+	if err != nil {
+		return nil, fmt.Errorf("gen: marshal layer execution audit: %w", err)
+	}
+	return append(data, '\n'), nil
 }
 
 type layerExecutionHasher struct {
