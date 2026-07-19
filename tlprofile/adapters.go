@@ -64,3 +64,24 @@ func layerAdaptBotGuestChatResult(_ LayerProfile, messageID tg.InputBotInlineMes
 	}
 	return true, nil
 }
+
+// layerProjectEphemeralBotCommandProject removes a Layer 228 ephemeral command when
+// encoding a command vector for a profile that cannot represent its privacy
+// bit. Keeping the command and merely dropping the bit would make an older
+// client send the command as an ordinary visible group message.
+func layerProjectEphemeralBotCommandProject(
+	profile LayerProfile,
+	value *tg.BotCommand,
+	ephemeral bool,
+) (*tg.BotCommand, bool, error) {
+	if value == nil {
+		return nil, false, fmt.Errorf("bot command target is nil")
+	}
+	if profile >= LayerProfile228 {
+		return nil, false, fmt.Errorf("ephemeral bot command projector used for profile %d", profile)
+	}
+	if ephemeral || value.Flags.Has(0) {
+		return nil, false, nil
+	}
+	return value, true, nil
+}

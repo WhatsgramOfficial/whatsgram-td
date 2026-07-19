@@ -2782,6 +2782,11 @@ var _ func(LayerProfile, tg.UpdatesClass) (bool, error) = layerAdaptWebBrowserSe
 // inside one transactional pass; hooks must not mutate their input value.
 var _ func(LayerProfile, *tg.MessagesChatInviteJoinResultWebView, tg.WebViewResultURL) error = layerCaptureChatInviteJoinQueryIDFromWebViewDecode
 
+// Static policy contract for layerProjectEphemeralBotCommandProject. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.BotCommand, bool) (*tg.BotCommand, bool, error) = layerProjectEphemeralBotCommandProject
+
 // Static policy contract for layerRequireCapturedChatInviteJoinQueryIDDecode. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.

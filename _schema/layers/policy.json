@@ -17,6 +17,30 @@
       }
     },
     {
+      "key": "layer-obligation/v1/field-projection/1dcb9be1d2041794a1788de2a738fb6e126c2ee76d41f6bcba69e028775c6771",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectEphemeralBotCommand",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:botCommand; wire=0x9852d6d2-\u003e0xc27ac8c7; field=ephemeral-\u003e; type=true-\u003e; source_shape=c02355ff56d29f8c4d69116641d2abcb8beb2cfff9ce3b7b23e0464d620e37db; target_shape=1759a0a62f1738d1c9a55717e7c7fcf7015ab76851ff97967a5338d2598ae188"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/2e1a3deb595e5808e3d7d3ed8d2a35824fe4d061676497c46251e0926d2f47e7",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectEphemeralBotCommand",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:botCommand; wire=0x9852d6d2-\u003e0xc27ac8c7; field=ephemeral-\u003e; type=true-\u003e; source_shape=c02355ff56d29f8c4d69116641d2abcb8beb2cfff9ce3b7b23e0464d620e37db; target_shape=1759a0a62f1738d1c9a55717e7c7fcf7015ab76851ff97967a5338d2598ae188"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/730fa610d190fd09c9ccac859f3b14816ee67972c8da657127c3509399157433",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectEphemeralBotCommand",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:botCommand; wire=0x9852d6d2-\u003e0xc27ac8c7; field=ephemeral-\u003e; type=true-\u003e; source_shape=c02355ff56d29f8c4d69116641d2abcb8beb2cfff9ce3b7b23e0464d620e37db; target_shape=1759a0a62f1738d1c9a55717e7c7fcf7015ab76851ff97967a5338d2598ae188"
+      }
+    },
+    {
       "key": "layer-obligation/v1/required/0c6cb2271ca5901d9c9de5b357ecf292420516611ff6b6f86b1f6a0d91c319a8",
       "resolution": {
         "action": "default",

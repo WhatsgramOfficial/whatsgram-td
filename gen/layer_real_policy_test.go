@@ -56,7 +56,7 @@ func TestRealLayerPolicy(t *testing.T) {
 	if unresolved := resolved.LayerConversionPlan().Report.Unresolved(); len(unresolved) != 0 {
 		t.Fatalf("real policy leaves %d unresolved obligations; first=%+v", len(unresolved), unresolved[0])
 	}
-	if got, want := len(document.Entries), 35; got != want {
+	if got, want := len(document.Entries), 38; got != want {
 		t.Fatalf("reviewed policy entry count = %d, want %d", got, want)
 	}
 	codec, err := resolved.buildLayerCodecModel("tg")
@@ -82,6 +82,7 @@ func assertRealLayerHookContracts(t *testing.T, codec, sparse []layerCodecHookCo
 	t.Helper()
 	wantCodec := map[string]string{
 		"layerCaptureChatInviteJoinQueryIDFromWebViewDecode": "func(LayerProfile, *MessagesChatInviteJoinResultWebView, WebViewResultURL) error",
+		"layerProjectEphemeralBotCommandProject":             "func(LayerProfile, *BotCommand, bool) (*BotCommand, bool, error)",
 		"layerRequireCapturedChatInviteJoinQueryIDDecode":    "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error)",
 	}
 	gotCodec := make(map[string]string, len(codec))
@@ -142,8 +143,19 @@ func buildRealLayerPolicy(report LayerObligationReport) (LayerPolicyDocument, er
 
 func realLayerResolution(obligation LayerObligation) (LayerObligationResolution, bool, error) {
 	// Mechanical field projections remain fail-closed with the analyzer's
-	// reject-if-present default.
+	// reject-if-present default. The ephemeral marker is different: preserving
+	// the surrounding BotCommand while dropping this privacy bit would expose
+	// a private command as an ordinary group command, so older profiles must
+	// project the entire vector element out.
 	if obligation.Kind == LayerObligationFieldProjection {
+		if obligation.Semantic.QName == "botCommand" &&
+			obligation.Field == "ephemeral" &&
+			obligation.Layer >= 225 && obligation.Layer < 228 {
+			return LayerObligationResolution{
+				Action: LayerResolveProject,
+				Hook:   "layerProjectEphemeralBotCommand",
+			}, true, nil
+		}
 		return LayerObligationResolution{}, false, nil
 	}
 	if obligation.Resolution.resolved() {

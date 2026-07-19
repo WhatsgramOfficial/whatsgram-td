@@ -1415,11 +1415,7 @@ func layerEncodeWirec27ac8c7(profile LayerProfile, value *tg.BotCommand, b *bin.
 	}
 	return layerCodecEncodeAtomic(profile, b, func() error {
 		switch profile {
-		case LayerProfile225:
-
-		case LayerProfile226:
-
-		case LayerProfile227:
+		case LayerProfile225, LayerProfile226, LayerProfile227:
 
 		default:
 			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeBotCommand, WireID: 0xc27ac8c7, Reason: "wire ID is unavailable in exact profile"}
@@ -1447,38 +1443,20 @@ func layerEncodeWirec27ac8c7BareBody(profile LayerProfile, value *tg.BotCommand,
 	}
 	state = &child
 	switch profile {
-	case LayerProfile225:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			if value.Flags.Has(0) || value.Ephemeral {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeBotCommand, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/730fa610d190fd09c9ccac859f3b14816ee67972c8da657127c3509399157433"}
-			}
-			if err := b.PutStringChecked(value.Command); err != nil {
-				return fmt.Errorf("encode field command: %w", err)
-			}
-			if err := b.PutStringChecked(value.Description); err != nil {
-				return fmt.Errorf("encode field description: %w", err)
-			}
-			return nil
-
-		}
-	case LayerProfile226:
-		{
-			if value.Flags.Has(0) || value.Ephemeral {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeBotCommand, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/1dcb9be1d2041794a1788de2a738fb6e126c2ee76d41f6bcba69e028775c6771"}
-			}
-			if err := b.PutStringChecked(value.Command); err != nil {
-				return fmt.Errorf("encode field command: %w", err)
-			}
-			if err := b.PutStringChecked(value.Description); err != nil {
-				return fmt.Errorf("encode field description: %w", err)
-			}
-			return nil
-
-		}
-	case LayerProfile227:
-		{
-			if value.Flags.Has(0) || value.Ephemeral {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeBotCommand, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/2e1a3deb595e5808e3d7d3ed8d2a35824fe4d061676497c46251e0926d2f47e7"}
+				projected, keep, err := layerProjectEphemeralBotCommandProject(profile, value, value.Ephemeral)
+				if err != nil {
+					return fmt.Errorf("project field ephemeral: %w", err)
+				}
+				if !keep {
+					return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeBotCommand, Dropped: true, Reason: "field projection removed canonical value"}
+				}
+				if projected == nil {
+					return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeBotCommand, Reason: "field projector returned nil canonical value"}
+				}
+				value = projected
 			}
 			if err := b.PutStringChecked(value.Command); err != nil {
 				return fmt.Errorf("encode field command: %w", err)
@@ -1496,11 +1474,7 @@ func layerEncodeWirec27ac8c7BareBody(profile LayerProfile, value *tg.BotCommand,
 
 func layerDecodeWirec27ac8c7(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.BotCommand, error) {
 	switch profile {
-	case LayerProfile225:
-
-	case LayerProfile226:
-
-	case LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeBotCommand, WireID: 0xc27ac8c7, Reason: "wire ID is unavailable in exact profile"}
@@ -1522,53 +1496,7 @@ func layerDecodeWirec27ac8c7Bare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(tg.BotCommand)
 	_ = value
 	switch profile {
-	case LayerProfile225:
-		{
-			var layerDecoded1 string
-			layerPrimitive2, err := b.String()
-			if err != nil {
-				return nil, fmt.Errorf("decode field command: %w", err)
-			}
-			layerDecoded1 = layerPrimitive2
-			var layerDecoded3 string
-			layerPrimitive4, err := b.String()
-			if err != nil {
-				return nil, fmt.Errorf("decode field description: %w", err)
-			}
-			layerDecoded3 = layerPrimitive4
-			if true {
-				value.Command = layerDecoded1
-			}
-			if true {
-				value.Description = layerDecoded3
-			}
-			return value, nil
-
-		}
-	case LayerProfile226:
-		{
-			var layerDecoded1 string
-			layerPrimitive2, err := b.String()
-			if err != nil {
-				return nil, fmt.Errorf("decode field command: %w", err)
-			}
-			layerDecoded1 = layerPrimitive2
-			var layerDecoded3 string
-			layerPrimitive4, err := b.String()
-			if err != nil {
-				return nil, fmt.Errorf("decode field description: %w", err)
-			}
-			layerDecoded3 = layerPrimitive4
-			if true {
-				value.Command = layerDecoded1
-			}
-			if true {
-				value.Description = layerDecoded3
-			}
-			return value, nil
-
-		}
-	case LayerProfile227:
+	case LayerProfile225, LayerProfile226, LayerProfile227:
 		{
 			var layerDecoded1 string
 			layerPrimitive2, err := b.String()
