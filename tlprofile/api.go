@@ -792,6 +792,22 @@ func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAd
 	// still apply the same generated scanners and allocation limits before any
 	// callback with business side effects runs.
 	fullWire := body.Raw()
+	firstWireID, err := body.PeekID()
+	if err != nil {
+		return Admission{}, true, err
+	}
+	if _, wrapped := tlLookupWrapperParser(initial, firstWireID); !wrapped {
+		if route, routed := tlLookupRoute(initial, firstWireID); routed {
+			if _, ordinary := tlLookupResultPlan(initial, route.semantic); ordinary {
+				working := bin.Buffer{Buf: fullWire}
+				admission, handled, err := admitSparseOrdinary(initial, &working, limits, false, preflight, fields)
+				if !handled || err != nil {
+					return admission, handled, err
+				}
+				return finishSparseAdmission(admission, body, &working, fullWire, nil, mode == sparseAdmissionExact)
+			}
+		}
+	}
 	working := &bin.Buffer{Buf: fullWire}
 	profile := initial
 	explicitProfile := Profile(0)
@@ -833,21 +849,25 @@ func admitSparse(initial Profile, body *bin.Buffer, limits Limits, mode sparseAd
 			}
 			return admission, handled, err
 		}
-		if working.Len() != 0 {
-			return Admission{}, true, fmt.Errorf("tlprofile: wrapped terminal left %d bytes", working.Len())
-		}
-		wireDigest := sha256.Sum256(fullWire)
-		admission.sparse.prepared.wireSize = len(fullWire)
-		admission.sparse.prepared.wireDigest = wireDigest
-		admission.sparse.prepared.identity.wireSize = len(fullWire)
-		admission.sparse.prepared.identity.wireDigest = wireDigest
-		admission.sparse.wrappers = wrappers
-		admission.sparse.effectiveProfile = true
-		admission.sparse.profileEvidence = mode == sparseAdmissionExact || explicitProfile != 0
-		body.ResetTo(working.Raw())
-		return admission, true, nil
+		return finishSparseAdmission(admission, body, working, fullWire, wrappers, mode == sparseAdmissionExact || explicitProfile != 0)
 	}
 	return Admission{}, true, fmt.Errorf("tlprofile: wrapper nesting exceeds %d", tlScanMaxDepth)
+}
+
+func finishSparseAdmission(admission Admission, body, working *bin.Buffer, fullWire []byte, wrappers []sparseWrapper, evidence bool) (Admission, bool, error) {
+	if working.Len() != 0 {
+		return Admission{}, true, fmt.Errorf("tlprofile: wrapped terminal left %d bytes", working.Len())
+	}
+	wireDigest := sha256.Sum256(fullWire)
+	admission.sparse.prepared.wireSize = len(fullWire)
+	admission.sparse.prepared.wireDigest = wireDigest
+	admission.sparse.prepared.identity.wireSize = len(fullWire)
+	admission.sparse.prepared.identity.wireDigest = wireDigest
+	admission.sparse.wrappers = wrappers
+	admission.sparse.effectiveProfile = true
+	admission.sparse.profileEvidence = evidence
+	body.ResetTo(working.Raw())
+	return admission, true, nil
 }
 
 func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evidence bool, preflight AdmissionPreflight, fields map[FieldID]FieldPreflight) (Admission, bool, error) {
@@ -893,18 +913,29 @@ func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evide
 	}
 	wireSize := len(wireBytes)
 	wireDigest := sha256.Sum256(wireBytes)
-	request, err := DecodeObject(profile, body, limits)
+	// The observed scan above has already proved the complete exact TypeRef,
+	// allocation bounds and absence of trailing bytes. Materialize directly so
+	// ordinary admission does not scan the same wire graph twice.
+	request, err := tlDecodeObjectPrefixScanned(profile, body, limits)
 	if err != nil {
 		return Admission{}, true, err
 	}
 	if body.Len() != 0 {
 		return Admission{}, true, fmt.Errorf("tlprofile: ordinary RPC left %d bytes", body.Len())
 	}
-	var canonical bin.Buffer
-	if err := request.Encode(&canonical); err != nil {
-		return Admission{}, true, fmt.Errorf("tlprofile: canonicalize admitted RPC: %w", err)
+	canonicalSize := wireSize
+	canonicalDigest := wireDigest
+	if route.mode != tlRouteDirect {
+		// Direct routes are generated only when the constructor ID, complete body
+		// shape and transitive dependencies equal canonical. Other modes still
+		// require materialized canonical bytes for stable semantic identity.
+		var canonical bin.Buffer
+		if err := request.Encode(&canonical); err != nil {
+			return Admission{}, true, fmt.Errorf("tlprofile: canonicalize admitted RPC: %w", err)
+		}
+		canonicalSize = canonical.Len()
+		canonicalDigest = sha256.Sum256(canonical.Raw())
 	}
-	canonicalDigest := sha256.Sum256(canonical.Raw())
 	wireInvariant := tlUnprofiledInvariant(wireID)
 	call := sparseCall{profile: profile, method: route.semantic, wireID: wireID, resultPlan: resultPlan, wireInvariant: wireInvariant}
 	identityProfile := profile
@@ -921,7 +952,7 @@ func admitSparseOrdinary(profile Profile, body *bin.Buffer, limits Limits, evide
 	}
 	prepared := sparsePreparedCall{
 		call: call, wireSize: wireSize, wireDigest: wireDigest, identity: identity,
-		semanticIdentity: sparseSemanticIdentity{method: route.semantic, canonicalSize: canonical.Len(), canonicalDigest: canonicalDigest},
+		semanticIdentity: sparseSemanticIdentity{method: route.semantic, canonicalSize: canonicalSize, canonicalDigest: canonicalDigest},
 	}
 	return Admission{sparse: &sparseAdmission{prepared: prepared, request: request, profileEvidence: evidence, effectiveProfile: true}}, true, nil
 }

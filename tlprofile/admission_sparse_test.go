@@ -2,6 +2,7 @@ package tlprofile
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"testing"
@@ -9,6 +10,8 @@ import (
 	"github.com/iamxvbaba/td/bin"
 	"github.com/iamxvbaba/td/tg"
 )
+
+var admissionAllocationSink Admission
 
 func TestSparseAdmissionPreflightAndFieldMetrics(t *testing.T) {
 	profiles := []Profile{Profile225, Profile226, Profile227, Profile228}
@@ -120,6 +123,46 @@ func TestSparseFieldPreflightRejectsBeforeConsumption(t *testing.T) {
 	}
 	if !bytes.Equal(original, body.Raw()) {
 		t.Fatal("rejected admission consumed or mutated input")
+	}
+}
+
+func TestSparseAdmissionAllocationBudget(t *testing.T) {
+	var encoded bin.Buffer
+	if err := EncodeObject(Profile225, &tg.HelpGetConfigRequest{}, &encoded); err != nil {
+		t.Fatal(err)
+	}
+	wire := encoded.Copy()
+	dispatcher := NewDispatcher()
+	var admissionErr error
+	allocations := testing.AllocsPerRun(1000, func() {
+		input := bin.Buffer{Buf: wire}
+		admissionAllocationSink, admissionErr = dispatcher.Admit(Profile225, &input, Limits{})
+	})
+	if admissionErr != nil {
+		t.Fatal(admissionErr)
+	}
+	if allocations > 2 {
+		t.Fatalf("direct sparse admission allocations = %.2f, want <= 2", allocations)
+	}
+}
+
+func TestSparseDirectAdmissionReusesWireCanonicalIdentity(t *testing.T) {
+	var encoded bin.Buffer
+	request := &tg.AccountUpdateProfileRequest{FirstName: "Alice", About: "direct route with flags"}
+	if err := EncodeObject(Profile225, request, &encoded); err != nil {
+		t.Fatal(err)
+	}
+	wire := encoded.Copy()
+	admission, err := NewDispatcher().Admit(Profile225, &encoded, Limits{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	identity := admission.Prepared().SemanticIdentity()
+	if identity.CanonicalSize() != len(wire) {
+		t.Fatalf("canonical size = %d, want %d", identity.CanonicalSize(), len(wire))
+	}
+	if digest := sha256.Sum256(wire); identity.CanonicalDigest() != digest {
+		t.Fatalf("canonical digest = %x, want wire digest %x", identity.CanonicalDigest(), digest)
 	}
 }
 

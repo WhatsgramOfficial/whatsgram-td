@@ -101,6 +101,8 @@ type layerCodecWire struct {
 	Encodable      bool
 	Decodable      bool
 	SparseDirect   bool
+	SparseEncode   bool
+	SparseDecode   bool
 	Profiles       []layerCodecProfileBody
 	ProfileGroups  []layerCodecProfileBody
 	RejectProfiles []int

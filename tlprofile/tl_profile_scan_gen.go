@@ -87,30 +87,30 @@ func tlScanLimit(value, fallback, hard int) (int, error) {
 	return value, nil
 }
 
-func tlNewScanState(profile Profile, wireBytes int, limits Limits) (*tlScanState, error) {
+func tlNewScanState(profile Profile, wireBytes int, limits Limits) (tlScanState, error) {
 	if _, ok := ResolveProfile(int(profile)); !ok {
-		return nil, fmt.Errorf("tlprofile: unsupported exact profile %d", profile)
+		return tlScanState{}, fmt.Errorf("tlprofile: unsupported exact profile %d", profile)
 	}
 	maxWireBytes, err := tlScanLimit(limits.MaxWireBytes, tlScanDefaultWireBytes, tlScanMaxWireBytes)
 	if err != nil {
-		return nil, err
+		return tlScanState{}, err
 	}
 	if wireBytes < 0 || wireBytes > maxWireBytes {
-		return nil, fmt.Errorf("tlprofile: wire byte length %d exceeds limit %d", wireBytes, maxWireBytes)
+		return tlScanState{}, fmt.Errorf("tlprofile: wire byte length %d exceeds limit %d", wireBytes, maxWireBytes)
 	}
 	maxVectorElements, err := tlScanLimit(limits.MaxVectorElements, tlScanDefaultVectorElements, tlScanMaxVectorElements)
 	if err != nil {
-		return nil, err
+		return tlScanState{}, err
 	}
 	maxAggregateElements, err := tlScanLimit(limits.MaxAggregateElements, tlScanDefaultAggregateElements, tlScanMaxAggregateElements)
 	if err != nil {
-		return nil, err
+		return tlScanState{}, err
 	}
 	maxDepth, err := tlScanLimit(limits.MaxDepth, tlScanDefaultDepth, tlScanMaxDepth)
 	if err != nil {
-		return nil, err
+		return tlScanState{}, err
 	}
-	return &tlScanState{maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements, fieldPlan: -1}, nil
+	return tlScanState{maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements, fieldPlan: -1}, nil
 }
 
 func (s *tlScanState) enter(profile Profile) error {
@@ -254,7 +254,7 @@ func tlScanExactObserved(profile Profile, body *bin.Buffer, limits Limits, obser
 	state.fieldPlan = tlLookupFieldPlan(profile, wireID)
 	state.fieldObserver = observer
 	cursor := &bin.Buffer{Buf: body.Raw()}
-	if err := tlScanDynamic(profile, cursor, state); err != nil {
+	if err := tlScanDynamic(profile, cursor, &state); err != nil {
 		return err
 	}
 	if cursor.Len() != 0 {

@@ -172,7 +172,7 @@ Required gates:
 7. telesrv contains no import-time or identifier dependency on `tg.Layer*`.
 
 The Layer 225--228 implementation currently emits 74 generated `tlprofile`
-files, 12,776,924 bytes and about 336k lines. The hard source budget is 16 MiB
+files, 12,047,226 bytes and 319,043 lines. The hard source budget is 16 MiB
 and 400k lines. The generation audit currently records 9,638 routes sharing
 763 body plans, 928 preflight plans and 599 result plans; 8,517 routes reuse
 the canonical implementation directly. `tg/tl_layer*_gen.go` must remain

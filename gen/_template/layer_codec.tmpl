@@ -215,13 +215,11 @@ var _ {{ .Signature }} = {{ .Name }}
 {{ define "layer_codec_wires" }}{{ with .LayerCodec }}{{ $codec := . }}
 {{ range .Wires }}{{ $wire := . }}
 {{ if .SparseDirect }}
-// Canonical-direct exact wire. The allocation-free scanner has already
-// proven the complete transitive wire graph, so no historical field program
-// is emitted here.
-func {{ .EncodeName }}(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
-    if value == nil { return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"} }
-    return value.Encode(b)
-}
+{{/* The scanner validates the transitive graph. Only entries referenced by
+the sparse typed closure are emitted; the other wrappers duplicate canonical
+methods and are intentionally absent. */}}
+// Canonical-direct exact wire; the scanner has validated its transitive graph.
+{{ if .SparseEncode -}}
 func {{ .EncodeBareName }}(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
     if value == nil { return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"} }
     return value.EncodeBare(b)
@@ -229,20 +227,14 @@ func {{ .EncodeBareName }}(profile LayerProfile, value *{{ .CanonicalType }}, b 
 func {{ .EncodeBareName }}Body(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
     return {{ .EncodeBareName }}(profile, value, b, state)
 }
-{{ if not $codec.Sparse }}func {{ .PreflightName }}(profile LayerProfile, value *{{ .CanonicalType }}, state *layerCodecState) (int, error) {
-    if value == nil { return 0, &LayerCodecError{Operation: "preflight", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"} }
-    return 1, nil
-}{{ end }}
+{{ end -}}
+{{ if .SparseDecode -}}
 func {{ .DecodeName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*{{ .CanonicalType }}, error) {
     value := new({{ .CanonicalType }})
     if err := value.Decode(b); err != nil { return nil, err }
     return value, nil
 }
-func {{ .DecodeBareName }}(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*{{ .CanonicalType }}, error) {
-    value := new({{ .CanonicalType }})
-    if err := value.DecodeBare(b); err != nil { return nil, err }
-    return value, nil
-}
+{{ end }}
 {{ else if .ProfileOnly }}
 // {{ .EncodeName }} is an admission-only stub for historical-only wire ID
 // 0x{{ .Hex }}. RPC admission rejects or statically aliases/adapts it before

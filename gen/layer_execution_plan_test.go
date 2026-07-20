@@ -55,6 +55,42 @@ func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 	if strings.Contains(routes, "map[") || strings.Contains(routes, "reflect.") {
 		t.Fatal("tlprofile sparse routes contain a runtime registry or reflection")
 	}
+
+	model, err := generator.buildLayerSparseCodecModel("tlprofile")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var generated strings.Builder
+	for _, source := range result {
+		generated.Write(source)
+	}
+	generatedText := generated.String()
+	var directWires int
+	for _, wire := range model.Wires {
+		if !wire.SparseDirect {
+			continue
+		}
+		directWires++
+		encode := "func " + wire.EncodeBareName + "Body("
+		if got := strings.Contains(generatedText, encode); got != wire.SparseEncode {
+			t.Errorf("tlprofile sparse direct wire %#08x encode helper presence = %v, want %v", wire.WireID, got, wire.SparseEncode)
+		}
+		decode := "func " + wire.DecodeName + "("
+		if got := strings.Contains(generatedText, decode); got != wire.SparseDecode {
+			t.Errorf("tlprofile sparse direct wire %#08x decode helper presence = %v, want %v", wire.WireID, got, wire.SparseDecode)
+		}
+		for _, forbidden := range []string{
+			"func " + wire.EncodeName + "(",
+			"func " + wire.DecodeBareName + "(",
+		} {
+			if strings.Contains(generatedText, forbidden) {
+				t.Errorf("tlprofile sparse direct wire %#08x retained unused helper %q", wire.WireID, forbidden)
+			}
+		}
+	}
+	if directWires == 0 {
+		t.Fatal("synthetic tlprofile schema has no sparse direct wire")
+	}
 }
 
 func layerSparseSyntheticPolicy(t *testing.T, set *SchemaSet) LayerObligationPolicy {

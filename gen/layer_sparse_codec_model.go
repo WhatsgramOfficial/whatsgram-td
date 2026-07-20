@@ -181,13 +181,15 @@ func findLayerSparseWire(wires []layerCodecWire, id uint32) *layerCodecWire {
 }
 
 var (
-	layerSparseWireReference   = regexp.MustCompile(`\blayer(?:Preflight|Encode|Decode)Wire([0-9a-f]{8})`)
+	layerSparseWireReference   = regexp.MustCompile(`\blayer(Preflight|Encode|Decode)Wire([0-9a-f]{8})`)
 	layerSparseClassReference  = regexp.MustCompile(`\blayer(?:Project|Preflight|Encode|Decode)Class([A-Za-z0-9_]+)`)
 	layerSparseFamilyReference = regexp.MustCompile(`\blayer(?:Project|Preflight|Encode)Family([A-Za-z0-9_]+)`)
 )
 
 type layerSparseReferenceSet struct {
 	wires    map[uint32]struct{}
+	encodes  map[uint32]struct{}
+	decodes  map[uint32]struct{}
 	classes  map[string]struct{}
 	families map[string]struct{}
 	dynamic  bool
@@ -195,17 +197,24 @@ type layerSparseReferenceSet struct {
 
 func newLayerSparseReferenceSet() *layerSparseReferenceSet {
 	return &layerSparseReferenceSet{
-		wires: make(map[uint32]struct{}), classes: make(map[string]struct{}), families: make(map[string]struct{}),
+		wires: make(map[uint32]struct{}), encodes: make(map[uint32]struct{}), decodes: make(map[uint32]struct{}),
+		classes: make(map[string]struct{}), families: make(map[string]struct{}),
 	}
 }
 
 func (r *layerSparseReferenceSet) collect(source string) error {
 	for _, match := range layerSparseWireReference.FindAllStringSubmatch(source, -1) {
 		var id uint32
-		if _, err := fmt.Sscanf(match[1], "%08x", &id); err != nil {
-			return fmt.Errorf("gen: parse sparse wire reference %q: %w", match[1], err)
+		if _, err := fmt.Sscanf(match[2], "%08x", &id); err != nil {
+			return fmt.Errorf("gen: parse sparse wire reference %q: %w", match[2], err)
 		}
 		r.wires[id] = struct{}{}
+		switch match[1] {
+		case "Encode":
+			r.encodes[id] = struct{}{}
+		case "Decode":
+			r.decodes[id] = struct{}{}
+		}
 	}
 	for _, match := range layerSparseClassReference.FindAllStringSubmatch(source, -1) {
 		r.classes[match[1]] = struct{}{}
@@ -323,6 +332,13 @@ func pruneLayerSparseClosure(model *layerCodecModel, roots map[uint32]struct{}, 
 	keptWires := make([]layerCodecWire, 0, len(processedWires))
 	for _, wire := range model.Wires {
 		if _, ok := processedWires[wire.WireID]; ok {
+			if wire.SparseDirect {
+				_, wire.SparseEncode = references.encodes[wire.WireID]
+				_, wire.SparseDecode = references.decodes[wire.WireID]
+				if !wire.SparseEncode && !wire.SparseDecode {
+					return fmt.Errorf("gen: sparse direct wire %#08x has no operation reference", wire.WireID)
+				}
+			}
 			keptWires = append(keptWires, wire)
 		}
 	}
