@@ -2163,7 +2163,7 @@ func layerEncodeWiref8b036afBareBody(profile LayerProfile, value *tg.ChannelsGet
 	case LayerProfile225:
 		{
 			if value.Flags.Has(3) || value.ForCommunityPeer {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodChannelsGetAdminedPublicChannels, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/481036efb87ca1bbb01222de597a2110014aa1f6b22eab688e014033d47b20aa"}
+				// layer-obligation/v1/field-projection/481036efb87ca1bbb01222de597a2110014aa1f6b22eab688e014033d47b20aa explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.ByLocation {
@@ -2184,7 +2184,7 @@ func layerEncodeWiref8b036afBareBody(profile LayerProfile, value *tg.ChannelsGet
 	case LayerProfile226:
 		{
 			if value.Flags.Has(3) || value.ForCommunityPeer {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodChannelsGetAdminedPublicChannels, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/33206aa2b01607745e8d86f5ef6877524c05ecfc6f11e29e872f0dd858cd1ebf"}
+				// layer-obligation/v1/field-projection/33206aa2b01607745e8d86f5ef6877524c05ecfc6f11e29e872f0dd858cd1ebf explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.ByLocation {
@@ -2205,7 +2205,7 @@ func layerEncodeWiref8b036afBareBody(profile LayerProfile, value *tg.ChannelsGet
 	case LayerProfile227:
 		{
 			if value.Flags.Has(3) || value.ForCommunityPeer {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodChannelsGetAdminedPublicChannels, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/c1cc47d7ba0e8d2e0cbb1eb0461f9e00aaed2847f859434908d5db4b19c98fa8"}
+				// layer-obligation/v1/field-projection/c1cc47d7ba0e8d2e0cbb1eb0461f9e00aaed2847f859434908d5db4b19c98fa8 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.ByLocation {

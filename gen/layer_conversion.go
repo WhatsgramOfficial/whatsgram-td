@@ -82,16 +82,24 @@ func (f LayerFamilyConversion) ResultObligations() []LayerObligation {
 	return result
 }
 
-// ProjectionObligations returns active-update projection decisions for a
-// constructor which is absent from the target profile.
+// ProjectionObligations returns the projection decision for a constructor
+// which is absent from the target profile. Update projections take precedence
+// because every canonical-only update also carries the generic new-only
+// obligation. Policy may override the mechanical new-only drop with an
+// explicit projection, rejection, or unavailable decision.
 func (f LayerFamilyConversion) ProjectionObligations() []LayerObligation {
-	result := make([]LayerObligation, 0, len(f.Obligations))
 	for _, obligation := range f.Obligations {
 		if obligation.Kind == LayerObligationUpdateProjection {
-			result = append(result, obligation)
+			return []LayerObligation{obligation}
 		}
 	}
-	return result
+	for _, obligation := range f.Obligations {
+		if obligation.Kind == LayerObligationNewOnly &&
+			obligation.Resolution.Action != LayerResolveUnavailable {
+			return []LayerObligation{obligation}
+		}
+	}
+	return nil
 }
 
 // FieldProjectionObligations returns canonical fields which the exact target
@@ -195,7 +203,11 @@ func AnalyzeLayerConversions(schemaSet *SchemaSet, policy LayerObligationPolicy)
 				unavailable := makeDefinitionObligation(
 					LayerObligationNewOnly, layer, LayerDirectionCanonicalToProfile, canonical.Definition,
 				)
-				unavailable.Resolution = LayerObligationResolution{Action: LayerResolveUnavailable}
+				// A canonical-only constructor has no wire identity in this exact
+				// profile. Typed containers can omit it mechanically; required or
+				// top-level positions still surface a projection error because an
+				// empty TL value is not encodable.
+				unavailable.Resolution = LayerObligationResolution{Action: LayerResolveDrop}
 				obligations = append(obligations, unavailable)
 				if isUpdateDefinition(canonical.Definition) {
 					obligations = append(obligations, makeDefinitionObligation(

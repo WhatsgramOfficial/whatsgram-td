@@ -101,7 +101,7 @@ func layerEncodeWire1c32b11cBareBody(profile LayerProfile, value *tg.Channel, b 
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannel, Reason: "malformed canonical value: explicit flag has nil interface field emoji_status"}
 			}
 			if value.Flags2.Has(20) || value.LinkedCommunityID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannel, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/aca7546a21fe4a88daf31e89875c19e963f5e44ef520264741a03f181e379a9f"}
+				// layer-obligation/v1/field-projection/aca7546a21fe4a88daf31e89875c19e963f5e44ef520264741a03f181e379a9f explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded13 := &bin.Buffer{}
 			layerPresent21 := (value.Flags.Has(9) || value.Restricted) || (value.Flags.Has(9) || value.RestrictionReason != nil)
@@ -542,7 +542,7 @@ func layerEncodeWire1c32b11cBareBody(profile LayerProfile, value *tg.Channel, b 
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannel, Reason: "malformed canonical value: explicit flag has nil interface field emoji_status"}
 			}
 			if value.Flags2.Has(20) || value.LinkedCommunityID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannel, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/3f0554101a0707dd1cf86537b59de1bc579a2be66bb2d3ac91a5069917d8df77"}
+				// layer-obligation/v1/field-projection/3f0554101a0707dd1cf86537b59de1bc579a2be66bb2d3ac91a5069917d8df77 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded13 := &bin.Buffer{}
 			layerPresent21 := (value.Flags.Has(9) || value.Restricted) || (value.Flags.Has(9) || value.RestrictionReason != nil)
@@ -983,7 +983,7 @@ func layerEncodeWire1c32b11cBareBody(profile LayerProfile, value *tg.Channel, b 
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannel, Reason: "malformed canonical value: explicit flag has nil interface field emoji_status"}
 			}
 			if value.Flags2.Has(20) || value.LinkedCommunityID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannel, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/1fda4b964d4afbc12ca5e4df55e490387bd86566746253f7ed4a26afcf4fbe48"}
+				// layer-obligation/v1/field-projection/1fda4b964d4afbc12ca5e4df55e490387bd86566746253f7ed4a26afcf4fbe48 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded13 := &bin.Buffer{}
 			layerPresent21 := (value.Flags.Has(9) || value.Restricted) || (value.Flags.Has(9) || value.RestrictionReason != nil)

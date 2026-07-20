@@ -478,7 +478,7 @@ func layerEncodeWire1759c560BareBody(profile LayerProfile, value *tg.PageBlockPh
 	case LayerProfile225:
 		{
 			if value.Flags.Has(1) || value.Spoiler {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockPhoto, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/015932d3bead825950a0abcf25aa483f33fce6c096473ebdda93b81614cd7f82"}
+				// layer-obligation/v1/field-projection/015932d3bead825950a0abcf25aa483f33fce6c096473ebdda93b81614cd7f82 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if (value.Flags.Has(0) || value.URL != "") || (value.Flags.Has(0) || value.WebpageID != 0) {
@@ -506,7 +506,7 @@ func layerEncodeWire1759c560BareBody(profile LayerProfile, value *tg.PageBlockPh
 	case LayerProfile226:
 		{
 			if value.Flags.Has(1) || value.Spoiler {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockPhoto, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/4324d5f91effeb89065f15c23e92d31f47439f6c3ee130a7adf2c3fd209d4471"}
+				// layer-obligation/v1/field-projection/4324d5f91effeb89065f15c23e92d31f47439f6c3ee130a7adf2c3fd209d4471 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if (value.Flags.Has(0) || value.URL != "") || (value.Flags.Has(0) || value.WebpageID != 0) {

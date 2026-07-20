@@ -243,10 +243,10 @@ func layerEncodeWire31774388BareBody(profile LayerProfile, value *tg.User, b *bi
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "malformed canonical value: explicit flag has nil interface field profile_color"}
 			}
 			if value.Flags2.Has(21) || value.LinkedCommunityID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/04c91ea30d0eb673df15bde3d7efc305c893bc9c153dd8078159f3c6e8642cef"}
+				// layer-obligation/v1/field-projection/04c91ea30d0eb673df15bde3d7efc305c893bc9c153dd8078159f3c6e8642cef explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags2.Has(20) || value.BotGuard {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/824e6a69b669db405c7f062566b3023788f87e4fe4e8e0310502f2506427f558"}
+				// layer-obligation/v1/field-projection/824e6a69b669db405c7f062566b3023788f87e4fe4e8e0310502f2506427f558 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded11 := &bin.Buffer{}
 			layerPresent13 := (value.Flags.Has(5) || value.Photo != nil)
@@ -687,7 +687,7 @@ func layerEncodeWire31774388BareBody(profile LayerProfile, value *tg.User, b *bi
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "malformed canonical value: explicit flag has nil interface field profile_color"}
 			}
 			if value.Flags2.Has(21) || value.LinkedCommunityID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/85cfe78c30b455071571ba03b410b5b633a4618d5f983f334ee5f8a01596b705"}
+				// layer-obligation/v1/field-projection/85cfe78c30b455071571ba03b410b5b633a4618d5f983f334ee5f8a01596b705 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded11 := &bin.Buffer{}
 			layerPresent13 := (value.Flags.Has(5) || value.Photo != nil)
@@ -1131,7 +1131,7 @@ func layerEncodeWire31774388BareBody(profile LayerProfile, value *tg.User, b *bi
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "malformed canonical value: explicit flag has nil interface field profile_color"}
 			}
 			if value.Flags2.Has(21) || value.LinkedCommunityID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUser, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/857c8a445cb6b0c1f60a285d1c0a5d587dc990b20d5fb6646f88eb5976196f72"}
+				// layer-obligation/v1/field-projection/857c8a445cb6b0c1f60a285d1c0a5d587dc990b20d5fb6646f88eb5976196f72 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded11 := &bin.Buffer{}
 			layerPresent13 := (value.Flags.Has(5) || value.Photo != nil)

@@ -2101,10 +2101,10 @@ func layerEncodeWireb92fb6cdBareBody(profile LayerProfile, value *tg.PageListIte
 	case LayerProfile225:
 		{
 			if value.Flags.Has(1) || value.Checked {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemText, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/36c44ad75aeda6ed65a46b88667095d60b830f3cad88a5799b3202091fc17ecf"}
+				// layer-obligation/v1/field-projection/36c44ad75aeda6ed65a46b88667095d60b830f3cad88a5799b3202091fc17ecf explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(0) || value.Checkbox {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemText, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/e69cd89ccea8bb2090cb9447fe90a3f5647884814475d066ecc51e030522d4bc"}
+				// layer-obligation/v1/field-projection/e69cd89ccea8bb2090cb9447fe90a3f5647884814475d066ecc51e030522d4bc explicitly permits dropping this field in the exact profile.
 			}
 			if err := layerEncodeClassRichTextBody(profile, value.Text, b, state); err != nil {
 				return fmt.Errorf("encode field text: %w", err)
@@ -2115,10 +2115,10 @@ func layerEncodeWireb92fb6cdBareBody(profile LayerProfile, value *tg.PageListIte
 	case LayerProfile226:
 		{
 			if value.Flags.Has(0) || value.Checkbox {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemText, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/2bcbb4060d8d3a42e67418e03a2f48593232c6ac47ac58115cc1b578f0bf92e9"}
+				// layer-obligation/v1/field-projection/2bcbb4060d8d3a42e67418e03a2f48593232c6ac47ac58115cc1b578f0bf92e9 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.Checked {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemText, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/c3685c31b4d28f4a50488eebb0101f202fd111a3a0c553417fcadb3953ed7306"}
+				// layer-obligation/v1/field-projection/c3685c31b4d28f4a50488eebb0101f202fd111a3a0c553417fcadb3953ed7306 explicitly permits dropping this field in the exact profile.
 			}
 			if err := layerEncodeClassRichTextBody(profile, value.Text, b, state); err != nil {
 				return fmt.Errorf("encode field text: %w", err)

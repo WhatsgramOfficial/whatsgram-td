@@ -159,10 +159,10 @@ func layerEncodeWire4c2985b6BareBody(profile LayerProfile, value *tg.ChannelsTog
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodChannelsToggleJoinRequest, Reason: "malformed canonical value: explicit flag has nil interface field guard_bot"}
 			}
 			if value.Flags.Has(0) || value.GuardBot != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodChannelsToggleJoinRequest, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/2da910be98a6bf176f2bebb8076b3b57bedd9dd7e9b82a6a372a14c88f79a40c"}
+				// layer-obligation/v1/field-projection/2da910be98a6bf176f2bebb8076b3b57bedd9dd7e9b82a6a372a14c88f79a40c explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.ApplyToInvites {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodChannelsToggleJoinRequest, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/4064856e4418b049ea1c4aa3f3600f169b6882e1437da2ce9d2c07a532d1fdd2"}
+				// layer-obligation/v1/field-projection/4064856e4418b049ea1c4aa3f3600f169b6882e1437da2ce9d2c07a532d1fdd2 explicitly permits dropping this field in the exact profile.
 			}
 			if err := layerEncodeClassInputChannelBody(profile, value.Channel, b, state); err != nil {
 				return fmt.Errorf("encode field channel: %w", err)
@@ -303,7 +303,7 @@ func layerEncodeWire7c8fe7b6BareBody(profile LayerProfile, value *tg.PageBlockVi
 	case LayerProfile225:
 		{
 			if value.Flags.Has(2) || value.Spoiler {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockVideo, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/efe4f3fac1db20df07b7d54af660cddeed1d3905f1756eec8b154586a7fa57c4"}
+				// layer-obligation/v1/field-projection/efe4f3fac1db20df07b7d54af660cddeed1d3905f1756eec8b154586a7fa57c4 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.Autoplay {
@@ -326,7 +326,7 @@ func layerEncodeWire7c8fe7b6BareBody(profile LayerProfile, value *tg.PageBlockVi
 	case LayerProfile226:
 		{
 			if value.Flags.Has(2) || value.Spoiler {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockVideo, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/548333c4948761a7f28b8d687998ba2bb3ee3cbe3975f668b8b40275d384ceec"}
+				// layer-obligation/v1/field-projection/548333c4948761a7f28b8d687998ba2bb3ee3cbe3975f668b8b40275d384ceec explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.Autoplay {
@@ -632,7 +632,7 @@ func layerEncodeWire973478b6BareBody(profile LayerProfile, value *tg.ContactsGet
 	case LayerProfile225:
 		{
 			if value.Flags.Has(17) || value.BotsGuestchat {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodContactsGetTopPeers, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/b2a451a394d6156a0e96bbaf499c6239ef5515c004c5f8098415a5e2fa0d9d7f"}
+				// layer-obligation/v1/field-projection/b2a451a394d6156a0e96bbaf499c6239ef5515c004c5f8098415a5e2fa0d9d7f explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.Correspondents {
@@ -970,16 +970,16 @@ func layerEncodeWire98dd8936BareBody(profile LayerProfile, value *tg.PageListOrd
 	case LayerProfile225:
 		{
 			if value.Flags.Has(3) || value.Value != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/02ce0ac4fb993d37e2a28e4077a5e2ecc7d7c8641df1533cc6e2985f525dae61"}
+				// layer-obligation/v1/field-projection/02ce0ac4fb993d37e2a28e4077a5e2ecc7d7c8641df1533cc6e2985f525dae61 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.Checked {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/192c14bd8ec901defcae88a5c03f33cff73cd0d2742bd5e3faa5d840eb4ca818"}
+				// layer-obligation/v1/field-projection/192c14bd8ec901defcae88a5c03f33cff73cd0d2742bd5e3faa5d840eb4ca818 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(4) || value.Type != "" {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/5b70cbf88966792f68cdb03bb5bf4409e0bf78242572c126befb3fa706e36a87"}
+				// layer-obligation/v1/field-projection/5b70cbf88966792f68cdb03bb5bf4409e0bf78242572c126befb3fa706e36a87 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(0) || value.Checkbox {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/71109c078763a9652160d2847a4c97dc292a77a641a311f7188eba3a878c8095"}
+				// layer-obligation/v1/field-projection/71109c078763a9652160d2847a4c97dc292a77a641a311f7188eba3a878c8095 explicitly permits dropping this field in the exact profile.
 			}
 			if err := b.PutStringChecked(value.Num); err != nil {
 				return fmt.Errorf("encode field num: %w", err)
@@ -1019,16 +1019,16 @@ func layerEncodeWire98dd8936BareBody(profile LayerProfile, value *tg.PageListOrd
 	case LayerProfile226:
 		{
 			if value.Flags.Has(0) || value.Checkbox {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/22c24e09f2fde2d75a34bd183319cc9582345286beecf80c79ac25a1e127eb62"}
+				// layer-obligation/v1/field-projection/22c24e09f2fde2d75a34bd183319cc9582345286beecf80c79ac25a1e127eb62 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(4) || value.Type != "" {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/28d5f45ddf4514ab408e16a92331b59cdc46a247aec1e4004a13ab4d51287483"}
+				// layer-obligation/v1/field-projection/28d5f45ddf4514ab408e16a92331b59cdc46a247aec1e4004a13ab4d51287483 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.Checked {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/cdd9c1f0f0c2587838e0c401d511d09ceb8ca51072a2ca228a53688e7dc13386"}
+				// layer-obligation/v1/field-projection/cdd9c1f0f0c2587838e0c401d511d09ceb8ca51072a2ca228a53688e7dc13386 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(3) || value.Value != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListOrderedItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/dc1d747afcd13b00dcffc7ab746f5af47d1ed546938b815060d837fe1a2fb736"}
+				// layer-obligation/v1/field-projection/dc1d747afcd13b00dcffc7ab746f5af47d1ed546938b815060d837fe1a2fb736 explicitly permits dropping this field in the exact profile.
 			}
 			if err := b.PutStringChecked(value.Num); err != nil {
 				return fmt.Errorf("encode field num: %w", err)

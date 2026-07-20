@@ -101,7 +101,7 @@ func layerEncodeWire1b97dd66BareBody(profile LayerProfile, value *tg.MessageRepl
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessageReplyHeader, Reason: "malformed canonical value: explicit flag has nil interface field quote_entities"}
 			}
 			if value.Flags.Has(13) || value.ReplyToEphemeral {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessageReplyHeader, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/9885f3efeab8a5f63c0c567b1f1762026530246603e497454aa6cc4eeebdfdd5"}
+				// layer-obligation/v1/field-projection/9885f3efeab8a5f63c0c567b1f1762026530246603e497454aa6cc4eeebdfdd5 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded6 := &bin.Buffer{}
 			layerPresent8 := (value.Flags.Has(0) || value.ReplyToPeerID != nil)
@@ -294,7 +294,7 @@ func layerEncodeWire1b97dd66BareBody(profile LayerProfile, value *tg.MessageRepl
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessageReplyHeader, Reason: "malformed canonical value: explicit flag has nil interface field quote_entities"}
 			}
 			if value.Flags.Has(13) || value.ReplyToEphemeral {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessageReplyHeader, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/bf442fc6580313a5c63d54594012c39ec0a4aef53a1bd7b858aa73b53647c538"}
+				// layer-obligation/v1/field-projection/bf442fc6580313a5c63d54594012c39ec0a4aef53a1bd7b858aa73b53647c538 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded6 := &bin.Buffer{}
 			layerPresent8 := (value.Flags.Has(0) || value.ReplyToPeerID != nil)

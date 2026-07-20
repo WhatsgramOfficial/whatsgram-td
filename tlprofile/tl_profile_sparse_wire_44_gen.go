@@ -2289,13 +2289,13 @@ func layerEncodeWirecd64636cBareBody(profile LayerProfile, value *tg.ConnectedBo
 	case LayerProfile225:
 		{
 			if value.Flags.Has(2) || value.Location != "" {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeConnectedBot, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/0aee71dce1431cea4f4b3b25532494bf6691a35bebacdbc3949023c3123d16a8"}
+				// layer-obligation/v1/field-projection/0aee71dce1431cea4f4b3b25532494bf6691a35bebacdbc3949023c3123d16a8 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.Date != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeConnectedBot, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/15028b18824ba7d32c838ae4c931505e2bf552f432b51a406075b347198235d9"}
+				// layer-obligation/v1/field-projection/15028b18824ba7d32c838ae4c931505e2bf552f432b51a406075b347198235d9 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(0) || value.Device != "" {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeConnectedBot, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/2fa734c6be1d46df51f64e5b38270d1f6c60785665949127e963f794815ab2a0"}
+				// layer-obligation/v1/field-projection/2fa734c6be1d46df51f64e5b38270d1f6c60785665949127e963f794815ab2a0 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if err := wireFlags0.Encode(b); err != nil {

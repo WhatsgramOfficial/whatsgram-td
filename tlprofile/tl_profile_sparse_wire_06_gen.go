@@ -54,7 +54,7 @@ func layerEncodeWire11dfa986BareBody(profile LayerProfile, value *tg.UpdateBotCh
 	case LayerProfile225:
 		{
 			if value.Flags.Has(0) || value.QueryID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdateBotChatInviteRequester, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/b787a2d8d5b4161190feb9cbdc7cd9a7f9dce94773808f71fe4e000647d78904"}
+				// layer-obligation/v1/field-projection/b787a2d8d5b4161190feb9cbdc7cd9a7f9dce94773808f71fe4e000647d78904 explicitly permits dropping this field in the exact profile.
 			}
 			if err := layerEncodeClassPeerBody(profile, value.Peer, b, state); err != nil {
 				return fmt.Errorf("encode field peer: %w", err)

@@ -64,6 +64,61 @@ func TestLayerConversionPlanIsSingleDecisionSource(t *testing.T) {
 	}
 }
 
+func TestProjectionObligationsPreferUpdateOverNewOnly(t *testing.T) {
+	update := LayerObligation{
+		Kind:       LayerObligationUpdateProjection,
+		Resolution: LayerObligationResolution{Action: LayerResolveDrop},
+	}
+	newOnlyDrop := LayerObligation{
+		Kind:       LayerObligationNewOnly,
+		Resolution: LayerObligationResolution{Action: LayerResolveDrop},
+	}
+	newOnlyProjected := LayerObligation{
+		Kind: LayerObligationNewOnly,
+		Resolution: LayerObligationResolution{
+			Action: LayerResolveProject,
+			Hook:   "projectNewOnly",
+		},
+	}
+
+	tests := []struct {
+		name        string
+		obligations []LayerObligation
+		wantKind    LayerObligationKind
+		wantCount   int
+	}{
+		{
+			name:        "default new-only drop is active",
+			obligations: []LayerObligation{newOnlyDrop},
+			wantKind:    LayerObligationNewOnly,
+			wantCount:   1,
+		},
+		{
+			name:        "reviewed new-only projection is active",
+			obligations: []LayerObligation{newOnlyProjected},
+			wantKind:    LayerObligationNewOnly,
+			wantCount:   1,
+		},
+		{
+			name:        "update policy wins over generic new-only policy",
+			obligations: []LayerObligation{newOnlyProjected, update},
+			wantKind:    LayerObligationUpdateProjection,
+			wantCount:   1,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			got := (LayerFamilyConversion{Obligations: test.obligations}).ProjectionObligations()
+			if len(got) != test.wantCount {
+				t.Fatalf("projection obligations = %+v, want %d", got, test.wantCount)
+			}
+			if test.wantCount != 0 && got[0].Kind != test.wantKind {
+				t.Fatalf("projection obligation kind = %s, want %s", got[0].Kind, test.wantKind)
+			}
+		})
+	}
+}
+
 func TestLayerConversionPlanTelegram225Through228(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {

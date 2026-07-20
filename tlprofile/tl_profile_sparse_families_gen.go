@@ -864,7 +864,7 @@ func layerProjectFamilyAccountWebBrowserSettings(profile LayerProfile, value *tg
 	}
 	switch profile {
 	case LayerProfile225:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeAccountWebBrowserSettings, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -882,7 +882,7 @@ func layerEncodeFamilyAccountWebBrowserSettingsBody(profile LayerProfile, value 
 	}
 	switch profile {
 	case LayerProfile225:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAccountWebBrowserSettings, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeAccountWebBrowserSettings, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		b.PutID(0x79eb8cb3)
 		return layerEncodeWire79eb8cb3BareBody(profile, value, b, state)
@@ -897,7 +897,7 @@ func layerProjectFamilyAccountWebBrowserSettingsNotModified(profile LayerProfile
 	}
 	switch profile {
 	case LayerProfile225:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeAccountWebBrowserSettingsNotModified, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -917,7 +917,7 @@ func layerEncodeFamilyAccountWebBrowserSettingsNotModifiedBody(profile LayerProf
 	}
 	switch profile {
 	case LayerProfile225:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAccountWebBrowserSettingsNotModified, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeAccountWebBrowserSettingsNotModified, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		b.PutID(0xc31c8f4e)
 		return layerEncodeWirec31c8f4eBareBody(profile, value, b, state)
@@ -1986,7 +1986,7 @@ func layerProjectFamilyBotInlineMessageRichMessage(profile LayerProfile, value *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeBotInlineMessageRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -2004,7 +2004,7 @@ func layerEncodeFamilyBotInlineMessageRichMessageBody(profile LayerProfile, valu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeBotInlineMessageRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeBotInlineMessageRichMessage, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x0a617e7b)
 		return layerEncodeWire0a617e7bBareBody(profile, value, b, state)
@@ -5541,7 +5541,7 @@ func layerProjectFamilyCommunity(profile LayerProfile, value *tg.Community) (bin
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -5559,7 +5559,7 @@ func layerEncodeFamilyCommunityBody(profile LayerProfile, value *tg.Community, b
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x65efe954)
 		return layerEncodeWire65efe954BareBody(profile, value, b, state)
@@ -5574,7 +5574,7 @@ func layerProjectFamilyCommunityForbidden(profile LayerProfile, value *tg.Commun
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeCommunityForbidden, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -5592,7 +5592,7 @@ func layerEncodeFamilyCommunityForbiddenBody(profile LayerProfile, value *tg.Com
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeCommunityForbidden, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeCommunityForbidden, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0xfd3cdab8)
 		return layerEncodeWirefd3cdab8BareBody(profile, value, b, state)
@@ -5607,7 +5607,7 @@ func layerProjectFamilyCommunityFull(profile LayerProfile, value *tg.CommunityFu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeCommunityFull, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -5625,7 +5625,7 @@ func layerEncodeFamilyCommunityFullBody(profile LayerProfile, value *tg.Communit
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeCommunityFull, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeCommunityFull, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0xcbb7a507)
 		return layerEncodeWirecbb7a507BareBody(profile, value, b, state)
@@ -6172,7 +6172,7 @@ func layerProjectFamilyDialogCommunity(profile LayerProfile, value *tg.DialogCom
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeDialogCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -6190,7 +6190,7 @@ func layerEncodeFamilyDialogCommunityBody(profile LayerProfile, value *tg.Dialog
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeDialogCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeDialogCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0xf78a0973)
 		return layerEncodeWiref78a0973BareBody(profile, value, b, state)
@@ -6263,7 +6263,7 @@ func layerProjectFamilyDialogPeerCommunity(profile LayerProfile, value *tg.Dialo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeDialogPeerCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -6281,7 +6281,7 @@ func layerEncodeFamilyDialogPeerCommunityBody(profile LayerProfile, value *tg.Di
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeDialogPeerCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeDialogPeerCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x2f65c8e4)
 		return layerEncodeWire2f65c8e4BareBody(profile, value, b, state)
@@ -7954,7 +7954,7 @@ func layerProjectFamilyInputAiComposeToneSingleUse(profile LayerProfile, value *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputAiComposeToneSingleUse, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -7972,7 +7972,7 @@ func layerEncodeFamilyInputAiComposeToneSingleUseBody(profile LayerProfile, valu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputAiComposeToneSingleUse, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputAiComposeToneSingleUse, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x0e0c35af)
 		return layerEncodeWire0e0c35afBareBody(profile, value, b, state)
@@ -8277,7 +8277,7 @@ func layerProjectFamilyInputBotInlineMessageRichMessage(profile LayerProfile, va
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputBotInlineMessageRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -8295,7 +8295,7 @@ func layerEncodeFamilyInputBotInlineMessageRichMessageBody(profile LayerProfile,
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputBotInlineMessageRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputBotInlineMessageRichMessage, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xb43df56c)
 		return layerEncodeWireb43df56cBareBody(profile, value, b, state)
@@ -8629,7 +8629,7 @@ func layerProjectFamilyInputDialogPeerCommunity(profile LayerProfile, value *tg.
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputDialogPeerCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -8647,7 +8647,7 @@ func layerEncodeFamilyInputDialogPeerCommunityBody(profile LayerProfile, value *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputDialogPeerCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputDialogPeerCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x69ef72c4)
 		return layerEncodeWire69ef72c4BareBody(profile, value, b, state)
@@ -10696,7 +10696,7 @@ func layerProjectFamilyInputNotifyCommunity(profile LayerProfile, value *tg.Inpu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputNotifyCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -10714,7 +10714,7 @@ func layerEncodeFamilyInputNotifyCommunityBody(profile LayerProfile, value *tg.I
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputNotifyCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputNotifyCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x27bb1adc)
 		return layerEncodeWire27bb1adcBareBody(profile, value, b, state)
@@ -10816,7 +10816,7 @@ func layerProjectFamilyInputPageBlockMap(profile LayerProfile, value *tg.InputPa
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputPageBlockMap, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -10834,7 +10834,7 @@ func layerEncodeFamilyInputPageBlockMapBody(profile LayerProfile, value *tg.Inpu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputPageBlockMap, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputPageBlockMap, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x574b617f)
 		return layerEncodeWire574b617fBareBody(profile, value, b, state)
@@ -11694,7 +11694,7 @@ func layerProjectFamilyInputReplyToEphemeralMessage(profile LayerProfile, value 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputReplyToEphemeralMessage, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -11712,7 +11712,7 @@ func layerEncodeFamilyInputReplyToEphemeralMessageBody(profile LayerProfile, val
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputReplyToEphemeralMessage, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputReplyToEphemeralMessage, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x4119b95e)
 		return layerEncodeWire4119b95eBareBody(profile, value, b, state)
@@ -11814,7 +11814,7 @@ func layerProjectFamilyInputRichMessage(profile LayerProfile, value *tg.InputRic
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -11832,7 +11832,7 @@ func layerEncodeFamilyInputRichMessageBody(profile LayerProfile, value *tg.Input
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputRichMessage, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xe4c449fc)
 		return layerEncodeWiree4c449fcBareBody(profile, value, b, state)
@@ -11847,7 +11847,7 @@ func layerProjectFamilyInputRichMessageHTML(profile LayerProfile, value *tg.Inpu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputRichMessageHTML, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -11865,7 +11865,7 @@ func layerEncodeFamilyInputRichMessageHTMLBody(profile LayerProfile, value *tg.I
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputRichMessageHTML, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputRichMessageHTML, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xdacb836a)
 		return layerEncodeWiredacb836aBareBody(profile, value, b, state)
@@ -11880,7 +11880,7 @@ func layerProjectFamilyInputRichMessageMarkdown(profile LayerProfile, value *tg.
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputRichMessageMarkdown, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -11898,7 +11898,7 @@ func layerEncodeFamilyInputRichMessageMarkdownBody(profile LayerProfile, value *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputRichMessageMarkdown, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputRichMessageMarkdown, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x004b572c)
 		return layerEncodeWire004b572cBareBody(profile, value, b, state)
@@ -11913,7 +11913,7 @@ func layerProjectFamilyInputSendMessageRichMessageDraftAction(profile LayerProfi
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeInputSendMessageRichMessageDraftAction, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -11933,7 +11933,7 @@ func layerEncodeFamilyInputSendMessageRichMessageDraftActionBody(profile LayerPr
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputSendMessageRichMessageDraftAction, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeInputSendMessageRichMessageDraftAction, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xe2b23b51)
 		return layerEncodeWiree2b23b51BareBody(profile, value, b, state)
@@ -13220,7 +13220,7 @@ func layerProjectFamilyMessageActionChangeCommunity(profile LayerProfile, value 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeMessageActionChangeCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -13238,7 +13238,7 @@ func layerEncodeFamilyMessageActionChangeCommunityBody(profile LayerProfile, val
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessageActionChangeCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeMessageActionChangeCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x5d20bae8)
 		return layerEncodeWire5d20bae8BareBody(profile, value, b, state)
@@ -17016,7 +17016,7 @@ func layerProjectFamilyMessagesChatInviteJoinResultOk(profile LayerProfile, valu
 	}
 	switch profile {
 	case LayerProfile225:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeMessagesChatInviteJoinResultOk, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -17034,7 +17034,7 @@ func layerEncodeFamilyMessagesChatInviteJoinResultOkBody(profile LayerProfile, v
 	}
 	switch profile {
 	case LayerProfile225:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessagesChatInviteJoinResultOk, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeMessagesChatInviteJoinResultOk, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		b.PutID(0x445663a7)
 		return layerEncodeWire445663a7BareBody(profile, value, b, state)
@@ -17049,7 +17049,7 @@ func layerProjectFamilyMessagesChatInviteJoinResultWebView(profile LayerProfile,
 	}
 	switch profile {
 	case LayerProfile225:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeMessagesChatInviteJoinResultWebView, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile226:
 		return value, true, nil
 	case LayerProfile227:
@@ -17073,7 +17073,7 @@ func layerEncodeFamilyMessagesChatInviteJoinResultWebViewBody(profile LayerProfi
 	}
 	switch profile {
 	case LayerProfile225:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessagesChatInviteJoinResultWebView, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeMessagesChatInviteJoinResultWebView, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile226:
 		b.PutID(0x774bbdf4)
 		return layerEncodeWire774bbdf4BareBody(profile, value, b, state)
@@ -19822,7 +19822,7 @@ func layerProjectFamilyNotifyCommunity(profile LayerProfile, value *tg.NotifyCom
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeNotifyCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -19840,7 +19840,7 @@ func layerEncodeFamilyNotifyCommunityBody(profile LayerProfile, value *tg.Notify
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeNotifyCommunity, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeNotifyCommunity, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0xbe376999)
 		return layerEncodeWirebe376999BareBody(profile, value, b, state)
@@ -20061,7 +20061,7 @@ func layerProjectFamilyPageBlockBlockquoteBlocks(profile LayerProfile, value *tg
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockBlockquoteBlocks, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20079,7 +20079,7 @@ func layerEncodeFamilyPageBlockBlockquoteBlocksBody(profile LayerProfile, value 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockBlockquoteBlocks, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockBlockquoteBlocks, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x0e6e47c4)
 		return layerEncodeWire0e6e47c4BareBody(profile, value, b, state)
@@ -20368,7 +20368,7 @@ func layerProjectFamilyPageBlockHeading1(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading1, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20386,7 +20386,7 @@ func layerEncodeFamilyPageBlockHeading1Body(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading1, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockHeading1, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xbaff072f)
 		return layerEncodeWirebaff072fBareBody(profile, value, b, state)
@@ -20401,7 +20401,7 @@ func layerProjectFamilyPageBlockHeading2(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading2, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20419,7 +20419,7 @@ func layerEncodeFamilyPageBlockHeading2Body(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading2, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockHeading2, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x096b2aec)
 		return layerEncodeWire096b2aecBareBody(profile, value, b, state)
@@ -20434,7 +20434,7 @@ func layerProjectFamilyPageBlockHeading3(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading3, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20452,7 +20452,7 @@ func layerEncodeFamilyPageBlockHeading3Body(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading3, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockHeading3, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x67e731ad)
 		return layerEncodeWire67e731adBareBody(profile, value, b, state)
@@ -20467,7 +20467,7 @@ func layerProjectFamilyPageBlockHeading4(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading4, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20485,7 +20485,7 @@ func layerEncodeFamilyPageBlockHeading4Body(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading4, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockHeading4, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xb532772b)
 		return layerEncodeWireb532772bBareBody(profile, value, b, state)
@@ -20500,7 +20500,7 @@ func layerProjectFamilyPageBlockHeading5(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading5, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20518,7 +20518,7 @@ func layerEncodeFamilyPageBlockHeading5Body(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading5, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockHeading5, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xdbbe6c6a)
 		return layerEncodeWiredbbe6c6aBareBody(profile, value, b, state)
@@ -20533,7 +20533,7 @@ func layerProjectFamilyPageBlockHeading6(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading6, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20551,7 +20551,7 @@ func layerEncodeFamilyPageBlockHeading6Body(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockHeading6, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockHeading6, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x682a41a9)
 		return layerEncodeWire682a41a9BareBody(profile, value, b, state)
@@ -20653,7 +20653,7 @@ func layerProjectFamilyPageBlockMath(profile LayerProfile, value *tg.PageBlockMa
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockMath, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20671,7 +20671,7 @@ func layerEncodeFamilyPageBlockMathBody(profile LayerProfile, value *tg.PageBloc
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockMath, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockMath, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x59080c20)
 		return layerEncodeWire59080c20BareBody(profile, value, b, state)
@@ -20981,7 +20981,7 @@ func layerProjectFamilyPageBlockThinking(profile LayerProfile, value *tg.PageBlo
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypePageBlockThinking, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -20999,7 +20999,7 @@ func layerEncodeFamilyPageBlockThinkingBody(profile LayerProfile, value *tg.Page
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockThinking, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypePageBlockThinking, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x3c29a3e2)
 		return layerEncodeWire3c29a3e2BareBody(profile, value, b, state)
@@ -24456,7 +24456,7 @@ func layerProjectFamilyRichMessage(profile LayerProfile, value *tg.RichMessage) 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -24474,7 +24474,7 @@ func layerEncodeFamilyRichMessageBody(profile LayerProfile, value *tg.RichMessag
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeRichMessage, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeRichMessage, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xbaf39d8b)
 		return layerEncodeWirebaf39d8bBareBody(profile, value, b, state)
@@ -25156,7 +25156,7 @@ func layerProjectFamilySendMessageRichMessageDraftAction(profile LayerProfile, v
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeSendMessageRichMessageDraftAction, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -25174,7 +25174,7 @@ func layerEncodeFamilySendMessageRichMessageDraftActionBody(profile LayerProfile
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeSendMessageRichMessageDraftAction, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeSendMessageRichMessageDraftAction, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xa2cb24f9)
 		return layerEncodeWirea2cb24f9BareBody(profile, value, b, state)
@@ -26929,7 +26929,7 @@ func layerProjectFamilyTextAutoEmail(profile LayerProfile, value *tg.TextAutoEma
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextAutoEmail, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -26947,7 +26947,7 @@ func layerEncodeFamilyTextAutoEmailBody(profile LayerProfile, value *tg.TextAuto
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextAutoEmail, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextAutoEmail, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xc556a45d)
 		return layerEncodeWirec556a45dBareBody(profile, value, b, state)
@@ -26962,7 +26962,7 @@ func layerProjectFamilyTextAutoPhone(profile LayerProfile, value *tg.TextAutoPho
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextAutoPhone, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -26980,7 +26980,7 @@ func layerEncodeFamilyTextAutoPhoneBody(profile LayerProfile, value *tg.TextAuto
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextAutoPhone, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextAutoPhone, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x24c26789)
 		return layerEncodeWire24c26789BareBody(profile, value, b, state)
@@ -26995,7 +26995,7 @@ func layerProjectFamilyTextAutoURL(profile LayerProfile, value *tg.TextAutoURL) 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextAutoURL, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27013,7 +27013,7 @@ func layerEncodeFamilyTextAutoURLBody(profile LayerProfile, value *tg.TextAutoUR
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextAutoURL, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextAutoURL, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xac6a83aa)
 		return layerEncodeWireac6a83aaBareBody(profile, value, b, state)
@@ -27028,7 +27028,7 @@ func layerProjectFamilyTextBankCard(profile LayerProfile, value *tg.TextBankCard
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextBankCard, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27046,7 +27046,7 @@ func layerEncodeFamilyTextBankCardBody(profile LayerProfile, value *tg.TextBankC
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextBankCard, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextBankCard, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xb956812d)
 		return layerEncodeWireb956812dBareBody(profile, value, b, state)
@@ -27090,7 +27090,7 @@ func layerProjectFamilyTextBotCommand(profile LayerProfile, value *tg.TextBotCom
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextBotCommand, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27108,7 +27108,7 @@ func layerEncodeFamilyTextBotCommandBody(profile LayerProfile, value *tg.TextBot
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextBotCommand, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextBotCommand, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x02ff29d3)
 		return layerEncodeWire02ff29d3BareBody(profile, value, b, state)
@@ -27123,7 +27123,7 @@ func layerProjectFamilyTextCashtag(profile LayerProfile, value *tg.TextCashtag) 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextCashtag, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27141,7 +27141,7 @@ func layerEncodeFamilyTextCashtagBody(profile LayerProfile, value *tg.TextCashta
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextCashtag, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextCashtag, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x7b9e1801)
 		return layerEncodeWire7b9e1801BareBody(profile, value, b, state)
@@ -27185,7 +27185,7 @@ func layerProjectFamilyTextCustomEmoji(profile LayerProfile, value *tg.TextCusto
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextCustomEmoji, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27203,7 +27203,7 @@ func layerEncodeFamilyTextCustomEmojiBody(profile LayerProfile, value *tg.TextCu
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextCustomEmoji, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextCustomEmoji, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xa26156c0)
 		return layerEncodeWirea26156c0BareBody(profile, value, b, state)
@@ -27218,7 +27218,7 @@ func layerProjectFamilyTextDate(profile LayerProfile, value *tg.TextDate) (bin.O
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextDate, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27236,7 +27236,7 @@ func layerEncodeFamilyTextDateBody(profile LayerProfile, value *tg.TextDate, b *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextDate, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextDate, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xa5b45e2b)
 		return layerEncodeWirea5b45e2bBareBody(profile, value, b, state)
@@ -27251,7 +27251,7 @@ func layerProjectFamilyTextDiff(profile LayerProfile, value *tg.TextDiff) (bin.O
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextDiff, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile228:
 		return value, true, nil
 	default:
@@ -27269,7 +27269,7 @@ func layerEncodeFamilyTextDiffBody(profile LayerProfile, value *tg.TextDiff, b *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226, LayerProfile227:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextDiff, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextDiff, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile228:
 		b.PutID(0x9686cb50)
 		return layerEncodeWire9686cb50BareBody(profile, value, b, state)
@@ -27371,7 +27371,7 @@ func layerProjectFamilyTextHashtag(profile LayerProfile, value *tg.TextHashtag) 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextHashtag, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27389,7 +27389,7 @@ func layerEncodeFamilyTextHashtagBody(profile LayerProfile, value *tg.TextHashta
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextHashtag, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextHashtag, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x519524ea)
 		return layerEncodeWire519524eaBareBody(profile, value, b, state)
@@ -27491,7 +27491,7 @@ func layerProjectFamilyTextMath(profile LayerProfile, value *tg.TextMath) (bin.O
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextMath, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27509,7 +27509,7 @@ func layerEncodeFamilyTextMathBody(profile LayerProfile, value *tg.TextMath, b *
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextMath, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextMath, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x9d2eac97)
 		return layerEncodeWire9d2eac97BareBody(profile, value, b, state)
@@ -27524,7 +27524,7 @@ func layerProjectFamilyTextMention(profile LayerProfile, value *tg.TextMention) 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextMention, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27542,7 +27542,7 @@ func layerEncodeFamilyTextMentionBody(profile LayerProfile, value *tg.TextMentio
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextMention, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextMention, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0xcd24cf44)
 		return layerEncodeWirecd24cf44BareBody(profile, value, b, state)
@@ -27557,7 +27557,7 @@ func layerProjectFamilyTextMentionName(profile LayerProfile, value *tg.TextMenti
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextMentionName, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27575,7 +27575,7 @@ func layerEncodeFamilyTextMentionNameBody(profile LayerProfile, value *tg.TextMe
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextMentionName, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextMentionName, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x01a9fbfc)
 		return layerEncodeWire01a9fbfcBareBody(profile, value, b, state)
@@ -27648,7 +27648,7 @@ func layerProjectFamilyTextSpoiler(profile LayerProfile, value *tg.TextSpoiler) 
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTextSpoiler, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27666,7 +27666,7 @@ func layerEncodeFamilyTextSpoilerBody(profile LayerProfile, value *tg.TextSpoile
 	}
 	switch profile {
 	case LayerProfile225, LayerProfile226:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTextSpoiler, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTextSpoiler, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile227, LayerProfile228:
 		b.PutID(0x4c2a5d62)
 		return layerEncodeWire4c2a5d62BareBody(profile, value, b, state)
@@ -27855,7 +27855,7 @@ func layerProjectFamilyTopPeerCategoryBotsGuestChat(profile LayerProfile, value 
 	}
 	switch profile {
 	case LayerProfile225:
-		return nil, false, &LayerCodecError{Operation: "project", Profile: profile, Semantic: LayerSemanticTypeTopPeerCategoryBotsGuestChat, Reason: "semantic family is unavailable in exact profile"}
+		return nil, false, nil
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		return value, true, nil
 	default:
@@ -27873,7 +27873,7 @@ func layerEncodeFamilyTopPeerCategoryBotsGuestChatBody(profile LayerProfile, val
 	}
 	switch profile {
 	case LayerProfile225:
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeTopPeerCategoryBotsGuestChat, Reason: "semantic family is unavailable in exact profile"}
+		return &LayerProjectionError{Profile: profile, Semantic: LayerSemanticTypeTopPeerCategoryBotsGuestChat, Dropped: true, Reason: "policy drops unavailable value"}
 	case LayerProfile226, LayerProfile227, LayerProfile228:
 		b.PutID(0x6c24f3dd)
 		return layerEncodeWire6c24f3ddBareBody(profile, value, b, state)

@@ -1725,7 +1725,7 @@ func layerEncodeWiree4e0b29dBareBody(profile LayerProfile, value *tg.ChannelFull
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannelFull, Reason: "malformed canonical value: explicit flag has nil interface field main_tab"}
 			}
 			if value.Flags2.Has(23) || value.GuardBotID != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChannelFull, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/020a12b73699e124c281c1dcf91407eac393b4934e711446fa7c0f943ce36db8"}
+				// layer-obligation/v1/field-projection/020a12b73699e124c281c1dcf91407eac393b4934e711446fa7c0f943ce36db8 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded19 := &bin.Buffer{}
 			layerPresent21 := (value.Flags.Has(23) || value.ExportedInvite != nil)

@@ -1633,7 +1633,7 @@ func layerEncodeWire9bb2636dBareBody(profile LayerProfile, value *tg.InputStoreP
 	case LayerProfile225:
 		{
 			if true {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeInputStorePaymentAuthCode, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/9df18766b56dd3f6f7699d4da17e9040702a1fd15461a6ad8fba104a32c36315"}
+				// layer-obligation/v1/field-projection/9df18766b56dd3f6f7699d4da17e9040702a1fd15461a6ad8fba104a32c36315 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.Restore {

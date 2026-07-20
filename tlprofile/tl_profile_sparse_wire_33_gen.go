@@ -430,7 +430,7 @@ func layerEncodeWire51e842e1BareBody(profile LayerProfile, value *tg.MessagesEdi
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesEditMessage, Reason: "malformed canonical value: explicit flag has nil interface field rich_message"}
 			}
 			if value.Flags.Has(23) || value.RichMessage != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesEditMessage, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/18fbe674aa2c15f2377b8fe7be1f7fbf61bd682bb267f7a73d5ba313394a3f0b"}
+				// layer-obligation/v1/field-projection/18fbe674aa2c15f2377b8fe7be1f7fbf61bd682bb267f7a73d5ba313394a3f0b explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded6 := &bin.Buffer{}
 			layerPresent8 := (value.Flags.Has(14) || value.Media != nil)
@@ -588,7 +588,7 @@ func layerEncodeWire51e842e1BareBody(profile LayerProfile, value *tg.MessagesEdi
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesEditMessage, Reason: "malformed canonical value: explicit flag has nil interface field rich_message"}
 			}
 			if value.Flags.Has(23) || value.RichMessage != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesEditMessage, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/df8f2f4a9547a4a16f408dd19397257665d3e0736375088ac016682131ebee14"}
+				// layer-obligation/v1/field-projection/df8f2f4a9547a4a16f408dd19397257665d3e0736375088ac016682131ebee14 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded6 := &bin.Buffer{}
 			layerPresent8 := (value.Flags.Has(14) || value.Media != nil)
@@ -1597,13 +1597,13 @@ func layerEncodeWire9a8ae1e1BareBody(profile LayerProfile, value *tg.PageBlockOr
 	case LayerProfile225:
 		{
 			if value.Flags.Has(1) || value.Type != "" {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockOrderedList, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/09f6cadee9e8c85c9fb310bc34eb8dcd326b48eb2e1cdf1e30052753c022c48b"}
+				// layer-obligation/v1/field-projection/09f6cadee9e8c85c9fb310bc34eb8dcd326b48eb2e1cdf1e30052753c022c48b explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(2) || value.Reversed {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockOrderedList, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/8d52b9f0712802d97658b5f8b09135875d9fd804623b34d4abefb5da7866cbc1"}
+				// layer-obligation/v1/field-projection/8d52b9f0712802d97658b5f8b09135875d9fd804623b34d4abefb5da7866cbc1 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(0) || value.Start != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockOrderedList, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/d6685586f4fb0c5b117feb6e46243172deefa8e8d656d0ddfd8fd6bcd51b0bca"}
+				// layer-obligation/v1/field-projection/d6685586f4fb0c5b117feb6e46243172deefa8e8d656d0ddfd8fd6bcd51b0bca explicitly permits dropping this field in the exact profile.
 			}
 			if len(value.Items) > layerCodecMaxVectorElements {
 				return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "vector length exceeds generated limit"}
@@ -1640,13 +1640,13 @@ func layerEncodeWire9a8ae1e1BareBody(profile LayerProfile, value *tg.PageBlockOr
 	case LayerProfile226:
 		{
 			if value.Flags.Has(0) || value.Start != 0 {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockOrderedList, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/0d7b6cc6c423a86a90941f04d6b62f2351324eed5c13fa251700b33af706fc5e"}
+				// layer-obligation/v1/field-projection/0d7b6cc6c423a86a90941f04d6b62f2351324eed5c13fa251700b33af706fc5e explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.Type != "" {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockOrderedList, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/c2bd1e653e448e88177f31788808494a4410bc1ad34980b37f86ea447573e16e"}
+				// layer-obligation/v1/field-projection/c2bd1e653e448e88177f31788808494a4410bc1ad34980b37f86ea447573e16e explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(2) || value.Reversed {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockOrderedList, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/f608cc748a1eaaa14a9e0e538d31547ee7bac3073dd0dfe559cccfbbccda3be6"}
+				// layer-obligation/v1/field-projection/f608cc748a1eaaa14a9e0e538d31547ee7bac3073dd0dfe559cccfbbccda3be6 explicitly permits dropping this field in the exact profile.
 			}
 			if len(value.Items) > layerCodecMaxVectorElements {
 				return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "vector length exceeds generated limit"}

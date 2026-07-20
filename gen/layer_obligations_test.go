@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/iamxvbaba/td/gen/semantic"
 	"github.com/gotd/tl"
+	"github.com/iamxvbaba/td/gen/semantic"
 )
 
 const obligationProfileOne = `
@@ -94,8 +94,8 @@ func TestAnalyzeLayerObligationsClassifiesSyntheticChanges(t *testing.T) {
 	if fieldProjection.Direction != LayerDirectionCanonicalToProfile || fieldProjection.Field != "modern" || fieldProjection.OtherField != "" {
 		t.Fatalf("field projection obligation = %+v", fieldProjection)
 	}
-	if fieldProjection.Resolution.Action != LayerResolveRejectIfPresent {
-		t.Fatalf("field projection default = %+v, want reject-if-present", fieldProjection.Resolution)
+	if fieldProjection.Resolution.Action != LayerResolveDrop {
+		t.Fatalf("field projection default = %+v, want drop", fieldProjection.Resolution)
 	}
 	if err := validateLayerObligationResolution(LayerObligationFieldProjection, LayerObligationResolution{Action: LayerResolveRejectIfPresent}); err != nil {
 		t.Fatalf("field projection reject was rejected: %v", err)

@@ -142,11 +142,11 @@ func buildRealLayerPolicy(report LayerObligationReport) (LayerPolicyDocument, er
 }
 
 func realLayerResolution(obligation LayerObligation) (LayerObligationResolution, bool, error) {
-	// Mechanical field projections remain fail-closed with the analyzer's
-	// reject-if-present default. The ephemeral marker is different: preserving
-	// the surrounding BotCommand while dropping this privacy bit would expose
-	// a private command as an ordinary group command, so older profiles must
-	// project the entire vector element out.
+	// Mechanical field projections are omitted according to the exact target
+	// schema. The ephemeral marker is different: preserving the surrounding
+	// BotCommand while dropping this privacy bit would expose a private command
+	// as an ordinary group command, so older profiles must project the entire
+	// vector element out.
 	if obligation.Kind == LayerObligationFieldProjection {
 		if obligation.Semantic.QName == "botCommand" &&
 			obligation.Field == "ephemeral" &&

@@ -673,7 +673,7 @@ func layerEncodeWire4bc6589aBareBody(profile LayerProfile, value *tg.MessagesSea
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSearchGlobal, Reason: "malformed canonical value: explicit flag has nil interface field community"}
 			}
 			if value.Flags.Has(4) || value.Community != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSearchGlobal, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/0758dccddcfa47fd5b62f53f3adbe59190dca9a7d27c12f8e05e217ae4dd3626"}
+				// layer-obligation/v1/field-projection/0758dccddcfa47fd5b62f53f3adbe59190dca9a7d27c12f8e05e217ae4dd3626 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.FolderID != 0 {
@@ -717,7 +717,7 @@ func layerEncodeWire4bc6589aBareBody(profile LayerProfile, value *tg.MessagesSea
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSearchGlobal, Reason: "malformed canonical value: explicit flag has nil interface field community"}
 			}
 			if value.Flags.Has(4) || value.Community != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSearchGlobal, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/97b9f137301afbe86bd04d4fdd9d2f955b1dc987866694ab8c907758a983f599"}
+				// layer-obligation/v1/field-projection/97b9f137301afbe86bd04d4fdd9d2f955b1dc987866694ab8c907758a983f599 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.FolderID != 0 {
@@ -761,7 +761,7 @@ func layerEncodeWire4bc6589aBareBody(profile LayerProfile, value *tg.MessagesSea
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSearchGlobal, Reason: "malformed canonical value: explicit flag has nil interface field community"}
 			}
 			if value.Flags.Has(4) || value.Community != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSearchGlobal, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/33a172162223e75a7e74e709a10cc8205c8c0084bcf1efec8c99f51d19e05ec7"}
+				// layer-obligation/v1/field-projection/33a172162223e75a7e74e709a10cc8205c8c0084bcf1efec8c99f51d19e05ec7 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.FolderID != 0 {
@@ -1252,7 +1252,7 @@ func layerEncodeWire545cd15aBareBody(profile LayerProfile, value *tg.MessagesSen
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSendMessage, Reason: "malformed canonical value: explicit flag has nil interface field rich_message"}
 			}
 			if value.Flags.Has(23) || value.RichMessage != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSendMessage, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/b3aad7dd4140d3609f215a2bfb1eb5f526cb71f096a3d402b5de53dfc7cd677a"}
+				// layer-obligation/v1/field-projection/b3aad7dd4140d3609f215a2bfb1eb5f526cb71f096a3d402b5de53dfc7cd677a explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded9 := &bin.Buffer{}
 			layerPresent11 := (value.Flags.Has(0) || value.ReplyTo != nil)
@@ -1508,7 +1508,7 @@ func layerEncodeWire545cd15aBareBody(profile LayerProfile, value *tg.MessagesSen
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSendMessage, Reason: "malformed canonical value: explicit flag has nil interface field rich_message"}
 			}
 			if value.Flags.Has(23) || value.RichMessage != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSendMessage, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/6e409a5c165b15d50d2f06968e836e354381feb326fb16492cbdf22cabf6504e"}
+				// layer-obligation/v1/field-projection/6e409a5c165b15d50d2f06968e836e354381feb326fb16492cbdf22cabf6504e explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded9 := &bin.Buffer{}
 			layerPresent11 := (value.Flags.Has(0) || value.ReplyTo != nil)

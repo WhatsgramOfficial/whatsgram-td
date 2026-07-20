@@ -923,7 +923,7 @@ func layerEncodeWire54ae308eBareBody(profile LayerProfile, value *tg.MessagesSav
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSaveDraft, Reason: "malformed canonical value: explicit flag has nil interface field rich_message"}
 			}
 			if value.Flags.Has(9) || value.RichMessage != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSaveDraft, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/9000775ef032f95f82a2b3237293ae2f2dbcc4cde7438c44175aae6668f2c93a"}
+				// layer-obligation/v1/field-projection/9000775ef032f95f82a2b3237293ae2f2dbcc4cde7438c44175aae6668f2c93a explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded7 := &bin.Buffer{}
 			layerPresent9 := (value.Flags.Has(4) || value.ReplyTo != nil)
@@ -1088,7 +1088,7 @@ func layerEncodeWire54ae308eBareBody(profile LayerProfile, value *tg.MessagesSav
 				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSaveDraft, Reason: "malformed canonical value: explicit flag has nil interface field rich_message"}
 			}
 			if value.Flags.Has(9) || value.RichMessage != nil {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodMessagesSaveDraft, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/5564f715102755e40dff40f585d89dd26e28bdc799a49099e357804fd224b917"}
+				// layer-obligation/v1/field-projection/5564f715102755e40dff40f585d89dd26e28bdc799a49099e357804fd224b917 explicitly permits dropping this field in the exact profile.
 			}
 			layerEncoded7 := &bin.Buffer{}
 			layerPresent9 := (value.Flags.Has(4) || value.ReplyTo != nil)

@@ -427,7 +427,7 @@ func layerEncodeWire5fb224d5BareBody(profile LayerProfile, value *tg.ChatAdminRi
 	case LayerProfile225:
 		{
 			if value.Flags.Has(19) || value.ManageLinkedPeers {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChatAdminRights, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/afcbe9b2e43da4f60bdd6b13e45be9a288432bb58758aef2ca814bda86bb12de"}
+				// layer-obligation/v1/field-projection/afcbe9b2e43da4f60bdd6b13e45be9a288432bb58758aef2ca814bda86bb12de explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.ChangeInfo {
@@ -490,7 +490,7 @@ func layerEncodeWire5fb224d5BareBody(profile LayerProfile, value *tg.ChatAdminRi
 	case LayerProfile226:
 		{
 			if value.Flags.Has(19) || value.ManageLinkedPeers {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChatAdminRights, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/39ac80ab2c57d5af828569e175a39aebde63d7391a2013f35c5f55cb8771c608"}
+				// layer-obligation/v1/field-projection/39ac80ab2c57d5af828569e175a39aebde63d7391a2013f35c5f55cb8771c608 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.ChangeInfo {
@@ -553,7 +553,7 @@ func layerEncodeWire5fb224d5BareBody(profile LayerProfile, value *tg.ChatAdminRi
 	case LayerProfile227:
 		{
 			if value.Flags.Has(19) || value.ManageLinkedPeers {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeChatAdminRights, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/818c652be33a6c3385409aea803b5a44fe5834a3a0832fd5c163129765f9d1a2"}
+				// layer-obligation/v1/field-projection/818c652be33a6c3385409aea803b5a44fe5834a3a0832fd5c163129765f9d1a2 explicitly permits dropping this field in the exact profile.
 			}
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.ChangeInfo {

@@ -321,11 +321,10 @@ func compareLayerDefinitions(layer int, canonical, profile *semantic.Definition)
 }
 
 // projectedCanonicalFields exposes canonical data which the exact target
-// profile has no field for. Even a conditional field cannot be silently
-// omitted: its zero/absent runtime state is mechanical, but a present value is
-// a semantic downgrade and must be explicitly dropped, adapted, projected, or
-// rejected by policy. This is the field-level counterpart of projecting an
-// unavailable update constructor.
+// profile has no field for. The exact encoder mechanically omits those fields:
+// they have no flag bit or body slot in the target schema. Policy can still
+// replace this default with a whole-value projection when omission would alter
+// semantics (for example, a privacy marker).
 func projectedCanonicalFields(layer int, canonical, profile *semantic.Definition, aliases, replacements map[string]string) []LayerObligation {
 	profileFields := valueFieldMap(profile)
 	var result []LayerObligation
@@ -353,11 +352,7 @@ func projectedCanonicalFields(layer int, canonical, profile *semantic.Definition
 			field,
 			nil,
 		)
-		// Rejecting only when this runtime field is present is the safe,
-		// mechanical default for additive fields. It keeps future schemas
-		// buildable without silently approving data loss; policy may replace
-		// the exact key with an explicit drop/project/adapter decision.
-		obligation.Resolution = LayerObligationResolution{Action: LayerResolveRejectIfPresent}
+		obligation.Resolution = LayerObligationResolution{Action: LayerResolveDrop}
 		result = append(result, obligation)
 	}
 	return result

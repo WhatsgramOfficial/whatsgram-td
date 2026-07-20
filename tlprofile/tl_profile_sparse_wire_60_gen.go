@@ -1960,10 +1960,10 @@ func layerEncodeWire25e073fcBareBody(profile LayerProfile, value *tg.PageListIte
 	case LayerProfile225:
 		{
 			if value.Flags.Has(1) || value.Checked {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/dd996e282f00fed7caf2da8c508b5509af192c550eb3c019e31b9b8568570ab8"}
+				// layer-obligation/v1/field-projection/dd996e282f00fed7caf2da8c508b5509af192c550eb3c019e31b9b8568570ab8 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(0) || value.Checkbox {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/f9672bcac2981d35ea66d2b3f25f702e4dd36a65706a9c0cf2d2a7f7673a9274"}
+				// layer-obligation/v1/field-projection/f9672bcac2981d35ea66d2b3f25f702e4dd36a65706a9c0cf2d2a7f7673a9274 explicitly permits dropping this field in the exact profile.
 			}
 			if len(value.Blocks) > layerCodecMaxVectorElements {
 				return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "vector length exceeds generated limit"}
@@ -2000,10 +2000,10 @@ func layerEncodeWire25e073fcBareBody(profile LayerProfile, value *tg.PageListIte
 	case LayerProfile226:
 		{
 			if value.Flags.Has(0) || value.Checkbox {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/05428bcf3e21486e3498a8a68def3ef84e49fe54fb6036819b1716e200c936e2"}
+				// layer-obligation/v1/field-projection/05428bcf3e21486e3498a8a68def3ef84e49fe54fb6036819b1716e200c936e2 explicitly permits dropping this field in the exact profile.
 			}
 			if value.Flags.Has(1) || value.Checked {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageListItemBlocks, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/b837eaeb61d66ebe58ed9fa9ea849ca6fc08db400daf10e4dab0c9d8dcd64f94"}
+				// layer-obligation/v1/field-projection/b837eaeb61d66ebe58ed9fa9ea849ca6fc08db400daf10e4dab0c9d8dcd64f94 explicitly permits dropping this field in the exact profile.
 			}
 			if len(value.Blocks) > layerCodecMaxVectorElements {
 				return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "vector length exceeds generated limit"}
@@ -3374,7 +3374,7 @@ func layerEncodeWiree0955a3cBareBody(profile LayerProfile, value *tg.AuthSentCod
 	case LayerProfile225:
 		{
 			if true {
-				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeAuthSentCodePaymentRequired, Reason: "field projection rejected by policy layer-obligation/v1/field-projection/9b374e8f775318a79734f1fc1c6ce45def69d66eee2e3cdba6131dab016ede6b"}
+				// layer-obligation/v1/field-projection/9b374e8f775318a79734f1fc1c6ce45def69d66eee2e3cdba6131dab016ede6b explicitly permits dropping this field in the exact profile.
 			}
 			if err := b.PutStringChecked(value.StoreProduct); err != nil {
 				return fmt.Errorf("encode field store_product: %w", err)
