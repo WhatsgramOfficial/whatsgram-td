@@ -28,7 +28,7 @@ const (
 func ClientRPCOverlayMethodCount(overlay ClientRPCOverlay) int {
 	switch overlay {
 	case ClientRPCOverlayDrkloAndroid:
-		return 15
+		return 17
 	case ClientRPCOverlayDrkloAndroidTheme:
 		return 4
 	default:
@@ -71,6 +71,9 @@ func adaptClientRPCOverlay(profile Profile, overlay ClientRPCOverlay, b *bin.Buf
 		case 0x199f3a6c:
 			canonical, err := layerAdaptClientRPCOverlayDrkloAndroid_199f3a6c(profile, b, state)
 			return canonical, true, err
+		case 0x24b524c5:
+			canonical, err := layerAdaptClientRPCOverlayDrkloAndroid_24b524c5(profile, b, state)
+			return canonical, true, err
 		case 0x25939651:
 			canonical, err := layerAdaptClientRPCOverlayDrkloAndroid_25939651(profile, b, state)
 			return canonical, true, err
@@ -88,6 +91,9 @@ func adaptClientRPCOverlay(profile Profile, overlay ClientRPCOverlay, b *bin.Buf
 			return canonical, true, err
 		case 0x637ea878:
 			canonical, err := layerAdaptClientRPCOverlayDrkloAndroid_637ea878(profile, b, state)
+			return canonical, true, err
+		case 0x6c50051c:
+			canonical, err := layerAdaptClientRPCOverlayDrkloAndroid_6c50051c(profile, b, state)
 			return canonical, true, err
 		case 0x800fd57d:
 			canonical, err := layerAdaptClientRPCOverlayDrkloAndroid_800fd57d(profile, b, state)
@@ -333,6 +339,31 @@ func layerAdaptClientRPCOverlayDrkloAndroid_199f3a6c(profile LayerProfile, b *bi
 	var canonical bin.Buffer
 	if err := value.Encode(&canonical); err != nil {
 		return nil, &LayerCodecError{Operation: "encode canonical client RPC overlay", Profile: profile, Semantic: LayerSemanticMethodChannelsInviteToChannel, WireID: 0x199f3a6c, Reason: err.Error(), Cause: err}
+	}
+	return &canonical, nil
+}
+
+func layerAdaptClientRPCOverlayDrkloAndroid_24b524c5(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*bin.Buffer, error) {
+	if b == nil || state == nil {
+		return nil, &LayerCodecError{Operation: "adapt client RPC overlay", Profile: profile, WireID: 0x24b524c5, Reason: "nil buffer or codec state"}
+	}
+	if err := b.ConsumeID(0x24b524c5); err != nil {
+		return nil, fmt.Errorf("consume private method channels.joinChannel: %w", err)
+	}
+	value := &tg.ChannelsJoinChannelRequest{}
+	var sourceField0 tg.InputChannelClass
+	layerClass1, err := layerDecodeClassInputChannel(profile, b, state)
+	if err != nil {
+		return nil, fmt.Errorf("decode client overlay field channel: %w", err)
+	}
+	sourceField0 = layerClass1
+	value.Channel = sourceField0
+	if b.Len() != 0 {
+		return nil, &LayerCodecError{Operation: "adapt client RPC overlay", Profile: profile, Semantic: LayerSemanticMethodChannelsJoinChannel, WireID: 0x24b524c5, Reason: fmt.Sprintf("%d trailing private method bytes", b.Len())}
+	}
+	var canonical bin.Buffer
+	if err := value.Encode(&canonical); err != nil {
+		return nil, &LayerCodecError{Operation: "encode canonical client RPC overlay", Profile: profile, Semantic: LayerSemanticMethodChannelsJoinChannel, WireID: 0x24b524c5, Reason: err.Error(), Cause: err}
 	}
 	return &canonical, nil
 }
@@ -787,6 +818,31 @@ func layerAdaptClientRPCOverlayDrkloAndroid_637ea878(profile LayerProfile, b *bi
 	var canonical bin.Buffer
 	if err := value.Encode(&canonical); err != nil {
 		return nil, &LayerCodecError{Operation: "encode canonical client RPC overlay", Profile: profile, Semantic: LayerSemanticMethodAccountRegisterDevice, WireID: 0x637ea878, Reason: err.Error(), Cause: err}
+	}
+	return &canonical, nil
+}
+
+func layerAdaptClientRPCOverlayDrkloAndroid_6c50051c(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*bin.Buffer, error) {
+	if b == nil || state == nil {
+		return nil, &LayerCodecError{Operation: "adapt client RPC overlay", Profile: profile, WireID: 0x6c50051c, Reason: "nil buffer or codec state"}
+	}
+	if err := b.ConsumeID(0x6c50051c); err != nil {
+		return nil, fmt.Errorf("consume private method messages.importChatInvite: %w", err)
+	}
+	value := &tg.MessagesImportChatInviteRequest{}
+	var sourceField0 string
+	layerPrimitive1, err := b.String()
+	if err != nil {
+		return nil, fmt.Errorf("decode client overlay field hash: %w", err)
+	}
+	sourceField0 = layerPrimitive1
+	value.Hash = sourceField0
+	if b.Len() != 0 {
+		return nil, &LayerCodecError{Operation: "adapt client RPC overlay", Profile: profile, Semantic: LayerSemanticMethodMessagesImportChatInvite, WireID: 0x6c50051c, Reason: fmt.Sprintf("%d trailing private method bytes", b.Len())}
+	}
+	var canonical bin.Buffer
+	if err := value.Encode(&canonical); err != nil {
+		return nil, &LayerCodecError{Operation: "encode canonical client RPC overlay", Profile: profile, Semantic: LayerSemanticMethodMessagesImportChatInvite, WireID: 0x6c50051c, Reason: err.Error(), Cause: err}
 	}
 	return &canonical, nil
 }

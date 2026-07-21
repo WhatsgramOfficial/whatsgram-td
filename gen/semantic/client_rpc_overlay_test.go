@@ -22,8 +22,12 @@ func TestRealClientRPCOverlayIsProvenanceLockedAndCanonicalBound(t *testing.T) {
 	if overlay.Name != "drklo_android" || overlay.Repository == "" || overlay.Commit == "" || len(overlay.Sources) != 4 {
 		t.Fatalf("unexpected DrKLO provenance: %+v", overlay)
 	}
-	if got, want := len(overlay.Methods), 15; got != want {
+	if got, want := len(overlay.Methods), 17; got != want {
 		t.Fatalf("DrKLO method count = %d, want %d", got, want)
+	}
+	wantRetainedJoinWires := map[DefinitionKey]uint32{
+		{Category: CategoryFunction, QName: "messages.importChatInvite"}: 0x6c50051c,
+		{Category: CategoryFunction, QName: "channels.joinChannel"}:      0x24b524c5,
 	}
 	seenWire := make(map[uint32]struct{}, len(overlay.Methods))
 	canonical := universe.Schemas[universe.CanonicalLayer]
@@ -42,5 +46,14 @@ func TestRealClientRPCOverlayIsProvenanceLockedAndCanonicalBound(t *testing.T) {
 		if !method.Definition.Result.Equal(target.Result) {
 			t.Fatalf("private method %s result differs from canonical target", method.Definition.Key)
 		}
+		if wantWire, ok := wantRetainedJoinWires[method.Target]; ok {
+			if method.Definition.WireID != wantWire {
+				t.Fatalf("private method %s wire = %#08x, want %#08x", method.Target, method.Definition.WireID, wantWire)
+			}
+			delete(wantRetainedJoinWires, method.Target)
+		}
+	}
+	if len(wantRetainedJoinWires) != 0 {
+		t.Fatalf("missing retained Android join methods: %+v", wantRetainedJoinWires)
 	}
 }

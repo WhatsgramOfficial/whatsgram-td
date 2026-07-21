@@ -123,7 +123,7 @@ generation. Upgrading canonical Layer therefore needs only the ordinary Layer
 import and regeneration when the comparison remains mechanical; otherwise the
 generator stops for an explicit review instead of guessing.
 
-The current DrKLO inputs keep the 15 long-lived core private RPCs and four
+The current DrKLO inputs keep the 17 long-lived core private RPCs and four
 theme RPCs in separate overlays. They generate into the `tlprofile` sidecar.
 Production adapters call `UnknownMethodView.AdaptClientRPCOverlay`, which
 shares the outer request decode budget and authoritative canonical admission

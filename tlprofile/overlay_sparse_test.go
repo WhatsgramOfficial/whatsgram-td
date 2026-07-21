@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"github.com/iamxvbaba/td/bin"
+	"github.com/iamxvbaba/td/tg"
 )
 
 func TestSparseClientRPCOverlayDirectAndAdmission(t *testing.T) {
-	if got, want := ClientRPCOverlayMethodCount(ClientRPCOverlayDrkloAndroid), 15; got != want {
+	if got, want := ClientRPCOverlayMethodCount(ClientRPCOverlayDrkloAndroid), 17; got != want {
 		t.Fatalf("DrKLO overlay methods = %d, want %d", got, want)
 	}
 	if got, want := ClientRPCOverlayMethodCount(ClientRPCOverlayDrkloAndroidTheme), 4; got != want {
@@ -117,6 +118,81 @@ func TestSparseClientRPCOverlayCanReuseHistoricalOfficialWireID(t *testing.T) {
 				t.Fatalf("adapted exact wire = %#08x, want %#08x", got, want)
 			}
 		})
+	}
+}
+
+func TestSparseClientRPCOverlayRetainedJoinMethodsUseCurrentResult(t *testing.T) {
+	tests := []struct {
+		name          string
+		privateWireID uint32
+		method        SemanticID
+		exactWireID   uint32
+		body          func(*testing.T) bin.Buffer
+	}{
+		{
+			name:          "messages.importChatInvite",
+			privateWireID: 0x6c50051c,
+			method:        SemanticMethodMessagesImportChatInvite,
+			exactWireID:   0xde91436e,
+			body: func(*testing.T) bin.Buffer {
+				var body bin.Buffer
+				body.PutID(0x6c50051c)
+				body.PutString("private-invite")
+				return body
+			},
+		},
+		{
+			name:          "channels.joinChannel",
+			privateWireID: 0x24b524c5,
+			method:        SemanticMethodChannelsJoinChannel,
+			exactWireID:   0x7f6a1e22,
+			body: func(t *testing.T) bin.Buffer {
+				var body bin.Buffer
+				body.PutID(0x24b524c5)
+				if err := (&tg.InputChannel{ChannelID: 41, AccessHash: 42}).Encode(&body); err != nil {
+					t.Fatal(err)
+				}
+				return body
+			},
+		},
+	}
+	for _, test := range tests {
+		test := test
+		for _, profile := range []Profile{Profile227, Profile228} {
+			profile := profile
+			t.Run(fmt.Sprintf("%s/layer_%d", test.name, profile), func(t *testing.T) {
+				body := test.body(t)
+				if wireID, err := body.PeekID(); err != nil || wireID != test.privateWireID {
+					t.Fatalf("private wire = %#08x err=%v, want %#08x", wireID, err, test.privateWireID)
+				}
+				d := NewDispatcher()
+				d.OnUnknownMethod(func(view UnknownMethodView) (OutboundCall, bool, error) {
+					return view.AdaptClientRPCOverlay(ClientRPCOverlayDrkloAndroid)
+				})
+				admitted, err := d.Admit(profile, &body, Limits{})
+				if err != nil {
+					t.Fatal(err)
+				}
+				if body.Len() != 0 {
+					t.Fatalf("overlay admission left %d bytes", body.Len())
+				}
+				if got := admitted.Call().Method(); got != test.method {
+					t.Fatalf("adapted method = %#x, want %#x", got, test.method)
+				}
+				if got := admitted.Call().WireID(); got != test.exactWireID {
+					t.Fatalf("adapted exact wire = %#08x, want %#08x", got, test.exactWireID)
+				}
+				var result bin.Buffer
+				if err := admitted.Call().EncodeResult(&tg.MessagesChatInviteJoinResultOk{
+					Updates: &tg.UpdatesTooLong{},
+				}, &result); err != nil {
+					t.Fatalf("encode current join result: %v", err)
+				}
+				if wireID, err := result.PeekID(); err != nil || wireID != 0x445663a7 {
+					t.Fatalf("result wire = %#08x err=%v, want chatInviteJoinResultOk#445663a7", wireID, err)
+				}
+			})
+		}
 	}
 }
 

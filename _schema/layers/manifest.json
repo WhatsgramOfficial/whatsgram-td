@@ -16,7 +16,7 @@
     {
       "name": "drklo_android",
       "file": "client-drklo-android.tl",
-      "sha256": "b2f1ca54ba9ead8712fce5d137e6648a576a0b5e933b56e85dee4130d67c1907",
+      "sha256": "d7c75f46038c8b5114d30be868d831834b9bce25820052c5f4528146554ee4f7",
       "repository": "https://github.com/DrKLO/Telegram.git",
       "commit": "86d42543312a867b3fc64b85a93963c5b3c09ce4",
       "sources": [
@@ -54,6 +54,7 @@
           }
         },
         "channels.inviteToChannel": {},
+        "channels.joinChannel": {},
         "contacts.search": {},
         "langpack.getLangPack": {},
         "langpack.getLanguages": {},
@@ -73,6 +74,7 @@
             "id": "vector_int_to_input_message_id"
           }
         },
+        "messages.importChatInvite": {},
         "messages.uploadMedia": {},
         "updates.getDifference": {}
       }
