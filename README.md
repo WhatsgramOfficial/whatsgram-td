@@ -20,6 +20,9 @@ feature group, and replay only the selected source, runtime, diagnostic,
 performance, security, and required dependency changes. Record skipped changes
 and the reason they do not belong in the fork.
 
+Completed and pending selective-replay audits are recorded in
+[`UPSTREAM_SYNC.md`](UPSTREAM_SYNC.md).
+
 Upstream-generated `tg/*_gen.go` files are never copied or conflict-merged.
 Schema changes enter through the versioned manifest, semantic policy audit, and
 sparse AOT generation workflow documented in
