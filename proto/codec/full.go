@@ -79,17 +79,16 @@ func readFull(r io.Reader, seqNo int, b *bin.Buffer) error {
 	if err != nil {
 		return errors.Wrap(err, "len")
 	}
+	if n < 3*bin.Word {
+		return errors.Wrap(invalidMsgLenErr{n: n}, "len")
+	}
 
-	// Put length, because it need to count CRC.
-	b.PutInt(n)
-	b.Expand(n - bin.Word)
-	inner := &bin.Buffer{Buf: b.Buf[bin.Word:n]}
-
-	// Reads tail of packet to the buffer.
-	// Length already read.
-	if _, err := io.ReadFull(r, inner.Buf); err != nil {
+	// Keep the already-read length because it participates in CRC, then grow
+	// progressively as the rest of the frame actually arrives.
+	if err := appendPayload(r, b, n-bin.Word); err != nil {
 		return errors.Wrap(err, "read seqno, buffer and crc")
 	}
+	inner := &bin.Buffer{Buf: b.Buf[bin.Word:n]}
 
 	serverSeqNo, err := inner.Int()
 	if err != nil {

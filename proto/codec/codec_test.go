@@ -3,6 +3,7 @@ package codec
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io"
 	"strings"
 	"testing"
@@ -194,4 +195,27 @@ func TestCodecs(t *testing.T) {
 			testCodec(c)(t)
 		})
 	}
+}
+
+func TestWordLengthCodecsGrowWithReceivedPayload(t *testing.T) {
+	var header [4]byte
+	binary.LittleEndian.PutUint32(header[:], MaxMessageSize)
+
+	for _, c := range []Codec{Intermediate{}, PaddedIntermediate{}} {
+		t.Run(fmt.Sprintf("%T", c), func(t *testing.T) {
+			var b bin.Buffer
+			err := c.Read(bytes.NewReader(header[:]), &b)
+			require.ErrorIs(t, err, io.EOF)
+			require.LessOrEqual(t, cap(b.Buf), 2*inboundReadChunkSize)
+		})
+	}
+}
+
+func TestReadPayloadDoesNotOverallocateCompletedFrame(t *testing.T) {
+	payload := bytes.Repeat([]byte{0xa5}, 3*inboundReadChunkSize+1)
+
+	var b bin.Buffer
+	require.NoError(t, readPayload(bytes.NewReader(payload), &b, len(payload)))
+	require.Equal(t, payload, b.Buf)
+	require.LessOrEqual(t, cap(b.Buf), len(payload))
 }

@@ -117,29 +117,52 @@ func writeAbridged(w io.Writer, b *bin.Buffer) error {
 }
 
 func readAbridged(r io.Reader, b *bin.Buffer) error {
-	b.ResetN(bin.Word)
-
-	_, err := io.ReadFull(r, b.Buf[:1])
+	n, err := readAbridgedLength(r)
 	if err != nil {
 		return err
 	}
 
-	if b.Buf[0] >= 127 {
-		_, err := io.ReadFull(r, b.Buf[0:3])
-		if err != nil {
-			return err
-		}
-	}
-
-	n, err := b.Int()
-	if err != nil {
-		return err
-	}
-
-	b.ResetN(n << 2)
-	if _, err := io.ReadFull(r, b.Buf); err != nil {
+	if err := readPayload(r, b, n); err != nil {
 		return errors.Wrap(err, "read payload")
 	}
 
 	return nil
+}
+
+func readAbridgedLength(r io.Reader) (int, error) {
+	var first [1]byte
+	if _, err := io.ReadFull(r, first[:]); err != nil {
+		return 0, err
+	}
+
+	// The high bit requests a quick ACK on client-to-server packets. This codec
+	// does not surface that request, but it must still validate the underlying
+	// abridged length without treating every high-bit byte as an extended header.
+	words := uint32(first[0] & 0x7f)
+	if words == 0 {
+		return 0, invalidMsgLenErr{n: 0}
+	}
+	if words < 0x7f {
+		n := int(words) * bin.Word
+		if err := checkMessageLength(n); err != nil {
+			return 0, err
+		}
+		return n, nil
+	}
+
+	var extended [3]byte
+	if _, err := io.ReadFull(r, extended[:]); err != nil {
+		return 0, err
+	}
+	words = uint32(extended[0]) |
+		uint32(extended[1])<<8 |
+		uint32(extended[2])<<16
+	n := int(words) * bin.Word
+	if words < 0x7f {
+		return 0, invalidMsgLenErr{n: n}
+	}
+	if err := checkMessageLength(n); err != nil {
+		return 0, err
+	}
+	return n, nil
 }

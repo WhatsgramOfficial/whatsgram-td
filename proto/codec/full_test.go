@@ -2,6 +2,9 @@ package codec
 
 import (
 	"bytes"
+	"encoding/binary"
+	"fmt"
+	"io"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -37,4 +40,29 @@ func TestFull(t *testing.T) {
 
 		require.Equal(t, payload, b.Buf)
 	})
+}
+
+func TestFullRejectsUndersizedEnvelopeWithoutPanic(t *testing.T) {
+	for _, n := range []uint32{1, 4, 8, 11} {
+		t.Run(fmt.Sprintf("%d", n), func(t *testing.T) {
+			var header [4]byte
+			binary.LittleEndian.PutUint32(header[:], n)
+
+			var b bin.Buffer
+			require.NotPanics(t, func() {
+				err := readFull(bytes.NewReader(header[:]), 0, &b)
+				require.ErrorIs(t, err, ErrInvalidMessageLength)
+			})
+		})
+	}
+}
+
+func TestFullDeclaredLengthGrowsWithReceivedPayload(t *testing.T) {
+	var header [4]byte
+	binary.LittleEndian.PutUint32(header[:], MaxMessageSize)
+
+	var b bin.Buffer
+	err := readFull(bytes.NewReader(header[:]), 0, &b)
+	require.ErrorIs(t, err, io.EOF)
+	require.LessOrEqual(t, cap(b.Buf), 2*inboundReadChunkSize)
 }

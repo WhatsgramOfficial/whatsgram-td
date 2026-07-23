@@ -9,6 +9,11 @@ import (
 	"github.com/iamxvbaba/td/bin"
 )
 
+// inboundReadChunkSize limits memory committed solely on the strength of an
+// untrusted transport length prefix. Larger messages grow progressively as
+// their bytes arrive.
+const inboundReadChunkSize = 32 << 10
+
 // Codec is MTProto transport protocol encoding abstraction.
 type Codec interface {
 	// WriteHeader sends protocol tag if needed.
@@ -36,9 +41,57 @@ func readLen(r io.Reader, b *bin.Buffer) (int, error) {
 	}
 	n := int(binary.LittleEndian.Uint32(b.Buf[:bin.Word]))
 
-	if n <= 0 || n > maxMessageSize {
-		return 0, invalidMsgLenErr{n: n}
+	if err := checkMessageLength(n); err != nil {
+		return 0, err
 	}
 
 	return n, nil
+}
+
+// readPayload reads exactly n bytes while growing b in bounded increments.
+// A peer that sends only a large length prefix therefore cannot make the
+// process allocate the entire declared frame before sending its payload.
+func readPayload(r io.Reader, b *bin.Buffer, n int) error {
+	b.Reset()
+	return appendPayload(r, b, n)
+}
+
+func appendPayload(r io.Reader, b *bin.Buffer, n int) error {
+	if n < 0 {
+		return invalidMsgLenErr{n: n}
+	}
+
+	target := b.Len() + n
+	for remaining := n; remaining > 0; {
+		chunk := remaining
+		if chunk > inboundReadChunkSize {
+			chunk = inboundReadChunkSize
+		}
+
+		start := b.Len()
+		end := start + chunk
+		if cap(b.Buf) < end {
+			nextCap := cap(b.Buf) * 2
+			if nextCap < end {
+				nextCap = end
+			}
+			if nextCap > target {
+				nextCap = target
+			}
+			grown := make([]byte, start, nextCap)
+			copy(grown, b.Buf)
+			b.Buf = grown
+		}
+		b.Buf = b.Buf[:end]
+		read, err := io.ReadFull(r, b.Buf[start:start+chunk])
+		if read != chunk {
+			// Do not expose zero-filled bytes which were never received.
+			b.Buf = b.Buf[:start+read]
+		}
+		if err != nil {
+			return err
+		}
+		remaining -= chunk
+	}
+	return nil
 }

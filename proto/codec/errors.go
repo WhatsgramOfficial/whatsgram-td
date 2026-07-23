@@ -41,16 +41,22 @@ func (p ProtocolErr) Error() string {
 	}
 }
 
-// Can be bigger that 1mb.
+// MaxMessageSize is the largest MTProto transport payload accepted by the
+// built-in codecs.
+//
+// It can be bigger than 1 MB.
 //
 // See https://github.com/gotd/td/issues/412
 //
 // See https://github.com/tdlib/td/blob/550ccc8d9bbbe9cff1dc618aef5764d2cbd2cd91/td/mtproto/TcpTransport.cpp#L53
-const maxMessageSize = 1 << 24 // 16 MB
+const MaxMessageSize = 1 << 24 // 16 MB
 
 func checkOutgoingMessage(b *bin.Buffer) error {
-	length := b.Len()
-	if length > maxMessageSize || length == 0 {
+	return checkMessageLength(b.Len())
+}
+
+func checkMessageLength(length int) error {
+	if length <= 0 || length > MaxMessageSize {
 		return invalidMsgLenErr{n: length}
 	}
 	return nil
@@ -96,11 +102,21 @@ func (e invalidMsgLenErr) Error() string {
 	return fmt.Sprintf("invalid message length %d", e.n)
 }
 
+func (e invalidMsgLenErr) Unwrap() error {
+	return ErrInvalidMessageLength
+}
+
 func (e invalidMsgLenErr) Is(err error) bool {
 	_, ok := err.(invalidMsgLenErr)
 	return ok
 }
 
-// ErrProtocolHeaderMismatch means that received protocol header
-// is mismatched with expected.
-var ErrProtocolHeaderMismatch = errors.New("protocol header mismatch")
+var (
+	// ErrInvalidMessageLength means that a transport frame declared an invalid
+	// or unsupported message length.
+	ErrInvalidMessageLength = errors.New("invalid message length")
+
+	// ErrProtocolHeaderMismatch means that received protocol header
+	// is mismatched with expected.
+	ErrProtocolHeaderMismatch = errors.New("protocol header mismatch")
+)

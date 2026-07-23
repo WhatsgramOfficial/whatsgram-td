@@ -3,6 +3,7 @@ package codec
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
 	"strings"
 	"testing"
 
@@ -66,4 +67,36 @@ func TestAbridged(t *testing.T) {
 			})
 		})
 	}
+}
+
+func TestAbridgedRejectsInvalidLengthsBeforeAllocation(t *testing.T) {
+	tests := []struct {
+		name   string
+		header []byte
+	}{
+		{"EmptyShort", []byte{0}},
+		{"EmptyQuickAckShort", []byte{0x80}},
+		{"NonCanonicalExtended", []byte{0x7f, 1, 0, 0}},
+		{"TooLarge", []byte{0x7f, 1, 0, 0x40}},
+		{"TooLargeQuickAck", []byte{0xff, 1, 0, 0x40}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var b bin.Buffer
+			err := readAbridged(bytes.NewReader(tt.header), &b)
+			require.ErrorIs(t, err, ErrInvalidMessageLength)
+			require.Zero(t, cap(b.Buf))
+		})
+	}
+}
+
+func TestAbridgedDeclaredLengthGrowsWithReceivedPayload(t *testing.T) {
+	words := uint32(MaxMessageSize / bin.Word)
+	packet := []byte{0x7f, byte(words), byte(words >> 8), byte(words >> 16)}
+
+	var b bin.Buffer
+	err := readAbridged(bytes.NewReader(packet), &b)
+	require.ErrorIs(t, err, io.EOF)
+	require.LessOrEqual(t, cap(b.Buf), 2*inboundReadChunkSize)
 }

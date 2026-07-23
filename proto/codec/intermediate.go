@@ -101,8 +101,7 @@ func readIntermediate(r io.Reader, b *bin.Buffer, padding bool) error {
 		return err
 	}
 
-	b.ResetN(n)
-	if _, err := io.ReadFull(r, b.Buf); err != nil {
+	if err := readPayload(r, b, n); err != nil {
 		return errors.Wrap(err, "read payload")
 	}
 
