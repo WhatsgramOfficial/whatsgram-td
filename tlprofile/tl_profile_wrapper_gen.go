@@ -17,7 +17,7 @@ var (
 	_ = tg.Layer
 )
 
-type tlWrapperParser func(Profile, *bin.Buffer, Limits) (sparseWrapper, Profile, bool, error)
+type tlWrapperParser func(Profile, *bin.Buffer, Limits, *tlScanState) (sparseWrapper, Profile, bool, error)
 
 func tlLookupWrapperParser(profile Profile, wireID uint32) (tlWrapperParser, bool) {
 	switch profile {
@@ -2623,7 +2623,7 @@ func tlKnownRPCWireID(wireID uint32) bool {
 	}
 }
 
-func tlParseWrapperBody0(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody0(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xc1cd5ea9); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2672,7 +2672,7 @@ func tlParseWrapperBody0(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 	}
 	frame.fields = append(frame.fields, sparseWrapperField{name: "lang_code", present: true, value: value7})
 	if flags0.Has(0) {
-		value8, err := tlDecodeObjectPrefixScanned(profile, b, limits)
+		value8, err := tlDecodeObjectPrefixValidated(profile, b, limits, scanState, tlScanClassf35f8f36effb5da2)
 		if err != nil {
 			return sparseWrapper{}, 0, false, err
 		}
@@ -2681,7 +2681,7 @@ func tlParseWrapperBody0(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 		frame.fields = append(frame.fields, sparseWrapperField{name: "proxy"})
 	}
 	if flags0.Has(1) {
-		value9, err := tlDecodeObjectPrefixScanned(profile, b, limits)
+		value9, err := tlDecodeObjectPrefixValidated(profile, b, limits, scanState, tlScanClassc1e33cae35afa05c)
 		if err != nil {
 			return sparseWrapper{}, 0, false, err
 		}
@@ -2693,7 +2693,7 @@ func tlParseWrapperBody0(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody1(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody1(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xcb9f372d); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2709,7 +2709,7 @@ func tlParseWrapperBody1(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody2(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody2(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0x3dc4b4f0); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2719,11 +2719,8 @@ func tlParseWrapperBody2(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 	if err := b.ConsumeID(bin.TypeVector); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
-	length1, err := b.Int()
-	if err != nil || length1 < 0 {
-		if err == nil {
-			err = fmt.Errorf("negative wrapper vector length %d", length1)
-		}
+	length1, err := tlWrapperVectorLength(profile, b, scanState, 8)
+	if err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
 	value0 := make([]int64, length1)
@@ -2734,12 +2731,13 @@ func tlParseWrapperBody2(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 		}
 		value0[i2] = element3
 	}
+	scanState.leave()
 	frame.fields = append(frame.fields, sparseWrapperField{name: "msg_ids", present: true, value: value0})
 	return frame, nestedProfile, explicit, nil
 
 }
 
-func tlParseWrapperBody3(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody3(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0x0dae54f8); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2760,7 +2758,7 @@ func tlParseWrapperBody3(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody4(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody4(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xdd289f8e); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2776,7 +2774,7 @@ func tlParseWrapperBody4(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody5(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody5(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0x1df92984); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2797,7 +2795,7 @@ func tlParseWrapperBody5(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody6(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody6(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xda9b0d0d); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2818,14 +2816,14 @@ func tlParseWrapperBody6(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody7(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody7(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0x365275f2); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
 	frame := sparseWrapper{profile: profile, semantic: SemanticMethodInvokeWithMessagesRange, wireID: 0x365275f2}
 	nestedProfile := profile
 	explicit := false
-	value0, err := tlDecodeObjectPrefixScanned(profile, b, limits)
+	value0, err := tlDecodeObjectPrefixValidated(profile, b, limits, scanState, tlScanClass86b8aad8f9169732)
 	if err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2834,7 +2832,7 @@ func tlParseWrapperBody7(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody8(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody8(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xadbb0f94); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2850,7 +2848,7 @@ func tlParseWrapperBody8(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody9(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody9(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xaca9fd2e); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}
@@ -2866,7 +2864,7 @@ func tlParseWrapperBody9(profile Profile, b *bin.Buffer, limits Limits) (sparseW
 
 }
 
-func tlParseWrapperBody10(profile Profile, b *bin.Buffer, limits Limits) (sparseWrapper, Profile, bool, error) {
+func tlParseWrapperBody10(profile Profile, b *bin.Buffer, limits Limits, scanState *tlScanState) (sparseWrapper, Profile, bool, error) {
 	if err := b.ConsumeID(0xbf9459b7); err != nil {
 		return sparseWrapper{}, 0, false, err
 	}

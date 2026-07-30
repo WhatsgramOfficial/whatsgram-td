@@ -51,6 +51,20 @@ func TestStaticScannerRejectsVectorBeforeMaterialization(t *testing.T) {
 	}
 }
 
+func TestSharedStaticScannerRechecksReplacementWireLimit(t *testing.T) {
+	state, err := tlNewScanState(Profile228, bin.Word, Limits{MaxWireBytes: 2 * bin.Word})
+	if err != nil {
+		t.Fatal(err)
+	}
+	var replacement bin.Buffer
+	replacement.PutID(tg.HelpGetConfigRequestTypeID)
+	replacement.PutLong(0)
+	err = tlScanExactObservedWithState(Profile228, &replacement, &state, nil)
+	if err == nil || !strings.Contains(err.Error(), "wire byte length 12 exceeds limit 8") {
+		t.Fatalf("replacement wire limit error = %v", err)
+	}
+}
+
 func TestSparseRouteRetagsWithoutHistoricalStruct(t *testing.T) {
 	request := &tg.ChannelsJoinChannelRequest{Channel: &tg.InputChannelEmpty{}}
 	var wire bin.Buffer

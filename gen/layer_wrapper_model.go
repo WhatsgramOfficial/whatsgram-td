@@ -256,7 +256,7 @@ func (e *layerWrapperValueEmitter) decode(ref *semantic.TypeRef, target string) 
 		case "bool", "Bool":
 			method, goType = "Bool", "bool"
 		case "Object":
-			return fmt.Sprintf("%s, err := tlDecodeObjectPrefixScanned(profile, b, limits)\nif err != nil { return sparseWrapper{}, 0, false, err }\n", target), "bin.Object", nil
+			return fmt.Sprintf("%s, err := tlDecodeObjectPrefixValidated(profile, b, limits, scanState, tlScanDynamic)\nif err != nil { return sparseWrapper{}, 0, false, err }\n", target), "bin.Object", nil
 		default:
 			return "", "", fmt.Errorf("unsupported wrapper primitive %q", ref.QName)
 		}
@@ -265,12 +265,17 @@ func (e *layerWrapperValueEmitter) decode(ref *semantic.TypeRef, target string) 
 		if ref.Bare || ref.Percent || ref.Arg != nil {
 			return "", "", fmt.Errorf("unsupported bare or parameterized wrapper metadata TypeRef %s", ref.String())
 		}
-		return fmt.Sprintf("%s, err := tlDecodeObjectPrefixScanned(profile, b, limits)\nif err != nil { return sparseWrapper{}, 0, false, err }\n", target), "bin.Object", nil
+		scanner := "tlScanClass" + layerScanNameSuffix(ref.QName)
+		return fmt.Sprintf("%s, err := tlDecodeObjectPrefixValidated(profile, b, limits, scanState, %s)\nif err != nil { return sparseWrapper{}, 0, false, err }\n", target, scanner), "bin.Object", nil
 	case semantic.TypeVector:
 		if ref.Arg == nil {
 			return "", "", fmt.Errorf("wrapper vector has no element")
 		}
 		elementType, err := layerWrapperGoType(ref.Arg)
+		if err != nil {
+			return "", "", err
+		}
+		minElementBytes, err := layerWrapperMinWireSize(ref.Arg)
 		if err != nil {
 			return "", "", err
 		}
@@ -281,14 +286,14 @@ func (e *layerWrapperValueEmitter) decode(ref *semantic.TypeRef, target string) 
 		if ref.QName == "Vector" && !ref.Bare && !ref.Percent {
 			out.WriteString("if err := b.ConsumeID(bin.TypeVector); err != nil { return sparseWrapper{}, 0, false, err }\n")
 		}
-		fmt.Fprintf(&out, "%s, err := b.Int()\nif err != nil || %s < 0 { if err == nil { err = fmt.Errorf(\"negative wrapper vector length %%d\", %s) }; return sparseWrapper{}, 0, false, err }\n", length, length, length)
+		fmt.Fprintf(&out, "%s, err := tlWrapperVectorLength(profile, b, scanState, %d)\nif err != nil { return sparseWrapper{}, 0, false, err }\n", length, minElementBytes)
 		fmt.Fprintf(&out, "%s := make([]%s, %s)\nfor %s := 0; %s < %s; %s++ {\n", target, elementType, length, index, index, length, index)
 		decode, _, err := e.decode(ref.Arg, element)
 		if err != nil {
 			return "", "", err
 		}
 		out.WriteString(decode)
-		fmt.Fprintf(&out, "%s[%s] = %s\n}\n", target, index, element)
+		fmt.Fprintf(&out, "%s[%s] = %s\n}\nscanState.leave()\n", target, index, element)
 		return out.String(), "[]" + elementType, nil
 	default:
 		return "", "", fmt.Errorf("unsupported wrapper metadata TypeRef %s", ref.String())
@@ -326,4 +331,31 @@ func layerWrapperGoType(ref *semantic.TypeRef) (string, error) {
 		}
 	}
 	return "", fmt.Errorf("unsupported wrapper Go type %s", ref.String())
+}
+
+func layerWrapperMinWireSize(ref *semantic.TypeRef) (int, error) {
+	if ref == nil {
+		return 0, fmt.Errorf("nil wrapper TypeRef")
+	}
+	switch ref.Kind {
+	case semantic.TypePrimitive:
+		switch ref.QName {
+		case "int", "Int", "int32", "string", "String", "bytes", "Bytes", "bool", "Bool", "Object":
+			return 4, nil
+		case "int53", "int64", "long", "Long":
+			return 8, nil
+		}
+	case semantic.TypeNamed:
+		if !ref.Bare && !ref.Percent && ref.Arg == nil {
+			return 4, nil
+		}
+	case semantic.TypeVector:
+		if ref.Arg != nil {
+			if ref.QName == "Vector" && !ref.Bare && !ref.Percent {
+				return 8, nil
+			}
+			return 4, nil
+		}
+	}
+	return 0, fmt.Errorf("unsupported wrapper minimum wire size %s", ref.String())
 }

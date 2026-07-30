@@ -44,10 +44,12 @@ const (
 
 type tlScanState struct {
 	depth             int
+	maxWireBytes      int
 	maxDepth          int
 	maxVectorElements int
 	remainingElements int
 	fieldPlan         int
+	fieldRootDepth    int
 	fieldObserver     tlFieldObserver
 }
 
@@ -110,7 +112,7 @@ func tlNewScanState(profile Profile, wireBytes int, limits Limits) (tlScanState,
 	if err != nil {
 		return tlScanState{}, err
 	}
-	return tlScanState{maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements, fieldPlan: -1}, nil
+	return tlScanState{maxWireBytes: maxWireBytes, maxDepth: maxDepth, maxVectorElements: maxVectorElements, remainingElements: maxAggregateElements, fieldPlan: -1}, nil
 }
 
 func (s *tlScanState) enter(profile Profile) error {
@@ -151,12 +153,12 @@ func (s *tlScanState) consumeVector(length int) error {
 }
 
 func (s *tlScanState) observe(ordinal int, metric tlFieldMetric, present bool, value int64) error {
-	if s == nil || s.fieldObserver == nil || s.fieldPlan < 0 {
+	if s == nil || s.fieldObserver == nil || s.fieldPlan < 0 || s.fieldRootDepth <= 0 {
 		return nil
 	}
-	rootDepth := 1
+	rootDepth := s.fieldRootDepth
 	if metric == tlFieldMetricVectorLength && present {
-		rootDepth = 2
+		rootDepth++
 	}
 	if s.depth != rootDepth {
 		return nil
@@ -247,14 +249,35 @@ func tlScanExactObserved(profile Profile, body *bin.Buffer, limits Limits, obser
 	if err != nil {
 		return err
 	}
+	return tlScanExactObservedWithState(profile, body, &state, observer)
+}
+
+// tlScanExactObservedWithState validates one complete value while preserving
+// the envelope depth and aggregate element budget already consumed by the same
+// admission.
+func tlScanExactObservedWithState(profile Profile, body *bin.Buffer, state *tlScanState, observer tlFieldObserver) error {
+	if body == nil {
+		return fmt.Errorf("tlprofile: nil exact-profile body")
+	}
+	if state == nil {
+		return fmt.Errorf("tlprofile: nil shared scan state")
+	}
+	if body.Len() > state.maxWireBytes {
+		return fmt.Errorf("tlprofile: wire byte length %d exceeds limit %d", body.Len(), state.maxWireBytes)
+	}
 	wireID, err := body.PeekID()
 	if err != nil {
 		return err
 	}
+	previousPlan, previousRoot, previousObserver := state.fieldPlan, state.fieldRootDepth, state.fieldObserver
+	defer func() {
+		state.fieldPlan, state.fieldRootDepth, state.fieldObserver = previousPlan, previousRoot, previousObserver
+	}()
 	state.fieldPlan = tlLookupFieldPlan(profile, wireID)
+	state.fieldRootDepth = state.depth + 1
 	state.fieldObserver = observer
 	cursor := &bin.Buffer{Buf: body.Raw()}
-	if err := tlScanDynamic(profile, cursor, &state); err != nil {
+	if err := tlScanDynamic(profile, cursor, state); err != nil {
 		return err
 	}
 	if cursor.Len() != 0 {

@@ -311,4 +311,21 @@ func TestLayerWrapperModelRealSchemaStaysCompact(t *testing.T) {
 	if len(model.Bodies) != 11 || len(model.UnprofiledInvariants) != 422 || len(model.KnownRPCWireIDs) < 800 {
 		t.Fatalf("sparse wrapper/invariant surface drifted: bodies=%d invariants=%d known=%d", len(model.Bodies), len(model.UnprofiledInvariants), len(model.KnownRPCWireIDs))
 	}
+	vectorGuard := false
+	objectGuard := false
+	for _, body := range model.Bodies {
+		if strings.Contains(body.Source, "SemanticMethodInvokeAfterMsgs") {
+			vectorGuard = strings.Contains(body.Source, "tlWrapperVectorLength(profile, b, scanState, 8)") &&
+				strings.Contains(body.Source, "scanState.leave()")
+		}
+		if strings.Contains(body.Source, "SemanticMethodInitConnection") {
+			objectGuard = strings.Contains(body.Source, "tlDecodeObjectPrefixValidated(profile, b, limits, scanState, tlScanClass")
+		}
+	}
+	if !vectorGuard {
+		t.Fatal("invokeAfterMsgs wrapper parser does not use generated vector limits")
+	}
+	if !objectGuard {
+		t.Fatal("initConnection wrapper parser does not statically validate Object metadata")
+	}
 }

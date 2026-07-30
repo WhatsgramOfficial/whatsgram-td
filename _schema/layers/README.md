@@ -148,6 +148,22 @@ Layer selection in this path.
   evidence; its canonical codec route remains an internal representative.
 - Request admission consumes the complete outer wire value and freezes the
   exact result `TypeRef`, wire ID and request digest.
+- `gzip_packed` is a transparent protocol `Object` envelope, not an RPC and
+  not a schema-driven wrapper. When `AdmissionOptions.ExpandGZIP` is present,
+  `Admit*WithOptions` may encounter it before profile selection, between
+  generated wrappers or at the terminal, expand it
+  under the caller's per-wrapper resource reservation, and continue through
+  the same exact-profile route. The original compressed bytes remain the
+  authoritative wire size/digest while the decoded terminal determines the
+  canonical semantic identity. Expansion never creates a canonical fallback,
+  dynamic TL walker or bytes-to-bytes transcode path.
+- Every successful or failed expander call returns an optional reservation
+  release that admission invokes exactly once in reverse order. Expanded
+  buffers are released only after generated wrapper metadata and the typed
+  request graph have copied their values. One wrapper is hard-capped at
+  10 MiB; nested envelopes share the admission's depth and cumulative
+  `MaxWireBytes` limit. A server remains responsible for a process-wide and
+  transport-frame-wide budget before supplying the expander.
 - Wrapper metadata is preserved outer-to-inner. Wrappers with session,
   ordering or update-suppression meaning must be consumed explicitly.
 - If at least one generated wrapper is completely decoded but its innermost
@@ -163,8 +179,14 @@ Layer selection in this path.
   present; every value-bearing member of a set bit is encoded atomically.
 - Encoding is transactional. Rejected adapters, partial projections, malformed
   flags and size limits leave the caller's buffer unchanged.
-- Decode depth and vector lengths are bounded. TL strings and byte strings must
-  fit the protocol's 24-bit length header.
+- Decode depth, wrapper vectors, wrapper metadata `Object` graphs and terminal
+  vectors are bounded before allocation. Generated wrapper parsers and the
+  terminal share one admission scan state, so envelope depth and aggregate
+  elements cannot reset at a wrapper or gzip boundary. Named wrapper metadata
+  is checked by its generated exact `TypeRef`/class scanner before generic
+  materialization; being any known constructor is insufficient. Wrapper
+  vectors also prove that declared elements fit the remaining wire. TL strings
+  and byte strings must fit the protocol's 24-bit length header.
 - Frozen values may be prepared once per exact profile/call identity. Wire bytes
   are never reused across unequal profiles or result `TypeRef` identities.
 - Proactive updates still require a real frozen target profile. Only a result

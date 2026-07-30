@@ -95,6 +95,22 @@ Inbound RPC admission runs a non-materializing generated preflight plan before
 the typed decode. It enforces wire-byte, depth, vector, aggregate-element and
 field policy limits before canonical decoders can allocate client-controlled
 collections. Preflight plans are also deduplicated by execution-plan digest.
+Generated generic-wrapper parsers and the terminal use the same bounded scan
+state. Envelope depth, wrapper metadata `Object` graphs and all vectors share
+one aggregate/depth budget, with remaining-wire checks before allocation.
+Every named wrapper metadata field calls its generated exact class scanner;
+the generic materializer runs only after the declared `TypeRef` is proven.
+
+`gzip_packed` may transparently replace the `Object` at any point in that
+wrapper chain. It is recognized by constructor only; an explicit
+caller-supplied `AdmissionOptions.ExpandGZIP` capability owns decompression and
+resource reservation. `AdmitUnprofiledWithOptions` may therefore discover
+`invokeWithLayer` evidence inside a top-level compressed envelope. Admission
+then resumes the generated exact route on the expanded single TL object. The
+full compressed input remains the exact wire identity, the typed terminal
+remains the semantic identity, and releases run exactly once after all decoded
+values have been copied. This adds no runtime schema, reflection walker or
+canonical-bytes fallback.
 
 `Admission` freezes:
 
@@ -115,7 +131,8 @@ The stable entry points are intentionally capability-oriented:
 
 ```go
 type Profile int
-type Limits struct { /* bounded decode limits */ }
+type Limits struct { /* stable, comparable bounded decode limits */ }
+type AdmissionOptions struct { Limits Limits; ExpandGZIP GZIPExpander }
 type Admission struct { /* immutable, opaque */ }
 type Call struct { /* immutable, opaque */ }
 type Result interface { bin.Encoder /* plus immutable call metadata */ }
@@ -126,6 +143,9 @@ func (d *Dispatcher) Register(method SemanticID, handler Handler) error
 func (d *Dispatcher) Admit(profile Profile, body *bin.Buffer, limits Limits) (Admission, error)
 func (d *Dispatcher) AdmitDefault(profile Profile, body *bin.Buffer, limits Limits) (Admission, error)
 func (d *Dispatcher) AdmitUnprofiled(body *bin.Buffer, limits Limits) (Admission, error)
+func (d *Dispatcher) AdmitWithOptions(profile Profile, body *bin.Buffer, options AdmissionOptions) (Admission, error)
+func (d *Dispatcher) AdmitDefaultWithOptions(profile Profile, body *bin.Buffer, options AdmissionOptions) (Admission, error)
+func (d *Dispatcher) AdmitUnprofiledWithOptions(body *bin.Buffer, options AdmissionOptions) (Admission, error)
 func (d *Dispatcher) Dispatch(ctx context.Context, admission Admission) (Result, error)
 
 func (a Admission) Call() Call
