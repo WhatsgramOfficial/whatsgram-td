@@ -154,6 +154,10 @@ func (c *Conn) readLoop(ctx context.Context) (err error) {
 	)
 	defer handlers.Wait()
 
+	conn, ok := c.transportConn()
+	if !ok {
+		return ErrTransportNotReady
+	}
 	for {
 		// We've tried multiple ways to reduce allocations via reusing buffer,
 		// but naive implementation induces high idle memory waste.
@@ -172,7 +176,7 @@ func (c *Conn) readLoop(ctx context.Context) (err error) {
 			return errors.Wrap(err, "halting")
 		}
 
-		if err := c.conn.Recv(ctx, buf); err != nil {
+		if err := conn.Recv(ctx, buf); err != nil {
 			select {
 			case <-ctx.Done():
 				return ctx.Err()

@@ -61,7 +61,7 @@ type Conn struct {
 	// Wrappers for external world, like logs or PRNG.
 	// Should be immutable.
 	clock clock.Clock // immutable
-	log   log.Helper // immutable
+	log   log.Helper  // immutable
 
 	// Handler passed by client.
 	handler Handler // immutable
@@ -390,5 +390,16 @@ func (c *Conn) init(ctx context.Context) error {
 
 // Ping calls ping for underlying protocol connection.
 func (c *Conn) Ping(ctx context.Context) error {
-	return c.proto.Ping(ctx)
+	if err := c.waitSession(ctx); err != nil {
+		return errors.Wrap(err, "waitSession")
+	}
+	if err := c.proto.Ping(ctx); err != nil {
+		select {
+		case <-c.dead.Ready():
+			return errors.Wrap(pool.ErrConnDead, "ping on dead connection")
+		default:
+			return err
+		}
+	}
+	return nil
 }

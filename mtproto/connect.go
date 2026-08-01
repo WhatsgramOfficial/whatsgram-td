@@ -38,7 +38,7 @@ func (c *Conn) connect(ctx context.Context) (rErr error) {
 	if err != nil {
 		return errors.Wrap(err, "dial failed")
 	}
-	c.conn = conn
+	c.setTransport(conn)
 	defer func() {
 		if rErr != nil {
 			multierr.AppendInto(&rErr, conn.Close())
@@ -108,7 +108,11 @@ func (c *Conn) runExchange(
 	mode exchange.ExchangeMode,
 	expiresIn int,
 ) (exchange.ClientExchangeResult, error) {
-	ex := exchange.NewExchanger(c.conn, c.dcID).
+	conn, ok := c.transportConn()
+	if !ok {
+		return exchange.ClientExchangeResult{}, ErrTransportNotReady
+	}
+	ex := exchange.NewExchanger(conn, c.dcID).
 		WithClock(c.clock).
 		WithLogger(c.log.Named("exchange").Logger()).
 		WithTimeout(c.exchangeTimeout).

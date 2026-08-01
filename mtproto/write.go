@@ -30,7 +30,11 @@ func (c *Conn) write(ctx context.Context, msgID int64, seqNo int32, message bin.
 		return err
 	}
 
-	if err := c.conn.Send(ctx, b); err != nil {
+	conn, ok := c.transportConn()
+	if !ok {
+		return ErrTransportNotReady
+	}
+	if err := conn.Send(ctx, b); err != nil {
 		return err
 	}
 

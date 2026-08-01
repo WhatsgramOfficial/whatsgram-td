@@ -38,6 +38,11 @@ type MessageBuf interface {
 	Consume(id int64) bool
 }
 
+// ErrTransportNotReady is returned when a caller tries to write before Run
+// has established the physical transport. Lifecycle races must be surfaced as
+// an error rather than dereferencing a nil transport connection.
+var ErrTransportNotReady = errors.New("mtproto transport not ready")
+
 // Cipher handles message encryption and decryption.
 type Cipher interface {
 	DecryptFromBuffer(k crypto.AuthKey, buf *bin.Buffer) (*crypto.EncryptedMessageData, error)
@@ -53,6 +58,7 @@ type Conn struct {
 
 	dialer        Dialer
 	conn          transport.Conn
+	transportMux  sync.RWMutex
 	handler       Handler
 	rpc           *rpc.Engine
 	rsaPublicKeys []exchange.PublicKey
@@ -121,6 +127,19 @@ type Conn struct {
 	tempKeyTTL int
 	// Ensure Run once.
 	ran atomic.Bool
+}
+
+func (c *Conn) setTransport(conn transport.Conn) {
+	c.transportMux.Lock()
+	c.conn = conn
+	c.transportMux.Unlock()
+}
+
+func (c *Conn) transportConn() (transport.Conn, bool) {
+	c.transportMux.RLock()
+	conn := c.conn
+	c.transportMux.RUnlock()
+	return conn, conn != nil
 }
 
 // New creates new unstarted connection.
@@ -195,7 +214,11 @@ func (c *Conn) handleClose(ctx context.Context) error {
 	// Close RPC Engine.
 	c.rpc.ForceClose()
 	// Close connection.
-	if err := c.conn.Close(); err != nil {
+	conn, ok := c.transportConn()
+	if !ok {
+		return nil
+	}
+	if err := conn.Close(); err != nil {
 		c.log.Debug(ctx, "Failed to cleanup connection", log.Error(err))
 	}
 	return nil
