@@ -81,13 +81,6 @@ func layerEncodeWire48f1d94cBare(profile LayerProfile, value *tg.EncryptedChatRe
 func layerEncodeWire48f1d94cBareBody(profile LayerProfile, value *tg.EncryptedChatRequested, b *bin.Buffer, state *layerCodecState) error {
 	return layerEncodeWire48f1d94cBare(profile, value, b, state)
 }
-func layerDecodeWire48f1d94c(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.EncryptedChatRequested, error) {
-	value := new(tg.EncryptedChatRequested)
-	if err := value.Decode(b); err != nil {
-		return nil, err
-	}
-	return value, nil
-}
 
 // Canonical-direct exact wire; the scanner has validated its transitive graph.
 func layerEncodeWire71bd134cBare(profile LayerProfile, value *tg.DialogFolder, b *bin.Buffer, state *layerCodecState) error {
@@ -116,13 +109,6 @@ func layerEncodeWire970708ccBare(profile LayerProfile, value *tg.HelpTimezonesLi
 }
 func layerEncodeWire970708ccBareBody(profile LayerProfile, value *tg.HelpTimezonesListNotModified, b *bin.Buffer, state *layerCodecState) error {
 	return layerEncodeWire970708ccBare(profile, value, b, state)
-}
-func layerDecodeWire970708cc(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.HelpTimezonesListNotModified, error) {
-	value := new(tg.HelpTimezonesListNotModified)
-	if err := value.Decode(b); err != nil {
-		return nil, err
-	}
-	return value, nil
 }
 
 // Canonical-direct exact wire; the scanner has validated its transitive graph.
@@ -197,33 +183,6 @@ func layerDecodeWireb8bc5b0c(profile LayerProfile, b *bin.Buffer, state *layerCo
 	return value, nil
 }
 
-func layerEncodeWirebdc62dcc(profile LayerProfile, value *tg.MessagesExportedChatInvites, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessagesExportedChatInvites, WireID: 0xbdc62dcc, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		switch profile {
-		case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
-
-		default:
-			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeMessagesExportedChatInvites, WireID: 0xbdc62dcc, Reason: "wire ID is unavailable in exact profile"}
-		}
-
-		b.PutID(0xbdc62dcc)
-		return layerEncodeWirebdc62dccBareBody(profile, value, b, state)
-
-	})
-}
-
-func layerEncodeWirebdc62dccBare(profile LayerProfile, value *tg.MessagesExportedChatInvites, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeMessagesExportedChatInvites, WireID: 0xbdc62dcc, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		return layerEncodeWirebdc62dccBareBody(profile, value, b, state)
-	})
-}
-
 func layerEncodeWirebdc62dccBareBody(profile LayerProfile, value *tg.MessagesExportedChatInvites, b *bin.Buffer, state *layerCodecState) error {
 	child, err := layerCodecDescend(profile, "encode", state)
 	if err != nil {
@@ -231,7 +190,7 @@ func layerEncodeWirebdc62dccBareBody(profile LayerProfile, value *tg.MessagesExp
 	}
 	state = &child
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			b.PutInt(value.Count)
 			if len(value.Invites) > layerCodecMaxVectorElements {
@@ -302,7 +261,7 @@ func layerEncodeWirebdc62dccBareBody(profile LayerProfile, value *tg.MessagesExp
 
 func layerDecodeWirebdc62dcc(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.MessagesExportedChatInvites, error) {
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeMessagesExportedChatInvites, WireID: 0xbdc62dcc, Reason: "wire ID is unavailable in exact profile"}
@@ -324,7 +283,7 @@ func layerDecodeWirebdc62dccBare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(tg.MessagesExportedChatInvites)
 	_ = value
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var layerDecoded17 int
 			layerPrimitive18, err := b.Int()
@@ -413,13 +372,6 @@ func layerEncodeWirecdc3858cBare(profile LayerProfile, value *tg.AccountWallPape
 func layerEncodeWirecdc3858cBareBody(profile LayerProfile, value *tg.AccountWallPapers, b *bin.Buffer, state *layerCodecState) error {
 	return layerEncodeWirecdc3858cBare(profile, value, b, state)
 }
-func layerDecodeWirecdc3858c(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.AccountWallPapers, error) {
-	value := new(tg.AccountWallPapers)
-	if err := value.Decode(b); err != nil {
-		return nil, err
-	}
-	return value, nil
-}
 
 // Canonical-direct exact wire; the scanner has validated its transitive graph.
 func layerEncodeWiredde8a54cBare(profile LayerProfile, value *tg.InputPeerUser, b *bin.Buffer, state *layerCodecState) error {
@@ -437,6 +389,17 @@ func layerDecodeWiredde8a54c(profile LayerProfile, b *bin.Buffer, state *layerCo
 		return nil, err
 	}
 	return value, nil
+}
+
+// Canonical-direct exact wire; the scanner has validated its transitive graph.
+func layerEncodeWiredf5ac00cBare(profile LayerProfile, value *tg.AuthFirebasePnvIntent, b *bin.Buffer, state *layerCodecState) error {
+	if value == nil {
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeAuthFirebasePnvIntent, WireID: 0xdf5ac00c, Reason: "nil canonical value"}
+	}
+	return value.EncodeBare(b)
+}
+func layerEncodeWiredf5ac00cBareBody(profile LayerProfile, value *tg.AuthFirebasePnvIntent, b *bin.Buffer, state *layerCodecState) error {
+	return layerEncodeWiredf5ac00cBare(profile, value, b, state)
 }
 
 // Canonical-direct exact wire; the scanner has validated its transitive graph.

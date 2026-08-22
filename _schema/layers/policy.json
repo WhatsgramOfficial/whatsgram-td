@@ -17,11 +17,46 @@
       }
     },
     {
+      "key": "layer-obligation/v1/field-projection/06df03c6c16701878c96584f2f2c46b2cc9362cba97ead6e69e2609773686bb1",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/0a87dedab5cbdc319f0d92e2050c5638af081e9174fa5efabbd62f497f67aa08",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=show_name-\u003e; type=true-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/0dfa9b8c5af521c1ef0e6d5afd41b68ef46a740f020b0fbc5a7ead0520724fea",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=rich_message-\u003e; type=RichMessage-\u003e; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/160a95f6335b58db7f6e0f013c406f17d6e8fccdd2bd00c1ba080c58472eca5c",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=name_hidden-\u003e; type=true-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
       "key": "layer-obligation/v1/field-projection/1dcb9be1d2041794a1788de2a738fb6e126c2ee76d41f6bcba69e028775c6771",
       "resolution": {
         "action": "project",
         "hook": "layerProjectEphemeralBotCommand",
         "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:botCommand; wire=0x9852d6d2-\u003e0xc27ac8c7; field=ephemeral-\u003e; type=true-\u003e; source_shape=c02355ff56d29f8c4d69116641d2abcb8beb2cfff9ce3b7b23e0464d620e37db; target_shape=1759a0a62f1738d1c9a55717e7c7fcf7015ab76851ff97967a5338d2598ae188"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/27e35978c2c2292eb7ee3e089542b789d564f64589fe8e48b8f24f199769acdb",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=welcome_template-\u003e; type=true-\u003e; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
       }
     },
     {
@@ -33,6 +68,90 @@
       }
     },
     {
+      "key": "layer-obligation/v1/field-projection/32fc6d1f658ea548d91c55354d890e26aa9ae77de863cf0992e9603ca944e31c",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=function:ephemeral.sendMessage; wire=0xba8d5f35-\u003e0x68cbd09f; field=invert_media-\u003e; type=true-\u003e; source_shape=48585103e3dd307920e976d9849b77df147e4f2e91be50a73bf7edb5cf1821d7; target_shape=8734385fadd9d3297422642cfbad8c68874084e248c7e1d497dcd75a3e9d707a"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/3cdd832795e5a16171abfe4a0dc66d04f8c97b2f9ba72dcf84c6e02dd8e6e325",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=force_reply-\u003e; type=true-\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/4292bb174e76658b00928dbbe534437db2add15b23b7c57e41230b6a055d0dbd",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/42fdcf2ed4949a255ececb1a09febffd03195253caf52cb92f5bd169314313d6",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=anchor_msg_id-\u003e; type=int-\u003e; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/44033a8d95e65a6a9420d7dac18131ff4ee1cae0119262b967b77f001c17ee45",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=function:messages.forwardMessages; wire=0x13704a7c-\u003e0x13704a7c; field=from_ephemeral-\u003e; type=true-\u003e; source_shape=55539120ace3a576c93e5fa48aaabf2c79479c973a7e4b78c8d44ef5ab05453e; target_shape=615de77563ce878177f116413b1aa68c7ab90297ac78cc52fdec7f7885ba15f8"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/4503f3c819c0c7466089895ccd6e62dada97720c4ee747db6f7c2d99599e67f1",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/4bf07a89eb9b0d72d5c46988c41a6c30906fcb8fa6c7af6a91b11675e20240f6",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=name_hidden-\u003e; type=true-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/52d1f8553a15af9df1d849feca8743215afa69faac5b1cfd42ae3b9049b6d20e",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:replyKeyboardMarkup; wire=0x85dd99d1-\u003e0x85dd99d1; field=force_reply-\u003e; type=true-\u003e; source_shape=792c8535ea9eae8e052602ff9c0557edd0940d62116df60efa6b09f5fb62e903; target_shape=191c6cf4d11e56d0968b29a27e6bceb24b187869631b16a73bf6f1f5ed08d47c"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/57a31009cdce4427a59c8e612645b49572fd00ecf9df8ab45c6a549e1778af79",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=function:messages.forwardMessages; wire=0x13704a7c-\u003e0x13704a7c; field=from_ephemeral-\u003e; type=true-\u003e; source_shape=55539120ace3a576c93e5fa48aaabf2c79479c973a7e4b78c8d44ef5ab05453e; target_shape=615de77563ce878177f116413b1aa68c7ab90297ac78cc52fdec7f7885ba15f8"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/58e4a9d758732ad043129d1def7c79aaa1d234ab6407d6987ca345f4206e11b4",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=function:messages.forwardMessages; wire=0x13704a7c-\u003e0x13704a7c; field=from_ephemeral-\u003e; type=true-\u003e; source_shape=55539120ace3a576c93e5fa48aaabf2c79479c973a7e4b78c8d44ef5ab05453e; target_shape=615de77563ce878177f116413b1aa68c7ab90297ac78cc52fdec7f7885ba15f8"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/5bb5c363b895c84538b15ba933ee51fc8d77d9d0448d6fce31ce69f6b11a344c",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=show_name-\u003e; type=true-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/5e25fc980b2853c7db53fb85bc06354a7be0cb04b3003b301ee2ec2f98b22722",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=function:messages.forwardMessages; wire=0x13704a7c-\u003e0x13704a7c; field=from_ephemeral-\u003e; type=true-\u003e; source_shape=55539120ace3a576c93e5fa48aaabf2c79479c973a7e4b78c8d44ef5ab05453e; target_shape=615de77563ce878177f116413b1aa68c7ab90297ac78cc52fdec7f7885ba15f8"
+      }
+    },
+    {
       "key": "layer-obligation/v1/field-projection/730fa610d190fd09c9ccac859f3b14816ee67972c8da657127c3509399157433",
       "resolution": {
         "action": "project",
@@ -41,10 +160,881 @@
       }
     },
     {
+      "key": "layer-obligation/v1/field-projection/74775151ccbccc97a10e978b49cf1abee1884e28800dea91ecdc772b02100621",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=name_hidden-\u003e; type=true-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/771074ff017ee5cc3f394a34c9cd73ae6129a4faa7854408ecd0e43e66a29cd3",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:replyKeyboardMarkup; wire=0x85dd99d1-\u003e0x85dd99d1; field=force_reply-\u003e; type=true-\u003e; source_shape=792c8535ea9eae8e052602ff9c0557edd0940d62116df60efa6b09f5fb62e903; target_shape=191c6cf4d11e56d0968b29a27e6bceb24b187869631b16a73bf6f1f5ed08d47c"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/7c3e7adf9096210fd6e542c5ffc8d4e348aeae9d33cb08b421239a5924c977f5",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectLegacyDefaultKeyboardButton",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:keyboardButton; wire=0x2f67a72f-\u003e0x7d170cff; field=type-\u003e; type=ButtonType-\u003e; source_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43; target_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/7f9f838ec0cfb1dbb7110fe15e0d76fe5062059d62e41ac37590026f7300d631",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=force_reply-\u003e; type=true-\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/822c86b456bb3f670f0620a20d7c0c655debc5e2cb4a0999ad7f63e7b5a19678",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/9704e743ebd7a75db3e369d04b3917547bb5023f1375b665c28c73c6e532094d",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=show_name-\u003e; type=true-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/9c01254b0259f07a6783efd153e8fcac915e9e52cea1559ffa2c339685186c5a",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=function:ephemeral.sendMessage; wire=0xba8d5f35-\u003e0x68cbd09f; field=anchor-\u003e; type=true-\u003e; source_shape=48585103e3dd307920e976d9849b77df147e4f2e91be50a73bf7edb5cf1821d7; target_shape=8734385fadd9d3297422642cfbad8c68874084e248c7e1d497dcd75a3e9d707a"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/9c3733247565a1e7527d7f595d3cc2e706248eb449bd6116f0663bfb9a64cfb0",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:replyKeyboardMarkup; wire=0x85dd99d1-\u003e0x85dd99d1; field=force_reply-\u003e; type=true-\u003e; source_shape=792c8535ea9eae8e052602ff9c0557edd0940d62116df60efa6b09f5fb62e903; target_shape=191c6cf4d11e56d0968b29a27e6bceb24b187869631b16a73bf6f1f5ed08d47c"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/a42d2da3a72e5a12e24e36fbefce100c8a18e7e174002c00d5ab54eb57d00024",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=show_name-\u003e; type=true-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/a682b4ccb10bf37db7e171a695e76da32dcc5966346cc2bc6e0867c9d64591e1",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectLegacyDefaultKeyboardButton",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:keyboardButton; wire=0x2f67a72f-\u003e0x7d170cff; field=type-\u003e; type=ButtonType-\u003e; source_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43; target_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/a8bcb43cf4238f8248261e234066bc4a7b226fbc6609209f33761c2d4da5b6e5",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=force_reply-\u003e; type=true-\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/ba133d0dce596725be1b690b934208adeb797aaedb95212e37846bb3ceffdcd1",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectLegacyDefaultKeyboardButton",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:keyboardButton; wire=0x2f67a72f-\u003e0x7d170cff; field=type-\u003e; type=ButtonType-\u003e; source_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43; target_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/bb2be4992fc024b4fd61f33d8987b5c3041ae526eede53d063462d6386d4636f",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=chat_instance-\u003e; type=long-\u003e; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/be0e77b4952bdbdf69254ff598fc64310f64532be3801d7468b33695e4a400ec",
+      "resolution": {
+        "action": "project",
+        "hook": "layerProjectLegacyDefaultKeyboardButton",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:keyboardButton; wire=0x2f67a72f-\u003e0x7d170cff; field=type-\u003e; type=ButtonType-\u003e; source_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43; target_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/c7026b7002eca9e4d342d5a5d7c5b1db7675ddc5c636bbb5abff09e02948fa30",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=function:ephemeral.sendMessage; wire=0xba8d5f35-\u003e0x68cbd09f; field=noforwards-\u003e; type=true-\u003e; source_shape=48585103e3dd307920e976d9849b77df147e4f2e91be50a73bf7edb5cf1821d7; target_shape=8734385fadd9d3297422642cfbad8c68874084e248c7e1d497dcd75a3e9d707a"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/ca64a0c9039f3b617c6e3fc60947d0dbca97c441251f30d50ba55b5c128b34c9",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/ccd6c9b698bc653fd820c53ba12d7a02d7dca88d55b224a4043865b0ac51167d",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=function:ephemeral.sendMessage; wire=0xba8d5f35-\u003e0x68cbd09f; field=welcome-\u003e; type=true-\u003e; source_shape=48585103e3dd307920e976d9849b77df147e4f2e91be50a73bf7edb5cf1821d7; target_shape=8734385fadd9d3297422642cfbad8c68874084e248c7e1d497dcd75a3e9d707a"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/d94311791013d088cd7c23cf3be8110d3818b45d4737dc184e079ed4ae1b7137",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=invert_media-\u003e; type=true-\u003e; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/dcf09e505e960127b64b1f3a9864a0eca0c981845e423978d6833b56ed666150",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=force_reply-\u003e; type=true-\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/dff5b74c3a165e3f4a60b5e276b12ede6c04300304a97fc915f1007a0aabe14e",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=225; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=name_hidden-\u003e; type=true-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/e4789b769d5d3ec598a182fe4c776e845eeeb285a6a78038ad211c62ed3c20b4",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=227; direction=canonical-to-profile; semantic=type:replyKeyboardMarkup; wire=0x85dd99d1-\u003e0x85dd99d1; field=force_reply-\u003e; type=true-\u003e; source_shape=792c8535ea9eae8e052602ff9c0557edd0940d62116df60efa6b09f5fb62e903; target_shape=191c6cf4d11e56d0968b29a27e6bceb24b187869631b16a73bf6f1f5ed08d47c"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/f1f3a4902f46449a1a56a15875bf04754462e77f721e498ba7e29694307a3512",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:messageActionStarGiftUnique; wire=0x7e1c1187-\u003e0xe6c31522; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=f6ab6ac4da445e3648d5b399d6226e44f5ec37fb7a8286c93999d1c55bb21b37; target_shape=9ae5fc8a92837b406a0685cce13a012e632a1c213de332f2632811b747eb61ea"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/f4ed6c32d88de0f9223ab65c18cbee41f82b1705e2851c20990ee89651c8f22a",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=226; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/fce20eccb6bf9d9fe16d04b760531d6e7d520adb9f6063b207b00f4dc21abd53",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=noforwards-\u003e; type=true-\u003e; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/field-projection/fe65d8535813f718755a62de6580ee82437456887b506a72fdd09fdbca017a41",
+      "resolution": {
+        "action": "reject-if-present",
+        "note": "kind=field-projection; layer=228; direction=canonical-to-profile; semantic=type:inputInvoiceStarGiftResale; wire=0xe9b0c658-\u003e0xc39f5324; field=message-\u003e; type=TextWithEntities-\u003e; source_shape=7fb36f97ae0ad984fa5b106531693a610400f2e79cde59ddb7c15554f7ccd640; target_shape=0b0b5cbdcddd3eb9d13277b08f0240aac9edeef278912f593b04556d8e9f35fa"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/1fb518e7daa2f8b3972fde83d91ade59bc3b565deb136d7f39e989b7e5be4653",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=226; direction=profile-to-canonical; semantic=type:replyInlineMarkup; wire=0x48a30254-\u003e0xb2b15770; field=rows-\u003erows; type=Vector\u003cKeyboardButtonRow\u003e-\u003eVector\u003cKeyboardInlineButtonRow\u003e; source_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9; target_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/603725778243a792e6973c9ed5bd37b032f79e015615d0066d54c2ffb3b2ed1c",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=225; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=rows-\u003erows; type=Vector\u003cKeyboardInlineButtonRow\u003e-\u003eVector\u003cKeyboardButtonRow\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/7452b25f1684355150313ad659abcf402e02290d8c245f27755eab4dd2288a5e",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=227; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=rows-\u003erows; type=Vector\u003cKeyboardInlineButtonRow\u003e-\u003eVector\u003cKeyboardButtonRow\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/7cdc023097674c7aac4b71fc7e297ecb6ce175e90bfdeaec407f3e1b69caf2b9",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=227; direction=profile-to-canonical; semantic=type:replyInlineMarkup; wire=0x48a30254-\u003e0xb2b15770; field=rows-\u003erows; type=Vector\u003cKeyboardButtonRow\u003e-\u003eVector\u003cKeyboardInlineButtonRow\u003e; source_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9; target_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/d37f2922a79d100481868053e06324e479b80603635be2534abcdc1643e40f89",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=228; direction=profile-to-canonical; semantic=type:replyInlineMarkup; wire=0x48a30254-\u003e0xb2b15770; field=rows-\u003erows; type=Vector\u003cKeyboardButtonRow\u003e-\u003eVector\u003cKeyboardInlineButtonRow\u003e; source_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9; target_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/e23a2f69a03a2dd235c736fb03b303c366c61a8d810aae34f70927823d97154b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=225; direction=profile-to-canonical; semantic=type:replyInlineMarkup; wire=0x48a30254-\u003e0xb2b15770; field=rows-\u003erows; type=Vector\u003cKeyboardButtonRow\u003e-\u003eVector\u003cKeyboardInlineButtonRow\u003e; source_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9; target_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/eb02bee35d13a8f058314383e23df01f9fd1849bf9f0a65ade76dc6eb64321f5",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=228; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=rows-\u003erows; type=Vector\u003cKeyboardInlineButtonRow\u003e-\u003eVector\u003cKeyboardButtonRow\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/incompatible/ec8b62a3fab041287f5af53d7d915faa98364eb21d9d515767d0da1cf7668464",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInlineKeyboardRows",
+        "note": "kind=incompatible; layer=226; direction=canonical-to-profile; semantic=type:replyInlineMarkup; wire=0xb2b15770-\u003e0x48a30254; field=rows-\u003erows; type=Vector\u003cKeyboardInlineButtonRow\u003e-\u003eVector\u003cKeyboardButtonRow\u003e; source_shape=b75286e447b59ba4eac3e1c81771c95bd32ae4e218bae9f7fb1d4933afcf7852; target_shape=cf9ebdc5ee66d31a3c908a44ca0c32f0ae7fbcf0996385035aac50f31b47a2f9"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/04095a246f363f365768d27cfea9ed4d959a1cff28664178e227bddfa5d2f9e5",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonSimpleWebView",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonSimpleWebView; wire=0xe15c4370-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/103dc1e0f95889c9f53b3a237b7fe6327b9c7d087fef09571d542a919a034426",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPhone",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPhone; wire=0x417efd8f-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/10655dde65a248e176961f56f21e1572bb1a578e105823704059437e20489a40",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonUrlAuth; wire=0xf51006f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=1cdc6438b7bc92c7556d016fcec5823448bbc85a083f54c589ddfd9c3758a67c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/1ac0f3adf016f09327e66442be45cc8ebbcf2893a07d62b1b18b9f38f94a2a1a",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:inputKeyboardButtonRequestPeer; wire=0x02b78156-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=613b75cc899127cd301af2469ffd38680a72c2876dacbe0cd16f97e3089b4c1f; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/1b1aac2dd0114ed4595c7b8e0491de60c112ff9bafd577d70f5f8803ca2c22e3",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCopy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonCopy; wire=0xbcc4af10-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=5ff87efeca38a7c85bdbc993a3d8632fdf959072a2ceca584d0937c7c46beace; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/1b35419b38352343c1bc8fd82544c94d4e68f524a4f1c69150860e443eed1b6a",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUrlAuth; wire=0x68013e72-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=8664b2121a66a0868054ec70270d831f685f1bd997536d9a3855d0bebdf68b65; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/21131a0bb7f139c29c3365bc724df9d633a44d9cbbf6c7fd0f41d3bf4bb14c40",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUserProfile; wire=0x7d5e07c7-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=4d00d2f281650780636bb5a25e365f3d2883dd7a26b01de9ec26de4dc8b2a8ea; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/21a40b904fcab1cfb949b3f85943526e3d163d049b8f40b51c64d9adeaa842a9",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCallback",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonCallback; wire=0xe62bc960-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=dd6defa115e93a6051c9506e184ffc215abb18924d09cbdd131ab6c9404727fc; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/22662ff9c55ef797ed09f037bcdcab00559bda0a628cdcdf9eaa5378c36aca75",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonUserProfile; wire=0xc0fd5d09-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=087f0700346b89a7c1523056899b50ec4e4157f7c70d824b760acbdf6d2655e2; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/293e17c1f14029a9c523223d30ac145c37495c8aad18d83bdc2e19a968a270e5",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUrlAuth; wire=0x68013e72-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=8664b2121a66a0868054ec70270d831f685f1bd997536d9a3855d0bebdf68b65; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/2b1cc0a9466c0d0e4929ea0c78d444b7d8dc0b46e7d54d7f32f50e08f59d1129",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPoll",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPoll; wire=0x7a11d782-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=97d78c881b34981a8c3d09d4fb79096a3a3f3a8fa03a1127e8d8cb9e451b91bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/2b4d32b81a08e68f2c9077d7803c9cd1ab6015274b6d59dc6e6530e9b4fd5861",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonBuy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonBuy; wire=0x3fa53905-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/2cf17db664114ae11de3a74b27d57cc54a534641ba11c7dedb5b8f04a800dabc",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCopy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonCopy; wire=0xbcc4af10-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=5ff87efeca38a7c85bdbc993a3d8632fdf959072a2ceca584d0937c7c46beace; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/2eb7b235edaff159207505feafce7dc1387ef440f6729fbde7643c5f161fa35b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonUrlAuth; wire=0xf51006f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=1cdc6438b7bc92c7556d016fcec5823448bbc85a083f54c589ddfd9c3758a67c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/2f260964d7fe9652fa75afbcf0db714f9fc30b781f149a1da3e77996b47858f7",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:inputKeyboardButtonRequestPeer; wire=0x02b78156-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=613b75cc899127cd301af2469ffd38680a72c2876dacbe0cd16f97e3089b4c1f; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/2f3c9f1c3b34b637988e5f07d47456301962b635daf169fdafd04677972d2ed4",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUserProfile; wire=0x7d5e07c7-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=4d00d2f281650780636bb5a25e365f3d2883dd7a26b01de9ec26de4dc8b2a8ea; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/31cab45edc25864ce5f7131822db1b30164fca1d2e09ff475e8ff8563691f5d9",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonSwitchInline",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonSwitchInline; wire=0x991399fc-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=6b4f983ffac2d2f39b8f2dfbf358029a34c4f481ce827c75a49ddf9b96050a79; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/3348480bf0c5389b3876adc5e88e43e3b63f0b947900043f820169908772ebf9",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCopy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonCopy; wire=0xbcc4af10-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=5ff87efeca38a7c85bdbc993a3d8632fdf959072a2ceca584d0937c7c46beace; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/35f70cc6bd8b548042c7211d685583c4fafc7d15f8e1e88fce740dac5d63aab6",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPeer; wire=0x5b0f15f5-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=2291541f500378c92643341b13d063ee35175e4080e2ffb0894ae7f976da556c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/3833964d1f495b6a57e66ae3ce21cd2e88486578eb2656183b0b6a9a3681e79b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonWebView",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonWebView; wire=0xe846b1a0-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/39ce046330d6a98d19397847037e349e1d4dca8c34b8f078c42183344a89c034",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:inputKeyboardButtonRequestPeer; wire=0x02b78156-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=613b75cc899127cd301af2469ffd38680a72c2876dacbe0cd16f97e3089b4c1f; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/3da77a340f6ae3570c1ce9a85719e9497cbf1f50539dec06eff1193801a41862",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonWebView",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonWebView; wire=0xe846b1a0-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/438797c663beff6c83bd2ccf08bca3546a5b8d60e32a506970bf27f64e382458",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestGeoLocation",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonRequestGeoLocation; wire=0xaa40f94d-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/47a42524785c305092f9979e43f5227dde7257b05bab4866e268972206d41bae",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUrlAuth; wire=0x68013e72-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=8664b2121a66a0868054ec70270d831f685f1bd997536d9a3855d0bebdf68b65; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/501567bad91b16f100ec1b03be2525189d0bbd579105541a4722708a386b2555",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestGeoLocation",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonRequestGeoLocation; wire=0xaa40f94d-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/53bb9f9f3b101ac1e3267709b1ea3ae2004803738f249090b5feccb9467cc61d",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonSimpleWebView",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonSimpleWebView; wire=0xe15c4370-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/55b7f91f2cd87d9bbe19b2ca67617d0fbe2301dabc62dcbe6fe388d924e87ed9",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUrlAuth; wire=0x68013e72-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=8664b2121a66a0868054ec70270d831f685f1bd997536d9a3855d0bebdf68b65; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/5b29b6786ee57312098ef1bd203d73ae919ceba57e9a8f1873b90b4ed823cc90",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonUrlAuth; wire=0xf51006f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=1cdc6438b7bc92c7556d016fcec5823448bbc85a083f54c589ddfd9c3758a67c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/5d2ac086d14b20b063a010e81795bbcd065ee85d765ac3da1dfd800aa809e3d1",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonSwitchInline",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonSwitchInline; wire=0x991399fc-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=6b4f983ffac2d2f39b8f2dfbf358029a34c4f481ce827c75a49ddf9b96050a79; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/5eb46876c1933161818d1bb88f69f5aa2f9747c9fed5f9ad263b775c92e7af27",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonWebView",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonWebView; wire=0xe846b1a0-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/625f4e6ab0fffae7c8a248596f3e47a9ec1bd12f88c43c5eadaadfa423edae30",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPhone",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPhone; wire=0x417efd8f-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/6508c9620b49e0bdcb55fdc4eb7f8b1c3ca79e296ad604cfde4724cd3316fd6c",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonSwitchInline",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonSwitchInline; wire=0x991399fc-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=6b4f983ffac2d2f39b8f2dfbf358029a34c4f481ce827c75a49ddf9b96050a79; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/65e4b2559e899b28cb34f1c8c7a64344e44740c4077757298f8a0c95ec5c506e",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonWebView",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonWebView; wire=0xe846b1a0-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/6bca8c00c6f39f55dd396d5f162c6f18a42ae0eaf5b0fc0cf726ae6286515ee6",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonGame",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonGame; wire=0x89c590f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/6bcde63b76f115f5efa8b4c75c338d9f73752765347ef4359d2be19795b8fdba",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestGeoLocation",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonRequestGeoLocation; wire=0xaa40f94d-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/7001f6d8c40c93385748f5045538ef4ae7ef13f789bf312b3c2da6dd7335f6df",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:inputKeyboardButtonRequestPeer; wire=0x02b78156-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=613b75cc899127cd301af2469ffd38680a72c2876dacbe0cd16f97e3089b4c1f; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/71aa3e1a9d989231e3cb0907007dfa4063bcc9ad04e7114456f5ea8e5f1244dd",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCopy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonCopy; wire=0xbcc4af10-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=5ff87efeca38a7c85bdbc993a3d8632fdf959072a2ceca584d0937c7c46beace; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/744a9f7c30fd7a19e1195483f901a18da08fb822435d0ea36c502f2f81ae5f00",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonUserProfile; wire=0xc0fd5d09-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=087f0700346b89a7c1523056899b50ec4e4157f7c70d824b760acbdf6d2655e2; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/7f2f78a8865d5c3decae9442bc1101f38172a8d36c56879a83edc37031cc155c",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonGame",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonGame; wire=0x89c590f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/8324f49bc05f94861b89573f8384b96b564ff217b0db2a3a1220a546a95e081b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUserProfile; wire=0x7d5e07c7-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=4d00d2f281650780636bb5a25e365f3d2883dd7a26b01de9ec26de4dc8b2a8ea; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/835cd78af951cd13bfc3fd44d97d88f29a512ead78a60ee0bd1559ed3fb11128",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPeer; wire=0x5b0f15f5-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=2291541f500378c92643341b13d063ee35175e4080e2ffb0894ae7f976da556c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/87fa0e52ebd4c3b72ecbca42888c0203980852f96d505c837f5e8f58c1f4d6a6",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCallback",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonCallback; wire=0xe62bc960-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=dd6defa115e93a6051c9506e184ffc215abb18924d09cbdd131ab6c9404727fc; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/8acaf47eccc927a0c98ada3f0f5237eecb3aee88ac145346cb7ae128bb076fdb",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonBuy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonBuy; wire=0x3fa53905-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/8e79fe5738d90fc474ffe0483792cd2d8941a2f4a4f644460739562d1c44e95a",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonGame",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonGame; wire=0x89c590f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/96d470cac693db026bef9968dbb480464a2c7599721d11cca66e4667fc64ebdd",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURL",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonUrl; wire=0xd80c25ec-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/a08033fe9143df24ecb3c36ce2e6e36e3aef8b673032f0e8635b44cd5cad4ba8",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURL",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonUrl; wire=0xd80c25ec-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/a419d407d2ffd32e89df2e079b011bf5cf9549b620d8e52f05a5290558df2de7",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCallback",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonCallback; wire=0xe62bc960-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=dd6defa115e93a6051c9506e184ffc215abb18924d09cbdd131ab6c9404727fc; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/acdb91c9d2cc7f48bfc139fff143faf92fd6b7d392009908e11e014754ae979b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURL",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonUrl; wire=0xd80c25ec-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/b2e01045777218bf16524e127aebd21bcf2652613aa17110520632559f0db6d5",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURLAuth",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonUrlAuth; wire=0xf51006f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=1cdc6438b7bc92c7556d016fcec5823448bbc85a083f54c589ddfd9c3758a67c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/b5982aee67e6a41a40124c5206a33feabdeb1d25fcf766ae6455c2ebd638988a",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPeer; wire=0x5b0f15f5-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=2291541f500378c92643341b13d063ee35175e4080e2ffb0894ae7f976da556c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/bc49e5f0fd4755df1badbda910f6406531e3a0413e1326f66d4a537cf6f19d28",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonUserProfile; wire=0xc0fd5d09-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=087f0700346b89a7c1523056899b50ec4e4157f7c70d824b760acbdf6d2655e2; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/bd34395b79506ebf548dda4e8713fd2cc38006fc7796ca112fb165dc2f72806e",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPoll",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPoll; wire=0x7a11d782-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=97d78c881b34981a8c3d09d4fb79096a3a3f3a8fa03a1127e8d8cb9e451b91bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/c043d49b430e2ffff139bb2efa9f98f382898c95915b734e388696f00ff218ad",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonURL",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonUrl; wire=0xd80c25ec-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/c213284c444343bc86b7bee232f76dc6a5e7045c88c99d0ebca840f251a4c791",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonBuy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonBuy; wire=0x3fa53905-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/c5886ab9481da0eda320b63f15a74bf152e0930e3d79943171adc703bf588dea",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPhone",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPhone; wire=0x417efd8f-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/c6c0e7a3201f906bbded519b533bb96fe47d02e0fc0085dd3ac0560ab585e0ea",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonSwitchInline",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonSwitchInline; wire=0x991399fc-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=6b4f983ffac2d2f39b8f2dfbf358029a34c4f481ce827c75a49ddf9b96050a79; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/c76668772e8f5fbd926b7c313f14ec8097567ebe5087efe5b214303c0504016b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPeer",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPeer; wire=0x5b0f15f5-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=2291541f500378c92643341b13d063ee35175e4080e2ffb0894ae7f976da556c; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/c882799a00bf925b6e54b0b6fef932a99db9297864598e581d11ecb3e73fd7c0",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonUserProfile; wire=0xc0fd5d09-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=087f0700346b89a7c1523056899b50ec4e4157f7c70d824b760acbdf6d2655e2; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/cb12720562c9acdaba083792e17236b5aea293f2586132c804b6d353acd957cd",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonGame",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=225; direction=profile-to-canonical; semantic=type:keyboardButtonGame; wire=0x89c590f9-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/d306af07e914990034746205a463297350ad2d9c67625aed1fd53ff8cbf30922",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPoll",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPoll; wire=0x7a11d782-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=97d78c881b34981a8c3d09d4fb79096a3a3f3a8fa03a1127e8d8cb9e451b91bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/d425a94bd51644727bd32ad2a3437913cdd5086c816ecad90fcec1880dbd7393",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestGeoLocation",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:keyboardButtonRequestGeoLocation; wire=0xaa40f94d-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/d522c88a32accbc3a1f9632bf7697641ed3b076bf886dbe1f5c09afbd06e483a",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPoll",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPoll; wire=0x7a11d782-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=97d78c881b34981a8c3d09d4fb79096a3a3f3a8fa03a1127e8d8cb9e451b91bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/d76c7a467ee526cc25eb32f4034950d4a2fd05053900430bf7ca294d379b1d4b",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonCallback",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonCallback; wire=0xe62bc960-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=dd6defa115e93a6051c9506e184ffc215abb18924d09cbdd131ab6c9404727fc; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/d7bcab9eb2c8f2b26b3433dde06904abce93f59a9e163cbde534e0591aa84427",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonSimpleWebView",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonSimpleWebView; wire=0xe15c4370-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/dcbecaa1bdd5ae5f480ea6fb665f2e0de38084cf63af35ce47cbd42576948b0d",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyInputKeyboardInlineButtonUserProfile",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=227; direction=profile-to-canonical; semantic=type:inputKeyboardButtonUserProfile; wire=0x7d5e07c7-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=4d00d2f281650780636bb5a25e365f3d2883dd7a26b01de9ec26de4dc8b2a8ea; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/dfb626b4928c449ecb8d2a742a799946a92fc4721b60a5b18b059227ba085c3e",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardInlineButtonBuy",
+        "target": "type:keyboardInlineButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonBuy; wire=0x3fa53905-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/e4b0b378dd9513571abb9080346cbe3b81ec36553d9dc743c43fe49180442a2c",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonRequestPhone",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=228; direction=profile-to-canonical; semantic=type:keyboardButtonRequestPhone; wire=0x417efd8f-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/old-only/f6473235ef8c507f5b195bee64361e5dcfcb5b8a67a0cf5a213c45d27092140d",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerAdaptLegacyKeyboardButtonSimpleWebView",
+        "target": "type:keyboardButton",
+        "note": "kind=old-only; layer=226; direction=profile-to-canonical; semantic=type:keyboardButtonSimpleWebView; wire=0xe15c4370-\u003e0x00000000; type=KeyboardButton-\u003e; source_shape=64f3d92fd85e340779d981320332ccec133593b5872157f489501777677e4077; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
       "key": "layer-obligation/v1/required/0c6cb2271ca5901d9c9de5b357ecf292420516611ff6b6f86b1f6a0d91c319a8",
       "resolution": {
         "action": "default",
         "note": "kind=required; layer=225; direction=profile-to-canonical; semantic=type:auth.sentCodePaymentRequired; wire=0xe0955a3c-\u003e0xf8827ebf; field=-\u003epremium_days; type=-\u003eint; source_shape=d6fca389d4abef2f9130eaf369e52010a711f85472c3200d7c05d33d9842b056; target_shape=1cc470a331d1ce106352041967817006f1ff034ca122c186a35ff11cc1f0cabe"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/required/0e338c90cfccd7748b1e6f7124de6b6d929e2ae8b4a2d93e226dc60c9147a493",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerDefaultLegacyKeyboardButtonType",
+        "note": "kind=required; layer=225; direction=profile-to-canonical; semantic=type:keyboardButton; wire=0x7d170cff-\u003e0x2f67a72f; field=-\u003etype; type=-\u003eButtonType; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/required/1051a55d4f57064689e68ed4a47ba6a7fd45d00672420509ecac88acdac5afe2",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerDefaultLegacyKeyboardButtonType",
+        "note": "kind=required; layer=228; direction=profile-to-canonical; semantic=type:keyboardButton; wire=0x7d170cff-\u003e0x2f67a72f; field=-\u003etype; type=-\u003eButtonType; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43"
       }
     },
     {
@@ -91,6 +1081,38 @@
       }
     },
     {
+      "key": "layer-obligation/v1/required/84054961032a4cff3970ec00b97c9a5623f58a6248376136b9cea7afdf4686d0",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerDefaultLegacyKeyboardButtonType",
+        "note": "kind=required; layer=226; direction=profile-to-canonical; semantic=type:keyboardButton; wire=0x7d170cff-\u003e0x2f67a72f; field=-\u003etype; type=-\u003eButtonType; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/required/b26b1a6b542d3c2f695e107256f15588fd21f7b903ae65f6bfafdaceab77441d",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerRequireLegacyEphemeralMessagePeer",
+        "note": "kind=required; layer=228; direction=canonical-to-profile; semantic=type:ephemeralMessage; wire=0xdd27bee9-\u003e0xd9c6dc1a; field=peer_id-\u003epeer_id; type=Peer-\u003ePeer; source_shape=ca8836f495a46cbc1d82582a1aed076064607accaddaae64fdc17962762e98e2; target_shape=c49a14b9ce1ed3e7e7b38e75f82624d6d942e108c572da524f6209bc5d4f56df"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/required/b978a53816d06b83b98c1b0c2e6ac49344a1e152492c92e9cf7d358a4bac1f30",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerDefaultLegacyKeyboardButtonType",
+        "note": "kind=required; layer=227; direction=profile-to-canonical; semantic=type:keyboardButton; wire=0x7d170cff-\u003e0x2f67a72f; field=-\u003etype; type=-\u003eButtonType; source_shape=d5de65f73914c8ec962960b97070a20b698fe29e5dccd18b0735273b38010d31; target_shape=f58bb0f4c175be9e8798770d8b6173fed7e5340b641f1e9a8679e54d235f4b43"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/required/ba08f85cc74d2237856597b3e207fbea66f63757f959e7802708832a5576cde7",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerRequireLegacyEphemeralSendPeer",
+        "note": "kind=required; layer=228; direction=canonical-to-profile; semantic=function:ephemeral.sendMessage; wire=0xba8d5f35-\u003e0x68cbd09f; field=peer-\u003epeer; type=InputPeer-\u003eInputPeer; source_shape=48585103e3dd307920e976d9849b77df147e4f2e91be50a73bf7edb5cf1821d7; target_shape=8734385fadd9d3297422642cfbad8c68874084e248c7e1d497dcd75a3e9d707a"
+      }
+    },
+    {
       "key": "layer-obligation/v1/required/cd9125a49bb4740f5108e644ca0a2323925d40a81a9df4f50e3bafc49ba167d7",
       "resolution": {
         "action": "reject",
@@ -102,6 +1124,14 @@
       "resolution": {
         "action": "default",
         "note": "kind=required; layer=225; direction=canonical-to-profile; semantic=type:pageListOrderedItemText; wire=0x15031189-\u003e0x5e068047; field=num-\u003enum; type=string-\u003estring; source_shape=798a5fc5cae9cbfb8334adb83b556c5a840a131b53795215facc76533800a8b4; target_shape=e6526f006ba37a5c0c3214bdd71b48f28b5abf935fd47af1455785075acfd4d8"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/required/e5172cf75a29757f3d8a2c83e52ed0f2696d4e2c97a12538fb31a858796e3374",
+      "resolution": {
+        "action": "adapter",
+        "hook": "layerRequireLegacyEphemeralDeletePeer",
+        "note": "kind=required; layer=228; direction=canonical-to-profile; semantic=function:ephemeral.deleteMessage; wire=0x92f6e797-\u003e0xa3c0d511; field=peer-\u003epeer; type=InputPeer-\u003eInputPeer; source_shape=35174d25a41609c9f3447fce9f9d280c2c4fae5127d693ff0c735be95d3395ac; target_shape=badf9af5f17cc4e1483dbb0f31f4c7ce4290ebd2fcab01fd27adb187c78ee3fa"
       }
     },
     {
@@ -209,6 +1239,20 @@
       }
     },
     {
+      "key": "layer-obligation/v1/update-projection/51b67248ab9901093d542da0d8d8e039ead9ea507b09a1449ba5c79f05105c5d",
+      "resolution": {
+        "action": "drop",
+        "note": "kind=update-projection; layer=226; direction=canonical-to-profile; semantic=type:updateEphemeralBotCallbackQuery; wire=0x7c1079d6-\u003e0x00000000; type=Update-\u003e; source_shape=e6ef279060da9ffeeb97aee57ce2a6c8a031fb757703d6b0aa55f72f002ce3bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/update-projection/6b7e151f0459839a37f9e453a3d676b0f58e917a37e5aae23d22dd0912aa1022",
+      "resolution": {
+        "action": "drop",
+        "note": "kind=update-projection; layer=225; direction=canonical-to-profile; semantic=type:updateEphemeralBotCallbackQuery; wire=0x7c1079d6-\u003e0x00000000; type=Update-\u003e; source_shape=e6ef279060da9ffeeb97aee57ce2a6c8a031fb757703d6b0aa55f72f002ce3bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
       "key": "layer-obligation/v1/update-projection/86b854a43c9f4fe067f8f3ef96fdf8c9fd08777c5d73b5e97cbca69c66d0d001",
       "resolution": {
         "action": "drop",
@@ -220,6 +1264,13 @@
       "resolution": {
         "action": "drop",
         "note": "kind=update-projection; layer=227; direction=canonical-to-profile; semantic=type:updateNewEphemeralMessage; wire=0x20bcbba1-\u003e0x00000000; type=Update-\u003e; source_shape=4e57255a3465abc2665cf75c44ab703bef2e78ff555c288a18479afa9a57a990; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/update-projection/934658ffc615745acc479d24bb4291e6ec85b0b71e4d096a58894a5b7d287581",
+      "resolution": {
+        "action": "drop",
+        "note": "kind=update-projection; layer=227; direction=canonical-to-profile; semantic=type:updateEphemeralBotCallbackQuery; wire=0x7c1079d6-\u003e0x00000000; type=Update-\u003e; source_shape=e6ef279060da9ffeeb97aee57ce2a6c8a031fb757703d6b0aa55f72f002ce3bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     },
     {
@@ -276,6 +1327,13 @@
       "resolution": {
         "action": "drop",
         "note": "kind=update-projection; layer=225; direction=canonical-to-profile; semantic=type:updateDeleteEphemeralMessages; wire=0x56dbfcf8-\u003e0x00000000; type=Update-\u003e; source_shape=73d0e0c1bd2550bff811fee67243e7624522d81f12ca67e1469cf8cac0cd182e; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    {
+      "key": "layer-obligation/v1/update-projection/faa6a4b768c1c73b3b9ad5b6376dbf119ea1e184d5421ed64789ee497f899366",
+      "resolution": {
+        "action": "drop",
+        "note": "kind=update-projection; layer=228; direction=canonical-to-profile; semantic=type:updateEphemeralBotCallbackQuery; wire=0x7c1079d6-\u003e0x00000000; type=Update-\u003e; source_shape=e6ef279060da9ffeeb97aee57ce2a6c8a031fb757703d6b0aa55f72f002ce3bb; target_shape=0000000000000000000000000000000000000000000000000000000000000000"
       }
     }
   ]

@@ -1374,7 +1374,7 @@ func tlDecodeObjectPrefixScanned(profile Profile, in *bin.Buffer, limits Limits)
 		in.ResetTo(cursor.Raw())
 		return value, nil
 	}
-	if route.mode == tlRouteRewrite || route.mode == tlRoutePolicy {
+	if route.mode == tlRouteRewrite || route.mode == tlRoutePolicy || route.mode == tlRouteProfileOnly {
 		cursor := &bin.Buffer{Buf: in.Raw()}
 		value, err := tlDecodeSparse(profile, wireID, cursor, limits)
 		if err != nil {

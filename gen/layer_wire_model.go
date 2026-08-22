@@ -65,7 +65,7 @@ type layerWireModel struct {
 	// effective semantic-to-wire mapping.
 	HistoricalConstructors []*layerHistoricalConstructorPlan
 	historicalByWire       map[layerHistoricalWireKey]*layerHistoricalConstructorPlan
-	historicalByTarget     map[layerHistoricalTargetKey]*layerHistoricalConstructorPlan
+	historicalByTarget     map[layerHistoricalTargetKey][]*layerHistoricalConstructorPlan
 	historicalBySource     map[layerHistoricalSourceKey]*layerHistoricalConstructorPlan
 }
 
@@ -180,6 +180,17 @@ func (m *layerWireModel) historicalWire(layer int, wireID uint32) *layerHistoric
 }
 
 func (m *layerWireModel) historicalTarget(layer int, key semantic.SemanticKey) *layerHistoricalConstructorPlan {
+	if m == nil {
+		return nil
+	}
+	plans := m.historicalByTarget[layerHistoricalTargetKey{Layer: layer, Key: key}]
+	if len(plans) != 1 {
+		return nil
+	}
+	return plans[0]
+}
+
+func (m *layerWireModel) historicalTargets(layer int, key semantic.SemanticKey) []*layerHistoricalConstructorPlan {
 	if m == nil {
 		return nil
 	}
@@ -324,7 +335,7 @@ func buildLayerHistoricalConstructorPlans(model *layerWireModel) error {
 		return fmt.Errorf("gen: historical constructor plan requires wire bindings")
 	}
 	model.historicalByWire = make(map[layerHistoricalWireKey]*layerHistoricalConstructorPlan)
-	model.historicalByTarget = make(map[layerHistoricalTargetKey]*layerHistoricalConstructorPlan)
+	model.historicalByTarget = make(map[layerHistoricalTargetKey][]*layerHistoricalConstructorPlan)
 	model.historicalBySource = make(map[layerHistoricalSourceKey]*layerHistoricalConstructorPlan)
 	sourceTargets := make(map[semantic.SemanticKey]semantic.SemanticKey)
 
@@ -356,16 +367,7 @@ func buildLayerHistoricalConstructorPlans(model *layerWireModel) error {
 			if target == nil || target.Definition == nil || target.Structure == nil {
 				return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_TARGET_NOT_FOUND: layer %d wire %#08x target %s has no canonical constructor binding", action.Layer, wire.WireID, targetKey)
 			}
-			if targetFamily := model.family(targetKey); targetFamily != nil {
-				if targetAction := targetFamily.profile(action.Layer); targetAction != nil && targetAction.WireIndex >= 0 &&
-					(targetAction.Kind == layerWireDirect || targetAction.Kind == layerWireRetag || targetAction.Kind == layerWireRewrite || targetAction.Kind == layerWirePolicy) {
-					return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_AMBIGUOUS_TARGET: layer %d canonical target %s already has wire %#08x and cannot also alias historical wire %#08x", action.Layer, targetKey, model.Wires[targetAction.WireIndex].WireID, wire.WireID)
-				}
-			}
 			definition := action.Variant.Definition
-			if !definition.Result.Equal(target.Definition.Result) {
-				return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_CLASS_MISMATCH: layer %d wire %#08x result %s cannot map to target %s result %s", action.Layer, wire.WireID, definition.Result.String(), targetKey, target.Definition.Result.String())
-			}
 			if len(definition.GenericParams) != 0 {
 				return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_GENERIC: layer %d wire %#08x historical constructors with generic parameters are not statically emittable", action.Layer, wire.WireID)
 			}
@@ -388,18 +390,20 @@ func buildLayerHistoricalConstructorPlans(model *layerWireModel) error {
 				return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_DUPLICATE_WIRE: layer %d wire %#08x maps to both %s and %s", action.Layer, wire.WireID, previous.TargetKey, targetKey)
 			}
 			targetMapKey := layerHistoricalTargetKey{Layer: action.Layer, Key: targetKey}
-			if previous := model.historicalByTarget[targetMapKey]; previous != nil {
-				return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_AMBIGUOUS_TARGET: layer %d canonical target %s maps to historical wires %#08x and %#08x", action.Layer, targetKey, previous.WireID, wire.WireID)
-			}
 			sourceMapKey := layerHistoricalSourceKey{Layer: action.Layer, Key: wire.Key}
 			if previous := model.historicalBySource[sourceMapKey]; previous != nil {
 				return fmt.Errorf("gen: E_PROFILE_ONLY_TYPE_DUPLICATE_SOURCE: layer %d historical semantic %s maps to wires %#08x and %#08x", action.Layer, wire.Key, previous.WireID, wire.WireID)
 			}
 			model.historicalByWire[wireKey] = plan
-			model.historicalByTarget[targetMapKey] = plan
+			model.historicalByTarget[targetMapKey] = append(model.historicalByTarget[targetMapKey], plan)
 			model.historicalBySource[sourceMapKey] = plan
 			model.HistoricalConstructors = append(model.HistoricalConstructors, plan)
 		}
+	}
+	for key := range model.historicalByTarget {
+		sort.Slice(model.historicalByTarget[key], func(i, j int) bool {
+			return model.historicalByTarget[key][i].WireID < model.historicalByTarget[key][j].WireID
+		})
 	}
 	return nil
 }

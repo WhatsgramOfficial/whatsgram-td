@@ -3,6 +3,7 @@ package gen
 import (
 	"bytes"
 	"go/format"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -67,29 +68,45 @@ func TestTLProfileSidecarGeneratedMetadata(t *testing.T) {
 	generatedText := generated.String()
 	var directWires int
 	for _, wire := range model.Wires {
-		if !wire.SparseDirect {
-			continue
+		if wire.SparseDirect {
+			directWires++
+			encode := "func " + wire.EncodeBareName + "Body("
+			if got := strings.Contains(generatedText, encode); got != wire.SparseEncode {
+				t.Errorf("tlprofile sparse direct wire %#08x encode helper presence = %v, want %v", wire.WireID, got, wire.SparseEncode)
+			}
+			decode := "func " + wire.DecodeName + "("
+			if got := strings.Contains(generatedText, decode); got != wire.SparseDecode {
+				t.Errorf("tlprofile sparse direct wire %#08x decode helper presence = %v, want %v", wire.WireID, got, wire.SparseDecode)
+			}
 		}
-		directWires++
-		encode := "func " + wire.EncodeBareName + "Body("
-		if got := strings.Contains(generatedText, encode); got != wire.SparseEncode {
-			t.Errorf("tlprofile sparse direct wire %#08x encode helper presence = %v, want %v", wire.WireID, got, wire.SparseEncode)
+		var forbidden []string
+		if !wire.ProfileOnly {
+			forbidden = append(forbidden, "func "+wire.EncodeName+"(")
 		}
-		decode := "func " + wire.DecodeName + "("
-		if got := strings.Contains(generatedText, decode); got != wire.SparseDecode {
-			t.Errorf("tlprofile sparse direct wire %#08x decode helper presence = %v, want %v", wire.WireID, got, wire.SparseDecode)
+		if wire.SparseDirect {
+			forbidden = append(forbidden, "func "+wire.DecodeBareName+"(")
+		} else if !wire.ProfileOnly {
+			forbidden = append(forbidden, "func "+wire.EncodeBareName+"(")
 		}
-		for _, forbidden := range []string{
-			"func " + wire.EncodeName + "(",
-			"func " + wire.DecodeBareName + "(",
-		} {
-			if strings.Contains(generatedText, forbidden) {
-				t.Errorf("tlprofile sparse direct wire %#08x retained unused helper %q", wire.WireID, forbidden)
+		for _, signature := range forbidden {
+			if strings.Contains(generatedText, signature) {
+				t.Errorf("tlprofile sparse wire %#08x retained unused helper %q", wire.WireID, signature)
 			}
 		}
 	}
 	if directWires == 0 {
 		t.Fatal("synthetic tlprofile schema has no sparse direct wire")
+	}
+	for file, expression := range map[string]*regexp.Regexp{
+		"tl_profile_scan_gen.go":            regexp.MustCompile(`(?m)^func (tlScanClass[A-Za-z0-9_]+)\(`),
+		"tl_profile_sparse_families_gen.go": regexp.MustCompile(`(?m)^func (layer(?:Project|Encode)Family[A-Za-z0-9_]+)\(`),
+		"tl_profile_sparse_classes_gen.go":  regexp.MustCompile(`(?m)^func (layer(?:Project|Encode|Decode)Class[A-Za-z0-9_]+)\(`),
+	} {
+		for _, match := range expression.FindAllStringSubmatch(string(result[file]), -1) {
+			if strings.Count(generatedText, match[1]) == 1 {
+				t.Errorf("tlprofile sparse source retained unreferenced helper %s in %s", match[1], file)
+			}
+		}
 	}
 }
 
@@ -226,7 +243,7 @@ func TestLayerExecutionPlanRealSchemaIsSparse(t *testing.T) {
 	if len(model.BodyPlans)*4 >= len(model.Routes) {
 		t.Fatalf("sparse body-plan ratio regressed: plans=%d routes=%d", len(model.BodyPlans), len(model.Routes))
 	}
-	if len(model.BodyPlans) > 800 || len(model.PreflightPlans) > 1000 || len(model.ResultPlans) > 650 {
+	if len(model.BodyPlans) > 1200 || len(model.PreflightPlans) > 1000 || len(model.ResultPlans) > 700 {
 		t.Fatalf("sparse plan budget regressed: body=%d preflight=%d result=%d", len(model.BodyPlans), len(model.PreflightPlans), len(model.ResultPlans))
 	}
 }

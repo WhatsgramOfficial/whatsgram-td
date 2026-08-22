@@ -41,6 +41,15 @@ func (g *Generator) buildLayerSparseCodecModel(pkg string) (*layerCodecModel, er
 			dirtySemantics[route.Key.String()] = route
 		}
 	}
+	// Reviewed historical constructors are ordinary typed codecs whose wire IDs
+	// do not appear as canonical semantic routes. They must retain their static
+	// adapter bodies in the sparse closure; treating them as canonical-direct
+	// would call the target type's incompatible EncodeBare/DecodeBare methods.
+	for index := range model.Wires {
+		if model.Wires[index].HistoricalOnly {
+			dirty[model.Wires[index].WireID] = struct{}{}
+		}
+	}
 
 	canonicalNames := make(map[string]struct{})
 	for _, binding := range bindings.Definitions {
@@ -181,9 +190,11 @@ func findLayerSparseWire(wires []layerCodecWire, id uint32) *layerCodecWire {
 }
 
 var (
-	layerSparseWireReference   = regexp.MustCompile(`\blayer(Preflight|Encode|Decode)Wire([0-9a-f]{8})`)
-	layerSparseClassReference  = regexp.MustCompile(`\blayer(?:Project|Preflight|Encode|Decode)Class([A-Za-z0-9_]+)`)
-	layerSparseFamilyReference = regexp.MustCompile(`\blayer(?:Project|Preflight|Encode)Family([A-Za-z0-9_]+)`)
+	layerSparseWireReference     = regexp.MustCompile(`\blayer(Preflight|Encode|Decode)Wire([0-9a-f]{8})`)
+	layerSparseClassReference    = regexp.MustCompile(`\b(layer(?:Project|Preflight|Encode|Decode)Class[A-Za-z0-9_]+)\b`)
+	layerSparseFamilyReference   = regexp.MustCompile(`\b(layer(?:Project|Preflight|Encode)Family[A-Za-z0-9_]+)\b`)
+	layerSparseClassDeclaration  = regexp.MustCompile(`\bfunc\s+(layer(?:Project|Preflight|Encode|Decode)Class[A-Za-z0-9_]+)\s*\(`)
+	layerSparseFamilyDeclaration = regexp.MustCompile(`\bfunc\s+(layer(?:Project|Preflight|Encode)Family[A-Za-z0-9_]+)\s*\(`)
 )
 
 type layerSparseReferenceSet struct {
@@ -236,24 +247,24 @@ func pruneLayerSparseClosure(model *layerCodecModel, roots map[uint32]struct{}, 
 	for index := range model.Wires {
 		wires[model.Wires[index].WireID] = &model.Wires[index]
 	}
-	classes := make(map[string][]string, len(model.ClassDeclarations))
+	classes := make(map[string]string, len(model.ClassDeclarations))
 	for _, declaration := range model.ClassDeclarations {
 		if strings.Contains(declaration, "func layerPreflight") {
 			continue
 		}
-		match := layerSparseClassReference.FindStringSubmatch(declaration)
+		match := layerSparseClassDeclaration.FindStringSubmatch(declaration)
 		if len(match) == 2 {
-			classes[match[1]] = append(classes[match[1]], declaration)
+			classes[match[1]] = declaration
 		}
 	}
-	families := make(map[string][]string, len(model.FamilyDeclarations))
+	families := make(map[string]string, len(model.FamilyDeclarations))
 	for _, declaration := range model.FamilyDeclarations {
 		if strings.Contains(declaration, "func layerPreflight") {
 			continue
 		}
-		match := layerSparseFamilyReference.FindStringSubmatch(declaration)
+		match := layerSparseFamilyDeclaration.FindStringSubmatch(declaration)
 		if len(match) == 2 {
-			families[match[1]] = append(families[match[1]], declaration)
+			families[match[1]] = declaration
 		}
 	}
 
@@ -262,7 +273,7 @@ func pruneLayerSparseClosure(model *layerCodecModel, roots map[uint32]struct{}, 
 		references.wires[id] = struct{}{}
 	}
 	for suffix := range rootFamilies {
-		references.families[suffix] = struct{}{}
+		references.families["layerEncodeFamily"+suffix] = struct{}{}
 	}
 	for _, source := range rootSources {
 		if err := references.collect(source); err != nil {
@@ -293,31 +304,31 @@ func pruneLayerSparseClosure(model *layerCodecModel, roots map[uint32]struct{}, 
 				}
 			}
 		}
-		for suffix := range references.classes {
-			if _, ok := processedClasses[suffix]; ok {
+		for name := range references.classes {
+			if _, ok := processedClasses[name]; ok {
 				continue
 			}
-			declarations, ok := classes[suffix]
+			declaration, ok := classes[name]
 			if !ok {
-				return fmt.Errorf("gen: sparse closure references absent class %s", suffix)
+				return fmt.Errorf("gen: sparse closure references absent class function %s", name)
 			}
-			processedClasses[suffix] = struct{}{}
+			processedClasses[name] = struct{}{}
 			progress = true
-			if err := references.collect(strings.Join(declarations, "\n")); err != nil {
+			if err := references.collect(declaration); err != nil {
 				return err
 			}
 		}
-		for suffix := range references.families {
-			if _, ok := processedFamilies[suffix]; ok {
+		for name := range references.families {
+			if _, ok := processedFamilies[name]; ok {
 				continue
 			}
-			declarations, ok := families[suffix]
+			declaration, ok := families[name]
 			if !ok {
-				return fmt.Errorf("gen: sparse closure references absent family %s", suffix)
+				return fmt.Errorf("gen: sparse closure references absent family function %s", name)
 			}
-			processedFamilies[suffix] = struct{}{}
+			processedFamilies[name] = struct{}{}
 			progress = true
-			if err := references.collect(strings.Join(declarations, "\n")); err != nil {
+			if err := references.collect(declaration); err != nil {
 				return err
 			}
 		}
@@ -345,21 +356,21 @@ func pruneLayerSparseClosure(model *layerCodecModel, roots map[uint32]struct{}, 
 	model.Wires = keptWires
 	model.ClassDeclarations = model.ClassDeclarations[:0]
 	classNames := make([]string, 0, len(processedClasses))
-	for suffix := range processedClasses {
-		classNames = append(classNames, suffix)
+	for name := range processedClasses {
+		classNames = append(classNames, name)
 	}
 	sort.Strings(classNames)
-	for _, suffix := range classNames {
-		model.ClassDeclarations = append(model.ClassDeclarations, classes[suffix]...)
+	for _, name := range classNames {
+		model.ClassDeclarations = append(model.ClassDeclarations, classes[name])
 	}
 	model.FamilyDeclarations = model.FamilyDeclarations[:0]
 	familyNames := make([]string, 0, len(processedFamilies))
-	for suffix := range processedFamilies {
-		familyNames = append(familyNames, suffix)
+	for name := range processedFamilies {
+		familyNames = append(familyNames, name)
 	}
 	sort.Strings(familyNames)
-	for _, suffix := range familyNames {
-		model.FamilyDeclarations = append(model.FamilyDeclarations, families[suffix]...)
+	for _, name := range familyNames {
+		model.FamilyDeclarations = append(model.FamilyDeclarations, families[name])
 	}
 	model.DynamicDeclarations = nil
 	return nil

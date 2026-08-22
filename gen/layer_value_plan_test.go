@@ -227,12 +227,16 @@ func TestLayerValueCompilerConsumesGeneratorConversionPlan(t *testing.T) {
 	}
 }
 
-func TestLayerValuePlanTelegram225Through228(t *testing.T) {
+func TestLayerValuePlanTelegram225Through229(t *testing.T) {
 	schemaSet, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	generator, err := NewSchemaSetGenerator(schemaSet, GeneratorOptions{})
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(schemaSet, GeneratorOptions{LayerPolicy: policy})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -275,7 +279,7 @@ func TestLayerValuePlanTelegram225Through228(t *testing.T) {
 			t.Errorf("real schema set produced no %s value plans; counts=%v", kind, counts)
 		}
 	}
-	t.Logf("Telegram Layers 225-228 value plans: roots=%d nodes=%v profile_only_constructors=%d", compiled, counts, profileOnly)
+	t.Logf("Telegram Layers 225-229 value plans: roots=%d nodes=%v profile_only_constructors=%d", compiled, counts, profileOnly)
 }
 
 func newLayerValueSyntheticCompiler(t *testing.T) (*layerValueCompiler, *SchemaSet) {

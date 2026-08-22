@@ -48,51 +48,54 @@ func StyleIcon(icon int64) StyleOption {
 }
 
 // Row creates keyboard row.
-func Row(buttons ...tg.KeyboardButtonClass) tg.KeyboardButtonRow {
+func Row(buttons ...tg.KeyboardButton) tg.KeyboardButtonRow {
 	return tg.KeyboardButtonRow{
 		Buttons: buttons,
 	}
 }
 
 // Button creates new plain text button.
-func Button(text string, style ...StyleOption) *tg.KeyboardButton {
-	return &tg.KeyboardButton{
+func Button(text string, style ...StyleOption) tg.KeyboardButton {
+	return tg.KeyboardButton{
 		Text:  text,
 		Style: applyStyle(style),
+		Type:  &tg.ButtonTypeDefault{},
 	}
 }
 
 // URL creates new URL button.
-func URL(text, url string, style ...StyleOption) *tg.KeyboardButtonURL {
-	return &tg.KeyboardButtonURL{
+func URL(text, url string, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
 		Text:  text,
-		URL:   url,
 		Style: applyStyle(style),
+		Type:  &tg.InlineButtonTypeURL{URL: url},
 	}
 }
 
 // Callback creates new callback button.
-func Callback(text string, data []byte, style ...StyleOption) *tg.KeyboardButtonCallback {
-	return &tg.KeyboardButtonCallback{
+func Callback(text string, data []byte, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
 		Text:  text,
-		Data:  data,
 		Style: applyStyle(style),
+		Type:  &tg.InlineButtonTypeCallback{Data: data},
 	}
 }
 
 // RequestPhone creates button to request a user's phone number.
-func RequestPhone(text string, style ...StyleOption) *tg.KeyboardButtonRequestPhone {
-	return &tg.KeyboardButtonRequestPhone{
+func RequestPhone(text string, style ...StyleOption) tg.KeyboardButton {
+	return tg.KeyboardButton{
 		Text:  text,
 		Style: applyStyle(style),
+		Type:  &tg.ButtonTypeRequestPhone{},
 	}
 }
 
 // RequestGeoLocation creates button to request a user's geo location.
-func RequestGeoLocation(text string, style ...StyleOption) *tg.KeyboardButtonRequestGeoLocation {
-	return &tg.KeyboardButtonRequestGeoLocation{
+func RequestGeoLocation(text string, style ...StyleOption) tg.KeyboardButton {
+	return tg.KeyboardButton{
 		Text:  text,
 		Style: applyStyle(style),
+		Type:  &tg.ButtonTypeRequestGeoLocation{},
 	}
 }
 
@@ -102,113 +105,123 @@ func RequestGeoLocation(text string, style ...StyleOption) *tg.KeyboardButtonReq
 //
 // If samePeer set, pressing the button will insert the bot‘s
 // username and the specified inline query in the current chat's input field.
-func SwitchInline(text, query string, samePeer bool, style ...StyleOption) *tg.KeyboardButtonSwitchInline {
-	return &tg.KeyboardButtonSwitchInline{
-		SamePeer: samePeer,
-		Text:     text,
-		Query:    query,
-		Style:    applyStyle(style),
+func SwitchInline(text, query string, samePeer bool, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
+		Text:  text,
+		Style: applyStyle(style),
+		Type: &tg.InlineButtonTypeSwitchInline{
+			SamePeer: samePeer,
+			Query:    query,
+		},
 	}
 }
 
 // Game creates button to start a game.
-func Game(text string, style ...StyleOption) *tg.KeyboardButtonGame {
-	return &tg.KeyboardButtonGame{
+func Game(text string, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
 		Text:  text,
 		Style: applyStyle(style),
+		Type:  &tg.InlineButtonTypeGame{},
 	}
 }
 
 // Buy creates button to buy a product.
-func Buy(text string, style ...StyleOption) *tg.KeyboardButtonBuy {
-	return &tg.KeyboardButtonBuy{
+func Buy(text string, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
 		Text:  text,
 		Style: applyStyle(style),
+		Type:  &tg.InlineButtonTypeBuy{},
 	}
 }
 
 // InputURLAuth creates button to request a user to authorize via URL using Seamless Telegram Login.
 // Can only be sent or received as part of an inline keyboard, use URLAuth for reply keyboards.
-func InputURLAuth(requestWriteAccess bool, text, fwdText, url string, bot tg.InputUserClass) *tg.InputKeyboardButtonURLAuth {
-	return &tg.InputKeyboardButtonURLAuth{
-		RequestWriteAccess: requestWriteAccess,
-		Text:               text,
-		FwdText:            fwdText,
-		URL:                url,
-		Bot:                bot,
+func InputURLAuth(requestWriteAccess bool, text, fwdText, url string, bot tg.InputUserClass) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
+		Text: text,
+		Type: &tg.InputInlineButtonTypeURLAuth{
+			RequestWriteAccess: requestWriteAccess,
+			FwdText:            fwdText,
+			URL:                url,
+			Bot:                bot,
+		},
 	}
 }
 
 // URLAuth creates button to request a user to authorize via URL using Seamless Telegram Login.
 // Can only be sent or received as part of a reply keyboard, use InputURLAuth for inline keyboards.
-func URLAuth(text, url string, buttonID int, fwdText string, style ...StyleOption) *tg.KeyboardButtonURLAuth {
-	return &tg.KeyboardButtonURLAuth{
-		Text:     text,
-		URL:      url,
-		ButtonID: buttonID,
-		FwdText:  fwdText,
-		Style:    applyStyle(style),
+func URLAuth(text, url string, buttonID int, fwdText string, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
+		Text:  text,
+		Style: applyStyle(style),
+		Type: &tg.InlineButtonTypeURLAuth{
+			URL:      url,
+			ButtonID: buttonID,
+			FwdText:  fwdText,
+		},
 	}
 }
 
 // RequestPoll creates button that allows the user to create and send a poll when pressed.
 // Available only in private.
-func RequestPoll(text string, quiz bool, style ...StyleOption) *tg.KeyboardButtonRequestPoll {
-	return &tg.KeyboardButtonRequestPoll{
+func RequestPoll(text string, quiz bool, style ...StyleOption) tg.KeyboardButton {
+	return tg.KeyboardButton{
 		Text:  text,
-		Quiz:  quiz,
 		Style: applyStyle(style),
+		Type:  &tg.ButtonTypeRequestPoll{Quiz: quiz},
 	}
 }
 
 // InputUserProfile creates button that links directly to a user profile.
 // Can only be sent or received as part of an inline keyboard, use UserProfile for reply keyboards.
-func InputUserProfile(text string, user tg.InputUserClass) *tg.InputKeyboardButtonUserProfile {
-	return &tg.InputKeyboardButtonUserProfile{
-		Text:   text,
-		UserID: user,
+func InputUserProfile(text string, user tg.InputUserClass) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
+		Text: text,
+		Type: &tg.InputInlineButtonTypeUserProfile{UserID: user},
 	}
 }
 
 // UserProfile creates button that links directly to a user profile.
 // Can only be sent or received as part of a reply keyboard, use InputUserProfile for inline keyboards.
-func UserProfile(text string, userID int64, style ...StyleOption) *tg.KeyboardButtonUserProfile {
-	return &tg.KeyboardButtonUserProfile{
-		Text:   text,
-		UserID: userID,
-		Style:  applyStyle(style),
+func UserProfile(text string, userID int64, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
+		Text:  text,
+		Style: applyStyle(style),
+		Type:  &tg.InlineButtonTypeUserProfile{UserID: userID},
 	}
 }
 
 // WebView creates button to open a bot web app using messages.requestWebView, sending over user information after
 // user confirmation.
 // Can only be sent or received as part of an inline keyboard, use SimpleWebView for reply keyboards.
-func WebView(text, url string, style ...StyleOption) *tg.KeyboardButtonWebView {
-	return &tg.KeyboardButtonWebView{
+func WebView(text, url string, style ...StyleOption) tg.KeyboardInlineButton {
+	return tg.KeyboardInlineButton{
 		Text:  text,
-		URL:   url,
 		Style: applyStyle(style),
+		Type:  &tg.InlineButtonTypeWebView{URL: url},
 	}
 }
 
 // SimpleWebView creates button to open a bot web app using messages.requestSimpleWebView, without sending user
 // information to the web app.
 // Can only be sent or received as part of a reply keyboard, use WebView for inline keyboards.
-func SimpleWebView(text, url string, style ...StyleOption) *tg.KeyboardButtonSimpleWebView {
-	return &tg.KeyboardButtonSimpleWebView{
+func SimpleWebView(text, url string, style ...StyleOption) tg.KeyboardButton {
+	return tg.KeyboardButton{
 		Text:  text,
-		URL:   url,
 		Style: applyStyle(style),
+		Type:  &tg.ButtonTypeSimpleWebView{URL: url},
 	}
 }
 
 // RequestPeer creates button that prompts the user to select and share a peer with the bot using
 // messages.sendBotRequestedPeer.
-func RequestPeer(text string, buttonID int, peerType tg.RequestPeerTypeClass, style ...StyleOption) *tg.KeyboardButtonRequestPeer {
-	return &tg.KeyboardButtonRequestPeer{
-		Text:     text,
-		ButtonID: buttonID,
-		PeerType: peerType,
-		Style:    applyStyle(style),
+func RequestPeer(text string, buttonID int, peerType tg.RequestPeerTypeClass, style ...StyleOption) tg.KeyboardButton {
+	return tg.KeyboardButton{
+		Text:  text,
+		Style: applyStyle(style),
+		Type: &tg.ButtonTypeRequestPeer{
+			ButtonID: buttonID,
+			PeerType: peerType,
+		},
 	}
 }

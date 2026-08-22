@@ -280,12 +280,16 @@ func TestLayerRPCModelNeverFallsBackAcrossRejectedBoundary(t *testing.T) {
 	}
 }
 
-func TestLayerRPCModelTelegram225Through228(t *testing.T) {
+func TestLayerRPCModelTelegram225Through229(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{})
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -305,7 +309,7 @@ func TestLayerRPCModelTelegram225Through228(t *testing.T) {
 			t.Fatalf("channels.joinChannel canonical result layer %d = %+v", layer, profile)
 		}
 		wantWire := "Updates"
-		wantAction := layerRPCReject
+		wantAction := layerRPCAdapter
 		if layer >= 226 {
 			wantWire = "messages.ChatInviteJoinResult"
 			wantAction = layerRPCDirect
@@ -372,7 +376,7 @@ func TestLayerRPCModelTelegram225Through228(t *testing.T) {
 	if handlers == 0 || wrappers == 0 || len(model.Routes) == 0 {
 		t.Fatalf("real RPC model counts: handlers=%d wrappers=%d routes=%d", handlers, wrappers, len(model.Routes))
 	}
-	t.Logf("Telegram Layers 225-228 RPC model: semantic_methods=%d handlers=%d wrappers=%d exact_routes=%d", len(model.Methods), handlers, wrappers, len(model.Routes))
+	t.Logf("Telegram Layers 225-229 RPC model: semantic_methods=%d handlers=%d wrappers=%d exact_routes=%d", len(model.Methods), handlers, wrappers, len(model.Routes))
 }
 
 func layerRPCSyntheticSchemaSet(t *testing.T) *SchemaSet {

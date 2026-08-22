@@ -40,7 +40,8 @@ const (
 	Profile226       Profile = 226
 	Profile227       Profile = 227
 	Profile228       Profile = 228
-	ProfileCanonical Profile = 228
+	Profile229       Profile = 229
+	ProfileCanonical Profile = 229
 )
 
 // ResolveProfile accepts only exact generated profiles.
@@ -54,6 +55,8 @@ func ResolveProfile(layer int) (Profile, bool) {
 		return Profile227, true
 	case Profile228:
 		return Profile228, true
+	case Profile229:
+		return Profile229, true
 	default:
 		return 0, false
 	}
@@ -132,6 +135,7 @@ const (
 	SemanticTypeAuthCodeTypeMissedCall                                            SemanticID = 0x124c00be62e8cfd3
 	SemanticTypeAuthCodeTypeSMS                                                   SemanticID = 0xd609b8294c67886f
 	SemanticTypeAuthExportedAuthorization                                         SemanticID = 0x6b6294aa63136a68
+	SemanticTypeAuthFirebasePnvIntent                                             SemanticID = 0xf1dc2b31d8ea62fe
 	SemanticTypeAuthLoggedOut                                                     SemanticID = 0xedd2f9355dde8e4f
 	SemanticTypeAuthLoginToken                                                    SemanticID = 0x24b47df53136adbb
 	SemanticTypeAuthLoginTokenMigrateTo                                           SemanticID = 0xc6ec2b334d298085
@@ -216,6 +220,12 @@ const (
 	SemanticTypeBusinessRecipients                                                SemanticID = 0x1409a0c713a1aec0
 	SemanticTypeBusinessWeeklyOpen                                                SemanticID = 0x64dc32c58564fff6
 	SemanticTypeBusinessWorkHours                                                 SemanticID = 0x503105278e56ecd3
+	SemanticTypeButtonTypeDefault                                                 SemanticID = 0xba1aee9a7af2cd97
+	SemanticTypeButtonTypeRequestGeoLocation                                      SemanticID = 0x2a2d6a573b8d9e1e
+	SemanticTypeButtonTypeRequestPeer                                             SemanticID = 0x8d2372a24dadaddc
+	SemanticTypeButtonTypeRequestPhone                                            SemanticID = 0x96ca4f0251421d72
+	SemanticTypeButtonTypeRequestPoll                                             SemanticID = 0xe48ba5db2f439725
+	SemanticTypeButtonTypeSimpleWebView                                           SemanticID = 0xaef8ff4739f7cd7e
 	SemanticTypeBytes                                                             SemanticID = 0x89e352522f882230
 	SemanticTypeCDNConfig                                                         SemanticID = 0x4215259ff45a97cf
 	SemanticTypeCDNPublicKey                                                      SemanticID = 0xd3081b424952b692
@@ -415,6 +425,8 @@ const (
 	SemanticTypeEncryptedFileEmpty                                                SemanticID = 0xf1b2c2bb8ba81019
 	SemanticTypeEncryptedMessage                                                  SemanticID = 0xa083886b6578d4a7
 	SemanticTypeEncryptedMessageService                                           SemanticID = 0x9bce34fdb1ec5d1e
+	SemanticTypeEphemeralWelcomeMessages                                          SemanticID = 0xfb4aa108d9f6b64a
+	SemanticTypeEphemeralWelcomeMessagesNotModified                               SemanticID = 0x6cf0e44e4d3ba0e9
 	SemanticTypeEphemeralMessage                                                  SemanticID = 0x65df9ee16c125347
 	SemanticTypeError                                                             SemanticID = 0xe86dd245adb3a397
 	SemanticTypeExportedChatlistInvite                                            SemanticID = 0xe00371df0adc407f
@@ -478,6 +490,16 @@ const (
 	SemanticTypeImportedContact                                                   SemanticID = 0x3ed69c9897fa6e61
 	SemanticTypeInlineBotSwitchPM                                                 SemanticID = 0xa9cb31e7ef308f38
 	SemanticTypeInlineBotWebView                                                  SemanticID = 0xa6ca49df3402fdb9
+	SemanticTypeInlineButtonTypeBuy                                               SemanticID = 0x614a6941466fcb18
+	SemanticTypeInlineButtonTypeCallback                                          SemanticID = 0x91f2938f19ec21f4
+	SemanticTypeInlineButtonTypeCopy                                              SemanticID = 0xe810a8445f1ecd01
+	SemanticTypeInlineButtonTypeDisabled                                          SemanticID = 0x91e03f5a9adbf747
+	SemanticTypeInlineButtonTypeGame                                              SemanticID = 0x4470515fb65ff1d3
+	SemanticTypeInlineButtonTypeSwitchInline                                      SemanticID = 0xea7377ca151675a9
+	SemanticTypeInlineButtonTypeURL                                               SemanticID = 0x1c608b0a11cffb5d
+	SemanticTypeInlineButtonTypeURLAuth                                           SemanticID = 0x0677117af51391af
+	SemanticTypeInlineButtonTypeUserProfile                                       SemanticID = 0xa977072ecff325c4
+	SemanticTypeInlineButtonTypeWebView                                           SemanticID = 0xa5c6d30502197889
 	SemanticTypeInlineQueryPeerTypeBotPM                                          SemanticID = 0x5b41e1e474028ebf
 	SemanticTypeInlineQueryPeerTypeBroadcast                                      SemanticID = 0x02e99c68521b9da5
 	SemanticTypeInlineQueryPeerTypeChat                                           SemanticID = 0xc9698b3d8521108a
@@ -512,6 +534,7 @@ const (
 	SemanticTypeInputBusinessGreetingMessage                                      SemanticID = 0x135a3b57d201267a
 	SemanticTypeInputBusinessIntro                                                SemanticID = 0x41049205661b9451
 	SemanticTypeInputBusinessRecipients                                           SemanticID = 0xd48e64fb9105a227
+	SemanticTypeInputButtonTypeRequestPeer                                        SemanticID = 0x76a29f94ee3e7855
 	SemanticTypeInputChannel                                                      SemanticID = 0x51715229c56d806a
 	SemanticTypeInputChannelEmpty                                                 SemanticID = 0x01cc9ad966255660
 	SemanticTypeInputChannelFromMessage                                           SemanticID = 0x24fd7c7a3823191b
@@ -553,6 +576,8 @@ const (
 	SemanticTypeInputGroupCallInviteMessage                                       SemanticID = 0xf09b132c3ef5d861
 	SemanticTypeInputGroupCallSlug                                                SemanticID = 0xaeaa2a6ad3483a1a
 	SemanticTypeInputGroupCallStream                                              SemanticID = 0xce14e32d6ec2a5d3
+	SemanticTypeInputInlineButtonTypeURLAuth                                      SemanticID = 0x3e71c0e8bbac710d
+	SemanticTypeInputInlineButtonTypeUserProfile                                  SemanticID = 0xf993af75fecac695
 	SemanticTypeInputInvoiceBusinessBotTransferStars                              SemanticID = 0x8d181d6ae5d48355
 	SemanticTypeInputInvoiceChatInviteSubscription                                SemanticID = 0xe8e569fb1c917a20
 	SemanticTypeInputInvoiceMessage                                               SemanticID = 0x0358689b0bb4dc4a
@@ -781,6 +806,8 @@ const (
 	SemanticTypeKeyboardButtonURLAuth                                             SemanticID = 0x9cef863802647784
 	SemanticTypeKeyboardButtonUserProfile                                         SemanticID = 0x3f94d17e441363d6
 	SemanticTypeKeyboardButtonWebView                                             SemanticID = 0x326a7cca415db0dc
+	SemanticTypeKeyboardInlineButton                                              SemanticID = 0x17485f2d50688bbc
+	SemanticTypeKeyboardInlineButtonRow                                           SemanticID = 0x25c0f9bb23f26824
 	SemanticTypeLabeledPrice                                                      SemanticID = 0xcd3f44ae8025ed29
 	SemanticTypeLangPackDifference                                                SemanticID = 0x73155124b09ab2f5
 	SemanticTypeLangPackLanguage                                                  SemanticID = 0x2d9453be200e40a3
@@ -1044,11 +1071,13 @@ const (
 	SemanticTypePageBlockAuthorDate                                               SemanticID = 0x6b03709aa5c2aecb
 	SemanticTypePageBlockBlockquote                                               SemanticID = 0xae24386d6130084a
 	SemanticTypePageBlockBlockquoteBlocks                                         SemanticID = 0x8dac759793e52f88
+	SemanticTypePageBlockButtonRow                                                SemanticID = 0x05554b45de826602
 	SemanticTypePageBlockChannel                                                  SemanticID = 0x18cbcd93be8a064b
 	SemanticTypePageBlockCollage                                                  SemanticID = 0xd337cb8125e46c9b
 	SemanticTypePageBlockCover                                                    SemanticID = 0x115523e7260ab468
 	SemanticTypePageBlockDetails                                                  SemanticID = 0x5efc4f85a9618db2
 	SemanticTypePageBlockDivider                                                  SemanticID = 0x8809c1f2640b2a86
+	SemanticTypePageBlockDocument                                                 SemanticID = 0x55098a7da0feecd9
 	SemanticTypePageBlockEmbed                                                    SemanticID = 0x27defe7d47e03d7a
 	SemanticTypePageBlockEmbedPost                                                SemanticID = 0x2151ba00b9727de0
 	SemanticTypePageBlockFooter                                                   SemanticID = 0xd1ed0024ddb8bdb9
@@ -1077,6 +1106,7 @@ const (
 	SemanticTypePageBlockTitle                                                    SemanticID = 0x42aabe5816e33c56
 	SemanticTypePageBlockUnsupported                                              SemanticID = 0x116ac3bba7f98abb
 	SemanticTypePageBlockVideo                                                    SemanticID = 0x0d09fc364192f146
+	SemanticTypePageButton                                                        SemanticID = 0xb0f313b0b339e413
 	SemanticTypePageCaption                                                       SemanticID = 0x791374a25b9a447e
 	SemanticTypePageListItemBlocks                                                SemanticID = 0xf1538f0a29bc39f2
 	SemanticTypePageListItemText                                                  SemanticID = 0x8e571d9535e719b7
@@ -1263,6 +1293,7 @@ const (
 	SemanticTypeRequirementToContactPaidMessages                                  SemanticID = 0x1c11b0a69e68f58c
 	SemanticTypeRequirementToContactPremium                                       SemanticID = 0x7b0a4d27ad75f6c1
 	SemanticTypeRestrictionReason                                                 SemanticID = 0xd312438c7af806aa
+	SemanticTypeRichButtonStyle                                                   SemanticID = 0x6edf07e8365022b5
 	SemanticTypeRichMessage                                                       SemanticID = 0xdf5496b67cef2844
 	SemanticTypeSavedDialog                                                       SemanticID = 0x379505c11f51461b
 	SemanticTypeSavedPhoneContact                                                 SemanticID = 0xcf45f0fc9dfa6857
@@ -1320,6 +1351,7 @@ const (
 	SemanticTypeSendMessageRecordRoundAction                                      SemanticID = 0x2a41a3c1ec1202a7
 	SemanticTypeSendMessageRecordVideoAction                                      SemanticID = 0xef712e7a85b3b0e3
 	SemanticTypeSendMessageRichMessageDraftAction                                 SemanticID = 0x6afa5106599dbb78
+	SemanticTypeSendMessageStopDraftAction                                        SemanticID = 0xd3d3b3d5f2999335
 	SemanticTypeSendMessageTextDraftAction                                        SemanticID = 0xb52aa90b18f24423
 	SemanticTypeSendMessageTypingAction                                           SemanticID = 0x72f105373a92cc3f
 	SemanticTypeSendMessageUploadAudioAction                                      SemanticID = 0x7125b7a32fdd7c68
@@ -1448,6 +1480,7 @@ const (
 	SemanticTypeTextBankCard                                                      SemanticID = 0x3e85d1e72bf3bdca
 	SemanticTypeTextBold                                                          SemanticID = 0xcd21cdf567b1b1dc
 	SemanticTypeTextBotCommand                                                    SemanticID = 0x64add30f3bd0ed97
+	SemanticTypeTextButton                                                        SemanticID = 0xc1a8f69d745565de
 	SemanticTypeTextCashtag                                                       SemanticID = 0x8fc533e9daf14343
 	SemanticTypeTextConcat                                                        SemanticID = 0x564db7a63abef445
 	SemanticTypeTextCustomEmoji                                                   SemanticID = 0xefdc22d3ea47bcc7
@@ -1558,6 +1591,7 @@ const (
 	SemanticTypeUpdateEncryptedChatTyping                                         SemanticID = 0xf1632c646536c1d1
 	SemanticTypeUpdateEncryptedMessagesRead                                       SemanticID = 0x39c63b097baae675
 	SemanticTypeUpdateEncryption                                                  SemanticID = 0x6b193523570f0809
+	SemanticTypeUpdateEphemeralBotCallbackQuery                                   SemanticID = 0x73dba7af2bb7b732
 	SemanticTypeUpdateFavedStickers                                               SemanticID = 0x2c12f1fd2c1ecfca
 	SemanticTypeUpdateFolderPeers                                                 SemanticID = 0x255351a743fe3528
 	SemanticTypeUpdateGeoLiveViewed                                               SemanticID = 0x5c0c6340df2017ac
@@ -1862,11 +1896,14 @@ const (
 	SemanticMethodAuthDropTempAuthKeys                                            SemanticID = 0x0fe88e7394947d91
 	SemanticMethodAuthExportAuthorization                                         SemanticID = 0x8adeaca76230cb93
 	SemanticMethodAuthExportLoginToken                                            SemanticID = 0xe39314402f281404
+	SemanticMethodAuthFinishFirebasePnvLogin                                      SemanticID = 0x603ee6bd275ab35f
 	SemanticMethodAuthFinishPasskeyLogin                                          SemanticID = 0x487dd133396cac1f
+	SemanticMethodAuthFirebasePnvSignUp                                           SemanticID = 0xc178fbf717be431e
 	SemanticMethodAuthImportAuthorization                                         SemanticID = 0x482f14f836b764df
 	SemanticMethodAuthImportBotAuthorization                                      SemanticID = 0x0b3b0bd96e2b408f
 	SemanticMethodAuthImportLoginToken                                            SemanticID = 0x500791cfba2eb1b0
 	SemanticMethodAuthImportWebTokenAuthorization                                 SemanticID = 0xfc672931e2870db9
+	SemanticMethodAuthInitFirebasePnvLogin                                        SemanticID = 0x01e22d8880a963df
 	SemanticMethodAuthInitPasskeyLogin                                            SemanticID = 0xf8aade6757b96d86
 	SemanticMethodAuthLogOut                                                      SemanticID = 0x1fe6c4d861e2d49a
 	SemanticMethodAuthRecoverPassword                                             SemanticID = 0xbf6c5155bb4776fb
@@ -2023,8 +2060,12 @@ const (
 	SemanticMethodContactsToggleTopPeers                                          SemanticID = 0x57b66c588e99476b
 	SemanticMethodContactsUnblock                                                 SemanticID = 0xa2b19d52fac2cd2c
 	SemanticMethodContactsUpdateContactNote                                       SemanticID = 0xb09d2ca6963f789b
+	SemanticMethodEphemeralDeleteAllWelcomeMessages                               SemanticID = 0x1eb2d1f3f2181f3f
 	SemanticMethodEphemeralDeleteMessage                                          SemanticID = 0xd97652edaea05670
+	SemanticMethodEphemeralDeleteWelcomeMessage                                   SemanticID = 0x35413bb91423ccad
+	SemanticMethodEphemeralEditMessage                                            SemanticID = 0x085bc46ebfd310c9
 	SemanticMethodEphemeralGetCallbackAnswer                                      SemanticID = 0xf387ebc717ea163a
+	SemanticMethodEphemeralGetWelcomeMessages                                     SemanticID = 0x3a5e851479028cc1
 	SemanticMethodEphemeralReportMessage                                          SemanticID = 0xdc06202673655c33
 	SemanticMethodEphemeralSendMessage                                            SemanticID = 0x2f4e06d70a5b4a97
 	SemanticMethodFoldersEditPeerFolders                                          SemanticID = 0x9a42556d276afb78
@@ -2616,7 +2657,10 @@ const (
 	FieldAuthExportLoginTokenAPIHash                        FieldID = 0x4c2459429f9b94f1
 	FieldAuthExportLoginTokenAPIID                          FieldID = 0x3d4a28760059b714
 	FieldAuthExportLoginTokenExceptIDs                      FieldID = 0x2df3950ada1c8a7b
+	FieldAuthFinishFirebasePnvLoginGoogleToken              FieldID = 0x783abf4487ea36e9
 	FieldAuthFinishPasskeyLoginFromDCID                     FieldID = 0x489eb3fbd53d65c2
+	FieldAuthFirebasePnvSignUpFirstName                     FieldID = 0x4d01ce8d7ede0dce
+	FieldAuthFirebasePnvSignUpLastName                      FieldID = 0x9f77bbbaa48cf41b
 	FieldAuthImportAuthorizationBytes                       FieldID = 0x2c0e789d4458781b
 	FieldAuthImportBotAuthorizationAPIHash                  FieldID = 0xabc038b10a91193e
 	FieldAuthImportBotAuthorizationAPIID                    FieldID = 0xab2dc07ee222eac5
@@ -2626,6 +2670,8 @@ const (
 	FieldAuthImportWebTokenAuthorizationAPIHash             FieldID = 0xca9235bb341f4031
 	FieldAuthImportWebTokenAuthorizationAPIID               FieldID = 0x6258b808d53f5a02
 	FieldAuthImportWebTokenAuthorizationWebAuthToken        FieldID = 0x2f27d917317cf5d3
+	FieldAuthInitFirebasePnvLoginAPIHash                    FieldID = 0xacd63eab310273f9
+	FieldAuthInitFirebasePnvLoginAPIID                      FieldID = 0xb4d39a2aade0cef0
 	FieldAuthInitPasskeyLoginAPIHash                        FieldID = 0xb789b45d0cc57c04
 	FieldAuthInitPasskeyLoginAPIID                          FieldID = 0xba868bdd90158f60
 	FieldAuthRecoverPasswordCode                            FieldID = 0xd46f9b99bf0a94e4
@@ -2759,6 +2805,10 @@ const (
 	FieldContactsSetBlockedID                               FieldID = 0xf76773a33dd57718
 	FieldContactsSetBlockedLimit                            FieldID = 0x4419f458650e09dc
 	FieldEphemeralDeleteMessageID                           FieldID = 0xeb51069cef207c26
+	FieldEphemeralDeleteWelcomeMessageID                    FieldID = 0x81830eccda8dea64
+	FieldEphemeralEditMessageEntities                       FieldID = 0x1c600299abe039a7
+	FieldEphemeralEditMessageID                             FieldID = 0x99020f5617ad104a
+	FieldEphemeralEditMessageMessage                        FieldID = 0xdcd93ed713caf5fb
 	FieldEphemeralGetCallbackAnswerData                     FieldID = 0xe0d44c23429b35b0
 	FieldEphemeralGetCallbackAnswerID                       FieldID = 0xf054bb214e86ba90
 	FieldEphemeralReportMessageID                           FieldID = 0x745cb7daf74a25ce
@@ -3486,6 +3536,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "auth.codeTypeSms", true
 	case SemanticTypeAuthExportedAuthorization:
 		return "type", "auth.exportedAuthorization", true
+	case SemanticTypeAuthFirebasePnvIntent:
+		return "type", "auth.firebasePnvIntent", true
 	case SemanticTypeAuthLoggedOut:
 		return "type", "auth.loggedOut", true
 	case SemanticTypeAuthLoginToken:
@@ -3654,6 +3706,18 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "businessWeeklyOpen", true
 	case SemanticTypeBusinessWorkHours:
 		return "type", "businessWorkHours", true
+	case SemanticTypeButtonTypeDefault:
+		return "type", "buttonTypeDefault", true
+	case SemanticTypeButtonTypeRequestGeoLocation:
+		return "type", "buttonTypeRequestGeoLocation", true
+	case SemanticTypeButtonTypeRequestPeer:
+		return "type", "buttonTypeRequestPeer", true
+	case SemanticTypeButtonTypeRequestPhone:
+		return "type", "buttonTypeRequestPhone", true
+	case SemanticTypeButtonTypeRequestPoll:
+		return "type", "buttonTypeRequestPoll", true
+	case SemanticTypeButtonTypeSimpleWebView:
+		return "type", "buttonTypeSimpleWebView", true
 	case SemanticTypeBytes:
 		return "type", "bytes", true
 	case SemanticTypeCDNConfig:
@@ -4052,6 +4116,10 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "encryptedMessage", true
 	case SemanticTypeEncryptedMessageService:
 		return "type", "encryptedMessageService", true
+	case SemanticTypeEphemeralWelcomeMessages:
+		return "type", "ephemeral.welcomeMessages", true
+	case SemanticTypeEphemeralWelcomeMessagesNotModified:
+		return "type", "ephemeral.welcomeMessagesNotModified", true
 	case SemanticTypeEphemeralMessage:
 		return "type", "ephemeralMessage", true
 	case SemanticTypeError:
@@ -4178,6 +4246,26 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "inlineBotSwitchPM", true
 	case SemanticTypeInlineBotWebView:
 		return "type", "inlineBotWebView", true
+	case SemanticTypeInlineButtonTypeBuy:
+		return "type", "inlineButtonTypeBuy", true
+	case SemanticTypeInlineButtonTypeCallback:
+		return "type", "inlineButtonTypeCallback", true
+	case SemanticTypeInlineButtonTypeCopy:
+		return "type", "inlineButtonTypeCopy", true
+	case SemanticTypeInlineButtonTypeDisabled:
+		return "type", "inlineButtonTypeDisabled", true
+	case SemanticTypeInlineButtonTypeGame:
+		return "type", "inlineButtonTypeGame", true
+	case SemanticTypeInlineButtonTypeSwitchInline:
+		return "type", "inlineButtonTypeSwitchInline", true
+	case SemanticTypeInlineButtonTypeURL:
+		return "type", "inlineButtonTypeUrl", true
+	case SemanticTypeInlineButtonTypeURLAuth:
+		return "type", "inlineButtonTypeUrlAuth", true
+	case SemanticTypeInlineButtonTypeUserProfile:
+		return "type", "inlineButtonTypeUserProfile", true
+	case SemanticTypeInlineButtonTypeWebView:
+		return "type", "inlineButtonTypeWebView", true
 	case SemanticTypeInlineQueryPeerTypeBotPM:
 		return "type", "inlineQueryPeerTypeBotPM", true
 	case SemanticTypeInlineQueryPeerTypeBroadcast:
@@ -4246,6 +4334,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "inputBusinessIntro", true
 	case SemanticTypeInputBusinessRecipients:
 		return "type", "inputBusinessRecipients", true
+	case SemanticTypeInputButtonTypeRequestPeer:
+		return "type", "inputButtonTypeRequestPeer", true
 	case SemanticTypeInputChannel:
 		return "type", "inputChannel", true
 	case SemanticTypeInputChannelEmpty:
@@ -4328,6 +4418,10 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "inputGroupCallSlug", true
 	case SemanticTypeInputGroupCallStream:
 		return "type", "inputGroupCallStream", true
+	case SemanticTypeInputInlineButtonTypeURLAuth:
+		return "type", "inputInlineButtonTypeUrlAuth", true
+	case SemanticTypeInputInlineButtonTypeUserProfile:
+		return "type", "inputInlineButtonTypeUserProfile", true
 	case SemanticTypeInputInvoiceBusinessBotTransferStars:
 		return "type", "inputInvoiceBusinessBotTransferStars", true
 	case SemanticTypeInputInvoiceChatInviteSubscription:
@@ -4784,6 +4878,10 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "keyboardButtonUserProfile", true
 	case SemanticTypeKeyboardButtonWebView:
 		return "type", "keyboardButtonWebView", true
+	case SemanticTypeKeyboardInlineButton:
+		return "type", "keyboardInlineButton", true
+	case SemanticTypeKeyboardInlineButtonRow:
+		return "type", "keyboardInlineButtonRow", true
 	case SemanticTypeLabeledPrice:
 		return "type", "labeledPrice", true
 	case SemanticTypeLangPackDifference:
@@ -5310,6 +5408,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "pageBlockBlockquote", true
 	case SemanticTypePageBlockBlockquoteBlocks:
 		return "type", "pageBlockBlockquoteBlocks", true
+	case SemanticTypePageBlockButtonRow:
+		return "type", "pageBlockButtonRow", true
 	case SemanticTypePageBlockChannel:
 		return "type", "pageBlockChannel", true
 	case SemanticTypePageBlockCollage:
@@ -5320,6 +5420,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "pageBlockDetails", true
 	case SemanticTypePageBlockDivider:
 		return "type", "pageBlockDivider", true
+	case SemanticTypePageBlockDocument:
+		return "type", "pageBlockDocument", true
 	case SemanticTypePageBlockEmbed:
 		return "type", "pageBlockEmbed", true
 	case SemanticTypePageBlockEmbedPost:
@@ -5376,6 +5478,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "pageBlockUnsupported", true
 	case SemanticTypePageBlockVideo:
 		return "type", "pageBlockVideo", true
+	case SemanticTypePageButton:
+		return "type", "pageButton", true
 	case SemanticTypePageCaption:
 		return "type", "pageCaption", true
 	case SemanticTypePageListItemBlocks:
@@ -5748,6 +5852,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "requirementToContactPremium", true
 	case SemanticTypeRestrictionReason:
 		return "type", "restrictionReason", true
+	case SemanticTypeRichButtonStyle:
+		return "type", "richButtonStyle", true
 	case SemanticTypeRichMessage:
 		return "type", "richMessage", true
 	case SemanticTypeSavedDialog:
@@ -5862,6 +5968,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "sendMessageRecordVideoAction", true
 	case SemanticTypeSendMessageRichMessageDraftAction:
 		return "type", "sendMessageRichMessageDraftAction", true
+	case SemanticTypeSendMessageStopDraftAction:
+		return "type", "sendMessageStopDraftAction", true
 	case SemanticTypeSendMessageTextDraftAction:
 		return "type", "sendMessageTextDraftAction", true
 	case SemanticTypeSendMessageTypingAction:
@@ -6118,6 +6226,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "textBold", true
 	case SemanticTypeTextBotCommand:
 		return "type", "textBotCommand", true
+	case SemanticTypeTextButton:
+		return "type", "textButton", true
 	case SemanticTypeTextCashtag:
 		return "type", "textCashtag", true
 	case SemanticTypeTextConcat:
@@ -6338,6 +6448,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "type", "updateEncryptedMessagesRead", true
 	case SemanticTypeUpdateEncryption:
 		return "type", "updateEncryption", true
+	case SemanticTypeUpdateEphemeralBotCallbackQuery:
+		return "type", "updateEphemeralBotCallbackQuery", true
 	case SemanticTypeUpdateFavedStickers:
 		return "type", "updateFavedStickers", true
 	case SemanticTypeUpdateFolderPeers:
@@ -6946,8 +7058,12 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "function", "auth.exportAuthorization", true
 	case SemanticMethodAuthExportLoginToken:
 		return "function", "auth.exportLoginToken", true
+	case SemanticMethodAuthFinishFirebasePnvLogin:
+		return "function", "auth.finishFirebasePnvLogin", true
 	case SemanticMethodAuthFinishPasskeyLogin:
 		return "function", "auth.finishPasskeyLogin", true
+	case SemanticMethodAuthFirebasePnvSignUp:
+		return "function", "auth.firebasePnvSignUp", true
 	case SemanticMethodAuthImportAuthorization:
 		return "function", "auth.importAuthorization", true
 	case SemanticMethodAuthImportBotAuthorization:
@@ -6956,6 +7072,8 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "function", "auth.importLoginToken", true
 	case SemanticMethodAuthImportWebTokenAuthorization:
 		return "function", "auth.importWebTokenAuthorization", true
+	case SemanticMethodAuthInitFirebasePnvLogin:
+		return "function", "auth.initFirebasePnvLogin", true
 	case SemanticMethodAuthInitPasskeyLogin:
 		return "function", "auth.initPasskeyLogin", true
 	case SemanticMethodAuthLogOut:
@@ -7268,10 +7386,18 @@ func SemanticName(id SemanticID) (category, qname string, ok bool) {
 		return "function", "contacts.unblock", true
 	case SemanticMethodContactsUpdateContactNote:
 		return "function", "contacts.updateContactNote", true
+	case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+		return "function", "ephemeral.deleteAllWelcomeMessages", true
 	case SemanticMethodEphemeralDeleteMessage:
 		return "function", "ephemeral.deleteMessage", true
+	case SemanticMethodEphemeralDeleteWelcomeMessage:
+		return "function", "ephemeral.deleteWelcomeMessage", true
+	case SemanticMethodEphemeralEditMessage:
+		return "function", "ephemeral.editMessage", true
 	case SemanticMethodEphemeralGetCallbackAnswer:
 		return "function", "ephemeral.getCallbackAnswer", true
+	case SemanticMethodEphemeralGetWelcomeMessages:
+		return "function", "ephemeral.getWelcomeMessages", true
 	case SemanticMethodEphemeralReportMessage:
 		return "function", "ephemeral.reportMessage", true
 	case SemanticMethodEphemeralSendMessage:
@@ -8415,6 +8541,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x72a3158c, true
 	case SemanticTypeAuthExportedAuthorization:
 		return 0xb434e2b8, true
+	case SemanticTypeAuthFirebasePnvIntent:
+		return 0xdf5ac00c, true
 	case SemanticTypeAuthLoggedOut:
 		return 0xc3a2835f, true
 	case SemanticTypeAuthLoginToken:
@@ -8583,6 +8711,18 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x120b1ab9, true
 	case SemanticTypeBusinessWorkHours:
 		return 0x8c92b098, true
+	case SemanticTypeButtonTypeDefault:
+		return 0xc9dd90e9, true
+	case SemanticTypeButtonTypeRequestGeoLocation:
+		return 0x9beee140, true
+	case SemanticTypeButtonTypeRequestPeer:
+		return 0x4f58a237, true
+	case SemanticTypeButtonTypeRequestPhone:
+		return 0xdf3d36f9, true
+	case SemanticTypeButtonTypeRequestPoll:
+		return 0xaacfff84, true
+	case SemanticTypeButtonTypeSimpleWebView:
+		return 0xc01a597a, true
 	case SemanticTypeBytes:
 		return 0xe937bb82, true
 	case SemanticTypeCDNConfig:
@@ -8981,8 +9121,12 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0xed18c118, true
 	case SemanticTypeEncryptedMessageService:
 		return 0x23734b06, true
+	case SemanticTypeEphemeralWelcomeMessages:
+		return 0x104fc872, true
+	case SemanticTypeEphemeralWelcomeMessagesNotModified:
+		return 0x59ffdb31, true
 	case SemanticTypeEphemeralMessage:
-		return 0xd9c6dc1a, true
+		return 0xdd27bee9, true
 	case SemanticTypeError:
 		return 0xc4b9f9bb, true
 	case SemanticTypeExportedChatlistInvite:
@@ -9107,6 +9251,26 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x3c20629f, true
 	case SemanticTypeInlineBotWebView:
 		return 0xb57295d5, true
+	case SemanticTypeInlineButtonTypeBuy:
+		return 0x48bad7a5, true
+	case SemanticTypeInlineButtonTypeCallback:
+		return 0x2955bc38, true
+	case SemanticTypeInlineButtonTypeCopy:
+		return 0xb41d3272, true
+	case SemanticTypeInlineButtonTypeDisabled:
+		return 0xa438619d, true
+	case SemanticTypeInlineButtonTypeGame:
+		return 0x5cd3709d, true
+	case SemanticTypeInlineButtonTypeSwitchInline:
+		return 0x93773ff5, true
+	case SemanticTypeInlineButtonTypeURL:
+		return 0xeca4f8d4, true
+	case SemanticTypeInlineButtonTypeURLAuth:
+		return 0xbfd02da2, true
+	case SemanticTypeInlineButtonTypeUserProfile:
+		return 0x3fa33fcf, true
+	case SemanticTypeInlineButtonTypeWebView:
+		return 0x3bcab5b4, true
 	case SemanticTypeInlineQueryPeerTypeBotPM:
 		return 0x0e3b2d0c, true
 	case SemanticTypeInlineQueryPeerTypeBroadcast:
@@ -9175,6 +9339,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x09c469cd, true
 	case SemanticTypeInputBusinessRecipients:
 		return 0x6f8b32aa, true
+	case SemanticTypeInputButtonTypeRequestPeer:
+		return 0x3fe268fe, true
 	case SemanticTypeInputChannel:
 		return 0xf35aec28, true
 	case SemanticTypeInputChannelEmpty:
@@ -9257,6 +9423,10 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0xfe06823f, true
 	case SemanticTypeInputGroupCallStream:
 		return 0x0598a92a, true
+	case SemanticTypeInputInlineButtonTypeURLAuth:
+		return 0x9961bcb4, true
+	case SemanticTypeInputInlineButtonTypeUserProfile:
+		return 0x53f3ce5a, true
 	case SemanticTypeInputInvoiceBusinessBotTransferStars:
 		return 0xf4997e42, true
 	case SemanticTypeInputInvoiceChatInviteSubscription:
@@ -9280,19 +9450,13 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypeInputInvoiceStarGiftPrepaidUpgrade:
 		return 0x9a0b48b8, true
 	case SemanticTypeInputInvoiceStarGiftResale:
-		return 0xc39f5324, true
+		return 0xe9b0c658, true
 	case SemanticTypeInputInvoiceStarGiftTransfer:
 		return 0x4a5f5bd9, true
 	case SemanticTypeInputInvoiceStarGiftUpgrade:
 		return 0x4d818d5d, true
 	case SemanticTypeInputInvoiceStars:
 		return 0x65f00ce3, true
-	case SemanticTypeInputKeyboardButtonRequestPeer:
-		return 0x02b78156, true
-	case SemanticTypeInputKeyboardButtonURLAuth:
-		return 0x68013e72, true
-	case SemanticTypeInputKeyboardButtonUserProfile:
-		return 0x7d5e07c7, true
 	case SemanticTypeInputMediaAreaChannelPost:
 		return 0x2271f2bf, true
 	case SemanticTypeInputMediaAreaVenue:
@@ -9560,7 +9724,7 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypeInputSecureValue:
 		return 0xdb21d0a7, true
 	case SemanticTypeInputSendMessageRichMessageDraftAction:
-		return 0xe2b23b51, true
+		return 0xa937c7be, true
 	case SemanticTypeInputSingleMedia:
 		return 0x1cc6e91f, true
 	case SemanticTypeInputStarGiftAuction:
@@ -9680,39 +9844,15 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypeJSONString:
 		return 0xb71e767a, true
 	case SemanticTypeKeyboardButton:
-		return 0x7d170cff, true
-	case SemanticTypeKeyboardButtonBuy:
-		return 0x3fa53905, true
-	case SemanticTypeKeyboardButtonCallback:
-		return 0xe62bc960, true
-	case SemanticTypeKeyboardButtonCopy:
-		return 0xbcc4af10, true
-	case SemanticTypeKeyboardButtonGame:
-		return 0x89c590f9, true
-	case SemanticTypeKeyboardButtonRequestGeoLocation:
-		return 0xaa40f94d, true
-	case SemanticTypeKeyboardButtonRequestPeer:
-		return 0x5b0f15f5, true
-	case SemanticTypeKeyboardButtonRequestPhone:
-		return 0x417efd8f, true
-	case SemanticTypeKeyboardButtonRequestPoll:
-		return 0x7a11d782, true
+		return 0x2f67a72f, true
 	case SemanticTypeKeyboardButtonRow:
 		return 0x77608b83, true
-	case SemanticTypeKeyboardButtonSimpleWebView:
-		return 0xe15c4370, true
 	case SemanticTypeKeyboardButtonStyle:
 		return 0x4fdd3430, true
-	case SemanticTypeKeyboardButtonSwitchInline:
-		return 0x991399fc, true
-	case SemanticTypeKeyboardButtonURL:
-		return 0xd80c25ec, true
-	case SemanticTypeKeyboardButtonURLAuth:
-		return 0xf51006f9, true
-	case SemanticTypeKeyboardButtonUserProfile:
-		return 0xc0fd5d09, true
-	case SemanticTypeKeyboardButtonWebView:
-		return 0xe846b1a0, true
+	case SemanticTypeKeyboardInlineButton:
+		return 0x11c1a322, true
+	case SemanticTypeKeyboardInlineButtonRow:
+		return 0x19420af6, true
 	case SemanticTypeLabeledPrice:
 		return 0xcb296bf8, true
 	case SemanticTypeLangPackDifference:
@@ -9860,7 +10000,7 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypeMessageActionStarGiftPurchaseOfferDeclined:
 		return 0x73ada76b, true
 	case SemanticTypeMessageActionStarGiftUnique:
-		return 0xe6c31522, true
+		return 0x7e1c1187, true
 	case SemanticTypeMessageActionSuggestBirthday:
 		return 0x2c8f2a25, true
 	case SemanticTypeMessageActionSuggestProfilePhoto:
@@ -10236,9 +10376,11 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypePageBlockAuthorDate:
 		return 0xbaafe5e0, true
 	case SemanticTypePageBlockBlockquote:
-		return 0x263d7c26, true
+		return 0x66d1670b, true
 	case SemanticTypePageBlockBlockquoteBlocks:
 		return 0x0e6e47c4, true
+	case SemanticTypePageBlockButtonRow:
+		return 0x6d640318, true
 	case SemanticTypePageBlockChannel:
 		return 0xef1751b5, true
 	case SemanticTypePageBlockCollage:
@@ -10249,6 +10391,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x76768bed, true
 	case SemanticTypePageBlockDivider:
 		return 0xdb20b188, true
+	case SemanticTypePageBlockDocument:
+		return 0x38fa3ba3, true
 	case SemanticTypePageBlockEmbed:
 		return 0xa8718dc5, true
 	case SemanticTypePageBlockEmbedPost:
@@ -10305,6 +10449,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x13567e8a, true
 	case SemanticTypePageBlockVideo:
 		return 0x7c8fe7b6, true
+	case SemanticTypePageButton:
+		return 0x692a5488, true
 	case SemanticTypePageCaption:
 		return 0x6f747657, true
 	case SemanticTypePageListItemBlocks:
@@ -10642,7 +10788,7 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypeRecentStory:
 		return 0x711d692d, true
 	case SemanticTypeReplyInlineMarkup:
-		return 0x48a30254, true
+		return 0xb2b15770, true
 	case SemanticTypeReplyKeyboardForceReply:
 		return 0x86b40b08, true
 	case SemanticTypeReplyKeyboardHide:
@@ -10677,6 +10823,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0xe581e4e9, true
 	case SemanticTypeRestrictionReason:
 		return 0xd072acb4, true
+	case SemanticTypeRichButtonStyle:
+		return 0x03c610bd, true
 	case SemanticTypeRichMessage:
 		return 0xbaf39d8b, true
 	case SemanticTypeSavedDialog:
@@ -10790,9 +10938,11 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 	case SemanticTypeSendMessageRecordVideoAction:
 		return 0xa187d66f, true
 	case SemanticTypeSendMessageRichMessageDraftAction:
-		return 0xa2cb24f9, true
+		return 0x52564893, true
+	case SemanticTypeSendMessageStopDraftAction:
+		return 0xfbf902b0, true
 	case SemanticTypeSendMessageTextDraftAction:
-		return 0x376d975c, true
+		return 0x3630b85a, true
 	case SemanticTypeSendMessageTypingAction:
 		return 0x16bf744e, true
 	case SemanticTypeSendMessageUploadAudioAction:
@@ -11047,6 +11197,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x6724abc4, true
 	case SemanticTypeTextBotCommand:
 		return 0x02ff29d3, true
+	case SemanticTypeTextButton:
+		return 0xafc79cd6, true
 	case SemanticTypeTextCashtag:
 		return 0x7b9e1801, true
 	case SemanticTypeTextConcat:
@@ -11267,6 +11419,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x38fe25b7, true
 	case SemanticTypeUpdateEncryption:
 		return 0xb4a2e88d, true
+	case SemanticTypeUpdateEphemeralBotCallbackQuery:
+		return 0x7c1079d6, true
 	case SemanticTypeUpdateFavedStickers:
 		return 0xe511996d, true
 	case SemanticTypeUpdateFolderPeers:
@@ -11875,8 +12029,12 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0xe5bfffcd, true
 	case SemanticMethodAuthExportLoginToken:
 		return 0xb7e085fe, true
+	case SemanticMethodAuthFinishFirebasePnvLogin:
+		return 0x2c85094c, true
 	case SemanticMethodAuthFinishPasskeyLogin:
 		return 0x9857ad07, true
+	case SemanticMethodAuthFirebasePnvSignUp:
+		return 0x783f6b56, true
 	case SemanticMethodAuthImportAuthorization:
 		return 0xa57a7dad, true
 	case SemanticMethodAuthImportBotAuthorization:
@@ -11885,6 +12043,8 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0x95ac5ce4, true
 	case SemanticMethodAuthImportWebTokenAuthorization:
 		return 0x2db873a9, true
+	case SemanticMethodAuthInitFirebasePnvLogin:
+		return 0x777df37a, true
 	case SemanticMethodAuthInitPasskeyLogin:
 		return 0x518ad0b7, true
 	case SemanticMethodAuthLogOut:
@@ -12197,14 +12357,22 @@ func canonicalWireID(id SemanticID) (uint32, bool) {
 		return 0xb550d328, true
 	case SemanticMethodContactsUpdateContactNote:
 		return 0x139f63fb, true
+	case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+		return 0x734f9721, true
 	case SemanticMethodEphemeralDeleteMessage:
-		return 0xa3c0d511, true
+		return 0x92f6e797, true
+	case SemanticMethodEphemeralDeleteWelcomeMessage:
+		return 0xe882a9e1, true
+	case SemanticMethodEphemeralEditMessage:
+		return 0xcf9c725b, true
 	case SemanticMethodEphemeralGetCallbackAnswer:
 		return 0x3fa464c8, true
+	case SemanticMethodEphemeralGetWelcomeMessages:
+		return 0xdb9ac18d, true
 	case SemanticMethodEphemeralReportMessage:
 		return 0x8704f2bf, true
 	case SemanticMethodEphemeralSendMessage:
-		return 0x68cbd09f, true
+		return 0xba8d5f35, true
 	case SemanticMethodFoldersEditPeerFolders:
 		return 0x6847d0ab, true
 	case SemanticMethodFragmentGetCollectibleInfo:
@@ -13217,11 +13385,25 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeAccountWebBrowserSettingsNotModified:
 			return 0, false
+		case SemanticTypeAuthFirebasePnvIntent:
+			return 0, false
 		case SemanticTypeAuthSentCodePaymentRequired:
 			return 0xe0955a3c, true
 		case SemanticTypeBotCommand:
 			return 0xc27ac8c7, true
 		case SemanticTypeBotInlineMessageRichMessage:
+			return 0, false
+		case SemanticTypeButtonTypeDefault:
+			return 0, false
+		case SemanticTypeButtonTypeRequestGeoLocation:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPeer:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPhone:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPoll:
+			return 0, false
+		case SemanticTypeButtonTypeSimpleWebView:
 			return 0, false
 		case SemanticTypeChannel:
 			return 0x1c32b11c, true
@@ -13249,14 +13431,52 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeDraftMessage:
 			return 0x96eaa5eb, true
+		case SemanticTypeEphemeralWelcomeMessages:
+			return 0, false
+		case SemanticTypeEphemeralWelcomeMessagesNotModified:
+			return 0, false
 		case SemanticTypeEphemeralMessage:
+			return 0, false
+		case SemanticTypeInlineButtonTypeBuy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCallback:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCopy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeDisabled:
+			return 0, false
+		case SemanticTypeInlineButtonTypeGame:
+			return 0, false
+		case SemanticTypeInlineButtonTypeSwitchInline:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURL:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInlineButtonTypeWebView:
 			return 0, false
 		case SemanticTypeInputAiComposeToneSingleUse:
 			return 0, false
 		case SemanticTypeInputBotInlineMessageRichMessage:
 			return 0, false
+		case SemanticTypeInputButtonTypeRequestPeer:
+			return 0, false
 		case SemanticTypeInputDialogPeerCommunity:
 			return 0, false
+		case SemanticTypeInputInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInputInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInputInvoiceStarGiftResale:
+			return 0xc39f5324, true
+		case SemanticTypeInputKeyboardButtonRequestPeer:
+			return 0x02b78156, true
+		case SemanticTypeInputKeyboardButtonURLAuth:
+			return 0x68013e72, true
+		case SemanticTypeInputKeyboardButtonUserProfile:
+			return 0x7d5e07c7, true
 		case SemanticTypeInputNotifyCommunity:
 			return 0, false
 		case SemanticTypeInputPageBlockMap:
@@ -13285,10 +13505,46 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeJoinChatBotResultWebView:
 			return 0, false
+		case SemanticTypeKeyboardButton:
+			return 0x7d170cff, true
+		case SemanticTypeKeyboardButtonBuy:
+			return 0x3fa53905, true
+		case SemanticTypeKeyboardButtonCallback:
+			return 0xe62bc960, true
+		case SemanticTypeKeyboardButtonCopy:
+			return 0xbcc4af10, true
+		case SemanticTypeKeyboardButtonGame:
+			return 0x89c590f9, true
+		case SemanticTypeKeyboardButtonRequestGeoLocation:
+			return 0xaa40f94d, true
+		case SemanticTypeKeyboardButtonRequestPeer:
+			return 0x5b0f15f5, true
+		case SemanticTypeKeyboardButtonRequestPhone:
+			return 0x417efd8f, true
+		case SemanticTypeKeyboardButtonRequestPoll:
+			return 0x7a11d782, true
+		case SemanticTypeKeyboardButtonSimpleWebView:
+			return 0xe15c4370, true
+		case SemanticTypeKeyboardButtonSwitchInline:
+			return 0x991399fc, true
+		case SemanticTypeKeyboardButtonURL:
+			return 0xd80c25ec, true
+		case SemanticTypeKeyboardButtonURLAuth:
+			return 0xf51006f9, true
+		case SemanticTypeKeyboardButtonUserProfile:
+			return 0xc0fd5d09, true
+		case SemanticTypeKeyboardButtonWebView:
+			return 0xe846b1a0, true
+		case SemanticTypeKeyboardInlineButton:
+			return 0, false
+		case SemanticTypeKeyboardInlineButtonRow:
+			return 0, false
 		case SemanticTypeMessage:
 			return 0x95ef6f2b, true
 		case SemanticTypeMessageActionChangeCommunity:
 			return 0, false
+		case SemanticTypeMessageActionStarGiftUnique:
+			return 0xe6c31522, true
 		case SemanticTypeMessagesChatInviteJoinResultOk:
 			return 0, false
 		case SemanticTypeMessagesChatInviteJoinResultWebView:
@@ -13299,7 +13555,13 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeNotifyCommunity:
 			return 0, false
+		case SemanticTypePageBlockBlockquote:
+			return 0x263d7c26, true
 		case SemanticTypePageBlockBlockquoteBlocks:
+			return 0, false
+		case SemanticTypePageBlockButtonRow:
+			return 0, false
+		case SemanticTypePageBlockDocument:
 			return 0, false
 		case SemanticTypePageBlockHeading1:
 			return 0, false
@@ -13319,6 +13581,8 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0x9a8ae1e1, true
 		case SemanticTypePageBlockThinking:
 			return 0, false
+		case SemanticTypePageButton:
+			return 0, false
 		case SemanticTypePageListItemBlocks:
 			return 0x25e073fc, true
 		case SemanticTypePageListItemText:
@@ -13327,10 +13591,18 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0x98dd8936, true
 		case SemanticTypePageListOrderedItemText:
 			return 0x5e068047, true
+		case SemanticTypeReplyInlineMarkup:
+			return 0x48a30254, true
+		case SemanticTypeRichButtonStyle:
+			return 0, false
 		case SemanticTypeRichMessage:
 			return 0, false
 		case SemanticTypeSendMessageRichMessageDraftAction:
 			return 0, false
+		case SemanticTypeSendMessageStopDraftAction:
+			return 0, false
+		case SemanticTypeSendMessageTextDraftAction:
+			return 0x376d975c, true
 		case SemanticTypeTextAutoEmail:
 			return 0, false
 		case SemanticTypeTextAutoPhone:
@@ -13340,6 +13612,8 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 		case SemanticTypeTextBankCard:
 			return 0, false
 		case SemanticTypeTextBotCommand:
+			return 0, false
+		case SemanticTypeTextButton:
 			return 0, false
 		case SemanticTypeTextCashtag:
 			return 0, false
@@ -13369,6 +13643,8 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeUpdateEditEphemeralMessage:
 			return 0, false
+		case SemanticTypeUpdateEphemeralBotCallbackQuery:
+			return 0, false
 		case SemanticTypeUpdateJoinChatWebViewDecision:
 			return 0, false
 		case SemanticTypeUpdateNewBotConnection:
@@ -13392,6 +13668,12 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 		case SemanticMethodAccountToggleWebBrowserSettingsException:
 			return 0, false
 		case SemanticMethodAccountUpdateWebBrowserSettings:
+			return 0, false
+		case SemanticMethodAuthFinishFirebasePnvLogin:
+			return 0, false
+		case SemanticMethodAuthFirebasePnvSignUp:
+			return 0, false
+		case SemanticMethodAuthInitFirebasePnvLogin:
 			return 0, false
 		case SemanticMethodBotsSetJoinChatResults:
 			return 0, false
@@ -13419,9 +13701,17 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticMethodContactsSearch:
 			return 0x11f812d8, true
+		case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+			return 0, false
 		case SemanticMethodEphemeralDeleteMessage:
 			return 0, false
+		case SemanticMethodEphemeralDeleteWelcomeMessage:
+			return 0, false
+		case SemanticMethodEphemeralEditMessage:
+			return 0, false
 		case SemanticMethodEphemeralGetCallbackAnswer:
+			return 0, false
+		case SemanticMethodEphemeralGetWelcomeMessages:
 			return 0, false
 		case SemanticMethodEphemeralReportMessage:
 			return 0, false
@@ -13454,9 +13744,23 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 		}
 	case Profile226:
 		switch semantic {
+		case SemanticTypeAuthFirebasePnvIntent:
+			return 0, false
 		case SemanticTypeBotCommand:
 			return 0xc27ac8c7, true
 		case SemanticTypeBotInlineMessageRichMessage:
+			return 0, false
+		case SemanticTypeButtonTypeDefault:
+			return 0, false
+		case SemanticTypeButtonTypeRequestGeoLocation:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPeer:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPhone:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPoll:
+			return 0, false
+		case SemanticTypeButtonTypeSimpleWebView:
 			return 0, false
 		case SemanticTypeChannel:
 			return 0x1c32b11c, true
@@ -13480,14 +13784,52 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeDraftMessage:
 			return 0x96eaa5eb, true
+		case SemanticTypeEphemeralWelcomeMessages:
+			return 0, false
+		case SemanticTypeEphemeralWelcomeMessagesNotModified:
+			return 0, false
 		case SemanticTypeEphemeralMessage:
+			return 0, false
+		case SemanticTypeInlineButtonTypeBuy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCallback:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCopy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeDisabled:
+			return 0, false
+		case SemanticTypeInlineButtonTypeGame:
+			return 0, false
+		case SemanticTypeInlineButtonTypeSwitchInline:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURL:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInlineButtonTypeWebView:
 			return 0, false
 		case SemanticTypeInputAiComposeToneSingleUse:
 			return 0, false
 		case SemanticTypeInputBotInlineMessageRichMessage:
 			return 0, false
+		case SemanticTypeInputButtonTypeRequestPeer:
+			return 0, false
 		case SemanticTypeInputDialogPeerCommunity:
 			return 0, false
+		case SemanticTypeInputInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInputInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInputInvoiceStarGiftResale:
+			return 0xc39f5324, true
+		case SemanticTypeInputKeyboardButtonRequestPeer:
+			return 0x02b78156, true
+		case SemanticTypeInputKeyboardButtonURLAuth:
+			return 0x68013e72, true
+		case SemanticTypeInputKeyboardButtonUserProfile:
+			return 0x7d5e07c7, true
 		case SemanticTypeInputNotifyCommunity:
 			return 0, false
 		case SemanticTypeInputPageBlockMap:
@@ -13506,10 +13848,46 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeInputSendMessageRichMessageDraftAction:
 			return 0, false
+		case SemanticTypeKeyboardButton:
+			return 0x7d170cff, true
+		case SemanticTypeKeyboardButtonBuy:
+			return 0x3fa53905, true
+		case SemanticTypeKeyboardButtonCallback:
+			return 0xe62bc960, true
+		case SemanticTypeKeyboardButtonCopy:
+			return 0xbcc4af10, true
+		case SemanticTypeKeyboardButtonGame:
+			return 0x89c590f9, true
+		case SemanticTypeKeyboardButtonRequestGeoLocation:
+			return 0xaa40f94d, true
+		case SemanticTypeKeyboardButtonRequestPeer:
+			return 0x5b0f15f5, true
+		case SemanticTypeKeyboardButtonRequestPhone:
+			return 0x417efd8f, true
+		case SemanticTypeKeyboardButtonRequestPoll:
+			return 0x7a11d782, true
+		case SemanticTypeKeyboardButtonSimpleWebView:
+			return 0xe15c4370, true
+		case SemanticTypeKeyboardButtonSwitchInline:
+			return 0x991399fc, true
+		case SemanticTypeKeyboardButtonURL:
+			return 0xd80c25ec, true
+		case SemanticTypeKeyboardButtonURLAuth:
+			return 0xf51006f9, true
+		case SemanticTypeKeyboardButtonUserProfile:
+			return 0xc0fd5d09, true
+		case SemanticTypeKeyboardButtonWebView:
+			return 0xe846b1a0, true
+		case SemanticTypeKeyboardInlineButton:
+			return 0, false
+		case SemanticTypeKeyboardInlineButtonRow:
+			return 0, false
 		case SemanticTypeMessage:
 			return 0x95ef6f2b, true
 		case SemanticTypeMessageActionChangeCommunity:
 			return 0, false
+		case SemanticTypeMessageActionStarGiftUnique:
+			return 0xe6c31522, true
 		case SemanticTypeMessagesChatInviteJoinResultWebView:
 			return 0x774bbdf4, true
 		case SemanticTypeMessagesComposedRichMessageWithAI:
@@ -13518,7 +13896,13 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeNotifyCommunity:
 			return 0, false
+		case SemanticTypePageBlockBlockquote:
+			return 0x263d7c26, true
 		case SemanticTypePageBlockBlockquoteBlocks:
+			return 0, false
+		case SemanticTypePageBlockButtonRow:
+			return 0, false
+		case SemanticTypePageBlockDocument:
 			return 0, false
 		case SemanticTypePageBlockHeading1:
 			return 0, false
@@ -13538,6 +13922,8 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0x9a8ae1e1, true
 		case SemanticTypePageBlockThinking:
 			return 0, false
+		case SemanticTypePageButton:
+			return 0, false
 		case SemanticTypePageListItemBlocks:
 			return 0x25e073fc, true
 		case SemanticTypePageListItemText:
@@ -13546,10 +13932,18 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0x98dd8936, true
 		case SemanticTypePageListOrderedItemText:
 			return 0x5e068047, true
+		case SemanticTypeReplyInlineMarkup:
+			return 0x48a30254, true
+		case SemanticTypeRichButtonStyle:
+			return 0, false
 		case SemanticTypeRichMessage:
 			return 0, false
 		case SemanticTypeSendMessageRichMessageDraftAction:
 			return 0, false
+		case SemanticTypeSendMessageStopDraftAction:
+			return 0, false
+		case SemanticTypeSendMessageTextDraftAction:
+			return 0x376d975c, true
 		case SemanticTypeTextAutoEmail:
 			return 0, false
 		case SemanticTypeTextAutoPhone:
@@ -13559,6 +13953,8 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 		case SemanticTypeTextBankCard:
 			return 0, false
 		case SemanticTypeTextBotCommand:
+			return 0, false
+		case SemanticTypeTextButton:
 			return 0, false
 		case SemanticTypeTextCashtag:
 			return 0, false
@@ -13584,12 +13980,20 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeUpdateEditEphemeralMessage:
 			return 0, false
+		case SemanticTypeUpdateEphemeralBotCallbackQuery:
+			return 0, false
 		case SemanticTypeUpdateNewEphemeralMessage:
 			return 0, false
 		case SemanticTypeUser:
 			return 0x31774388, true
 		case SemanticMethodAccountToggleWebBrowserSettingsException:
 			return 0x2d0a0571, true
+		case SemanticMethodAuthFinishFirebasePnvLogin:
+			return 0, false
+		case SemanticMethodAuthFirebasePnvSignUp:
+			return 0, false
+		case SemanticMethodAuthInitFirebasePnvLogin:
+			return 0, false
 		case SemanticMethodCommunitiesCreate:
 			return 0, false
 		case SemanticMethodCommunitiesGetJoinedCommunities:
@@ -13610,9 +14014,17 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticMethodContactsSearch:
 			return 0x11f812d8, true
+		case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+			return 0, false
 		case SemanticMethodEphemeralDeleteMessage:
 			return 0, false
+		case SemanticMethodEphemeralDeleteWelcomeMessage:
+			return 0, false
+		case SemanticMethodEphemeralEditMessage:
+			return 0, false
 		case SemanticMethodEphemeralGetCallbackAnswer:
+			return 0, false
+		case SemanticMethodEphemeralGetWelcomeMessages:
 			return 0, false
 		case SemanticMethodEphemeralReportMessage:
 			return 0, false
@@ -13639,8 +14051,22 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 		}
 	case Profile227:
 		switch semantic {
+		case SemanticTypeAuthFirebasePnvIntent:
+			return 0, false
 		case SemanticTypeBotCommand:
 			return 0xc27ac8c7, true
+		case SemanticTypeButtonTypeDefault:
+			return 0, false
+		case SemanticTypeButtonTypeRequestGeoLocation:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPeer:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPhone:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPoll:
+			return 0, false
+		case SemanticTypeButtonTypeSimpleWebView:
+			return 0, false
 		case SemanticTypeChannel:
 			return 0x1c32b11c, true
 		case SemanticTypeCommunitiesParticipantJoinedChats:
@@ -13661,18 +14087,94 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeDialogPeerCommunity:
 			return 0, false
+		case SemanticTypeEphemeralWelcomeMessages:
+			return 0, false
+		case SemanticTypeEphemeralWelcomeMessagesNotModified:
+			return 0, false
 		case SemanticTypeEphemeralMessage:
+			return 0, false
+		case SemanticTypeInlineButtonTypeBuy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCallback:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCopy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeDisabled:
+			return 0, false
+		case SemanticTypeInlineButtonTypeGame:
+			return 0, false
+		case SemanticTypeInlineButtonTypeSwitchInline:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURL:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInlineButtonTypeWebView:
 			return 0, false
 		case SemanticTypeInputAiComposeToneSingleUse:
 			return 0, false
+		case SemanticTypeInputButtonTypeRequestPeer:
+			return 0, false
 		case SemanticTypeInputDialogPeerCommunity:
 			return 0, false
+		case SemanticTypeInputInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInputInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInputInvoiceStarGiftResale:
+			return 0xc39f5324, true
+		case SemanticTypeInputKeyboardButtonRequestPeer:
+			return 0x02b78156, true
+		case SemanticTypeInputKeyboardButtonURLAuth:
+			return 0x68013e72, true
+		case SemanticTypeInputKeyboardButtonUserProfile:
+			return 0x7d5e07c7, true
 		case SemanticTypeInputNotifyCommunity:
 			return 0, false
 		case SemanticTypeInputReplyToEphemeralMessage:
 			return 0, false
+		case SemanticTypeInputSendMessageRichMessageDraftAction:
+			return 0xe2b23b51, true
+		case SemanticTypeKeyboardButton:
+			return 0x7d170cff, true
+		case SemanticTypeKeyboardButtonBuy:
+			return 0x3fa53905, true
+		case SemanticTypeKeyboardButtonCallback:
+			return 0xe62bc960, true
+		case SemanticTypeKeyboardButtonCopy:
+			return 0xbcc4af10, true
+		case SemanticTypeKeyboardButtonGame:
+			return 0x89c590f9, true
+		case SemanticTypeKeyboardButtonRequestGeoLocation:
+			return 0xaa40f94d, true
+		case SemanticTypeKeyboardButtonRequestPeer:
+			return 0x5b0f15f5, true
+		case SemanticTypeKeyboardButtonRequestPhone:
+			return 0x417efd8f, true
+		case SemanticTypeKeyboardButtonRequestPoll:
+			return 0x7a11d782, true
+		case SemanticTypeKeyboardButtonSimpleWebView:
+			return 0xe15c4370, true
+		case SemanticTypeKeyboardButtonSwitchInline:
+			return 0x991399fc, true
+		case SemanticTypeKeyboardButtonURL:
+			return 0xd80c25ec, true
+		case SemanticTypeKeyboardButtonURLAuth:
+			return 0xf51006f9, true
+		case SemanticTypeKeyboardButtonUserProfile:
+			return 0xc0fd5d09, true
+		case SemanticTypeKeyboardButtonWebView:
+			return 0xe846b1a0, true
+		case SemanticTypeKeyboardInlineButton:
+			return 0, false
+		case SemanticTypeKeyboardInlineButtonRow:
+			return 0, false
 		case SemanticTypeMessageActionChangeCommunity:
 			return 0, false
+		case SemanticTypeMessageActionStarGiftUnique:
+			return 0xe6c31522, true
 		case SemanticTypeMessagesChatInviteJoinResultWebView:
 			return 0x2f51c337, true
 		case SemanticTypeMessagesComposedRichMessageWithAI:
@@ -13680,6 +14182,26 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 		case SemanticTypeMessagesTranslatedRichMessage:
 			return 0, false
 		case SemanticTypeNotifyCommunity:
+			return 0, false
+		case SemanticTypePageBlockBlockquote:
+			return 0x263d7c26, true
+		case SemanticTypePageBlockButtonRow:
+			return 0, false
+		case SemanticTypePageBlockDocument:
+			return 0, false
+		case SemanticTypePageButton:
+			return 0, false
+		case SemanticTypeReplyInlineMarkup:
+			return 0x48a30254, true
+		case SemanticTypeRichButtonStyle:
+			return 0, false
+		case SemanticTypeSendMessageRichMessageDraftAction:
+			return 0xa2cb24f9, true
+		case SemanticTypeSendMessageStopDraftAction:
+			return 0, false
+		case SemanticTypeSendMessageTextDraftAction:
+			return 0x376d975c, true
+		case SemanticTypeTextButton:
 			return 0, false
 		case SemanticTypeTextDiff:
 			return 0, false
@@ -13689,10 +14211,18 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticTypeUpdateEditEphemeralMessage:
 			return 0, false
+		case SemanticTypeUpdateEphemeralBotCallbackQuery:
+			return 0, false
 		case SemanticTypeUpdateNewEphemeralMessage:
 			return 0, false
 		case SemanticTypeUser:
 			return 0x31774388, true
+		case SemanticMethodAuthFinishFirebasePnvLogin:
+			return 0, false
+		case SemanticMethodAuthFirebasePnvSignUp:
+			return 0, false
+		case SemanticMethodAuthInitFirebasePnvLogin:
+			return 0, false
 		case SemanticMethodCommunitiesCreate:
 			return 0, false
 		case SemanticMethodCommunitiesGetJoinedCommunities:
@@ -13711,9 +14241,17 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0, false
 		case SemanticMethodCommunitiesTogglePeerLinkRequestApproval:
 			return 0, false
+		case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+			return 0, false
 		case SemanticMethodEphemeralDeleteMessage:
 			return 0, false
+		case SemanticMethodEphemeralDeleteWelcomeMessage:
+			return 0, false
+		case SemanticMethodEphemeralEditMessage:
+			return 0, false
 		case SemanticMethodEphemeralGetCallbackAnswer:
+			return 0, false
+		case SemanticMethodEphemeralGetWelcomeMessages:
 			return 0, false
 		case SemanticMethodEphemeralReportMessage:
 			return 0, false
@@ -13727,6 +14265,141 @@ func WireID(profile Profile, semantic SemanticID) (uint32, bool) {
 			return 0x4bc6589a, true
 		case SemanticMethodMessagesTranslateRichMessage:
 			return 0, false
+		}
+	case Profile228:
+		switch semantic {
+		case SemanticTypeAuthFirebasePnvIntent:
+			return 0, false
+		case SemanticTypeButtonTypeDefault:
+			return 0, false
+		case SemanticTypeButtonTypeRequestGeoLocation:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPeer:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPhone:
+			return 0, false
+		case SemanticTypeButtonTypeRequestPoll:
+			return 0, false
+		case SemanticTypeButtonTypeSimpleWebView:
+			return 0, false
+		case SemanticTypeEphemeralWelcomeMessages:
+			return 0, false
+		case SemanticTypeEphemeralWelcomeMessagesNotModified:
+			return 0, false
+		case SemanticTypeEphemeralMessage:
+			return 0xd9c6dc1a, true
+		case SemanticTypeInlineButtonTypeBuy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCallback:
+			return 0, false
+		case SemanticTypeInlineButtonTypeCopy:
+			return 0, false
+		case SemanticTypeInlineButtonTypeDisabled:
+			return 0, false
+		case SemanticTypeInlineButtonTypeGame:
+			return 0, false
+		case SemanticTypeInlineButtonTypeSwitchInline:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURL:
+			return 0, false
+		case SemanticTypeInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInlineButtonTypeWebView:
+			return 0, false
+		case SemanticTypeInputButtonTypeRequestPeer:
+			return 0, false
+		case SemanticTypeInputInlineButtonTypeURLAuth:
+			return 0, false
+		case SemanticTypeInputInlineButtonTypeUserProfile:
+			return 0, false
+		case SemanticTypeInputInvoiceStarGiftResale:
+			return 0xc39f5324, true
+		case SemanticTypeInputKeyboardButtonRequestPeer:
+			return 0x02b78156, true
+		case SemanticTypeInputKeyboardButtonURLAuth:
+			return 0x68013e72, true
+		case SemanticTypeInputKeyboardButtonUserProfile:
+			return 0x7d5e07c7, true
+		case SemanticTypeInputSendMessageRichMessageDraftAction:
+			return 0xe2b23b51, true
+		case SemanticTypeKeyboardButton:
+			return 0x7d170cff, true
+		case SemanticTypeKeyboardButtonBuy:
+			return 0x3fa53905, true
+		case SemanticTypeKeyboardButtonCallback:
+			return 0xe62bc960, true
+		case SemanticTypeKeyboardButtonCopy:
+			return 0xbcc4af10, true
+		case SemanticTypeKeyboardButtonGame:
+			return 0x89c590f9, true
+		case SemanticTypeKeyboardButtonRequestGeoLocation:
+			return 0xaa40f94d, true
+		case SemanticTypeKeyboardButtonRequestPeer:
+			return 0x5b0f15f5, true
+		case SemanticTypeKeyboardButtonRequestPhone:
+			return 0x417efd8f, true
+		case SemanticTypeKeyboardButtonRequestPoll:
+			return 0x7a11d782, true
+		case SemanticTypeKeyboardButtonSimpleWebView:
+			return 0xe15c4370, true
+		case SemanticTypeKeyboardButtonSwitchInline:
+			return 0x991399fc, true
+		case SemanticTypeKeyboardButtonURL:
+			return 0xd80c25ec, true
+		case SemanticTypeKeyboardButtonURLAuth:
+			return 0xf51006f9, true
+		case SemanticTypeKeyboardButtonUserProfile:
+			return 0xc0fd5d09, true
+		case SemanticTypeKeyboardButtonWebView:
+			return 0xe846b1a0, true
+		case SemanticTypeKeyboardInlineButton:
+			return 0, false
+		case SemanticTypeKeyboardInlineButtonRow:
+			return 0, false
+		case SemanticTypeMessageActionStarGiftUnique:
+			return 0xe6c31522, true
+		case SemanticTypePageBlockBlockquote:
+			return 0x263d7c26, true
+		case SemanticTypePageBlockButtonRow:
+			return 0, false
+		case SemanticTypePageBlockDocument:
+			return 0, false
+		case SemanticTypePageButton:
+			return 0, false
+		case SemanticTypeReplyInlineMarkup:
+			return 0x48a30254, true
+		case SemanticTypeRichButtonStyle:
+			return 0, false
+		case SemanticTypeSendMessageRichMessageDraftAction:
+			return 0xa2cb24f9, true
+		case SemanticTypeSendMessageStopDraftAction:
+			return 0, false
+		case SemanticTypeSendMessageTextDraftAction:
+			return 0x376d975c, true
+		case SemanticTypeTextButton:
+			return 0, false
+		case SemanticTypeUpdateEphemeralBotCallbackQuery:
+			return 0, false
+		case SemanticMethodAuthFinishFirebasePnvLogin:
+			return 0, false
+		case SemanticMethodAuthFirebasePnvSignUp:
+			return 0, false
+		case SemanticMethodAuthInitFirebasePnvLogin:
+			return 0, false
+		case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+			return 0, false
+		case SemanticMethodEphemeralDeleteMessage:
+			return 0xa3c0d511, true
+		case SemanticMethodEphemeralDeleteWelcomeMessage:
+			return 0, false
+		case SemanticMethodEphemeralEditMessage:
+			return 0, false
+		case SemanticMethodEphemeralGetWelcomeMessages:
+			return 0, false
+		case SemanticMethodEphemeralSendMessage:
+			return 0x68cbd09f, true
 		}
 	case ProfileCanonical:
 	default:
@@ -13811,6 +14484,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodPhotosUploadProfilePhoto, true
 	case 0x038a08d3:
 		return SemanticMethodHelpGetUserInfo, true
+	case 0x03c610bd:
+		return SemanticTypeRichButtonStyle, true
 	case 0x041845db:
 		return SemanticMethodPhoneGetGroupCall, true
 	case 0x042f1f61:
@@ -14023,6 +14698,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodPaymentsExportInvoice, true
 	case 0x1013fd9e:
 		return SemanticMethodContactsDeleteByPhones, true
+	case 0x104fc872:
+		return SemanticTypeEphemeralWelcomeMessages, true
 	case 0x107e31a0:
 		return SemanticMethodMessagesSearchSentMedia, true
 	case 0x1081464c:
@@ -14055,6 +14732,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeBotInlineResult, true
 	case 0x11b58939:
 		return SemanticTypeDocumentAttributeAnimated, true
+	case 0x11c1a322:
+		return SemanticTypeKeyboardInlineButton, true
 	case 0x11dfa986:
 		return SemanticTypeUpdateBotChatInviteRequester, true
 	case 0x11e831ee:
@@ -14207,6 +14886,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeUpdateFolderPeers, true
 	case 0x193b4417:
 		return SemanticTypeInputNotifyUsers, true
+	case 0x19420af6:
+		return SemanticTypeKeyboardInlineButtonRow, true
 	case 0x1991b13b:
 		return SemanticTypeBotsPopularAppBots, true
 	case 0x199fed96:
@@ -14511,6 +15192,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodStoriesGetStoriesViews, true
 	case 0x28ecf961:
 		return SemanticTypeHelpTermsOfServiceUpdate, true
+	case 0x2955bc38:
+		return SemanticTypeInlineButtonTypeCallback, true
 	case 0x29562865:
 		return SemanticTypeChatEmpty, true
 	case 0x2979eeb2:
@@ -14559,6 +15242,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodStoriesEditStory, true
 	case 0x2c800be5:
 		return SemanticMethodContactsImportContacts, true
+	case 0x2c85094c:
+		return SemanticMethodAuthFinishFirebasePnvLogin, true
 	case 0x2c8f2a25:
 		return SemanticTypeMessageActionSuggestBirthday, true
 	case 0x2ca4fdf8:
@@ -14627,6 +15312,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypePageListItemText, true
 	case 0x2f65c8e4:
 		return SemanticTypeDialogPeerCommunity, true
+	case 0x2f67a72f:
+		return SemanticTypeKeyboardButton, true
 	case 0x2f6cb2ab:
 		return SemanticTypeBotCommandScopeDefault, true
 	case 0x2f98c3d5:
@@ -14745,6 +15432,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesEditChatPhoto, true
 	case 0x35e410a8:
 		return SemanticTypeMessagesStickerSetInstallResultArchive, true
+	case 0x3630b85a:
+		return SemanticTypeSendMessageTextDraftAction, true
 	case 0x363293ae:
 		return SemanticTypeDialogFilterDefault, true
 	case 0x3637e05b:
@@ -14801,6 +15490,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodAccountUpdateDeviceLocked, true
 	case 0x38e79fde:
 		return SemanticTypeChatParticipant, true
+	case 0x38fa3ba3:
+		return SemanticTypePageBlockDocument, true
 	case 0x38fe25b7:
 		return SemanticTypeUpdateEncryptedMessagesRead, true
 	case 0x390d5c5e:
@@ -14849,6 +15540,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeInputPhoto, true
 	case 0x3bb842ac:
 		return SemanticTypeOutboxReadDate, true
+	case 0x3bcab5b4:
+		return SemanticTypeInlineButtonTypeWebView, true
 	case 0x3bd2b4a0:
 		return SemanticMethodPhoneAcceptCall, true
 	case 0x3bd4b7c2:
@@ -14941,6 +15634,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesReportReaction, true
 	case 0x3f6d7b68:
 		return SemanticTypeJSONNull, true
+	case 0x3fa33fcf:
+		return SemanticTypeInlineButtonTypeUserProfile, true
 	case 0x3fa464c8:
 		return SemanticMethodEphemeralGetCallbackAnswer, true
 	case 0x3fa53905:
@@ -14951,6 +15646,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeExportedStoryLink, true
 	case 0x3fd863d1:
 		return SemanticTypeBotCommandScopePeerAdmins, true
+	case 0x3fe268fe:
+		return SemanticTypeInputButtonTypeRequestPeer, true
 	case 0x3fedc75f:
 		return SemanticMethodHelpGetDeepLinkInfo, true
 	case 0x3fedd339:
@@ -15109,6 +15806,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeReplyInlineMarkup, true
 	case 0x48aaae3c:
 		return SemanticTypeStarGiftAttributeIDModel, true
+	case 0x48bad7a5:
+		return SemanticTypeInlineButtonTypeBuy, true
 	case 0x48cdc6d8:
 		return SemanticMethodPhoneCreateGroupCall, true
 	case 0x48e246c2:
@@ -15231,6 +15930,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypePageBlockPullquote, true
 	case 0x4f47a016:
 		return SemanticMethodMessagesSetDefaultReaction, true
+	case 0x4f58a237:
+		return SemanticTypeButtonTypeRequestPeer, true
 	case 0x4f96cb18:
 		return SemanticTypeInputPrivacyKeyStatusTimestamp, true
 	case 0x4fa417f2:
@@ -15295,6 +15996,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodHelpGetAppUpdate, true
 	case 0x523da4eb:
 		return SemanticTypeReactionPaid, true
+	case 0x52564893:
+		return SemanticTypeSendMessageRichMessageDraftAction, true
 	case 0x527d22eb:
 		return SemanticTypeEmailVerifyPurposeLoginChange, true
 	case 0x528a0677:
@@ -15325,6 +16028,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodAccountDeleteAutoSaveExceptions, true
 	case 0x53e6f1ec:
 		return SemanticTypeUpdateDeleteQuickReply, true
+	case 0x53f3ce5a:
+		return SemanticTypeInputInlineButtonTypeUserProfile, true
 	case 0x541a1d1a:
 		return SemanticTypeUserStatusLastWeek, true
 	case 0x54236209:
@@ -15451,6 +16156,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeMessagesEmojiGameUnavailable, true
 	case 0x59ead627:
 		return SemanticMethodPhoneSetCallRating, true
+	case 0x59ffdb31:
+		return SemanticTypeEphemeralWelcomeMessagesNotModified, true
 	case 0x5a0a066d:
 		return SemanticTypeBusinessIntro, true
 	case 0x5a17b5e5:
@@ -15491,6 +16198,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodPaymentsGetStarGiftAuctionState, true
 	case 0x5cc761bd:
 		return SemanticTypeEmojiKeywordsDifference, true
+	case 0x5cd3709d:
+		return SemanticTypeInlineButtonTypeGame, true
 	case 0x5ce14175:
 		return SemanticTypePopularContact, true
 	case 0x5cf09635:
@@ -15671,6 +16380,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodHelpEditUserInfo, true
 	case 0x66cdafc4:
 		return SemanticMethodAccountUpdateBusinessGreetingMessage, true
+	case 0x66d1670b:
+		return SemanticTypePageBlockBlockquote, true
 	case 0x66e486fb:
 		return SemanticMethodChatlistsHideChatlistUpdates, true
 	case 0x6724abc4:
@@ -15713,6 +16424,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeUpdateInlineBotCallbackQuery, true
 	case 0x69279795:
 		return SemanticTypeInputSavedStarGiftUser, true
+	case 0x692a5488:
+		return SemanticTypePageButton, true
 	case 0x695c9e7c:
 		return SemanticTypeUpdateReadChannelDiscussionOutbox, true
 	case 0x69d66c45:
@@ -15785,6 +16498,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodPaymentsGetStarGiftUpgradeAttributes, true
 	case 0x6d5f77ee:
 		return SemanticTypeBaseThemeTinted, true
+	case 0x6d640318:
+		return SemanticTypePageBlockButtonRow, true
 	case 0x6dfa0622:
 		return SemanticMethodPaymentsBotCancelStarsSubscription, true
 	case 0x6e153f16:
@@ -15879,6 +16594,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeRequestedPeerChat, true
 	case 0x7311ca11:
 		return SemanticTypeWebPageNotModified, true
+	case 0x734f9721:
+		return SemanticMethodEphemeralDeleteAllWelcomeMessages, true
 	case 0x735787a8:
 		return SemanticMethodHelpGetCountriesList, true
 	case 0x73665bc2:
@@ -15969,6 +16686,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeKeyboardButtonRow, true
 	case 0x77744d4a:
 		return SemanticTypeDialogFilterSuggested, true
+	case 0x777df37a:
+		return SemanticMethodAuthInitFirebasePnvLogin, true
 	case 0x7780bcb4:
 		return SemanticTypeGroupCallDiscarded, true
 	case 0x7781fe18:
@@ -15993,6 +16712,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeHelpTermsOfService, true
 	case 0x78337739:
 		return SemanticMethodMessagesReorderStickerSets, true
+	case 0x783f6b56:
+		return SemanticMethodAuthFirebasePnvSignUp, true
 	case 0x78499170:
 		return SemanticMethodStoriesGetPeerMaxIDs, true
 	case 0x78515775:
@@ -16057,6 +16778,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypePaymentsPaymentFormStars, true
 	case 0x7bfbdefc:
 		return SemanticTypeAttachMenuPeerTypeBroadcast, true
+	case 0x7c1079d6:
+		return SemanticTypeUpdateEphemeralBotCallbackQuery, true
 	case 0x7c2557c4:
 		return SemanticMethodStoriesToggleAllStoriesHidden, true
 	case 0x7c8fe7b6:
@@ -16089,6 +16812,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeInputPeerSelf, true
 	case 0x7dbf8673:
 		return SemanticTypeSponsoredMessage, true
+	case 0x7e1c1187:
+		return SemanticTypeMessageActionStarGiftUnique, true
 	case 0x7e58ee9c:
 		return SemanticMethodMessagesClearAllDrafts, true
 	case 0x7e6260d7:
@@ -16477,6 +17202,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesSearchEmojiStickerSets, true
 	case 0x92ceddd4:
 		return SemanticMethodMessagesCreateChat, true
+	case 0x92f6e797:
+		return SemanticMethodEphemeralDeleteMessage, true
 	case 0x93037e20:
 		return SemanticTypeStatsPublicForwards, true
 	case 0x9308ce1b:
@@ -16491,6 +17218,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeUpdateSavedGifs, true
 	case 0x93773344:
 		return SemanticMethodCommunitiesGetPeerLinkRequests, true
+	case 0x93773ff5:
+		return SemanticTypeInlineButtonTypeSwitchInline, true
 	case 0x93b31848:
 		return SemanticTypeMessageActionRequestedPeerSentMe, true
 	case 0x93bd878d:
@@ -16607,6 +17336,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeHelpPromoDataEmpty, true
 	case 0x991399fc:
 		return SemanticTypeKeyboardButtonSwitchInline, true
+	case 0x9961bcb4:
+		return SemanticTypeInputInlineButtonTypeURLAuth, true
 	case 0x99622c0c:
 		return SemanticTypePeerNotifySettings, true
 	case 0x9967ad0f:
@@ -16677,6 +17408,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeInputStorePaymentAuthCode, true
 	case 0x9bed434d:
 		return SemanticTypeInputWebDocument, true
+	case 0x9beee140:
+		return SemanticTypeButtonTypeRequestGeoLocation, true
 	case 0x9bf8bb95:
 		return SemanticTypeTextStrike, true
 	case 0x9c4e7e8b:
@@ -16851,6 +17584,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesEditInlineBotMessage, true
 	case 0xa437c3ed:
 		return SemanticTypeWallPaper, true
+	case 0xa438619d:
+		return SemanticTypeInlineButtonTypeDisabled, true
 	case 0xa43f30cc:
 		return SemanticTypeMessageActionChatDeleteUser, true
 	case 0xa44f3ef6:
@@ -16961,6 +17696,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeMessagesInactiveChats, true
 	case 0xa929597a:
 		return SemanticMethodAccountGetAuthorizationForm, true
+	case 0xa937c7be:
+		return SemanticTypeInputSendMessageRichMessageDraftAction, true
 	case 0xa9478a1a:
 		return SemanticTypeChannelParticipantSelf, true
 	case 0xa99fca4f:
@@ -16983,6 +17720,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeStorageFileUnknown, true
 	case 0xaac7b717:
 		return SemanticMethodAuthSignUp, true
+	case 0xaacfff84:
+		return SemanticTypeButtonTypeRequestPoll, true
 	case 0xab03c6d9:
 		return SemanticTypeAuthSentCodeTypeFlashCall, true
 	case 0xab0f6b1e:
@@ -17075,6 +17814,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesGetForumTopicsByID, true
 	case 0xafb6144a:
 		return SemanticTypeChannelAdminLogEventActionParticipantJoinByRequest, true
+	case 0xafc79cd6:
+		return SemanticTypeTextButton, true
 	case 0xafe5623f:
 		return SemanticTypePhoneJoinAsPeers, true
 	case 0xaff56398:
@@ -17135,6 +17876,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeGeoPoint, true
 	case 0xb2a7386b:
 		return SemanticTypeAttachMenuBotIcon, true
+	case 0xb2b15770:
+		return SemanticTypeReplyInlineMarkup, true
 	case 0xb2cbc1c0:
 		return SemanticMethodPhoneDiscardCall, true
 	case 0xb2da71d2:
@@ -17159,6 +17902,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeEmojiLanguage, true
 	case 0xb4073647:
 		return SemanticTypeUsername, true
+	case 0xb41d3272:
+		return SemanticTypeInlineButtonTypeCopy, true
 	case 0xb425cfe1:
 		return SemanticTypePaymentsPaymentFormStarGift, true
 	case 0xb434e2b8:
@@ -17321,6 +18066,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodContactsEditCloseFriends, true
 	case 0xba7bb15e:
 		return SemanticTypePollResults, true
+	case 0xba8d5f35:
+		return SemanticMethodEphemeralSendMessage, true
 	case 0xba9ee679:
 		return SemanticMethodMessagesRequestChatJoinWebView, true
 	case 0xbaa57628:
@@ -17447,6 +18194,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeChannelLocationEmpty, true
 	case 0xbfb9f457:
 		return SemanticTypeHelpPassportConfigNotModified, true
+	case 0xbfd02da2:
+		return SemanticTypeInlineButtonTypeURLAuth, true
 	case 0xbfd064ec:
 		return SemanticTypePageBlockHeader, true
 	case 0xbfe3dd3d:
@@ -17459,6 +18208,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodPaymentsGetStarsTopupOptions, true
 	case 0xc0111fe3:
 		return SemanticMethodChannelsDeleteChannel, true
+	case 0xc01a597a:
+		return SemanticTypeButtonTypeSimpleWebView, true
 	case 0xc01f6fe8:
 		return SemanticTypeMessagesSavedDialogsNotModified, true
 	case 0xc070d93e:
@@ -17633,6 +18384,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeSearchResultsCalendarPeriod, true
 	case 0xc9b9e2b9:
 		return SemanticTypeBusinessAwayMessageScheduleAlways, true
+	case 0xc9dd90e9:
+		return SemanticTypeButtonTypeDefault, true
 	case 0xc9e01e7b:
 		return SemanticMethodMessagesRequestMainWebView, true
 	case 0xc9e33d54:
@@ -17737,6 +18490,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesReportSpam, true
 	case 0xcf6f6db8:
 		return SemanticTypeWebPageAttributeUniqueStarGift, true
+	case 0xcf9c725b:
+		return SemanticMethodEphemeralEditMessage, true
 	case 0xcfb9d957:
 		return SemanticTypeMessagesTranscribedAudio, true
 	case 0xcfc9e002:
@@ -17945,6 +18700,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodAccountResetNotifySettings, true
 	case 0xdb909ec2:
 		return SemanticTypeEmailVerificationGoogle, true
+	case 0xdb9ac18d:
+		return SemanticMethodEphemeralGetWelcomeMessages, true
 	case 0xdb9d897d:
 		return SemanticTypeBotCommandScopePeer, true
 	case 0xdb9e70d2:
@@ -17983,6 +18740,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeHelpAppConfig, true
 	case 0xdd1fbf93:
 		return SemanticTypeBotsAccessSettings, true
+	case 0xdd27bee9:
+		return SemanticTypeEphemeralMessage, true
 	case 0xdd289f8e:
 		return SemanticMethodInvokeWithBusinessConnection, true
 	case 0xdd39316a:
@@ -18019,6 +18778,10 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticMethodMessagesEditChatAbout, true
 	case 0xdf04dd4e:
 		return SemanticMethodMessagesGetChatInviteImporters, true
+	case 0xdf3d36f9:
+		return SemanticTypeButtonTypeRequestPhone, true
+	case 0xdf5ac00c:
+		return SemanticTypeAuthFirebasePnvIntent, true
 	case 0xdf77f3bc:
 		return SemanticMethodAccountResetAuthorization, true
 	case 0xdfb80317:
@@ -18215,6 +18978,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeMessagesAllStickersNotModified, true
 	case 0xe87acbc0:
 		return SemanticTypeFoundStory, true
+	case 0xe882a9e1:
+		return SemanticMethodEphemeralDeleteWelcomeMessage, true
 	case 0xe894ad4d:
 		return SemanticMethodAuthAcceptLoginToken, true
 	case 0xe89c45b2:
@@ -18237,6 +19002,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeInputPrivacyValueDisallowChatParticipants, true
 	case 0xe9763aec:
 		return SemanticTypeSendMessageUploadVideoAction, true
+	case 0xe9b0c658:
+		return SemanticTypeInputInvoiceStarGiftResale, true
 	case 0xe9baa668:
 		return SemanticTypeFolderPeer, true
 	case 0xe9ce781c:
@@ -18297,6 +19064,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypePhonePhoneCall, true
 	case 0xec86017a:
 		return SemanticMethodAccountRegisterDevice, true
+	case 0xeca4f8d4:
+		return SemanticTypeInlineButtonTypeURL, true
 	case 0xece2a0e6:
 		return SemanticMethodChannelsGetMessageAuthor, true
 	case 0xece9814b:
@@ -18631,6 +19400,8 @@ func semanticByWireID(id uint32) (SemanticID, bool) {
 		return SemanticTypeTopPeerCategoryForwardChats, true
 	case 0xfbf6e8b1:
 		return SemanticTypeAccountSavedRingtonesNotModified, true
+	case 0xfbf902b0:
+		return SemanticTypeSendMessageStopDraftAction, true
 	case 0xfbfca18f:
 		return SemanticMethodMessagesGetEmojiStickers, true
 	case 0xfc36954e:

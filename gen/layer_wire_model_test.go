@@ -100,12 +100,16 @@ func TestLayerWireModelRequiresCachedConversionPlan(t *testing.T) {
 	}
 }
 
-func TestLayerWireModelTelegram225Through228(t *testing.T) {
+func TestLayerWireModelTelegram225Through229(t *testing.T) {
 	set, err := semantic.LoadUniverse("../_schema/layers/manifest.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{})
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	generator, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -176,7 +180,8 @@ func TestLayerWireModelTelegram225Through228(t *testing.T) {
 	if resultChanges != 4 {
 		t.Fatalf("result-changing actions = %d, want 4", resultChanges)
 	}
-	if actionCounts[layerWireUnavailable] == 0 || actionCounts[layerWirePolicy] == 0 || actionCounts[layerWireProfileOnly] != 0 {
+	if actionCounts[layerWireUnavailable] == 0 || actionCounts[layerWirePolicy] == 0 ||
+		actionCounts[layerWireProfileOnly] == 0 || actionCounts[layerWireAbsent] == 0 {
 		t.Fatalf("real action kinds are incomplete: %v", actionCounts)
 	}
 
@@ -191,7 +196,7 @@ func TestLayerWireModelTelegram225Through228(t *testing.T) {
 	}
 
 	t.Logf(
-		"Telegram Layers 225-228 wire model: profiles=%d families=%d wires=%d wire_actions=%d accepted_wire_actions=%d rejected_wire_actions=%d body_variants=%d multi_body_wires=%d classes=%d class_constructor_actions=%d profile_only_wires=%d semantic_actions=%d action_kinds=%v result_changes=%d",
+		"Telegram Layers 225-229 wire model: profiles=%d families=%d wires=%d wire_actions=%d accepted_wire_actions=%d rejected_wire_actions=%d body_variants=%d multi_body_wires=%d classes=%d class_constructor_actions=%d profile_only_wires=%d semantic_actions=%d action_kinds=%v result_changes=%d",
 		len(model.Profiles), len(model.Families), len(model.Wires), wireActions, acceptedWireActions, rejectedWireActions, bodyVariants, multiBodyWires,
 		len(model.Classes), classConstructors, profileOnlyWires, semanticActions, actionCounts, resultChanges,
 	)

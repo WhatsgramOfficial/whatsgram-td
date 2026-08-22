@@ -12,7 +12,11 @@ func TestLayerMetadataUsesSparseProfileOverrides(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	g, err := NewSchemaSetGenerator(set, GeneratorOptions{})
+	policy, err := LoadLayerPolicy("../_schema/layers/policy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	g, err := NewSchemaSetGenerator(set, GeneratorOptions{LayerPolicy: policy})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -20,7 +24,7 @@ func TestLayerMetadataUsesSparseProfileOverrides(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got, want := metadata.Profiles, []int{225, 226, 227, 228}; !reflect.DeepEqual(got, want) {
+	if got, want := metadata.Profiles, []int{225, 226, 227, 228, 229}; !reflect.DeepEqual(got, want) {
 		t.Fatalf("profiles = %v, want %v", got, want)
 	}
 	if got, want := len(metadata.Wires), len(set.WireCodecs); got != want {

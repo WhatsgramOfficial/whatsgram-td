@@ -179,9 +179,13 @@ func tlScanExactObservedWithState(profile Profile, body *bin.Buffer, state *tlSc
 
 func tlFieldRegistration(field FieldID) error {
     switch field {
-    {{- range .AdmissionFields }}
+    {{- range .CompleteAdmissionFields }}
+    case {{ range $index, $field := . }}{{ if $index }}, {{ end }}FieldID(0x{{ printf "%016x" $field }}){{ end }}:
+        return nil
+    {{- end }}
+    {{- range .FailedAdmissionFields }}
     case FieldID(0x{{ printf "%016x" .ID }}):
-        {{- if .Complete }}return nil{{ else }}return fmt.Errorf("tlprofile: field %#016x is not observable across every routable profile: %s", uint64(field), {{ printf "%q" .Failure }}){{ end }}
+        return fmt.Errorf("tlprofile: field %#016x is not observable across every routable profile: %s", uint64(field), {{ printf "%q" .Failure }})
     {{- end }}
     default:
         return fmt.Errorf("tlprofile: unknown admission field %#016x", uint64(field))
@@ -189,12 +193,12 @@ func tlFieldRegistration(field FieldID) error {
 }
 
 func tlLookupFieldPlan(profile Profile, wireID uint32) int {
-    switch profile {
-    {{- range .FieldProfiles }}
-    case Profile{{ .Layer }}:
-        switch wireID {
-        {{- range .Routes }}
-        case 0x{{ .Hex }}: return {{ .Plan }}
+    switch wireID {
+    {{- range .FieldWires }}
+    case 0x{{ .Hex }}:
+        switch profile {
+        {{- range .Groups }}
+        case {{ range $index, $layer := .Layers }}{{ if $index }}, {{ end }}Profile{{ $layer }}{{ end }}: return {{ .Plan }}
         {{- end }}
         }
     {{- end }}

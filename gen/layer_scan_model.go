@@ -26,8 +26,9 @@ type layerScanModel struct {
 	Classes                  []layerScanClass
 	Bares                    []layerScanBare
 	FieldPlans               []layerScanFieldPlan
-	FieldProfiles            []layerScanFieldProfile
-	AdmissionFields          []layerScanAdmissionField
+	FieldWires               []layerScanFieldWire
+	CompleteAdmissionFields  [][]uint64
+	FailedAdmissionFields    []layerScanAdmissionField
 }
 
 type layerScanBody struct {
@@ -85,9 +86,15 @@ type layerScanFieldRoute struct {
 	Plan   int
 }
 
-type layerScanFieldProfile struct {
-	Layer  int
-	Routes []layerScanFieldRoute
+type layerScanFieldPlanGroup struct {
+	Layers []int
+	Plan   int
+}
+
+type layerScanFieldWire struct {
+	WireID uint32
+	Hex    string
+	Groups []layerScanFieldPlanGroup
 }
 
 type layerScanAdmissionField struct {
@@ -139,9 +146,6 @@ func (g *Generator) buildLayerScanModel() (*layerScanModel, error) {
 				return nil, fmt.Errorf("gen: layer scanner wire %#08x profile %d has conflicting bodies", definition.WireID, layer)
 			}
 			routes[layer] = body
-		}
-		for qname := range schema.ConstructorsByClass {
-			classQNames[qname] = struct{}{}
 		}
 	}
 
@@ -235,13 +239,22 @@ func buildLayerScanFieldPlans(model *layerScanModel, rpc *layerRPCModel) error {
 	if model == nil || rpc == nil {
 		return fmt.Errorf("gen: nil scanner or RPC model for field plans")
 	}
+	const admissionFieldGroupSize = 16
 	for _, field := range rpc.AdmissionFields {
-		model.AdmissionFields = append(model.AdmissionFields, layerScanAdmissionField{
-			ID: field.ID, Complete: field.Complete, Failure: field.Failure,
-		})
+		if !field.Complete {
+			model.FailedAdmissionFields = append(model.FailedAdmissionFields, layerScanAdmissionField{
+				ID: field.ID, Complete: false, Failure: field.Failure,
+			})
+			continue
+		}
+		if len(model.CompleteAdmissionFields) == 0 || len(model.CompleteAdmissionFields[len(model.CompleteAdmissionFields)-1]) == admissionFieldGroupSize {
+			model.CompleteAdmissionFields = append(model.CompleteAdmissionFields, nil)
+		}
+		index := len(model.CompleteAdmissionFields) - 1
+		model.CompleteAdmissionFields[index] = append(model.CompleteAdmissionFields[index], field.ID)
 	}
 	planByKey := make(map[string]int)
-	routesByLayer := make(map[int][]layerScanFieldRoute)
+	routesByWire := make(map[uint32]map[int]int)
 	seenRoute := make(map[string]int)
 	for methodIndex := range rpc.Methods {
 		method := &rpc.Methods[methodIndex]
@@ -278,17 +291,45 @@ func buildLayerScanFieldPlans(model *layerScanModel, rpc *layerRPCModel) error {
 				return fmt.Errorf("gen: scanner field route profile %d wire %#08x has conflicting plans %d and %d", profile.Layer, profile.WireID, previous, plan)
 			}
 			seenRoute[routeKey] = plan
-			routesByLayer[profile.Layer] = append(routesByLayer[profile.Layer], layerScanFieldRoute{
-				WireID: profile.WireID, Hex: fmt.Sprintf("%08x", profile.WireID), Plan: plan,
-			})
+			profiles := routesByWire[profile.WireID]
+			if profiles == nil {
+				profiles = make(map[int]int)
+				routesByWire[profile.WireID] = profiles
+			}
+			profiles[profile.Layer] = plan
 		}
 	}
-	for _, layer := range rpc.Profiles {
-		routes := routesByLayer[layer]
-		sort.Slice(routes, func(i, j int) bool { return routes[i].WireID < routes[j].WireID })
-		model.FieldProfiles = append(model.FieldProfiles, layerScanFieldProfile{Layer: layer, Routes: routes})
+	wireIDs := make([]uint32, 0, len(routesByWire))
+	for wireID := range routesByWire {
+		wireIDs = append(wireIDs, wireID)
+	}
+	sort.Slice(wireIDs, func(i, j int) bool { return wireIDs[i] < wireIDs[j] })
+	for _, wireID := range wireIDs {
+		model.FieldWires = append(model.FieldWires, layerScanFieldWire{
+			WireID: wireID,
+			Hex:    fmt.Sprintf("%08x", wireID),
+			Groups: groupLayerFieldPlans(routesByWire[wireID]),
+		})
 	}
 	return nil
+}
+
+func groupLayerFieldPlans(routes map[int]int) []layerScanFieldPlanGroup {
+	planLayers := make(map[int][]int)
+	var plans []int
+	for layer, plan := range routes {
+		if _, ok := planLayers[plan]; !ok {
+			plans = append(plans, plan)
+		}
+		planLayers[plan] = append(planLayers[plan], layer)
+	}
+	sort.Ints(plans)
+	groups := make([]layerScanFieldPlanGroup, 0, len(plans))
+	for _, plan := range plans {
+		sort.Ints(planLayers[plan])
+		groups = append(groups, layerScanFieldPlanGroup{Layers: planLayers[plan], Plan: plan})
+	}
+	return groups
 }
 
 func layerScanMetricConstant(metric layerRPCAdmissionMetricKind) string {

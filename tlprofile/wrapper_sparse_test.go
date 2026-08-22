@@ -102,10 +102,10 @@ func TestSparseStrictAdmissionRejectsConflictingInvokeWithLayerTransactionally(t
 func TestSparseWrapperVectorMetadataIsImmutable(t *testing.T) {
 	request := &tg.InvokeAfterMsgsRequest{MsgIDs: []int64{11, 22}, Query: &tg.HelpGetConfigRequest{}}
 	var body bin.Buffer
-	if err := EncodeObject(Profile228, request, &body); err != nil {
+	if err := EncodeObject(Profile229, request, &body); err != nil {
 		t.Fatal(err)
 	}
-	admitted, err := NewDispatcher().Admit(Profile228, &body, Limits{})
+	admitted, err := NewDispatcher().Admit(Profile229, &body, Limits{})
 	if err != nil {
 		t.Fatal(err)
 	}

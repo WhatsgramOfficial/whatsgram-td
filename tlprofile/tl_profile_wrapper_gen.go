@@ -121,6 +121,31 @@ func tlLookupWrapperParser(profile Profile, wireID uint32) (tlWrapperParser, boo
 		case 0xdd289f8e:
 			return tlParseWrapperBody4, true
 		}
+	case Profile229:
+		switch wireID {
+		case 0x0dae54f8:
+			return tlParseWrapperBody3, true
+		case 0x1df92984:
+			return tlParseWrapperBody5, true
+		case 0x365275f2:
+			return tlParseWrapperBody7, true
+		case 0x3dc4b4f0:
+			return tlParseWrapperBody2, true
+		case 0xaca9fd2e:
+			return tlParseWrapperBody9, true
+		case 0xadbb0f94:
+			return tlParseWrapperBody8, true
+		case 0xbf9459b7:
+			return tlParseWrapperBody10, true
+		case 0xc1cd5ea9:
+			return tlParseWrapperBody0, true
+		case 0xcb9f372d:
+			return tlParseWrapperBody1, true
+		case 0xda9b0d0d:
+			return tlParseWrapperBody6, true
+		case 0xdd289f8e:
+			return tlParseWrapperBody4, true
+		}
 	}
 	return nil, false
 }
@@ -1248,6 +1273,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 		return true
 	case 0x2c800be5:
 		return true
+	case 0x2c85094c:
+		return true
 	case 0x2ca51fd1:
 		return true
 	case 0x2d0135b3:
@@ -1694,6 +1721,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 		return true
 	case 0x725afbbc:
 		return true
+	case 0x734f9721:
+		return true
 	case 0x735787a8:
 		return true
 	case 0x73665bc2:
@@ -1720,6 +1749,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 		return true
 	case 0x7727a7d5:
 		return true
+	case 0x777df37a:
+		return true
 	case 0x778b5ab3:
 		return true
 	case 0x778d902f:
@@ -1727,6 +1758,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 	case 0x77ced9d0:
 		return true
 	case 0x78337739:
+		return true
+	case 0x783f6b56:
 		return true
 	case 0x78499170:
 		return true
@@ -1905,6 +1938,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 	case 0x92b4494c:
 		return true
 	case 0x92ceddd4:
+		return true
+	case 0x92f6e797:
 		return true
 	case 0x9308ce1b:
 		return true
@@ -2184,6 +2219,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 		return true
 	case 0xba6705f0:
 		return true
+	case 0xba8d5f35:
+		return true
 	case 0xba9ee679:
 		return true
 	case 0xbb12a419:
@@ -2306,6 +2343,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 		return true
 	case 0xcf1592db:
 		return true
+	case 0xcf9c725b:
+		return true
 	case 0xcff43f61:
 		return true
 	case 0xd069ccde:
@@ -2387,6 +2426,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 	case 0xdaeda864:
 		return true
 	case 0xdb7e1747:
+		return true
+	case 0xdb9ac18d:
 		return true
 	case 0xdc0242c8:
 		return true
@@ -2471,6 +2512,8 @@ func tlKnownRPCWireID(wireID uint32) bool {
 	case 0xe785a43f:
 		return true
 	case 0xe822649d:
+		return true
+	case 0xe882a9e1:
 		return true
 	case 0xe894ad4d:
 		return true

@@ -259,6 +259,10 @@ func {{ .DecodeBareName }}(profile LayerProfile, b *bin.Buffer, state *layerCode
     return &LayerCodecError{Operation: "decode-bare", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "profile-only method must be handled at RPC admission"}
 }
 {{ else }}
+{{ if not $codec.Sparse }}
+{{/* Sparse family/class entry points already own the transactional boundary
+and call the typed bare body directly. Retaining these boxed/bare wrappers in
+the sparse sidecar would leave two dead functions for every dirty wire. */}}
 func {{ .EncodeName }}(profile LayerProfile, value *{{ .CanonicalType }}, b *bin.Buffer, state *layerCodecState) error {
     if value == nil {
         return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: {{ .Semantic }}, WireID: 0x{{ .Hex }}, Reason: "nil canonical value"}
@@ -285,6 +289,7 @@ func {{ .EncodeBareName }}(profile LayerProfile, value *{{ .CanonicalType }}, b 
         return {{ .EncodeBareName }}Body(profile, value, b, state)
     })
 }
+{{ end }}
 
 {{ if not $codec.Sparse }}func {{ .PreflightName }}(profile LayerProfile, value *{{ .CanonicalType }}, state *layerCodecState) (int, error) {
     if value == nil {

@@ -56,7 +56,7 @@ func TestRealLayerPolicy(t *testing.T) {
 	if unresolved := resolved.LayerConversionPlan().Report.Unresolved(); len(unresolved) != 0 {
 		t.Fatalf("real policy leaves %d unresolved obligations; first=%+v", len(unresolved), unresolved[0])
 	}
-	if got, want := len(document.Entries), 38; got != want {
+	if got, want := len(document.Entries), 167; got != want {
 		t.Fatalf("reviewed policy entry count = %d, want %d", got, want)
 	}
 	codec, err := resolved.buildLayerCodecModel("tg")
@@ -81,9 +81,48 @@ func TestRealLayerPolicy(t *testing.T) {
 func assertRealLayerHookContracts(t *testing.T, codec, sparse []layerCodecHookContract) {
 	t.Helper()
 	wantCodec := map[string]string{
-		"layerCaptureChatInviteJoinQueryIDFromWebViewDecode": "func(LayerProfile, *MessagesChatInviteJoinResultWebView, WebViewResultURL) error",
-		"layerProjectEphemeralBotCommandProject":             "func(LayerProfile, *BotCommand, bool) (*BotCommand, bool, error)",
-		"layerRequireCapturedChatInviteJoinQueryIDDecode":    "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error)",
+		"layerAdaptLegacyInputKeyboardButtonRequestPeerDecode":       "func(LayerProfile, bool, bool, bool, bool, KeyboardButtonStyle, string, int, RequestPeerTypeClass, int) (*KeyboardButton, error)",
+		"layerAdaptLegacyInputKeyboardButtonRequestPeerEncode":       "func(LayerProfile, *KeyboardButton) (bool, bool, bool, bool, KeyboardButtonStyle, string, int, RequestPeerTypeClass, int, error)",
+		"layerAdaptLegacyInputKeyboardInlineButtonURLAuthDecode":     "func(LayerProfile, bool, bool, KeyboardButtonStyle, string, bool, string, string, InputUserClass) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyInputKeyboardInlineButtonURLAuthEncode":     "func(LayerProfile, *KeyboardInlineButton) (bool, bool, KeyboardButtonStyle, string, bool, string, string, InputUserClass, error)",
+		"layerAdaptLegacyInputKeyboardInlineButtonUserProfileDecode": "func(LayerProfile, bool, KeyboardButtonStyle, string, InputUserClass) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyInputKeyboardInlineButtonUserProfileEncode": "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, InputUserClass, error)",
+		"layerAdaptLegacyKeyboardButtonRequestGeoLocationDecode":     "func(LayerProfile, bool, KeyboardButtonStyle, string) (*KeyboardButton, error)",
+		"layerAdaptLegacyKeyboardButtonRequestGeoLocationEncode":     "func(LayerProfile, *KeyboardButton) (bool, KeyboardButtonStyle, string, error)",
+		"layerAdaptLegacyKeyboardButtonRequestPeerDecode":            "func(LayerProfile, bool, KeyboardButtonStyle, string, int, RequestPeerTypeClass, int) (*KeyboardButton, error)",
+		"layerAdaptLegacyKeyboardButtonRequestPeerEncode":            "func(LayerProfile, *KeyboardButton) (bool, KeyboardButtonStyle, string, int, RequestPeerTypeClass, int, error)",
+		"layerAdaptLegacyKeyboardButtonRequestPhoneDecode":           "func(LayerProfile, bool, KeyboardButtonStyle, string) (*KeyboardButton, error)",
+		"layerAdaptLegacyKeyboardButtonRequestPhoneEncode":           "func(LayerProfile, *KeyboardButton) (bool, KeyboardButtonStyle, string, error)",
+		"layerAdaptLegacyKeyboardButtonRequestPollDecode":            "func(LayerProfile, bool, KeyboardButtonStyle, bool, bool, string) (*KeyboardButton, error)",
+		"layerAdaptLegacyKeyboardButtonRequestPollEncode":            "func(LayerProfile, *KeyboardButton) (bool, KeyboardButtonStyle, bool, bool, string, error)",
+		"layerAdaptLegacyKeyboardButtonSimpleWebViewDecode":          "func(LayerProfile, bool, KeyboardButtonStyle, string, string) (*KeyboardButton, error)",
+		"layerAdaptLegacyKeyboardButtonSimpleWebViewEncode":          "func(LayerProfile, *KeyboardButton) (bool, KeyboardButtonStyle, string, string, error)",
+		"layerAdaptLegacyKeyboardInlineButtonBuyDecode":              "func(LayerProfile, bool, KeyboardButtonStyle, string) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonBuyEncode":              "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, error)",
+		"layerAdaptLegacyKeyboardInlineButtonCallbackDecode":         "func(LayerProfile, bool, bool, KeyboardButtonStyle, string, []byte) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonCallbackEncode":         "func(LayerProfile, *KeyboardInlineButton) (bool, bool, KeyboardButtonStyle, string, []byte, error)",
+		"layerAdaptLegacyKeyboardInlineButtonCopyDecode":             "func(LayerProfile, bool, KeyboardButtonStyle, string, string) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonCopyEncode":             "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, string, error)",
+		"layerAdaptLegacyKeyboardInlineButtonGameDecode":             "func(LayerProfile, bool, KeyboardButtonStyle, string) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonGameEncode":             "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, error)",
+		"layerAdaptLegacyKeyboardInlineButtonSwitchInlineDecode":     "func(LayerProfile, bool, bool, KeyboardButtonStyle, string, string, bool, []InlineQueryPeerTypeClass) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonSwitchInlineEncode":     "func(LayerProfile, *KeyboardInlineButton) (bool, bool, KeyboardButtonStyle, string, string, bool, []InlineQueryPeerTypeClass, error)",
+		"layerAdaptLegacyKeyboardInlineButtonURLAuthDecode":          "func(LayerProfile, bool, KeyboardButtonStyle, string, bool, string, string, int) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonURLAuthEncode":          "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, bool, string, string, int, error)",
+		"layerAdaptLegacyKeyboardInlineButtonURLDecode":              "func(LayerProfile, bool, KeyboardButtonStyle, string, string) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonURLEncode":              "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, string, error)",
+		"layerAdaptLegacyKeyboardInlineButtonUserProfileDecode":      "func(LayerProfile, bool, KeyboardButtonStyle, string, int64) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonUserProfileEncode":      "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, int64, error)",
+		"layerAdaptLegacyKeyboardInlineButtonWebViewDecode":          "func(LayerProfile, bool, KeyboardButtonStyle, string, string) (*KeyboardInlineButton, error)",
+		"layerAdaptLegacyKeyboardInlineButtonWebViewEncode":          "func(LayerProfile, *KeyboardInlineButton) (bool, KeyboardButtonStyle, string, string, error)",
+		"layerCaptureChatInviteJoinQueryIDFromWebViewDecode":         "func(LayerProfile, *MessagesChatInviteJoinResultWebView, WebViewResultURL) error",
+		"layerDefaultLegacyKeyboardButtonTypeDecode":                 "func(LayerProfile, *KeyboardButton) (ButtonTypeClass, error)",
+		"layerProjectEphemeralBotCommandProject":                     "func(LayerProfile, *BotCommand, bool) (*BotCommand, bool, error)",
+		"layerProjectLegacyDefaultKeyboardButtonProject":             "func(LayerProfile, *KeyboardButton, ButtonTypeClass) (*KeyboardButton, bool, error)",
+		"layerRequireCapturedChatInviteJoinQueryIDDecode":            "func(LayerProfile, *MessagesChatInviteJoinResultWebView) (int64, error)",
+		"layerRequireLegacyEphemeralDeletePeerEncode":                "func(LayerProfile, *EphemeralDeleteMessageRequest, bool, InputPeerClass) (InputPeerClass, error)",
+		"layerRequireLegacyEphemeralMessagePeerEncode":               "func(LayerProfile, *EphemeralMessage, bool, PeerClass) (PeerClass, error)",
+		"layerRequireLegacyEphemeralSendPeerEncode":                  "func(LayerProfile, *EphemeralSendMessageRequest, bool, InputPeerClass) (InputPeerClass, error)",
 	}
 	gotCodec := make(map[string]string, len(codec))
 	for _, hook := range codec {
@@ -156,6 +195,33 @@ func realLayerResolution(obligation LayerObligation) (LayerObligationResolution,
 				Hook:   "layerProjectEphemeralBotCommand",
 			}, true, nil
 		}
+		if obligation.Layer >= 225 && obligation.Layer < 229 {
+			switch obligation.Semantic.QName + ":" + obligation.Field {
+			case "keyboardButton:type":
+				return LayerObligationResolution{
+					Action: LayerResolveProject,
+					Hook:   "layerProjectLegacyDefaultKeyboardButton",
+				}, true, nil
+			case "ephemeralMessage:welcome_template",
+				"ephemeralMessage:invert_media",
+				"ephemeralMessage:noforwards",
+				"ephemeralMessage:rich_message",
+				"ephemeralMessage:chat_instance",
+				"ephemeralMessage:anchor_msg_id",
+				"ephemeral.sendMessage:invert_media",
+				"ephemeral.sendMessage:welcome",
+				"ephemeral.sendMessage:anchor",
+				"ephemeral.sendMessage:noforwards",
+				"messages.forwardMessages:from_ephemeral",
+				"messageActionStarGiftUnique:name_hidden",
+				"messageActionStarGiftUnique:message",
+				"inputInvoiceStarGiftResale:show_name",
+				"inputInvoiceStarGiftResale:message",
+				"replyKeyboardMarkup:force_reply",
+				"replyInlineMarkup:force_reply":
+				return LayerObligationResolution{Action: LayerResolveRejectIfPresent}, true, nil
+			}
+		}
 		return LayerObligationResolution{}, false, nil
 	}
 	if obligation.Resolution.resolved() {
@@ -166,6 +232,12 @@ func realLayerResolution(obligation LayerObligation) (LayerObligationResolution,
 		return LayerObligationResolution{Action: LayerResolveAdapter, Hook: hook}, true, nil
 	}
 	switch obligation.Kind {
+	case LayerObligationOldOnly:
+		return realHistoricalKeyboardResolution(obligation)
+	case LayerObligationIncompatible:
+		if obligation.Semantic.QName == "replyInlineMarkup" && obligation.Field == "rows" {
+			return adapter("layerAdaptLegacyInlineKeyboardRows")
+		}
 	case LayerObligationDiscard:
 		switch obligation.Semantic.QName + ":" + obligation.Field {
 		case "messages.chatInviteJoinResultWebView:url":
@@ -209,6 +281,22 @@ func realRequiredLayerResolution(obligation LayerObligation) (LayerObligationRes
 		return LayerObligationResolution{Action: LayerResolveDefault}, true, nil
 	}
 	switch obligation.Semantic.QName {
+	case "keyboardButton":
+		if obligation.OtherField == "type" {
+			return adapter("layerDefaultLegacyKeyboardButtonType")
+		}
+	case "ephemeralMessage":
+		if obligation.OtherField == "peer_id" {
+			return adapter("layerRequireLegacyEphemeralMessagePeer")
+		}
+	case "ephemeral.sendMessage":
+		if obligation.OtherField == "peer" {
+			return adapter("layerRequireLegacyEphemeralSendPeer")
+		}
+	case "ephemeral.deleteMessage":
+		if obligation.OtherField == "peer" {
+			return adapter("layerRequireLegacyEphemeralDeletePeer")
+		}
 	case "auth.sentCodePaymentRequired", "pageListOrderedItemBlocks", "pageListOrderedItemText":
 		return defaulted()
 	case "inputStorePaymentAuthCode":
@@ -225,4 +313,46 @@ func realRequiredLayerResolution(obligation LayerObligation) (LayerObligationRes
 		}
 	}
 	return LayerObligationResolution{}, false, fmt.Errorf("unreviewed required layer obligation: %+v", obligation)
+}
+
+func realHistoricalKeyboardResolution(obligation LayerObligation) (LayerObligationResolution, bool, error) {
+	if obligation.Direction != LayerDirectionProfileToCanonical {
+		return LayerObligationResolution{}, false, fmt.Errorf("unreviewed historical keyboard direction: %+v", obligation)
+	}
+	reply := map[string]string{
+		"keyboardButtonRequestPhone":       "layerAdaptLegacyKeyboardButtonRequestPhone",
+		"keyboardButtonRequestGeoLocation": "layerAdaptLegacyKeyboardButtonRequestGeoLocation",
+		"keyboardButtonRequestPoll":        "layerAdaptLegacyKeyboardButtonRequestPoll",
+		"keyboardButtonRequestPeer":        "layerAdaptLegacyKeyboardButtonRequestPeer",
+		"inputKeyboardButtonRequestPeer":   "layerAdaptLegacyInputKeyboardButtonRequestPeer",
+		"keyboardButtonSimpleWebView":      "layerAdaptLegacyKeyboardButtonSimpleWebView",
+	}
+	if hook := reply[obligation.Semantic.QName]; hook != "" {
+		return LayerObligationResolution{
+			Action: LayerResolveAdapter,
+			Hook:   hook,
+			Target: "type:keyboardButton",
+		}, true, nil
+	}
+	inline := map[string]string{
+		"keyboardButtonUrl":              "layerAdaptLegacyKeyboardInlineButtonURL",
+		"keyboardButtonCallback":         "layerAdaptLegacyKeyboardInlineButtonCallback",
+		"keyboardButtonSwitchInline":     "layerAdaptLegacyKeyboardInlineButtonSwitchInline",
+		"keyboardButtonGame":             "layerAdaptLegacyKeyboardInlineButtonGame",
+		"keyboardButtonBuy":              "layerAdaptLegacyKeyboardInlineButtonBuy",
+		"keyboardButtonUrlAuth":          "layerAdaptLegacyKeyboardInlineButtonURLAuth",
+		"inputKeyboardButtonUrlAuth":     "layerAdaptLegacyInputKeyboardInlineButtonURLAuth",
+		"keyboardButtonUserProfile":      "layerAdaptLegacyKeyboardInlineButtonUserProfile",
+		"inputKeyboardButtonUserProfile": "layerAdaptLegacyInputKeyboardInlineButtonUserProfile",
+		"keyboardButtonWebView":          "layerAdaptLegacyKeyboardInlineButtonWebView",
+		"keyboardButtonCopy":             "layerAdaptLegacyKeyboardInlineButtonCopy",
+	}
+	if hook := inline[obligation.Semantic.QName]; hook != "" {
+		return LayerObligationResolution{
+			Action: LayerResolveAdapter,
+			Hook:   hook,
+			Target: "type:keyboardInlineButton",
+		}, true, nil
+	}
+	return LayerObligationResolution{}, false, fmt.Errorf("unreviewed old-only layer obligation: %+v", obligation)
 }

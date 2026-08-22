@@ -24,6 +24,7 @@ const (
 	LayerProfile226       = Profile226
 	LayerProfile227       = Profile227
 	LayerProfile228       = Profile228
+	LayerProfile229       = Profile229
 	LayerProfileCanonical = ProfileCanonical
 )
 
@@ -100,6 +101,7 @@ const (
 	LayerSemanticTypeAuthCodeTypeMissedCall                                            = SemanticTypeAuthCodeTypeMissedCall
 	LayerSemanticTypeAuthCodeTypeSMS                                                   = SemanticTypeAuthCodeTypeSMS
 	LayerSemanticTypeAuthExportedAuthorization                                         = SemanticTypeAuthExportedAuthorization
+	LayerSemanticTypeAuthFirebasePnvIntent                                             = SemanticTypeAuthFirebasePnvIntent
 	LayerSemanticTypeAuthLoggedOut                                                     = SemanticTypeAuthLoggedOut
 	LayerSemanticTypeAuthLoginToken                                                    = SemanticTypeAuthLoginToken
 	LayerSemanticTypeAuthLoginTokenMigrateTo                                           = SemanticTypeAuthLoginTokenMigrateTo
@@ -184,6 +186,12 @@ const (
 	LayerSemanticTypeBusinessRecipients                                                = SemanticTypeBusinessRecipients
 	LayerSemanticTypeBusinessWeeklyOpen                                                = SemanticTypeBusinessWeeklyOpen
 	LayerSemanticTypeBusinessWorkHours                                                 = SemanticTypeBusinessWorkHours
+	LayerSemanticTypeButtonTypeDefault                                                 = SemanticTypeButtonTypeDefault
+	LayerSemanticTypeButtonTypeRequestGeoLocation                                      = SemanticTypeButtonTypeRequestGeoLocation
+	LayerSemanticTypeButtonTypeRequestPeer                                             = SemanticTypeButtonTypeRequestPeer
+	LayerSemanticTypeButtonTypeRequestPhone                                            = SemanticTypeButtonTypeRequestPhone
+	LayerSemanticTypeButtonTypeRequestPoll                                             = SemanticTypeButtonTypeRequestPoll
+	LayerSemanticTypeButtonTypeSimpleWebView                                           = SemanticTypeButtonTypeSimpleWebView
 	LayerSemanticTypeBytes                                                             = SemanticTypeBytes
 	LayerSemanticTypeCDNConfig                                                         = SemanticTypeCDNConfig
 	LayerSemanticTypeCDNPublicKey                                                      = SemanticTypeCDNPublicKey
@@ -383,6 +391,8 @@ const (
 	LayerSemanticTypeEncryptedFileEmpty                                                = SemanticTypeEncryptedFileEmpty
 	LayerSemanticTypeEncryptedMessage                                                  = SemanticTypeEncryptedMessage
 	LayerSemanticTypeEncryptedMessageService                                           = SemanticTypeEncryptedMessageService
+	LayerSemanticTypeEphemeralWelcomeMessages                                          = SemanticTypeEphemeralWelcomeMessages
+	LayerSemanticTypeEphemeralWelcomeMessagesNotModified                               = SemanticTypeEphemeralWelcomeMessagesNotModified
 	LayerSemanticTypeEphemeralMessage                                                  = SemanticTypeEphemeralMessage
 	LayerSemanticTypeError                                                             = SemanticTypeError
 	LayerSemanticTypeExportedChatlistInvite                                            = SemanticTypeExportedChatlistInvite
@@ -446,6 +456,16 @@ const (
 	LayerSemanticTypeImportedContact                                                   = SemanticTypeImportedContact
 	LayerSemanticTypeInlineBotSwitchPM                                                 = SemanticTypeInlineBotSwitchPM
 	LayerSemanticTypeInlineBotWebView                                                  = SemanticTypeInlineBotWebView
+	LayerSemanticTypeInlineButtonTypeBuy                                               = SemanticTypeInlineButtonTypeBuy
+	LayerSemanticTypeInlineButtonTypeCallback                                          = SemanticTypeInlineButtonTypeCallback
+	LayerSemanticTypeInlineButtonTypeCopy                                              = SemanticTypeInlineButtonTypeCopy
+	LayerSemanticTypeInlineButtonTypeDisabled                                          = SemanticTypeInlineButtonTypeDisabled
+	LayerSemanticTypeInlineButtonTypeGame                                              = SemanticTypeInlineButtonTypeGame
+	LayerSemanticTypeInlineButtonTypeSwitchInline                                      = SemanticTypeInlineButtonTypeSwitchInline
+	LayerSemanticTypeInlineButtonTypeURL                                               = SemanticTypeInlineButtonTypeURL
+	LayerSemanticTypeInlineButtonTypeURLAuth                                           = SemanticTypeInlineButtonTypeURLAuth
+	LayerSemanticTypeInlineButtonTypeUserProfile                                       = SemanticTypeInlineButtonTypeUserProfile
+	LayerSemanticTypeInlineButtonTypeWebView                                           = SemanticTypeInlineButtonTypeWebView
 	LayerSemanticTypeInlineQueryPeerTypeBotPM                                          = SemanticTypeInlineQueryPeerTypeBotPM
 	LayerSemanticTypeInlineQueryPeerTypeBroadcast                                      = SemanticTypeInlineQueryPeerTypeBroadcast
 	LayerSemanticTypeInlineQueryPeerTypeChat                                           = SemanticTypeInlineQueryPeerTypeChat
@@ -480,6 +500,7 @@ const (
 	LayerSemanticTypeInputBusinessGreetingMessage                                      = SemanticTypeInputBusinessGreetingMessage
 	LayerSemanticTypeInputBusinessIntro                                                = SemanticTypeInputBusinessIntro
 	LayerSemanticTypeInputBusinessRecipients                                           = SemanticTypeInputBusinessRecipients
+	LayerSemanticTypeInputButtonTypeRequestPeer                                        = SemanticTypeInputButtonTypeRequestPeer
 	LayerSemanticTypeInputChannel                                                      = SemanticTypeInputChannel
 	LayerSemanticTypeInputChannelEmpty                                                 = SemanticTypeInputChannelEmpty
 	LayerSemanticTypeInputChannelFromMessage                                           = SemanticTypeInputChannelFromMessage
@@ -521,6 +542,8 @@ const (
 	LayerSemanticTypeInputGroupCallInviteMessage                                       = SemanticTypeInputGroupCallInviteMessage
 	LayerSemanticTypeInputGroupCallSlug                                                = SemanticTypeInputGroupCallSlug
 	LayerSemanticTypeInputGroupCallStream                                              = SemanticTypeInputGroupCallStream
+	LayerSemanticTypeInputInlineButtonTypeURLAuth                                      = SemanticTypeInputInlineButtonTypeURLAuth
+	LayerSemanticTypeInputInlineButtonTypeUserProfile                                  = SemanticTypeInputInlineButtonTypeUserProfile
 	LayerSemanticTypeInputInvoiceBusinessBotTransferStars                              = SemanticTypeInputInvoiceBusinessBotTransferStars
 	LayerSemanticTypeInputInvoiceChatInviteSubscription                                = SemanticTypeInputInvoiceChatInviteSubscription
 	LayerSemanticTypeInputInvoiceMessage                                               = SemanticTypeInputInvoiceMessage
@@ -749,6 +772,8 @@ const (
 	LayerSemanticTypeKeyboardButtonURLAuth                                             = SemanticTypeKeyboardButtonURLAuth
 	LayerSemanticTypeKeyboardButtonUserProfile                                         = SemanticTypeKeyboardButtonUserProfile
 	LayerSemanticTypeKeyboardButtonWebView                                             = SemanticTypeKeyboardButtonWebView
+	LayerSemanticTypeKeyboardInlineButton                                              = SemanticTypeKeyboardInlineButton
+	LayerSemanticTypeKeyboardInlineButtonRow                                           = SemanticTypeKeyboardInlineButtonRow
 	LayerSemanticTypeLabeledPrice                                                      = SemanticTypeLabeledPrice
 	LayerSemanticTypeLangPackDifference                                                = SemanticTypeLangPackDifference
 	LayerSemanticTypeLangPackLanguage                                                  = SemanticTypeLangPackLanguage
@@ -1012,11 +1037,13 @@ const (
 	LayerSemanticTypePageBlockAuthorDate                                               = SemanticTypePageBlockAuthorDate
 	LayerSemanticTypePageBlockBlockquote                                               = SemanticTypePageBlockBlockquote
 	LayerSemanticTypePageBlockBlockquoteBlocks                                         = SemanticTypePageBlockBlockquoteBlocks
+	LayerSemanticTypePageBlockButtonRow                                                = SemanticTypePageBlockButtonRow
 	LayerSemanticTypePageBlockChannel                                                  = SemanticTypePageBlockChannel
 	LayerSemanticTypePageBlockCollage                                                  = SemanticTypePageBlockCollage
 	LayerSemanticTypePageBlockCover                                                    = SemanticTypePageBlockCover
 	LayerSemanticTypePageBlockDetails                                                  = SemanticTypePageBlockDetails
 	LayerSemanticTypePageBlockDivider                                                  = SemanticTypePageBlockDivider
+	LayerSemanticTypePageBlockDocument                                                 = SemanticTypePageBlockDocument
 	LayerSemanticTypePageBlockEmbed                                                    = SemanticTypePageBlockEmbed
 	LayerSemanticTypePageBlockEmbedPost                                                = SemanticTypePageBlockEmbedPost
 	LayerSemanticTypePageBlockFooter                                                   = SemanticTypePageBlockFooter
@@ -1045,6 +1072,7 @@ const (
 	LayerSemanticTypePageBlockTitle                                                    = SemanticTypePageBlockTitle
 	LayerSemanticTypePageBlockUnsupported                                              = SemanticTypePageBlockUnsupported
 	LayerSemanticTypePageBlockVideo                                                    = SemanticTypePageBlockVideo
+	LayerSemanticTypePageButton                                                        = SemanticTypePageButton
 	LayerSemanticTypePageCaption                                                       = SemanticTypePageCaption
 	LayerSemanticTypePageListItemBlocks                                                = SemanticTypePageListItemBlocks
 	LayerSemanticTypePageListItemText                                                  = SemanticTypePageListItemText
@@ -1231,6 +1259,7 @@ const (
 	LayerSemanticTypeRequirementToContactPaidMessages                                  = SemanticTypeRequirementToContactPaidMessages
 	LayerSemanticTypeRequirementToContactPremium                                       = SemanticTypeRequirementToContactPremium
 	LayerSemanticTypeRestrictionReason                                                 = SemanticTypeRestrictionReason
+	LayerSemanticTypeRichButtonStyle                                                   = SemanticTypeRichButtonStyle
 	LayerSemanticTypeRichMessage                                                       = SemanticTypeRichMessage
 	LayerSemanticTypeSavedDialog                                                       = SemanticTypeSavedDialog
 	LayerSemanticTypeSavedPhoneContact                                                 = SemanticTypeSavedPhoneContact
@@ -1288,6 +1317,7 @@ const (
 	LayerSemanticTypeSendMessageRecordRoundAction                                      = SemanticTypeSendMessageRecordRoundAction
 	LayerSemanticTypeSendMessageRecordVideoAction                                      = SemanticTypeSendMessageRecordVideoAction
 	LayerSemanticTypeSendMessageRichMessageDraftAction                                 = SemanticTypeSendMessageRichMessageDraftAction
+	LayerSemanticTypeSendMessageStopDraftAction                                        = SemanticTypeSendMessageStopDraftAction
 	LayerSemanticTypeSendMessageTextDraftAction                                        = SemanticTypeSendMessageTextDraftAction
 	LayerSemanticTypeSendMessageTypingAction                                           = SemanticTypeSendMessageTypingAction
 	LayerSemanticTypeSendMessageUploadAudioAction                                      = SemanticTypeSendMessageUploadAudioAction
@@ -1416,6 +1446,7 @@ const (
 	LayerSemanticTypeTextBankCard                                                      = SemanticTypeTextBankCard
 	LayerSemanticTypeTextBold                                                          = SemanticTypeTextBold
 	LayerSemanticTypeTextBotCommand                                                    = SemanticTypeTextBotCommand
+	LayerSemanticTypeTextButton                                                        = SemanticTypeTextButton
 	LayerSemanticTypeTextCashtag                                                       = SemanticTypeTextCashtag
 	LayerSemanticTypeTextConcat                                                        = SemanticTypeTextConcat
 	LayerSemanticTypeTextCustomEmoji                                                   = SemanticTypeTextCustomEmoji
@@ -1526,6 +1557,7 @@ const (
 	LayerSemanticTypeUpdateEncryptedChatTyping                                         = SemanticTypeUpdateEncryptedChatTyping
 	LayerSemanticTypeUpdateEncryptedMessagesRead                                       = SemanticTypeUpdateEncryptedMessagesRead
 	LayerSemanticTypeUpdateEncryption                                                  = SemanticTypeUpdateEncryption
+	LayerSemanticTypeUpdateEphemeralBotCallbackQuery                                   = SemanticTypeUpdateEphemeralBotCallbackQuery
 	LayerSemanticTypeUpdateFavedStickers                                               = SemanticTypeUpdateFavedStickers
 	LayerSemanticTypeUpdateFolderPeers                                                 = SemanticTypeUpdateFolderPeers
 	LayerSemanticTypeUpdateGeoLiveViewed                                               = SemanticTypeUpdateGeoLiveViewed
@@ -1830,11 +1862,14 @@ const (
 	LayerSemanticMethodAuthDropTempAuthKeys                                            = SemanticMethodAuthDropTempAuthKeys
 	LayerSemanticMethodAuthExportAuthorization                                         = SemanticMethodAuthExportAuthorization
 	LayerSemanticMethodAuthExportLoginToken                                            = SemanticMethodAuthExportLoginToken
+	LayerSemanticMethodAuthFinishFirebasePnvLogin                                      = SemanticMethodAuthFinishFirebasePnvLogin
 	LayerSemanticMethodAuthFinishPasskeyLogin                                          = SemanticMethodAuthFinishPasskeyLogin
+	LayerSemanticMethodAuthFirebasePnvSignUp                                           = SemanticMethodAuthFirebasePnvSignUp
 	LayerSemanticMethodAuthImportAuthorization                                         = SemanticMethodAuthImportAuthorization
 	LayerSemanticMethodAuthImportBotAuthorization                                      = SemanticMethodAuthImportBotAuthorization
 	LayerSemanticMethodAuthImportLoginToken                                            = SemanticMethodAuthImportLoginToken
 	LayerSemanticMethodAuthImportWebTokenAuthorization                                 = SemanticMethodAuthImportWebTokenAuthorization
+	LayerSemanticMethodAuthInitFirebasePnvLogin                                        = SemanticMethodAuthInitFirebasePnvLogin
 	LayerSemanticMethodAuthInitPasskeyLogin                                            = SemanticMethodAuthInitPasskeyLogin
 	LayerSemanticMethodAuthLogOut                                                      = SemanticMethodAuthLogOut
 	LayerSemanticMethodAuthRecoverPassword                                             = SemanticMethodAuthRecoverPassword
@@ -1991,8 +2026,12 @@ const (
 	LayerSemanticMethodContactsToggleTopPeers                                          = SemanticMethodContactsToggleTopPeers
 	LayerSemanticMethodContactsUnblock                                                 = SemanticMethodContactsUnblock
 	LayerSemanticMethodContactsUpdateContactNote                                       = SemanticMethodContactsUpdateContactNote
+	LayerSemanticMethodEphemeralDeleteAllWelcomeMessages                               = SemanticMethodEphemeralDeleteAllWelcomeMessages
 	LayerSemanticMethodEphemeralDeleteMessage                                          = SemanticMethodEphemeralDeleteMessage
+	LayerSemanticMethodEphemeralDeleteWelcomeMessage                                   = SemanticMethodEphemeralDeleteWelcomeMessage
+	LayerSemanticMethodEphemeralEditMessage                                            = SemanticMethodEphemeralEditMessage
 	LayerSemanticMethodEphemeralGetCallbackAnswer                                      = SemanticMethodEphemeralGetCallbackAnswer
+	LayerSemanticMethodEphemeralGetWelcomeMessages                                     = SemanticMethodEphemeralGetWelcomeMessages
 	LayerSemanticMethodEphemeralReportMessage                                          = SemanticMethodEphemeralReportMessage
 	LayerSemanticMethodEphemeralSendMessage                                            = SemanticMethodEphemeralSendMessage
 	LayerSemanticMethodFoldersEditPeerFolders                                          = SemanticMethodFoldersEditPeerFolders
@@ -2772,6 +2811,176 @@ var _ func(LayerProfile, tg.InputBotInlineMessageIDClass) (bool, error) = layerA
 // inside one transactional pass; hooks must not mutate their input value.
 var _ func(LayerProfile, tg.MessagesChatInviteJoinResultClass) (tg.UpdatesClass, error) = layerAdaptChatInviteJoinResultToUpdates
 
+// Static policy contract for layerAdaptLegacyInputKeyboardButtonRequestPeerDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, bool, bool, bool, tg.KeyboardButtonStyle, string, int, tg.RequestPeerTypeClass, int) (*tg.KeyboardButton, error) = layerAdaptLegacyInputKeyboardButtonRequestPeerDecode
+
+// Static policy contract for layerAdaptLegacyInputKeyboardButtonRequestPeerEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (bool, bool, bool, bool, tg.KeyboardButtonStyle, string, int, tg.RequestPeerTypeClass, int, error) = layerAdaptLegacyInputKeyboardButtonRequestPeerEncode
+
+// Static policy contract for layerAdaptLegacyInputKeyboardInlineButtonURLAuthDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, bool, tg.KeyboardButtonStyle, string, bool, string, string, tg.InputUserClass) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyInputKeyboardInlineButtonURLAuthDecode
+
+// Static policy contract for layerAdaptLegacyInputKeyboardInlineButtonURLAuthEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, bool, tg.KeyboardButtonStyle, string, bool, string, string, tg.InputUserClass, error) = layerAdaptLegacyInputKeyboardInlineButtonURLAuthEncode
+
+// Static policy contract for layerAdaptLegacyInputKeyboardInlineButtonUserProfileDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, tg.InputUserClass) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyInputKeyboardInlineButtonUserProfileDecode
+
+// Static policy contract for layerAdaptLegacyInputKeyboardInlineButtonUserProfileEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, tg.InputUserClass, error) = layerAdaptLegacyInputKeyboardInlineButtonUserProfileEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestGeoLocationDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string) (*tg.KeyboardButton, error) = layerAdaptLegacyKeyboardButtonRequestGeoLocationDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestGeoLocationEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (bool, tg.KeyboardButtonStyle, string, error) = layerAdaptLegacyKeyboardButtonRequestGeoLocationEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestPeerDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, int, tg.RequestPeerTypeClass, int) (*tg.KeyboardButton, error) = layerAdaptLegacyKeyboardButtonRequestPeerDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestPeerEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (bool, tg.KeyboardButtonStyle, string, int, tg.RequestPeerTypeClass, int, error) = layerAdaptLegacyKeyboardButtonRequestPeerEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestPhoneDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string) (*tg.KeyboardButton, error) = layerAdaptLegacyKeyboardButtonRequestPhoneDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestPhoneEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (bool, tg.KeyboardButtonStyle, string, error) = layerAdaptLegacyKeyboardButtonRequestPhoneEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestPollDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, bool, bool, string) (*tg.KeyboardButton, error) = layerAdaptLegacyKeyboardButtonRequestPollDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonRequestPollEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (bool, tg.KeyboardButtonStyle, bool, bool, string, error) = layerAdaptLegacyKeyboardButtonRequestPollEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonSimpleWebViewDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, string) (*tg.KeyboardButton, error) = layerAdaptLegacyKeyboardButtonSimpleWebViewDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardButtonSimpleWebViewEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (bool, tg.KeyboardButtonStyle, string, string, error) = layerAdaptLegacyKeyboardButtonSimpleWebViewEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonBuyDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonBuyDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonBuyEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, error) = layerAdaptLegacyKeyboardInlineButtonBuyEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonCallbackDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, bool, tg.KeyboardButtonStyle, string, []byte) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonCallbackDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonCallbackEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, bool, tg.KeyboardButtonStyle, string, []byte, error) = layerAdaptLegacyKeyboardInlineButtonCallbackEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonCopyDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, string) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonCopyDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonCopyEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, string, error) = layerAdaptLegacyKeyboardInlineButtonCopyEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonGameDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonGameDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonGameEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, error) = layerAdaptLegacyKeyboardInlineButtonGameEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonSwitchInlineDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, bool, tg.KeyboardButtonStyle, string, string, bool, []tg.InlineQueryPeerTypeClass) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonSwitchInlineDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonSwitchInlineEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, bool, tg.KeyboardButtonStyle, string, string, bool, []tg.InlineQueryPeerTypeClass, error) = layerAdaptLegacyKeyboardInlineButtonSwitchInlineEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonURLAuthDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, bool, string, string, int) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonURLAuthDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonURLAuthEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, bool, string, string, int, error) = layerAdaptLegacyKeyboardInlineButtonURLAuthEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonURLDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, string) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonURLDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonURLEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, string, error) = layerAdaptLegacyKeyboardInlineButtonURLEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonUserProfileDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, int64) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonUserProfileDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonUserProfileEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, int64, error) = layerAdaptLegacyKeyboardInlineButtonUserProfileEncode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonWebViewDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, bool, tg.KeyboardButtonStyle, string, string) (*tg.KeyboardInlineButton, error) = layerAdaptLegacyKeyboardInlineButtonWebViewDecode
+
+// Static policy contract for layerAdaptLegacyKeyboardInlineButtonWebViewEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardInlineButton) (bool, tg.KeyboardButtonStyle, string, string, error) = layerAdaptLegacyKeyboardInlineButtonWebViewEncode
+
 // Static policy contract for layerAdaptWebBrowserSettingsExceptionResult. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.
@@ -2782,12 +2991,37 @@ var _ func(LayerProfile, tg.UpdatesClass) (bool, error) = layerAdaptWebBrowserSe
 // inside one transactional pass; hooks must not mutate their input value.
 var _ func(LayerProfile, *tg.MessagesChatInviteJoinResultWebView, tg.WebViewResultURL) error = layerCaptureChatInviteJoinQueryIDFromWebViewDecode
 
+// Static policy contract for layerDefaultLegacyKeyboardButtonTypeDecode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton) (tg.ButtonTypeClass, error) = layerDefaultLegacyKeyboardButtonTypeDecode
+
 // Static policy contract for layerProjectEphemeralBotCommandProject. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.
 var _ func(LayerProfile, *tg.BotCommand, bool) (*tg.BotCommand, bool, error) = layerProjectEphemeralBotCommandProject
 
+// Static policy contract for layerProjectLegacyDefaultKeyboardButtonProject. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.KeyboardButton, tg.ButtonTypeClass) (*tg.KeyboardButton, bool, error) = layerProjectLegacyDefaultKeyboardButtonProject
+
 // Static policy contract for layerRequireCapturedChatInviteJoinQueryIDDecode. Missing hooks and signature drift
 // intentionally fail compilation. Production encoding invokes each hook once
 // inside one transactional pass; hooks must not mutate their input value.
 var _ func(LayerProfile, *tg.MessagesChatInviteJoinResultWebView) (int64, error) = layerRequireCapturedChatInviteJoinQueryIDDecode
+
+// Static policy contract for layerRequireLegacyEphemeralDeletePeerEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.EphemeralDeleteMessageRequest, bool, tg.InputPeerClass) (tg.InputPeerClass, error) = layerRequireLegacyEphemeralDeletePeerEncode
+
+// Static policy contract for layerRequireLegacyEphemeralMessagePeerEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.EphemeralMessage, bool, tg.PeerClass) (tg.PeerClass, error) = layerRequireLegacyEphemeralMessagePeerEncode
+
+// Static policy contract for layerRequireLegacyEphemeralSendPeerEncode. Missing hooks and signature drift
+// intentionally fail compilation. Production encoding invokes each hook once
+// inside one transactional pass; hooks must not mutate their input value.
+var _ func(LayerProfile, *tg.EphemeralSendMessageRequest, bool, tg.InputPeerClass) (tg.InputPeerClass, error) = layerRequireLegacyEphemeralSendPeerEncode

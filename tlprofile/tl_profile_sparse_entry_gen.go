@@ -124,6 +124,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire199fed96(profile, b, state)
 	case 0x19bc4b6d:
 		return layerDecodeWire19bc4b6d(profile, b, state)
+	case 0x1a542004:
+		return layerDecodeWire1a542004(profile, b, state)
 	case 0x1ae373ac:
 		return layerDecodeWire1ae373ac(profile, b, state)
 	case 0x1b3f4df7:
@@ -154,8 +156,12 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire20212ca8(profile, b, state)
 	case 0x2064674e:
 		return layerDecodeWire2064674e(profile, b, state)
+	case 0x20bcbba1:
+		return layerDecodeWire20bcbba1(profile, b, state)
 	case 0x222600ef:
 		return layerDecodeWire222600ef(profile, b, state)
+	case 0x2244afad:
+		return layerDecodeWire2244afad(profile, b, state)
 	case 0x2390fe44:
 		return layerDecodeWire2390fe44(profile, b, state)
 	case 0x23e91ba3:
@@ -226,6 +232,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire367617d3(profile, b, state)
 	case 0x37148dbb:
 		return layerDecodeWire37148dbb(profile, b, state)
+	case 0x376d975c:
+		return layerDecodeWire376d975c(profile, b, state)
 	case 0x390d5c5e:
 		return layerDecodeWire390d5c5e(profile, b, state)
 	case 0x399674dc:
@@ -252,14 +260,20 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire3e050d0f(profile, b, state)
 	case 0x3e77f614:
 		return layerDecodeWire3e77f614(profile, b, state)
+	case 0x3fa53905:
+		return layerDecodeWire3fa53905(profile, b, state)
 	case 0x405fef0d:
 		return layerDecodeWire405fef0d(profile, b, state)
 	case 0x416c56e8:
 		return layerDecodeWire416c56e8(profile, b, state)
 	case 0x417bbf11:
 		return layerDecodeWire417bbf11(profile, b, state)
+	case 0x417efd8f:
+		return layerDecodeWire417efd8f(profile, b, state)
 	case 0x41cbf256:
 		return layerDecodeWire41cbf256(profile, b, state)
+	case 0x4203998f:
+		return layerDecodeWire4203998f(profile, b, state)
 	case 0x42e047bb:
 		return layerDecodeWire42e047bb(profile, b, state)
 	case 0x445663a7:
@@ -278,6 +292,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire4b425864(profile, b, state)
 	case 0x4b7d786a:
 		return layerDecodeWire4b7d786a(profile, b, state)
+	case 0x4bbb8f01:
+		return layerDecodeWire4bbb8f01(profile, b, state)
 	case 0x4bc6589a:
 		return layerDecodeWire4bc6589a(profile, b, state)
 	case 0x4c2985b6:
@@ -286,6 +302,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire4c2a5d62(profile, b, state)
 	case 0x4c3e069d:
 		return layerDecodeWire4c3e069d(profile, b, state)
+	case 0x4c4537c8:
+		return layerDecodeWire4c4537c8(profile, b, state)
 	case 0x4d22ff98:
 		return layerDecodeWire4d22ff98(profile, b, state)
 	case 0x4d6deea5:
@@ -364,12 +382,16 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire64ff9fd5(profile, b, state)
 	case 0x65a0fa4d:
 		return layerDecodeWire65a0fa4d(profile, b, state)
+	case 0x65efe954:
+		return layerDecodeWire65efe954(profile, b, state)
 	case 0x65f00ce3:
 		return layerDecodeWire65f00ce3(profile, b, state)
 	case 0x6724abc4:
 		return layerDecodeWire6724abc4(profile, b, state)
 	case 0x67e731ad:
 		return layerDecodeWire67e731ad(profile, b, state)
+	case 0x68013e72:
+		return layerDecodeWire68013e72(profile, b, state)
 	case 0x682a41a9:
 		return layerDecodeWire682a41a9(profile, b, state)
 	case 0x686c85a6:
@@ -378,6 +400,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire6880b94d(profile, b, state)
 	case 0x68cb6283:
 		return layerDecodeWire68cb6283(profile, b, state)
+	case 0x68cbd09f:
+		return layerDecodeWire68cbd09f(profile, b, state)
 	case 0x6b39f4ec:
 		return layerDecodeWire6b39f4ec(profile, b, state)
 	case 0x6c3f19b9:
@@ -428,6 +452,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire78d4dec1(profile, b, state)
 	case 0x7998c914:
 		return layerDecodeWire7998c914(profile, b, state)
+	case 0x7a11d782:
+		return layerDecodeWire7a11d782(profile, b, state)
 	case 0x7a800e0a:
 		return layerDecodeWire7a800e0a(profile, b, state)
 	case 0x7b9e1801:
@@ -436,8 +462,12 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire7bf6b15c(profile, b, state)
 	case 0x7c8fe7b6:
 		return layerDecodeWire7c8fe7b6(profile, b, state)
+	case 0x7d170cff:
+		return layerDecodeWire7d170cff(profile, b, state)
 	case 0x7d5bd1f0:
 		return layerDecodeWire7d5bd1f0(profile, b, state)
+	case 0x7d5e07c7:
+		return layerDecodeWire7d5e07c7(profile, b, state)
 	case 0x7dbf8673:
 		return layerDecodeWire7dbf8673(profile, b, state)
 	case 0x7e6260d7:
@@ -472,6 +502,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire883a4108(profile, b, state)
 	case 0x88bf9319:
 		return layerDecodeWire88bf9319(profile, b, state)
+	case 0x89c590f9:
+		return layerDecodeWire89c590f9(profile, b, state)
 	case 0x8a86659c:
 		return layerDecodeWire8a86659c(profile, b, state)
 	case 0x8b716587:
@@ -484,6 +516,10 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire8c88c923(profile, b, state)
 	case 0x8c9a88ac:
 		return layerDecodeWire8c9a88ac(profile, b, state)
+	case 0x8d78512a:
+		return layerDecodeWire8d78512a(profile, b, state)
+	case 0x8d7ae6af:
+		return layerDecodeWire8d7ae6af(profile, b, state)
 	case 0x8dca6aa5:
 		return layerDecodeWire8dca6aa5(profile, b, state)
 	case 0x8f079643:
@@ -516,6 +552,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire95f389b1(profile, b, state)
 	case 0x966e2dbf:
 		return layerDecodeWire966e2dbf(profile, b, state)
+	case 0x9686cb50:
+		return layerDecodeWire9686cb50(profile, b, state)
 	case 0x96929a85:
 		return layerDecodeWire96929a85(profile, b, state)
 	case 0x96e6cd81:
@@ -534,6 +572,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWire98d5ea1d(profile, b, state)
 	case 0x98dd8936:
 		return layerDecodeWire98dd8936(profile, b, state)
+	case 0x991399fc:
+		return layerDecodeWire991399fc(profile, b, state)
 	case 0x9a23af21:
 		return layerDecodeWire9a23af21(profile, b, state)
 	case 0x9a35e999:
@@ -572,6 +612,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWirea1405817(profile, b, state)
 	case 0xa2cb24f9:
 		return layerDecodeWirea2cb24f9(profile, b, state)
+	case 0xa3c0d511:
+		return layerDecodeWirea3c0d511(profile, b, state)
 	case 0xa423bb51:
 		return layerDecodeWirea423bb51(profile, b, state)
 	case 0xa44f3ef6:
@@ -598,6 +640,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWirea8fb1981(profile, b, state)
 	case 0xa927fec5:
 		return layerDecodeWirea927fec5(profile, b, state)
+	case 0xaa40f94d:
+		return layerDecodeWireaa40f94d(profile, b, state)
 	case 0xaa5f789c:
 		return layerDecodeWireaa5f789c(profile, b, state)
 	case 0xac6a83aa:
@@ -658,6 +702,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWirebb12a419(profile, b, state)
 	case 0xbbab2643:
 		return layerDecodeWirebbab2643(profile, b, state)
+	case 0xbcc4af10:
+		return layerDecodeWirebcc4af10(profile, b, state)
 	case 0xbd74cf49:
 		return layerDecodeWirebd74cf49(profile, b, state)
 	case 0xbdc62dcc:
@@ -676,10 +722,14 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWirec070d93e(profile, b, state)
 	case 0xc0cf7646:
 		return layerDecodeWirec0cf7646(profile, b, state)
+	case 0xc0fd5d09:
+		return layerDecodeWirec0fd5d09(profile, b, state)
 	case 0xc12622c4:
 		return layerDecodeWirec12622c4(profile, b, state)
 	case 0xc27ac8c7:
 		return layerDecodeWirec27ac8c7(profile, b, state)
+	case 0xc39f5324:
+		return layerDecodeWirec39f5324(profile, b, state)
 	case 0xc4103386:
 		return layerDecodeWirec4103386(profile, b, state)
 	case 0xc556a45d:
@@ -704,6 +754,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWirecfcd0f13(profile, b, state)
 	case 0xd1b4ab14:
 		return layerDecodeWired1b4ab14(profile, b, state)
+	case 0xd49f34c6:
+		return layerDecodeWired49f34c6(profile, b, state)
 	case 0xd5676710:
 		return layerDecodeWired5676710(profile, b, state)
 	case 0xd5a41724:
@@ -714,8 +766,12 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWired64c522b(profile, b, state)
 	case 0xd7e78225:
 		return layerDecodeWired7e78225(profile, b, state)
+	case 0xd80c25ec:
+		return layerDecodeWired80c25ec(profile, b, state)
 	case 0xd912a59c:
 		return layerDecodeWired912a59c(profile, b, state)
+	case 0xd9c6dc1a:
+		return layerDecodeWired9c6dc1a(profile, b, state)
 	case 0xdabbf83a:
 		return layerDecodeWiredabbf83a(profile, b, state)
 	case 0xdaecc589:
@@ -742,6 +798,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWiree0955a3c(profile, b, state)
 	case 0xe0c0c5e5:
 		return layerDecodeWiree0c0c5e5(profile, b, state)
+	case 0xe15c4370:
+		return layerDecodeWiree15c4370(profile, b, state)
 	case 0xe1664194:
 		return layerDecodeWiree1664194(profile, b, state)
 	case 0xe1bb0d61:
@@ -764,8 +822,14 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWiree4e88011(profile, b, state)
 	case 0xe5d7d19c:
 		return layerDecodeWiree5d7d19c(profile, b, state)
+	case 0xe62bc960:
+		return layerDecodeWiree62bc960(profile, b, state)
+	case 0xe6c31522:
+		return layerDecodeWiree6c31522(profile, b, state)
 	case 0xe6d83d7e:
 		return layerDecodeWiree6d83d7e(profile, b, state)
+	case 0xe846b1a0:
+		return layerDecodeWiree846b1a0(profile, b, state)
 	case 0xe87acbc0:
 		return layerDecodeWiree87acbc0(profile, b, state)
 	case 0xe89c45b2:
@@ -816,6 +880,8 @@ func tlDecodeSparse(profile Profile, wireID uint32, b *bin.Buffer, limits Limits
 		return layerDecodeWiref47751b6(profile, b, state)
 	case 0xf496b0c6:
 		return layerDecodeWiref496b0c6(profile, b, state)
+	case 0xf51006f9:
+		return layerDecodeWiref51006f9(profile, b, state)
 	case 0xf6a548d3:
 		return layerDecodeWiref6a548d3(profile, b, state)
 	case 0xf83ae221:
@@ -988,6 +1054,18 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyContactsSearchRequest(profile, typed, b, state)
+	case SemanticMethodEphemeralDeleteMessage:
+		typed, ok := value.(*tg.EphemeralDeleteMessageRequest)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyEphemeralDeleteMessageRequest(profile, typed, b, state)
+	case SemanticMethodEphemeralSendMessage:
+		typed, ok := value.(*tg.EphemeralSendMessageRequest)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyEphemeralSendMessageRequest(profile, typed, b, state)
 	case SemanticMethodMessagesAddPollAnswer:
 		typed, ok := value.(*tg.MessagesAddPollAnswerRequest)
 		if !ok {
@@ -1000,6 +1078,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyMessagesComposeMessageWithAIRequest(profile, typed, b, state)
+	case SemanticMethodMessagesComposeRichMessageWithAI:
+		typed, ok := value.(*tg.MessagesComposeRichMessageWithAIRequest)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyMessagesComposeRichMessageWithAIRequest(profile, typed, b, state)
 	case SemanticMethodMessagesEditChatDefaultBannedRights:
 		typed, ok := value.(*tg.MessagesEditChatDefaultBannedRightsRequest)
 		if !ok {
@@ -1144,6 +1228,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyMessagesToggleSavedDialogPinRequest(profile, typed, b, state)
+	case SemanticMethodMessagesTranslateRichMessage:
+		typed, ok := value.(*tg.MessagesTranslateRichMessageRequest)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyMessagesTranslateRichMessageRequest(profile, typed, b, state)
 	case SemanticMethodMessagesUploadImportedMedia:
 		typed, ok := value.(*tg.MessagesUploadImportedMediaRequest)
 		if !ok {
@@ -1624,6 +1714,24 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyChatlistsExportedInvites(profile, typed, b, state)
+	case SemanticTypeCommunitiesParticipantJoinedChats:
+		typed, ok := value.(*tg.CommunitiesParticipantJoinedChats)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyCommunitiesParticipantJoinedChats(profile, typed, b, state)
+	case SemanticTypeCommunitiesPeerLinkRequests:
+		typed, ok := value.(*tg.CommunitiesPeerLinkRequests)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyCommunitiesPeerLinkRequests(profile, typed, b, state)
+	case SemanticTypeCommunity:
+		typed, ok := value.(*tg.Community)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyCommunity(profile, typed, b, state)
 	case SemanticTypeConnectedBot:
 		typed, ok := value.(*tg.ConnectedBot)
 		if !ok {
@@ -1696,6 +1804,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyDraftMessage(profile, typed, b, state)
+	case SemanticTypeEphemeralMessage:
+		typed, ok := value.(*tg.EphemeralMessage)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyEphemeralMessage(profile, typed, b, state)
 	case SemanticTypeForumTopic:
 		typed, ok := value.(*tg.ForumTopic)
 		if !ok {
@@ -1822,18 +1936,18 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyInputInvoicePremiumGiftCode(profile, typed, b, state)
+	case SemanticTypeInputInvoiceStarGiftResale:
+		typed, ok := value.(*tg.InputInvoiceStarGiftResale)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyInputInvoiceStarGiftResale(profile, typed, b, state)
 	case SemanticTypeInputInvoiceStars:
 		typed, ok := value.(*tg.InputInvoiceStars)
 		if !ok {
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyInputInvoiceStars(profile, typed, b, state)
-	case SemanticTypeInputKeyboardButtonRequestPeer:
-		typed, ok := value.(*tg.InputKeyboardButtonRequestPeer)
-		if !ok {
-			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
-		}
-		return layerEncodeFamilyInputKeyboardButtonRequestPeer(profile, typed, b, state)
 	case SemanticTypeInputMediaInvoice:
 		typed, ok := value.(*tg.InputMediaInvoice)
 		if !ok {
@@ -1888,12 +2002,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyInputStorePaymentAuthCode(profile, typed, b, state)
-	case SemanticTypeKeyboardButtonRequestPeer:
-		typed, ok := value.(*tg.KeyboardButtonRequestPeer)
+	case SemanticTypeKeyboardButton:
+		typed, ok := value.(*tg.KeyboardButton)
 		if !ok {
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
-		return layerEncodeFamilyKeyboardButtonRequestPeer(profile, typed, b, state)
+		return layerEncodeFamilyKeyboardButton(profile, typed, b, state)
 	case SemanticTypeKeyboardButtonRow:
 		typed, ok := value.(*tg.KeyboardButtonRow)
 		if !ok {
@@ -1918,6 +2032,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyMessageActionPollDeleteAnswer(profile, typed, b, state)
+	case SemanticTypeMessageActionStarGiftUnique:
+		typed, ok := value.(*tg.MessageActionStarGiftUnique)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyMessageActionStarGiftUnique(profile, typed, b, state)
 	case SemanticTypeMessageExtendedMedia:
 		typed, ok := value.(*tg.MessageExtendedMedia)
 		if !ok {
@@ -2020,6 +2140,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyMessagesChatsSlice(profile, typed, b, state)
+	case SemanticTypeMessagesComposedRichMessageWithAI:
+		typed, ok := value.(*tg.MessagesComposedRichMessageWithAI)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyMessagesComposedRichMessageWithAI(profile, typed, b, state)
 	case SemanticTypeMessagesDialogs:
 		typed, ok := value.(*tg.MessagesDialogs)
 		if !ok {
@@ -2152,6 +2278,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyMessagesSponsoredMessages(profile, typed, b, state)
+	case SemanticTypeMessagesTranslatedRichMessage:
+		typed, ok := value.(*tg.MessagesTranslatedRichMessage)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyMessagesTranslatedRichMessage(profile, typed, b, state)
 	case SemanticTypeMessagesVotesList:
 		typed, ok := value.(*tg.MessagesVotesList)
 		if !ok {
@@ -2662,6 +2794,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilySendMessageRichMessageDraftAction(profile, typed, b, state)
+	case SemanticTypeSendMessageTextDraftAction:
+		typed, ok := value.(*tg.SendMessageTextDraftAction)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilySendMessageTextDraftAction(profile, typed, b, state)
 	case SemanticTypeSponsoredMessage:
 		typed, ok := value.(*tg.SponsoredMessage)
 		if !ok {
@@ -2818,6 +2956,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyTextDate(profile, typed, b, state)
+	case SemanticTypeTextDiff:
+		typed, ok := value.(*tg.TextDiff)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyTextDiff(profile, typed, b, state)
 	case SemanticTypeTextEmail:
 		typed, ok := value.(*tg.TextEmail)
 		if !ok {
@@ -2998,6 +3142,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyUpdateEditChannelMessage(profile, typed, b, state)
+	case SemanticTypeUpdateEditEphemeralMessage:
+		typed, ok := value.(*tg.UpdateEditEphemeralMessage)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyUpdateEditEphemeralMessage(profile, typed, b, state)
 	case SemanticTypeUpdateEditMessage:
 		typed, ok := value.(*tg.UpdateEditMessage)
 		if !ok {
@@ -3022,6 +3172,12 @@ func tlEncodeSparse(profile Profile, semantic SemanticID, value bin.Object, b *b
 			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
 		}
 		return layerEncodeFamilyUpdateNewChannelMessage(profile, typed, b, state)
+	case SemanticTypeUpdateNewEphemeralMessage:
+		typed, ok := value.(*tg.UpdateNewEphemeralMessage)
+		if !ok {
+			return &LayerCodecError{Operation: "encode sparse", Profile: profile, Semantic: semantic, Reason: fmt.Sprintf("canonical type mismatch: %T", value)}
+		}
+		return layerEncodeFamilyUpdateNewEphemeralMessage(profile, typed, b, state)
 	case SemanticTypeUpdateNewMessage:
 		typed, ok := value.(*tg.UpdateNewMessage)
 		if !ok {
@@ -3217,3997 +3373,4034 @@ func tlLookupResultPlan(profile Profile, semantic SemanticID) (int, bool) {
 	switch semantic {
 	case SemanticMethodAccountAcceptAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountCancelPasswordEmail:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountChangeAuthorizationSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountChangePhone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodAccountCheckUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountClearRecentEmojiStatuses:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountConfirmBotConnection:
 		switch profile {
-		case Profile226, Profile227, Profile228:
+		case Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountConfirmPasswordEmail:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountConfirmPhone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountCreateBusinessChatLink:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 2, true
 		}
 	case SemanticMethodAccountCreateTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 3, true
 		}
 	case SemanticMethodAccountDeclinePasswordReset:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountDeleteAccount:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountDeleteAutoSaveExceptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountDeleteBusinessChatLink:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountDeletePasskey:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountDeleteSecureValue:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountDeleteWebBrowserSettingsExceptions:
 		switch profile {
-		case Profile226, Profile227, Profile228:
+		case Profile226, Profile227, Profile228, Profile229:
 			return 4, true
 		}
 	case SemanticMethodAccountDisablePeerConnectedBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountEditBusinessChatLink:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 2, true
 		}
 	case SemanticMethodAccountFinishTakeoutSession:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountGetAccountTTL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 5, true
 		}
 	case SemanticMethodAccountGetAllSecureValues:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 6, true
 		}
 	case SemanticMethodAccountGetAuthorizationForm:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 7, true
 		}
 	case SemanticMethodAccountGetAuthorizations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 8, true
 		}
 	case SemanticMethodAccountGetAutoDownloadSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 9, true
 		}
 	case SemanticMethodAccountGetAutoSaveSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 10, true
 		}
 	case SemanticMethodAccountGetBotBusinessConnection:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodAccountGetBusinessChatLinks:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 12, true
 		}
 	case SemanticMethodAccountGetChannelDefaultEmojiStatuses:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 13, true
 		}
 	case SemanticMethodAccountGetChannelRestrictedStatusEmojis:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 14, true
 		}
 	case SemanticMethodAccountGetChatThemes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 15, true
 		}
 	case SemanticMethodAccountGetCollectibleEmojiStatuses:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 13, true
 		}
 	case SemanticMethodAccountGetConnectedBots:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 16, true
 		}
 	case SemanticMethodAccountGetContactSignUpNotification:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountGetContentSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 17, true
 		}
 	case SemanticMethodAccountGetDefaultBackgroundEmojis:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 14, true
 		}
 	case SemanticMethodAccountGetDefaultEmojiStatuses:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 13, true
 		}
 	case SemanticMethodAccountGetDefaultGroupPhotoEmojis:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 14, true
 		}
 	case SemanticMethodAccountGetDefaultProfilePhotoEmojis:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 14, true
 		}
 	case SemanticMethodAccountGetGlobalPrivacySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 18, true
 		}
 	case SemanticMethodAccountGetMultiWallPapers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 19, true
 		}
 	case SemanticMethodAccountGetNotifyExceptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodAccountGetNotifySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 20, true
 		}
 	case SemanticMethodAccountGetPaidMessagesRevenue:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 21, true
 		}
 	case SemanticMethodAccountGetPasskeys:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 22, true
 		}
 	case SemanticMethodAccountGetPassword:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 23, true
 		}
 	case SemanticMethodAccountGetPasswordSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 24, true
 		}
 	case SemanticMethodAccountGetPrivacy:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 25, true
 		}
 	case SemanticMethodAccountGetReactionsNotifySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 26, true
 		}
 	case SemanticMethodAccountGetRecentEmojiStatuses:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 13, true
 		}
 	case SemanticMethodAccountGetSavedMusicIDs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 27, true
 		}
 	case SemanticMethodAccountGetSavedRingtones:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 28, true
 		}
 	case SemanticMethodAccountGetSecureValue:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 6, true
 		}
 	case SemanticMethodAccountGetTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 3, true
 		}
 	case SemanticMethodAccountGetThemes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 15, true
 		}
 	case SemanticMethodAccountGetTmpPassword:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 29, true
 		}
 	case SemanticMethodAccountGetUniqueGiftChatThemes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 30, true
 		}
 	case SemanticMethodAccountGetWallPaper:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 31, true
 		}
 	case SemanticMethodAccountGetWallPapers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 32, true
 		}
 	case SemanticMethodAccountGetWebAuthorizations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 33, true
 		}
 	case SemanticMethodAccountGetWebBrowserSettings:
 		switch profile {
-		case Profile226, Profile227, Profile228:
+		case Profile226, Profile227, Profile228, Profile229:
 			return 4, true
 		}
 	case SemanticMethodAccountInitPasskeyRegistration:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 34, true
 		}
 	case SemanticMethodAccountInitTakeoutSession:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 35, true
 		}
 	case SemanticMethodAccountInstallTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountInstallWallPaper:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountInvalidateSignInCodes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountRegisterDevice:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountRegisterPasskey:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 36, true
 		}
 	case SemanticMethodAccountReorderUsernames:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountReportPeer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountReportProfilePhoto:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResendPasswordEmail:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResetAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResetNotifySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResetPassword:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 37, true
 		}
 	case SemanticMethodAccountResetWallPapers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResetWebAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResetWebAuthorizations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountResolveBusinessChatLink:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 38, true
 		}
 	case SemanticMethodAccountSaveAutoDownloadSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSaveAutoSaveSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSaveMusic:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSaveRingtone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 39, true
 		}
 	case SemanticMethodAccountSaveSecureValue:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 40, true
 		}
 	case SemanticMethodAccountSaveTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSaveWallPaper:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSendChangePhoneCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAccountSendConfirmPhoneCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAccountSendVerifyEmailCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 42, true
 		}
 	case SemanticMethodAccountSendVerifyPhoneCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAccountSetAccountTTL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSetAuthorizationTTL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSetContactSignUpNotification:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSetContentSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSetGlobalPrivacySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 18, true
 		}
 	case SemanticMethodAccountSetMainProfileTab:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountSetPrivacy:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 25, true
 		}
 	case SemanticMethodAccountSetReactionsNotifySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 26, true
 		}
 	case SemanticMethodAccountToggleConnectedBotPaused:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountToggleNoPaidMessagesException:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountToggleSponsoredMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountToggleUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountToggleWebBrowserSettingsException:
 		switch profile {
-		case Profile227, Profile228:
+		case Profile227, Profile228, Profile229:
 			return 11, true
 		case Profile226:
 			return 43, true
 		}
 	case SemanticMethodAccountUnregisterDevice:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateBirthday:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateBusinessAwayMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateBusinessGreetingMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateBusinessIntro:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateBusinessLocation:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateBusinessWorkHours:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateColor:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateConnectedBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodAccountUpdateDeviceLocked:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateEmojiStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateNotifySettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdatePasswordSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdatePersonalChannel:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateProfile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodAccountUpdateStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAccountUpdateTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 3, true
 		}
 	case SemanticMethodAccountUpdateUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodAccountUpdateWebBrowserSettings:
 		switch profile {
-		case Profile226, Profile227, Profile228:
+		case Profile226, Profile227, Profile228, Profile229:
 			return 4, true
 		}
 	case SemanticMethodAccountUploadRingtone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 44, true
 		}
 	case SemanticMethodAccountUploadTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 44, true
 		}
 	case SemanticMethodAccountUploadWallPaper:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 31, true
 		}
 	case SemanticMethodAccountVerifyEmail:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 45, true
 		}
 	case SemanticMethodAccountVerifyPhone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAicomposeCreateTone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 46, true
 		}
 	case SemanticMethodAicomposeDeleteTone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAicomposeGetTone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 47, true
 		}
 	case SemanticMethodAicomposeGetToneExample:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 48, true
 		}
 	case SemanticMethodAicomposeGetTones:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 47, true
 		}
 	case SemanticMethodAicomposeSaveTone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAicomposeUpdateTone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 46, true
 		}
 	case SemanticMethodAuthAcceptLoginToken:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 49, true
 		}
 	case SemanticMethodAuthBindTempAuthKey:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthCancelCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthCheckPaidAuth:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAuthCheckPassword:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
 		}
 	case SemanticMethodAuthCheckRecoveryPassword:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthDropTempAuthKeys:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthExportAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 51, true
 		}
 	case SemanticMethodAuthExportLoginToken:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 52, true
+		}
+	case SemanticMethodAuthFinishFirebasePnvLogin:
+		switch profile {
+		case Profile229:
+			return 50, true
 		}
 	case SemanticMethodAuthFinishPasskeyLogin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 50, true
+		}
+	case SemanticMethodAuthFirebasePnvSignUp:
+		switch profile {
+		case Profile229:
 			return 50, true
 		}
 	case SemanticMethodAuthImportAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
 		}
 	case SemanticMethodAuthImportBotAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
 		}
 	case SemanticMethodAuthImportLoginToken:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 52, true
 		}
 	case SemanticMethodAuthImportWebTokenAuthorization:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
+		}
+	case SemanticMethodAuthInitFirebasePnvLogin:
+		switch profile {
+		case Profile229:
+			return 53, true
 		}
 	case SemanticMethodAuthInitPasskeyLogin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 53, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 54, true
 		}
 	case SemanticMethodAuthLogOut:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 54, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 55, true
 		}
 	case SemanticMethodAuthRecoverPassword:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
 		}
 	case SemanticMethodAuthReportMissingCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthRequestFirebaseSMS:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthRequestPasswordRecovery:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 55, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 56, true
 		}
 	case SemanticMethodAuthResendCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAuthResetAuthorizations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodAuthResetLoginEmail:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAuthSendCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 41, true
 		}
 	case SemanticMethodAuthSignIn:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
 		}
 	case SemanticMethodAuthSignUp:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 50, true
 		}
 	case SemanticMethodBotsAddPreviewMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 56, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 57, true
 		}
 	case SemanticMethodBotsAllowSendMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodBotsAnswerWebhookJSONQuery:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsCanSendMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsCheckDownloadFileParams:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsCheckUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsCreateBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodBotsDeletePreviewMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsEditAccessSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsEditPreviewMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 56, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 57, true
 		}
 	case SemanticMethodBotsExportBotToken:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 57, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 58, true
 		}
 	case SemanticMethodBotsGetAccessSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 58, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 59, true
 		}
 	case SemanticMethodBotsGetAdminedBots:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 59, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 60, true
 		}
 	case SemanticMethodBotsGetBotCommands:
 		switch profile {
 		case Profile225, Profile226, Profile227:
-			return 60, true
-		case Profile228:
 			return 61, true
+		case Profile228, Profile229:
+			return 62, true
 		}
 	case SemanticMethodBotsGetBotInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 62, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 63, true
 		}
 	case SemanticMethodBotsGetBotMenuButton:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 63, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 64, true
 		}
 	case SemanticMethodBotsGetBotRecommendations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 64, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 65, true
 		}
 	case SemanticMethodBotsGetPopularAppBots:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 65, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 66, true
 		}
 	case SemanticMethodBotsGetPreviewInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 66, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 67, true
 		}
 	case SemanticMethodBotsGetPreviewMedias:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 67, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 68, true
 		}
 	case SemanticMethodBotsGetRequestedWebViewButton:
 		switch profile {
 		case Profile225, Profile226, Profile227, Profile228:
-			return 68, true
+			return 69, true
+		case Profile229:
+			return 70, true
 		}
 	case SemanticMethodBotsInvokeWebViewCustomMethod:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 69, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 71, true
 		}
 	case SemanticMethodBotsReorderPreviewMedias:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsReorderUsernames:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsRequestWebViewButton:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 70, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 72, true
 		}
 	case SemanticMethodBotsResetBotCommands:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSendCustomRequest:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 69, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 71, true
 		}
 	case SemanticMethodBotsSetBotBroadcastDefaultAdminRights:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSetBotCommands:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSetBotGroupDefaultAdminRights:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSetBotInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSetBotMenuButton:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSetCustomVerification:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsSetJoinChatResults:
 		switch profile {
-		case Profile226, Profile227, Profile228:
+		case Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsToggleUserEmojiStatusPermission:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsToggleUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodBotsUpdateStarRefProgram:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 71, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 73, true
 		}
 	case SemanticMethodBotsUpdateUserEmojiStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsCheckSearchPostsFlood:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 72, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 74, true
 		}
 	case SemanticMethodChannelsCheckUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsConvertToGigagroup:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsCreateChannel:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsDeactivateAllUsernames:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsDeleteChannel:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsDeleteHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsDeleteMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 73, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 75, true
 		}
 	case SemanticMethodChannelsDeleteParticipantHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodChannelsEditAdmin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsEditBanned:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsEditLocation:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsEditPhoto:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsEditTitle:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsExportMessageLink:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 75, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 77, true
 		}
 	case SemanticMethodChannelsGetAdminLog:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 76, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 78, true
 		}
 	case SemanticMethodChannelsGetAdminedPublicChannels:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodChannelsGetChannelRecommendations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodChannelsGetChannels:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodChannelsGetFullChannel:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 78, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 80, true
 		}
 	case SemanticMethodChannelsGetGroupsForDiscussion:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodChannelsGetInactiveChannels:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 79, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 81, true
 		}
 	case SemanticMethodChannelsGetLeftChannels:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodChannelsGetMessageAuthor:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodChannelsGetMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodChannelsGetParticipant:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 81, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 83, true
 		}
 	case SemanticMethodChannelsGetParticipants:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 82, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 84, true
 		}
 	case SemanticMethodChannelsGetSendAs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 83, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 85, true
 		}
 	case SemanticMethodChannelsInviteToChannel:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 84, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 86, true
 		}
 	case SemanticMethodChannelsJoinChannel:
 		switch profile {
 		case Profile225:
-			return 85, true
-		case Profile226, Profile227, Profile228:
-			return 86, true
+			return 87, true
+		case Profile226, Profile227, Profile228, Profile229:
+			return 88, true
 		}
 	case SemanticMethodChannelsLeaveChannel:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsReadHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsReadMessageContents:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsReorderUsernames:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsReportAntiSpamFalsePositive:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsReportSpam:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsRestrictSponsoredMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsSearchPosts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodChannelsSetBoostsToUnblockRestrictions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsSetDiscussionGroup:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsSetEmojiStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsSetMainProfileTab:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsSetStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsToggleAntiSpam:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleAutotranslation:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleForum:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleJoinRequest:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleJoinToSend:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleParticipantsHidden:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsTogglePreHistoryHidden:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleSignatures:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleSlowMode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsToggleUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChannelsToggleViewForumAsMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsUpdateColor:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsUpdateEmojiStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsUpdatePaidMessagesPrice:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChannelsUpdateUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChatlistsCheckChatlistInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 87, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 89, true
 		}
 	case SemanticMethodChatlistsDeleteExportedInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChatlistsEditExportedInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 88, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 90, true
 		}
 	case SemanticMethodChatlistsExportChatlistInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 89, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 91, true
 		}
 	case SemanticMethodChatlistsGetChatlistUpdates:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 90, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 92, true
 		}
 	case SemanticMethodChatlistsGetExportedInvites:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 91, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 93, true
 		}
 	case SemanticMethodChatlistsGetLeaveChatlistSuggestions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 92, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 94, true
 		}
 	case SemanticMethodChatlistsHideChatlistUpdates:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodChatlistsJoinChatlistInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChatlistsJoinChatlistUpdates:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodChatlistsLeaveChatlist:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodCommunitiesCreate:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodCommunitiesGetJoinedCommunities:
 		switch profile {
-		case Profile228:
-			return 77, true
+		case Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodCommunitiesGetParticipantJoinedChats:
 		switch profile {
-		case Profile228:
-			return 93, true
+		case Profile228, Profile229:
+			return 95, true
 		}
 	case SemanticMethodCommunitiesGetPeerLinkRequests:
 		switch profile {
-		case Profile228:
-			return 94, true
+		case Profile228, Profile229:
+			return 96, true
 		}
 	case SemanticMethodCommunitiesToggleAllPeerLinkRequestApproval:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodCommunitiesToggleCommunityCollapsedInDialogs:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodCommunitiesToggleParticipantBanned:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodCommunitiesTogglePeerLink:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodCommunitiesTogglePeerLinkRequestApproval:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsAcceptContact:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodContactsAddContact:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodContactsBlock:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsBlockFromReplies:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodContactsDeleteByPhones:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsDeleteContacts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodContactsEditCloseFriends:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsExportContactToken:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 95, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 97, true
 		}
 	case SemanticMethodContactsGetBirthdays:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 96, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 98, true
 		}
 	case SemanticMethodContactsGetBlocked:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 97, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 99, true
 		}
 	case SemanticMethodContactsGetContactIDs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 98, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 100, true
 		}
 	case SemanticMethodContactsGetContacts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 99, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 101, true
 		}
 	case SemanticMethodContactsGetLocated:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodContactsGetSaved:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 100, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 102, true
 		}
 	case SemanticMethodContactsGetSponsoredPeers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 101, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 103, true
 		}
 	case SemanticMethodContactsGetStatuses:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 102, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 104, true
 		}
 	case SemanticMethodContactsGetTopPeers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 103, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 105, true
 		}
 	case SemanticMethodContactsImportContactToken:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodContactsImportContacts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 104, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 106, true
 		}
 	case SemanticMethodContactsResetSaved:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsResetTopPeerRating:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsResolvePhone:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 105, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 107, true
 		}
 	case SemanticMethodContactsResolveUsername:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 105, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 107, true
 		}
 	case SemanticMethodContactsSearch:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 106, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 108, true
 		}
 	case SemanticMethodContactsSetBlocked:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsToggleTopPeers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsUnblock:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodContactsUpdateContactNote:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 0, true
+		}
+	case SemanticMethodEphemeralDeleteAllWelcomeMessages:
+		switch profile {
+		case Profile229:
 			return 0, true
 		}
 	case SemanticMethodEphemeralDeleteMessage:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 0, true
+		}
+	case SemanticMethodEphemeralDeleteWelcomeMessage:
+		switch profile {
+		case Profile229:
+			return 0, true
+		}
+	case SemanticMethodEphemeralEditMessage:
+		switch profile {
+		case Profile229:
+			return 11, true
 		}
 	case SemanticMethodEphemeralGetCallbackAnswer:
 		switch profile {
-		case Profile228:
-			return 107, true
+		case Profile228, Profile229:
+			return 109, true
+		}
+	case SemanticMethodEphemeralGetWelcomeMessages:
+		switch profile {
+		case Profile229:
+			return 110, true
 		}
 	case SemanticMethodEphemeralReportMessage:
 		switch profile {
-		case Profile228:
-			return 108, true
+		case Profile228, Profile229:
+			return 111, true
 		}
 	case SemanticMethodEphemeralSendMessage:
 		switch profile {
-		case Profile228:
+		case Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodFoldersEditPeerFolders:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodFragmentGetCollectibleInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 109, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 112, true
 		}
 	case SemanticMethodHelpAcceptTermsOfService:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodHelpDismissSuggestion:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodHelpEditUserInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 110, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 113, true
 		}
 	case SemanticMethodHelpGetAppConfig:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 111, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 114, true
 		}
 	case SemanticMethodHelpGetAppUpdate:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 112, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 115, true
 		}
 	case SemanticMethodHelpGetCDNConfig:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 113, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 116, true
 		}
 	case SemanticMethodHelpGetConfig:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 114, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 117, true
 		}
 	case SemanticMethodHelpGetCountriesList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 115, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 118, true
 		}
 	case SemanticMethodHelpGetDeepLinkInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 116, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 119, true
 		}
 	case SemanticMethodHelpGetInviteText:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 117, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 120, true
 		}
 	case SemanticMethodHelpGetNearestDC:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 118, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 121, true
 		}
 	case SemanticMethodHelpGetPassportConfig:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 119, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 122, true
 		}
 	case SemanticMethodHelpGetPeerColors:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 120, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 123, true
 		}
 	case SemanticMethodHelpGetPeerProfileColors:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 120, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 123, true
 		}
 	case SemanticMethodHelpGetPremiumPromo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 121, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 124, true
 		}
 	case SemanticMethodHelpGetPromoData:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 122, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 125, true
 		}
 	case SemanticMethodHelpGetRecentMeURLs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 123, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 126, true
 		}
 	case SemanticMethodHelpGetSupport:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 124, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 127, true
 		}
 	case SemanticMethodHelpGetSupportName:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 125, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 128, true
 		}
 	case SemanticMethodHelpGetTermsOfServiceUpdate:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 126, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 129, true
 		}
 	case SemanticMethodHelpGetTimezonesList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 127, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 130, true
 		}
 	case SemanticMethodHelpGetUserInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 110, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 113, true
 		}
 	case SemanticMethodHelpHidePromoData:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodHelpSaveAppLog:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodHelpSetBotUpdatesStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodLangpackGetDifference:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 128, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 131, true
 		}
 	case SemanticMethodLangpackGetLangPack:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 128, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 131, true
 		}
 	case SemanticMethodLangpackGetLanguage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 129, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 132, true
 		}
 	case SemanticMethodLangpackGetLanguages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 130, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 133, true
 		}
 	case SemanticMethodLangpackGetStrings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 131, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 134, true
 		}
 	case SemanticMethodMessagesAcceptEncryption:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 132, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 135, true
 		}
 	case SemanticMethodMessagesAcceptURLAuth:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 133, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 136, true
 		}
 	case SemanticMethodMessagesAddChatUser:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 84, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 86, true
 		}
 	case SemanticMethodMessagesAddPollAnswer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesAppendTodoList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesCheckChatInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 134, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 137, true
 		}
 	case SemanticMethodMessagesCheckHistoryImport:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 135, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 138, true
 		}
 	case SemanticMethodMessagesCheckHistoryImportPeer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 136, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 139, true
 		}
 	case SemanticMethodMessagesCheckQuickReplyShortcut:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesCheckURLAuthMatchCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesClearAllDrafts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesClearRecentReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesClearRecentStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesClickSponsoredMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesComposeMessageWithAI:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 137, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 140, true
 		}
 	case SemanticMethodMessagesComposeRichMessageWithAI:
 		switch profile {
-		case Profile228:
-			return 138, true
+		case Profile228, Profile229:
+			return 141, true
 		}
 	case SemanticMethodMessagesCreateChat:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 84, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 86, true
 		}
 	case SemanticMethodMessagesCreateForumTopic:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeclineURLAuth:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesDeleteChat:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesDeleteChatUser:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeleteExportedChatInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesDeleteFactCheck:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeleteHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesDeleteMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 73, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 75, true
 		}
 	case SemanticMethodMessagesDeleteParticipantReaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeleteParticipantReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesDeletePhoneCallHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 139, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 142, true
 		}
 	case SemanticMethodMessagesDeletePollAnswer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeleteQuickReplyMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeleteQuickReplyShortcut:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesDeleteRevokedExportedChatInvites:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesDeleteSavedHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesDeleteScheduledMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesDeleteTopicHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesDiscardEncryption:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesEditChatAbout:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesEditChatAdmin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesEditChatCreator:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditChatDefaultBannedRights:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditChatParticipantRank:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditChatPhoto:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditChatTitle:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditExportedChatInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 140, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 143, true
 		}
 	case SemanticMethodMessagesEditFactCheck:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditForumTopic:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditInlineBotMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesEditMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesEditQuickReplyShortcut:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesExportChatInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 141, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 144, true
 		}
 	case SemanticMethodMessagesFaveSticker:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesForwardMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesGetAdminsWithInvites:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 142, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 145, true
 		}
 	case SemanticMethodMessagesGetAllDrafts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesGetAllStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 143, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 146, true
 		}
 	case SemanticMethodMessagesGetArchivedStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 144, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 147, true
 		}
 	case SemanticMethodMessagesGetAttachMenuBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 145, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 148, true
 		}
 	case SemanticMethodMessagesGetAttachMenuBots:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 146, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 149, true
 		}
 	case SemanticMethodMessagesGetAttachedStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 147, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 150, true
 		}
 	case SemanticMethodMessagesGetAvailableEffects:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 148, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 151, true
 		}
 	case SemanticMethodMessagesGetAvailableReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 149, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 152, true
 		}
 	case SemanticMethodMessagesGetBotApp:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 150, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 153, true
 		}
 	case SemanticMethodMessagesGetBotCallbackAnswer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 107, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 109, true
 		}
 	case SemanticMethodMessagesGetChatInviteImporters:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 151, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 154, true
 		}
 	case SemanticMethodMessagesGetChats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodMessagesGetCommonChats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodMessagesGetCustomEmojiDocuments:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 152, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 155, true
 		}
 	case SemanticMethodMessagesGetDefaultHistoryTTL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 153, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 156, true
 		}
 	case SemanticMethodMessagesGetDefaultTagReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 154, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 157, true
 		}
 	case SemanticMethodMessagesGetDhConfig:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 155, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 158, true
 		}
 	case SemanticMethodMessagesGetDialogFilters:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 156, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 159, true
 		}
 	case SemanticMethodMessagesGetDialogUnreadMarks:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 157, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 160, true
 		}
 	case SemanticMethodMessagesGetDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 158, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 161, true
 		}
 	case SemanticMethodMessagesGetDiscussionMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 159, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 162, true
 		}
 	case SemanticMethodMessagesGetDocumentByHash:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 44, true
 		}
 	case SemanticMethodMessagesGetEmojiGameInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 160, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 163, true
 		}
 	case SemanticMethodMessagesGetEmojiGroups:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 161, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 164, true
 		}
 	case SemanticMethodMessagesGetEmojiKeywords:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 162, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 165, true
 		}
 	case SemanticMethodMessagesGetEmojiKeywordsDifference:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 162, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 165, true
 		}
 	case SemanticMethodMessagesGetEmojiKeywordsLanguages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 163, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 166, true
 		}
 	case SemanticMethodMessagesGetEmojiProfilePhotoGroups:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 161, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 164, true
 		}
 	case SemanticMethodMessagesGetEmojiStatusGroups:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 161, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 164, true
 		}
 	case SemanticMethodMessagesGetEmojiStickerGroups:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 161, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 164, true
 		}
 	case SemanticMethodMessagesGetEmojiStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 143, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 146, true
 		}
 	case SemanticMethodMessagesGetEmojiURL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 164, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 167, true
 		}
 	case SemanticMethodMessagesGetExportedChatInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 140, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 143, true
 		}
 	case SemanticMethodMessagesGetExportedChatInvites:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 165, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 168, true
 		}
 	case SemanticMethodMessagesGetExtendedMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesGetFactCheck:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 166, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 169, true
 		}
 	case SemanticMethodMessagesGetFavedStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 167, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 170, true
 		}
 	case SemanticMethodMessagesGetFeaturedEmojiStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 168, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 171, true
 		}
 	case SemanticMethodMessagesGetFeaturedStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 168, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 171, true
 		}
 	case SemanticMethodMessagesGetForumTopics:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 169, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 172, true
 		}
 	case SemanticMethodMessagesGetForumTopicsByID:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 169, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 172, true
 		}
 	case SemanticMethodMessagesGetFullChat:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 78, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 80, true
 		}
 	case SemanticMethodMessagesGetFutureChatCreatorAfterLeave:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 1, true
 		}
 	case SemanticMethodMessagesGetGameHighScores:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 170, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 173, true
 		}
 	case SemanticMethodMessagesGetHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetInlineBotResults:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 171, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 174, true
 		}
 	case SemanticMethodMessagesGetInlineGameHighScores:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 170, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 173, true
 		}
 	case SemanticMethodMessagesGetMaskStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 143, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 146, true
 		}
 	case SemanticMethodMessagesGetMessageEditData:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 172, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 175, true
 		}
 	case SemanticMethodMessagesGetMessageReactionsList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 173, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 176, true
 		}
 	case SemanticMethodMessagesGetMessageReadParticipants:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 174, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 177, true
 		}
 	case SemanticMethodMessagesGetMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetMessagesReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesGetMessagesViews:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 175, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 178, true
 		}
 	case SemanticMethodMessagesGetMyStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 176, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 179, true
 		}
 	case SemanticMethodMessagesGetOldFeaturedStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 168, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 171, true
 		}
 	case SemanticMethodMessagesGetOnlines:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 177, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 180, true
 		}
 	case SemanticMethodMessagesGetOutboxReadDate:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 178, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 181, true
 		}
 	case SemanticMethodMessagesGetPaidReactionPrivacy:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesGetPeerDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 179, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 182, true
 		}
 	case SemanticMethodMessagesGetPeerSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 180, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 183, true
 		}
 	case SemanticMethodMessagesGetPersonalChannelHistory:
 		switch profile {
-		case Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetPinnedDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 179, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 182, true
 		}
 	case SemanticMethodMessagesGetPinnedSavedDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 181, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 184, true
 		}
 	case SemanticMethodMessagesGetPollResults:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesGetPollVotes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 182, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 185, true
 		}
 	case SemanticMethodMessagesGetPreparedInlineMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 183, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 186, true
 		}
 	case SemanticMethodMessagesGetQuickReplies:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 184, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 187, true
 		}
 	case SemanticMethodMessagesGetQuickReplyMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetRecentLocations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetRecentReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 154, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 157, true
 		}
 	case SemanticMethodMessagesGetRecentStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 185, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 188, true
 		}
 	case SemanticMethodMessagesGetReplies:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetRichMessage:
 		switch profile {
-		case Profile227, Profile228:
-			return 80, true
+		case Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetSavedDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 181, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 184, true
 		}
 	case SemanticMethodMessagesGetSavedDialogsByID:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 181, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 184, true
 		}
 	case SemanticMethodMessagesGetSavedGifs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 186, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 189, true
 		}
 	case SemanticMethodMessagesGetSavedHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetSavedReactionTags:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 187, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 190, true
 		}
 	case SemanticMethodMessagesGetScheduledHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetScheduledMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetSearchCounters:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 188, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 191, true
 		}
 	case SemanticMethodMessagesGetSearchResultsCalendar:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 189, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 192, true
 		}
 	case SemanticMethodMessagesGetSearchResultsPositions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 190, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 193, true
 		}
 	case SemanticMethodMessagesGetSplitRanges:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 191, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 194, true
 		}
 	case SemanticMethodMessagesGetSponsoredMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 192, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 195, true
 		}
 	case SemanticMethodMessagesGetStickerSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodMessagesGetStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 194, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 197, true
 		}
 	case SemanticMethodMessagesGetSuggestedDialogFilters:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 195, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 198, true
 		}
 	case SemanticMethodMessagesGetTopReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 154, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 157, true
 		}
 	case SemanticMethodMessagesGetUnreadMentions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetUnreadPollVotes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetUnreadReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesGetWebPage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 196, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 199, true
 		}
 	case SemanticMethodMessagesGetWebPagePreview:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 197, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 200, true
 		}
 	case SemanticMethodMessagesHideAllChatJoinRequests:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesHideChatJoinRequest:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesHidePeerSettingsBar:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesImportChatInvite:
 		switch profile {
 		case Profile225:
-			return 85, true
-		case Profile226, Profile227, Profile228:
-			return 86, true
+			return 87, true
+		case Profile226, Profile227, Profile228, Profile229:
+			return 88, true
 		}
 	case SemanticMethodMessagesInitHistoryImport:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 198, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 201, true
 		}
 	case SemanticMethodMessagesInstallStickerSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 199, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 202, true
 		}
 	case SemanticMethodMessagesMarkDialogUnread:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesMigrateChat:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesProlongWebView:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesRateTranscribedAudio:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReadDiscussion:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReadEncryptedHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReadFeaturedStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReadHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 73, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 75, true
 		}
 	case SemanticMethodMessagesReadMentions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesReadMessageContents:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 73, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 75, true
 		}
 	case SemanticMethodMessagesReadPollVotes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesReadReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesReadSavedHistory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReceivedMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 200, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 203, true
 		}
 	case SemanticMethodMessagesReceivedQueue:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 201, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 204, true
 		}
 	case SemanticMethodMessagesReorderPinnedDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReorderPinnedForumTopics:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesReorderPinnedSavedDialogs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReorderQuickReplies:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReorderStickerSets:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReport:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 108, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 111, true
 		}
 	case SemanticMethodMessagesReportEncryptedSpam:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReportMessagesDelivery:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReportMusicListen:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReportReaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReportReadMetrics:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReportSpam:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesReportSponsoredMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 202, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 205, true
 		}
 	case SemanticMethodMessagesRequestAppWebView:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 203, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 206, true
 		}
 	case SemanticMethodMessagesRequestChatJoinWebView:
 		switch profile {
-		case Profile228:
-			return 203, true
+		case Profile228, Profile229:
+			return 206, true
 		}
 	case SemanticMethodMessagesRequestEncryption:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 132, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 135, true
 		}
 	case SemanticMethodMessagesRequestMainWebView:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 203, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 206, true
 		}
 	case SemanticMethodMessagesRequestSimpleWebView:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 203, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 206, true
 		}
 	case SemanticMethodMessagesRequestURLAuth:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 133, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 136, true
 		}
 	case SemanticMethodMessagesRequestWebView:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 203, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 206, true
 		}
 	case SemanticMethodMessagesSaveDefaultSendAs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSaveDraft:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSaveGif:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSavePreparedInlineMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 204, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 207, true
 		}
 	case SemanticMethodMessagesSaveRecentSticker:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSearch:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesSearchCustomEmoji:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 14, true
 		}
 	case SemanticMethodMessagesSearchEmojiStickerSets:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 205, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 208, true
 		}
 	case SemanticMethodMessagesSearchGlobal:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesSearchSentMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 80, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 82, true
 		}
 	case SemanticMethodMessagesSearchStickerSets:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 205, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 208, true
 		}
 	case SemanticMethodMessagesSearchStickers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 206, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 209, true
 		}
 	case SemanticMethodMessagesSendBotRequestedPeer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendEncrypted:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 207, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 210, true
 		}
 	case SemanticMethodMessagesSendEncryptedFile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 207, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 210, true
 		}
 	case SemanticMethodMessagesSendEncryptedService:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 207, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 210, true
 		}
 	case SemanticMethodMessagesSendInlineBotResult:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendMultiMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendPaidReaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendQuickReplyMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendReaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendScheduledMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendScreenshotNotification:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendVote:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendWebViewData:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSendWebViewResultMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 208, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 211, true
 		}
 	case SemanticMethodMessagesSetBotCallbackAnswer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetBotGuestChatResult:
 		switch profile {
 		case Profile225:
-			return 209, true
-		case Profile226, Profile227, Profile228:
-			return 210, true
+			return 212, true
+		case Profile226, Profile227, Profile228, Profile229:
+			return 213, true
 		}
 	case SemanticMethodMessagesSetBotPrecheckoutResults:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetBotShippingResults:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetChatAvailableReactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSetChatTheme:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSetChatWallPaper:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSetDefaultHistoryTTL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetDefaultReaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetEncryptedTyping:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetGameScore:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSetHistoryTTL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesSetInlineBotResults:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetInlineGameScore:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSetTyping:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesStartBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesStartHistoryImport:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesSummarizeText:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 211, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 214, true
 		}
 	case SemanticMethodMessagesToggleBotInAttachMenu:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesToggleDialogFilterTags:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesToggleDialogPin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesToggleNoForwards:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesTogglePaidReactionPrivacy:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesTogglePeerTranslations:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesToggleSavedDialogPin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesToggleStickerSets:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesToggleSuggestedPostApproval:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesToggleTodoCompleted:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesTranscribeAudio:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 212, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 215, true
 		}
 	case SemanticMethodMessagesTranslateRichMessage:
 		switch profile {
-		case Profile228:
-			return 213, true
+		case Profile228, Profile229:
+			return 216, true
 		}
 	case SemanticMethodMessagesTranslateText:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 214, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 217, true
 		}
 	case SemanticMethodMessagesUninstallStickerSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesUnpinAllMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 74, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 76, true
 		}
 	case SemanticMethodMessagesUpdateDialogFilter:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesUpdateDialogFiltersOrder:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesUpdatePinnedForumTopic:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesUpdatePinnedMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodMessagesUpdateSavedReactionTag:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodMessagesUploadEncryptedFile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 215, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 218, true
 		}
 	case SemanticMethodMessagesUploadImportedMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 216, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 219, true
 		}
 	case SemanticMethodMessagesUploadMedia:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 216, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 219, true
 		}
 	case SemanticMethodMessagesViewSponsoredMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsApplyGiftCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsAssignAppStoreTransaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsAssignPlayMarketTransaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsBotCancelStarsSubscription:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsCanPurchaseStore:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsChangeStarsSubscription:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsCheckCanSendGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 217, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 220, true
 		}
 	case SemanticMethodPaymentsCheckGiftCode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 218, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 221, true
 		}
 	case SemanticMethodPaymentsClearSavedInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsConnectStarRefBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 219, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 222, true
 		}
 	case SemanticMethodPaymentsConvertStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsCraftStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsCreateStarGiftCollection:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 220, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 223, true
 		}
 	case SemanticMethodPaymentsDeleteStarGiftCollection:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsEditConnectedStarRefBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 219, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 222, true
 		}
 	case SemanticMethodPaymentsExportInvoice:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 221, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 224, true
 		}
 	case SemanticMethodPaymentsFulfillStarsSubscription:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsGetBankCardData:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 222, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 225, true
 		}
 	case SemanticMethodPaymentsGetConnectedStarRefBot:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 219, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 222, true
 		}
 	case SemanticMethodPaymentsGetConnectedStarRefBots:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 219, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 222, true
 		}
 	case SemanticMethodPaymentsGetCraftStarGifts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 223, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 226, true
 		}
 	case SemanticMethodPaymentsGetGiveawayInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 224, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 227, true
 		}
 	case SemanticMethodPaymentsGetPaymentForm:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 225, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 228, true
 		}
 	case SemanticMethodPaymentsGetPaymentReceipt:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 226, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 229, true
 		}
 	case SemanticMethodPaymentsGetPremiumGiftCodeOptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 227, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 230, true
 		}
 	case SemanticMethodPaymentsGetResaleStarGifts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 228, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 231, true
 		}
 	case SemanticMethodPaymentsGetSavedInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 229, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 232, true
 		}
 	case SemanticMethodPaymentsGetSavedStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 223, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 226, true
 		}
 	case SemanticMethodPaymentsGetSavedStarGifts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 223, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 226, true
 		}
 	case SemanticMethodPaymentsGetStarGiftActiveAuctions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 230, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 233, true
 		}
 	case SemanticMethodPaymentsGetStarGiftAuctionAcquiredGifts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 231, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 234, true
 		}
 	case SemanticMethodPaymentsGetStarGiftAuctionState:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 232, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 235, true
 		}
 	case SemanticMethodPaymentsGetStarGiftCollections:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 233, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 236, true
 		}
 	case SemanticMethodPaymentsGetStarGiftUpgradeAttributes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 234, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 237, true
 		}
 	case SemanticMethodPaymentsGetStarGiftUpgradePreview:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 235, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 238, true
 		}
 	case SemanticMethodPaymentsGetStarGiftWithdrawalURL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 236, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 239, true
 		}
 	case SemanticMethodPaymentsGetStarGifts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 237, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 240, true
 		}
 	case SemanticMethodPaymentsGetStarsGiftOptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 238, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 241, true
 		}
 	case SemanticMethodPaymentsGetStarsGiveawayOptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 239, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 242, true
 		}
 	case SemanticMethodPaymentsGetStarsRevenueAdsAccountURL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 240, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 243, true
 		}
 	case SemanticMethodPaymentsGetStarsRevenueStats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 241, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 244, true
 		}
 	case SemanticMethodPaymentsGetStarsRevenueWithdrawalURL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 242, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 245, true
 		}
 	case SemanticMethodPaymentsGetStarsStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 243, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 246, true
 		}
 	case SemanticMethodPaymentsGetStarsSubscriptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 243, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 246, true
 		}
 	case SemanticMethodPaymentsGetStarsTopupOptions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 244, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 247, true
 		}
 	case SemanticMethodPaymentsGetStarsTransactions:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 243, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 246, true
 		}
 	case SemanticMethodPaymentsGetStarsTransactionsByID:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 243, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 246, true
 		}
 	case SemanticMethodPaymentsGetSuggestedStarRefBots:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 245, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 248, true
 		}
 	case SemanticMethodPaymentsGetUniqueStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 246, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 249, true
 		}
 	case SemanticMethodPaymentsGetUniqueStarGiftValueInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 247, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 250, true
 		}
 	case SemanticMethodPaymentsLaunchPrepaidGiveaway:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsRefundStarsCharge:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsReorderStarGiftCollections:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsResolveStarGiftOffer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsSaveStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsSendPaymentForm:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 248, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 251, true
 		}
 	case SemanticMethodPaymentsSendStarGiftOffer:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsSendStarsForm:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 248, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 251, true
 		}
 	case SemanticMethodPaymentsToggleChatStarGiftNotifications:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsToggleStarGiftsPinnedToTop:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPaymentsTransferStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsUpdateStarGiftCollection:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 220, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 223, true
 		}
 	case SemanticMethodPaymentsUpdateStarGiftPrice:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsUpgradeStarGift:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPaymentsValidateRequestedInfo:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 249, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 252, true
 		}
 	case SemanticMethodPhoneAcceptCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 250, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 253, true
 		}
 	case SemanticMethodPhoneCheckGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 98, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 100, true
 		}
 	case SemanticMethodPhoneConfirmCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 250, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 253, true
 		}
 	case SemanticMethodPhoneCreateConferenceCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneCreateGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneDeclineConferenceCallInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneDeleteConferenceCallParticipants:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneDeleteGroupCallMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneDeleteGroupCallParticipantMessages:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneDiscardCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneDiscardGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneEditGroupCallParticipant:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneEditGroupCallTitle:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneExportGroupCallInvite:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 251, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 254, true
 		}
 	case SemanticMethodPhoneGetCallConfig:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 69, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 71, true
 		}
 	case SemanticMethodPhoneGetGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 252, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 255, true
 		}
 	case SemanticMethodPhoneGetGroupCallChainBlocks:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneGetGroupCallJoinAs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 253, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 256, true
 		}
 	case SemanticMethodPhoneGetGroupCallStars:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 254, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 257, true
 		}
 	case SemanticMethodPhoneGetGroupCallStreamChannels:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 255, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 258, true
 		}
 	case SemanticMethodPhoneGetGroupCallStreamRtmpURL:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 256, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 259, true
 		}
 	case SemanticMethodPhoneGetGroupParticipants:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 257, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 260, true
 		}
 	case SemanticMethodPhoneInviteConferenceCallParticipant:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneInviteToGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneJoinGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneJoinGroupCallPresentation:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneLeaveGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneLeaveGroupCallPresentation:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneReceivedCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneRequestCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 250, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 253, true
 		}
 	case SemanticMethodPhoneSaveCallDebug:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneSaveCallLog:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneSaveDefaultGroupCallJoinAs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneSaveDefaultSendAs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneSendConferenceCallBroadcast:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneSendGroupCallEncryptedMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneSendGroupCallMessage:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneSendSignalingData:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodPhoneSetCallRating:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneStartScheduledGroupCall:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneToggleGroupCallRecord:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneToggleGroupCallSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhoneToggleGroupCallStartSubscription:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodPhotosDeletePhotos:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 201, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 204, true
 		}
 	case SemanticMethodPhotosGetUserPhotos:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 258, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 261, true
 		}
 	case SemanticMethodPhotosUpdateProfilePhoto:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 259, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 262, true
 		}
 	case SemanticMethodPhotosUploadContactProfilePhoto:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 259, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 262, true
 		}
 	case SemanticMethodPhotosUploadProfilePhoto:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 259, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 262, true
 		}
 	case SemanticMethodPremiumApplyBoost:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 260, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 263, true
 		}
 	case SemanticMethodPremiumGetBoostsList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 261, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 264, true
 		}
 	case SemanticMethodPremiumGetBoostsStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 262, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 265, true
 		}
 	case SemanticMethodPremiumGetMyBoosts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 260, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 263, true
 		}
 	case SemanticMethodPremiumGetUserBoosts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 261, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 264, true
 		}
 	case SemanticMethodSMSJobsFinishJob:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodSMSJobsGetSMSJob:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 263, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 266, true
 		}
 	case SemanticMethodSMSJobsGetStatus:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 264, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 267, true
 		}
 	case SemanticMethodSMSJobsIsEligibleToJoin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 265, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 268, true
 		}
 	case SemanticMethodSMSJobsJoin:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodSMSJobsLeave:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodSMSJobsUpdateSettings:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStatsGetBroadcastStats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 266, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 269, true
 		}
 	case SemanticMethodStatsGetMegagroupStats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 267, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 270, true
 		}
 	case SemanticMethodStatsGetMessagePublicForwards:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 268, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 271, true
 		}
 	case SemanticMethodStatsGetMessageStats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 269, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 272, true
 		}
 	case SemanticMethodStatsGetPollStats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 270, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 273, true
 		}
 	case SemanticMethodStatsGetStoryPublicForwards:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 268, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 271, true
 		}
 	case SemanticMethodStatsGetStoryStats:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 271, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 274, true
 		}
 	case SemanticMethodStatsLoadAsyncGraph:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 272, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 275, true
 		}
 	case SemanticMethodStickersAddStickerToSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersChangeSticker:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersChangeStickerPosition:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersCheckShortName:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStickersCreateStickerSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersDeleteStickerSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStickersRemoveStickerFromSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersRenameStickerSet:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersReplaceSticker:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersSetStickerSetThumb:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 193, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 196, true
 		}
 	case SemanticMethodStickersSuggestShortName:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 273, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 276, true
 		}
 	case SemanticMethodStoriesActivateStealthMode:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodStoriesCanSendStory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 274, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 277, true
 		}
 	case SemanticMethodStoriesCreateAlbum:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 275, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 278, true
 		}
 	case SemanticMethodStoriesDeleteAlbum:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStoriesDeleteStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 98, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 100, true
 		}
 	case SemanticMethodStoriesEditStory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodStoriesExportStoryLink:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 276, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 279, true
 		}
 	case SemanticMethodStoriesGetAlbumStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 277, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 280, true
 		}
 	case SemanticMethodStoriesGetAlbums:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 278, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 281, true
 		}
 	case SemanticMethodStoriesGetAllReadPeerStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodStoriesGetAllStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 279, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 282, true
 		}
 	case SemanticMethodStoriesGetChatsToSend:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 77, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 79, true
 		}
 	case SemanticMethodStoriesGetPeerMaxIDs:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 280, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 283, true
 		}
 	case SemanticMethodStoriesGetPeerStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 281, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 284, true
 		}
 	case SemanticMethodStoriesGetPinnedStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 277, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 280, true
 		}
 	case SemanticMethodStoriesGetStoriesArchive:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 277, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 280, true
 		}
 	case SemanticMethodStoriesGetStoriesByID:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 277, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 280, true
 		}
 	case SemanticMethodStoriesGetStoriesViews:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 282, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 285, true
 		}
 	case SemanticMethodStoriesGetStoryReactionsList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 283, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 286, true
 		}
 	case SemanticMethodStoriesGetStoryViewsList:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 284, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 287, true
 		}
 	case SemanticMethodStoriesIncrementStoryViews:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStoriesReadStories:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 98, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 100, true
 		}
 	case SemanticMethodStoriesReorderAlbums:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStoriesReport:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 108, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 111, true
 		}
 	case SemanticMethodStoriesSearchPosts:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 285, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 288, true
 		}
 	case SemanticMethodStoriesSendReaction:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodStoriesSendStory:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodStoriesStartLive:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	case SemanticMethodStoriesToggleAllStoriesHidden:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStoriesTogglePeerStoriesHidden:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStoriesTogglePinned:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 98, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 100, true
 		}
 	case SemanticMethodStoriesTogglePinnedToTop:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodStoriesUpdateAlbum:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 275, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 278, true
 		}
 	case SemanticMethodTestUseConfigSimple:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 286, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 289, true
 		}
 	case SemanticMethodTestUseError:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 287, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 290, true
 		}
 	case SemanticMethodUpdatesGetChannelDifference:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 288, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 291, true
 		}
 	case SemanticMethodUpdatesGetDifference:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 289, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 292, true
 		}
 	case SemanticMethodUpdatesGetState:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 290, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 293, true
 		}
 	case SemanticMethodUploadGetCDNFile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 291, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 294, true
 		}
 	case SemanticMethodUploadGetCDNFileHashes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 292, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 295, true
 		}
 	case SemanticMethodUploadGetFile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 293, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 296, true
 		}
 	case SemanticMethodUploadGetFileHashes:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 292, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 295, true
 		}
 	case SemanticMethodUploadGetWebFile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 294, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 297, true
 		}
 	case SemanticMethodUploadReuploadCDNFile:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 292, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 295, true
 		}
 	case SemanticMethodUploadSaveBigFilePart:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodUploadSaveFilePart:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodUsersGetFullUser:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 295, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 298, true
 		}
 	case SemanticMethodUsersGetRequirementsToContact:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 296, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 299, true
 		}
 	case SemanticMethodUsersGetSavedMusic:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 297, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 300, true
 		}
 	case SemanticMethodUsersGetSavedMusicByID:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 297, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 300, true
 		}
 	case SemanticMethodUsersGetUsers:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
-			return 59, true
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
+			return 60, true
 		}
 	case SemanticMethodUsersSetSecureValueErrors:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 0, true
 		}
 	case SemanticMethodUsersSuggestBirthday:
 		switch profile {
-		case Profile225, Profile226, Profile227, Profile228:
+		case Profile225, Profile226, Profile227, Profile228, Profile229:
 			return 11, true
 		}
 	}
@@ -8173,6 +8366,27 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 			}
 		case 53:
 			{
+				var canonical tg.AuthFirebasePnvIntent
+				switch candidate := value.(type) {
+				case tg.AuthFirebasePnvIntent:
+					canonical = candidate
+				case *tg.AuthFirebasePnvIntent:
+					if candidate == nil {
+						return fmt.Errorf("nil RPC result AuthFirebasePnvIntent")
+					}
+					canonical = *candidate
+				default:
+					return fmt.Errorf("RPC result expected AuthFirebasePnvIntent, got %T", value)
+				}
+				b.PutID(0xdf5ac00c)
+				if err := layerEncodeWiredf5ac00cBareBody(profile, &(canonical), b, state); err != nil {
+					return fmt.Errorf("encode RPC result: %w", err)
+				}
+				return nil
+
+			}
+		case 54:
+			{
 				var canonical tg.AuthPasskeyLoginOptions
 				switch candidate := value.(type) {
 				case tg.AuthPasskeyLoginOptions:
@@ -8192,7 +8406,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 54:
+		case 55:
 			{
 				var canonical tg.AuthLoggedOut
 				switch candidate := value.(type) {
@@ -8213,7 +8427,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 55:
+		case 56:
 			{
 				var canonical tg.AuthPasswordRecovery
 				switch candidate := value.(type) {
@@ -8234,7 +8448,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 56:
+		case 57:
 			{
 				var canonical tg.BotPreviewMedia
 				switch candidate := value.(type) {
@@ -8255,7 +8469,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 57:
+		case 58:
 			{
 				var canonical tg.BotsExportedBotToken
 				switch candidate := value.(type) {
@@ -8276,7 +8490,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 58:
+		case 59:
 			{
 				var canonical tg.BotsAccessSettings
 				switch candidate := value.(type) {
@@ -8297,7 +8511,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 59:
+		case 60:
 			{
 				canonical, ok := value.([]tg.UserClass)
 				if !ok {
@@ -8335,7 +8549,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 60:
+		case 61:
 			{
 				canonical, ok := value.([]tg.BotCommand)
 				if !ok {
@@ -8374,7 +8588,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 61:
+		case 62:
 			{
 				canonical, ok := value.([]tg.BotCommand)
 				if !ok {
@@ -8413,7 +8627,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 62:
+		case 63:
 			{
 				var canonical tg.BotsBotInfo
 				switch candidate := value.(type) {
@@ -8434,7 +8648,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 63:
+		case 64:
 			{
 				canonical, ok := value.(tg.BotMenuButtonClass)
 				if !ok {
@@ -8446,7 +8660,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 64:
+		case 65:
 			{
 				canonical, ok := value.(tg.UsersUsersClass)
 				if !ok {
@@ -8458,7 +8672,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 65:
+		case 66:
 			{
 				var canonical tg.BotsPopularAppBots
 				switch candidate := value.(type) {
@@ -8479,7 +8693,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 66:
+		case 67:
 			{
 				var canonical tg.BotsPreviewInfo
 				switch candidate := value.(type) {
@@ -8500,7 +8714,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 67:
+		case 68:
 			{
 				canonical, ok := value.([]tg.BotPreviewMedia)
 				if !ok {
@@ -8539,19 +8753,48 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 68:
+		case 69:
 			{
-				canonical, ok := value.(tg.KeyboardButtonClass)
-				if !ok {
-					return fmt.Errorf("RPC result expected KeyboardButtonClass, got %T", value)
+				var canonical tg.KeyboardButton
+				switch candidate := value.(type) {
+				case tg.KeyboardButton:
+					canonical = candidate
+				case *tg.KeyboardButton:
+					if candidate == nil {
+						return fmt.Errorf("nil RPC result KeyboardButton")
+					}
+					canonical = *candidate
+				default:
+					return fmt.Errorf("RPC result expected KeyboardButton, got %T", value)
 				}
-				if err := layerEncodeClassKeyboardButtonBody(profile, canonical, b, state); err != nil {
+				if err := layerEncodeFamilyKeyboardButtonBody(profile, &(canonical), b, state); err != nil {
 					return fmt.Errorf("encode RPC result: %w", err)
 				}
 				return nil
 
 			}
-		case 69:
+		case 70:
+			{
+				var canonical tg.KeyboardButton
+				switch candidate := value.(type) {
+				case tg.KeyboardButton:
+					canonical = candidate
+				case *tg.KeyboardButton:
+					if candidate == nil {
+						return fmt.Errorf("nil RPC result KeyboardButton")
+					}
+					canonical = *candidate
+				default:
+					return fmt.Errorf("RPC result expected KeyboardButton, got %T", value)
+				}
+				b.PutID(0x2f67a72f)
+				if err := layerEncodeWire2f67a72fBareBody(profile, &(canonical), b, state); err != nil {
+					return fmt.Errorf("encode RPC result: %w", err)
+				}
+				return nil
+
+			}
+		case 71:
 			{
 				var canonical tg.DataJSON
 				switch candidate := value.(type) {
@@ -8572,7 +8815,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 70:
+		case 72:
 			{
 				var canonical tg.BotsRequestedButton
 				switch candidate := value.(type) {
@@ -8593,7 +8836,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 71:
+		case 73:
 			{
 				var canonical tg.StarRefProgram
 				switch candidate := value.(type) {
@@ -8614,7 +8857,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 72:
+		case 74:
 			{
 				var canonical tg.SearchPostsFlood
 				switch candidate := value.(type) {
@@ -8635,7 +8878,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 73:
+		case 75:
 			{
 				var canonical tg.MessagesAffectedMessages
 				switch candidate := value.(type) {
@@ -8656,7 +8899,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 74:
+		case 76:
 			{
 				var canonical tg.MessagesAffectedHistory
 				switch candidate := value.(type) {
@@ -8677,7 +8920,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 75:
+		case 77:
 			{
 				var canonical tg.ExportedMessageLink
 				switch candidate := value.(type) {
@@ -8698,7 +8941,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 76:
+		case 78:
 			{
 				var canonical tg.ChannelsAdminLogResults
 				switch candidate := value.(type) {
@@ -8719,7 +8962,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 77:
+		case 79:
 			{
 				canonical, ok := value.(tg.MessagesChatsClass)
 				if !ok {
@@ -8731,7 +8974,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 78:
+		case 80:
 			{
 				var canonical tg.MessagesChatFull
 				switch candidate := value.(type) {
@@ -8752,7 +8995,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 79:
+		case 81:
 			{
 				var canonical tg.MessagesInactiveChats
 				switch candidate := value.(type) {
@@ -8773,7 +9016,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 80:
+		case 82:
 			{
 				canonical, ok := value.(tg.MessagesMessagesClass)
 				if !ok {
@@ -8785,7 +9028,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 81:
+		case 83:
 			{
 				var canonical tg.ChannelsChannelParticipant
 				switch candidate := value.(type) {
@@ -8806,7 +9049,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 82:
+		case 84:
 			{
 				canonical, ok := value.(tg.ChannelsChannelParticipantsClass)
 				if !ok {
@@ -8818,7 +9061,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 83:
+		case 85:
 			{
 				var canonical tg.ChannelsSendAsPeers
 				switch candidate := value.(type) {
@@ -8839,7 +9082,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 84:
+		case 86:
 			{
 				var canonical tg.MessagesInvitedUsers
 				switch candidate := value.(type) {
@@ -8860,7 +9103,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 85:
+		case 87:
 			{
 				canonical, ok := value.(tg.MessagesChatInviteJoinResultClass)
 				if !ok {
@@ -8876,7 +9119,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 86:
+		case 88:
 			{
 				canonical, ok := value.(tg.MessagesChatInviteJoinResultClass)
 				if !ok {
@@ -8888,7 +9131,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 87:
+		case 89:
 			{
 				canonical, ok := value.(tg.ChatlistsChatlistInviteClass)
 				if !ok {
@@ -8900,7 +9143,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 88:
+		case 90:
 			{
 				var canonical tg.ExportedChatlistInvite
 				switch candidate := value.(type) {
@@ -8921,7 +9164,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 89:
+		case 91:
 			{
 				var canonical tg.ChatlistsExportedChatlistInvite
 				switch candidate := value.(type) {
@@ -8942,7 +9185,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 90:
+		case 92:
 			{
 				var canonical tg.ChatlistsChatlistUpdates
 				switch candidate := value.(type) {
@@ -8963,7 +9206,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 91:
+		case 93:
 			{
 				var canonical tg.ChatlistsExportedInvites
 				switch candidate := value.(type) {
@@ -8984,7 +9227,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 92:
+		case 94:
 			{
 				canonical, ok := value.([]tg.PeerClass)
 				if !ok {
@@ -9022,7 +9265,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 93:
+		case 95:
 			{
 				var canonical tg.CommunitiesParticipantJoinedChats
 				switch candidate := value.(type) {
@@ -9043,7 +9286,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 94:
+		case 96:
 			{
 				var canonical tg.CommunitiesPeerLinkRequests
 				switch candidate := value.(type) {
@@ -9064,7 +9307,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 95:
+		case 97:
 			{
 				var canonical tg.ExportedContactToken
 				switch candidate := value.(type) {
@@ -9085,7 +9328,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 96:
+		case 98:
 			{
 				var canonical tg.ContactsContactBirthdays
 				switch candidate := value.(type) {
@@ -9106,7 +9349,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 97:
+		case 99:
 			{
 				canonical, ok := value.(tg.ContactsBlockedClass)
 				if !ok {
@@ -9118,7 +9361,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 98:
+		case 100:
 			{
 				canonical, ok := value.([]int)
 				if !ok {
@@ -9134,7 +9377,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 99:
+		case 101:
 			{
 				canonical, ok := value.(tg.ContactsContactsClass)
 				if !ok {
@@ -9146,7 +9389,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 100:
+		case 102:
 			{
 				canonical, ok := value.([]tg.SavedPhoneContact)
 				if !ok {
@@ -9185,7 +9428,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 101:
+		case 103:
 			{
 				canonical, ok := value.(tg.ContactsSponsoredPeersClass)
 				if !ok {
@@ -9197,7 +9440,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 102:
+		case 104:
 			{
 				canonical, ok := value.([]tg.ContactStatus)
 				if !ok {
@@ -9236,7 +9479,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 103:
+		case 105:
 			{
 				canonical, ok := value.(tg.ContactsTopPeersClass)
 				if !ok {
@@ -9248,7 +9491,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 104:
+		case 106:
 			{
 				var canonical tg.ContactsImportedContacts
 				switch candidate := value.(type) {
@@ -9269,7 +9512,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 105:
+		case 107:
 			{
 				var canonical tg.ContactsResolvedPeer
 				switch candidate := value.(type) {
@@ -9290,7 +9533,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 106:
+		case 108:
 			{
 				var canonical tg.ContactsFound
 				switch candidate := value.(type) {
@@ -9311,7 +9554,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 107:
+		case 109:
 			{
 				var canonical tg.MessagesBotCallbackAnswer
 				switch candidate := value.(type) {
@@ -9332,7 +9575,19 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 108:
+		case 110:
+			{
+				canonical, ok := value.(tg.EphemeralWelcomeMessagesClass)
+				if !ok {
+					return fmt.Errorf("RPC result expected EphemeralWelcomeMessagesClass, got %T", value)
+				}
+				if err := layerEncodeClassEphemeralWelcomeMessagesBody(profile, canonical, b, state); err != nil {
+					return fmt.Errorf("encode RPC result: %w", err)
+				}
+				return nil
+
+			}
+		case 111:
 			{
 				canonical, ok := value.(tg.ReportResultClass)
 				if !ok {
@@ -9344,7 +9599,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 109:
+		case 112:
 			{
 				var canonical tg.FragmentCollectibleInfo
 				switch candidate := value.(type) {
@@ -9365,7 +9620,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 110:
+		case 113:
 			{
 				canonical, ok := value.(tg.HelpUserInfoClass)
 				if !ok {
@@ -9377,7 +9632,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 111:
+		case 114:
 			{
 				canonical, ok := value.(tg.HelpAppConfigClass)
 				if !ok {
@@ -9389,7 +9644,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 112:
+		case 115:
 			{
 				canonical, ok := value.(tg.HelpAppUpdateClass)
 				if !ok {
@@ -9401,7 +9656,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 113:
+		case 116:
 			{
 				var canonical tg.CDNConfig
 				switch candidate := value.(type) {
@@ -9422,7 +9677,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 114:
+		case 117:
 			{
 				var canonical tg.Config
 				switch candidate := value.(type) {
@@ -9443,7 +9698,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 115:
+		case 118:
 			{
 				canonical, ok := value.(tg.HelpCountriesListClass)
 				if !ok {
@@ -9455,7 +9710,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 116:
+		case 119:
 			{
 				canonical, ok := value.(tg.HelpDeepLinkInfoClass)
 				if !ok {
@@ -9467,7 +9722,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 117:
+		case 120:
 			{
 				var canonical tg.HelpInviteText
 				switch candidate := value.(type) {
@@ -9488,7 +9743,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 118:
+		case 121:
 			{
 				var canonical tg.NearestDC
 				switch candidate := value.(type) {
@@ -9509,7 +9764,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 119:
+		case 122:
 			{
 				canonical, ok := value.(tg.HelpPassportConfigClass)
 				if !ok {
@@ -9521,7 +9776,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 120:
+		case 123:
 			{
 				canonical, ok := value.(tg.HelpPeerColorsClass)
 				if !ok {
@@ -9533,7 +9788,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 121:
+		case 124:
 			{
 				var canonical tg.HelpPremiumPromo
 				switch candidate := value.(type) {
@@ -9554,7 +9809,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 122:
+		case 125:
 			{
 				canonical, ok := value.(tg.HelpPromoDataClass)
 				if !ok {
@@ -9566,7 +9821,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 123:
+		case 126:
 			{
 				var canonical tg.HelpRecentMeURLs
 				switch candidate := value.(type) {
@@ -9587,7 +9842,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 124:
+		case 127:
 			{
 				var canonical tg.HelpSupport
 				switch candidate := value.(type) {
@@ -9608,7 +9863,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 125:
+		case 128:
 			{
 				var canonical tg.HelpSupportName
 				switch candidate := value.(type) {
@@ -9629,7 +9884,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 126:
+		case 129:
 			{
 				canonical, ok := value.(tg.HelpTermsOfServiceUpdateClass)
 				if !ok {
@@ -9641,7 +9896,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 127:
+		case 130:
 			{
 				canonical, ok := value.(tg.HelpTimezonesListClass)
 				if !ok {
@@ -9653,7 +9908,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 128:
+		case 131:
 			{
 				var canonical tg.LangPackDifference
 				switch candidate := value.(type) {
@@ -9674,7 +9929,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 129:
+		case 132:
 			{
 				var canonical tg.LangPackLanguage
 				switch candidate := value.(type) {
@@ -9695,7 +9950,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 130:
+		case 133:
 			{
 				canonical, ok := value.([]tg.LangPackLanguage)
 				if !ok {
@@ -9734,7 +9989,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 131:
+		case 134:
 			{
 				canonical, ok := value.([]tg.LangPackStringClass)
 				if !ok {
@@ -9772,7 +10027,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 132:
+		case 135:
 			{
 				canonical, ok := value.(tg.EncryptedChatClass)
 				if !ok {
@@ -9784,7 +10039,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 133:
+		case 136:
 			{
 				canonical, ok := value.(tg.URLAuthResultClass)
 				if !ok {
@@ -9796,7 +10051,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 134:
+		case 137:
 			{
 				canonical, ok := value.(tg.ChatInviteClass)
 				if !ok {
@@ -9808,7 +10063,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 135:
+		case 138:
 			{
 				var canonical tg.MessagesHistoryImportParsed
 				switch candidate := value.(type) {
@@ -9829,7 +10084,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 136:
+		case 139:
 			{
 				var canonical tg.MessagesCheckedHistoryImportPeer
 				switch candidate := value.(type) {
@@ -9850,7 +10105,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 137:
+		case 140:
 			{
 				var canonical tg.MessagesComposedMessageWithAI
 				switch candidate := value.(type) {
@@ -9871,7 +10126,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 138:
+		case 141:
 			{
 				var canonical tg.MessagesComposedRichMessageWithAI
 				switch candidate := value.(type) {
@@ -9892,7 +10147,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 139:
+		case 142:
 			{
 				var canonical tg.MessagesAffectedFoundMessages
 				switch candidate := value.(type) {
@@ -9913,7 +10168,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 140:
+		case 143:
 			{
 				canonical, ok := value.(tg.MessagesExportedChatInviteClass)
 				if !ok {
@@ -9925,7 +10180,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 141:
+		case 144:
 			{
 				canonical, ok := value.(tg.ExportedChatInviteClass)
 				if !ok {
@@ -9937,7 +10192,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 142:
+		case 145:
 			{
 				var canonical tg.MessagesChatAdminsWithInvites
 				switch candidate := value.(type) {
@@ -9958,7 +10213,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 143:
+		case 146:
 			{
 				canonical, ok := value.(tg.MessagesAllStickersClass)
 				if !ok {
@@ -9970,7 +10225,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 144:
+		case 147:
 			{
 				var canonical tg.MessagesArchivedStickers
 				switch candidate := value.(type) {
@@ -9991,7 +10246,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 145:
+		case 148:
 			{
 				var canonical tg.AttachMenuBotsBot
 				switch candidate := value.(type) {
@@ -10012,7 +10267,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 146:
+		case 149:
 			{
 				canonical, ok := value.(tg.AttachMenuBotsClass)
 				if !ok {
@@ -10024,7 +10279,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 147:
+		case 150:
 			{
 				canonical, ok := value.([]tg.StickerSetCoveredClass)
 				if !ok {
@@ -10062,7 +10317,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 148:
+		case 151:
 			{
 				canonical, ok := value.(tg.MessagesAvailableEffectsClass)
 				if !ok {
@@ -10074,7 +10329,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 149:
+		case 152:
 			{
 				canonical, ok := value.(tg.MessagesAvailableReactionsClass)
 				if !ok {
@@ -10086,7 +10341,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 150:
+		case 153:
 			{
 				var canonical tg.MessagesBotApp
 				switch candidate := value.(type) {
@@ -10107,7 +10362,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 151:
+		case 154:
 			{
 				var canonical tg.MessagesChatInviteImporters
 				switch candidate := value.(type) {
@@ -10128,7 +10383,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 152:
+		case 155:
 			{
 				canonical, ok := value.([]tg.DocumentClass)
 				if !ok {
@@ -10166,7 +10421,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 153:
+		case 156:
 			{
 				var canonical tg.DefaultHistoryTTL
 				switch candidate := value.(type) {
@@ -10187,7 +10442,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 154:
+		case 157:
 			{
 				canonical, ok := value.(tg.MessagesReactionsClass)
 				if !ok {
@@ -10199,7 +10454,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 155:
+		case 158:
 			{
 				canonical, ok := value.(tg.MessagesDhConfigClass)
 				if !ok {
@@ -10211,7 +10466,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 156:
+		case 159:
 			{
 				var canonical tg.MessagesDialogFilters
 				switch candidate := value.(type) {
@@ -10232,7 +10487,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 157:
+		case 160:
 			{
 				canonical, ok := value.([]tg.DialogPeerClass)
 				if !ok {
@@ -10270,7 +10525,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 158:
+		case 161:
 			{
 				canonical, ok := value.(tg.MessagesDialogsClass)
 				if !ok {
@@ -10282,7 +10537,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 159:
+		case 162:
 			{
 				var canonical tg.MessagesDiscussionMessage
 				switch candidate := value.(type) {
@@ -10303,7 +10558,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 160:
+		case 163:
 			{
 				canonical, ok := value.(tg.MessagesEmojiGameInfoClass)
 				if !ok {
@@ -10315,7 +10570,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 161:
+		case 164:
 			{
 				canonical, ok := value.(tg.MessagesEmojiGroupsClass)
 				if !ok {
@@ -10327,7 +10582,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 162:
+		case 165:
 			{
 				var canonical tg.EmojiKeywordsDifference
 				switch candidate := value.(type) {
@@ -10348,7 +10603,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 163:
+		case 166:
 			{
 				canonical, ok := value.([]tg.EmojiLanguage)
 				if !ok {
@@ -10387,7 +10642,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 164:
+		case 167:
 			{
 				var canonical tg.EmojiURL
 				switch candidate := value.(type) {
@@ -10408,7 +10663,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 165:
+		case 168:
 			{
 				var canonical tg.MessagesExportedChatInvites
 				switch candidate := value.(type) {
@@ -10429,7 +10684,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 166:
+		case 169:
 			{
 				canonical, ok := value.([]tg.FactCheck)
 				if !ok {
@@ -10468,7 +10723,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 167:
+		case 170:
 			{
 				canonical, ok := value.(tg.MessagesFavedStickersClass)
 				if !ok {
@@ -10480,7 +10735,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 168:
+		case 171:
 			{
 				canonical, ok := value.(tg.MessagesFeaturedStickersClass)
 				if !ok {
@@ -10492,7 +10747,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 169:
+		case 172:
 			{
 				var canonical tg.MessagesForumTopics
 				switch candidate := value.(type) {
@@ -10513,7 +10768,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 170:
+		case 173:
 			{
 				var canonical tg.MessagesHighScores
 				switch candidate := value.(type) {
@@ -10534,7 +10789,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 171:
+		case 174:
 			{
 				var canonical tg.MessagesBotResults
 				switch candidate := value.(type) {
@@ -10555,7 +10810,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 172:
+		case 175:
 			{
 				var canonical tg.MessagesMessageEditData
 				switch candidate := value.(type) {
@@ -10576,7 +10831,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 173:
+		case 176:
 			{
 				var canonical tg.MessagesMessageReactionsList
 				switch candidate := value.(type) {
@@ -10597,7 +10852,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 174:
+		case 177:
 			{
 				canonical, ok := value.([]tg.ReadParticipantDate)
 				if !ok {
@@ -10636,7 +10891,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 175:
+		case 178:
 			{
 				var canonical tg.MessagesMessageViews
 				switch candidate := value.(type) {
@@ -10657,7 +10912,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 176:
+		case 179:
 			{
 				var canonical tg.MessagesMyStickers
 				switch candidate := value.(type) {
@@ -10678,7 +10933,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 177:
+		case 180:
 			{
 				var canonical tg.ChatOnlines
 				switch candidate := value.(type) {
@@ -10699,7 +10954,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 178:
+		case 181:
 			{
 				var canonical tg.OutboxReadDate
 				switch candidate := value.(type) {
@@ -10720,7 +10975,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 179:
+		case 182:
 			{
 				var canonical tg.MessagesPeerDialogs
 				switch candidate := value.(type) {
@@ -10741,7 +10996,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 180:
+		case 183:
 			{
 				var canonical tg.MessagesPeerSettings
 				switch candidate := value.(type) {
@@ -10762,7 +11017,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 181:
+		case 184:
 			{
 				canonical, ok := value.(tg.MessagesSavedDialogsClass)
 				if !ok {
@@ -10774,7 +11029,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 182:
+		case 185:
 			{
 				var canonical tg.MessagesVotesList
 				switch candidate := value.(type) {
@@ -10795,7 +11050,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 183:
+		case 186:
 			{
 				var canonical tg.MessagesPreparedInlineMessage
 				switch candidate := value.(type) {
@@ -10816,7 +11071,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 184:
+		case 187:
 			{
 				canonical, ok := value.(tg.MessagesQuickRepliesClass)
 				if !ok {
@@ -10828,7 +11083,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 185:
+		case 188:
 			{
 				canonical, ok := value.(tg.MessagesRecentStickersClass)
 				if !ok {
@@ -10840,7 +11095,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 186:
+		case 189:
 			{
 				canonical, ok := value.(tg.MessagesSavedGifsClass)
 				if !ok {
@@ -10852,7 +11107,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 187:
+		case 190:
 			{
 				canonical, ok := value.(tg.MessagesSavedReactionTagsClass)
 				if !ok {
@@ -10864,7 +11119,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 188:
+		case 191:
 			{
 				canonical, ok := value.([]tg.MessagesSearchCounter)
 				if !ok {
@@ -10903,7 +11158,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 189:
+		case 192:
 			{
 				var canonical tg.MessagesSearchResultsCalendar
 				switch candidate := value.(type) {
@@ -10924,7 +11179,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 190:
+		case 193:
 			{
 				var canonical tg.MessagesSearchResultsPositions
 				switch candidate := value.(type) {
@@ -10945,7 +11200,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 191:
+		case 194:
 			{
 				canonical, ok := value.([]tg.MessageRange)
 				if !ok {
@@ -10984,7 +11239,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 192:
+		case 195:
 			{
 				canonical, ok := value.(tg.MessagesSponsoredMessagesClass)
 				if !ok {
@@ -10996,7 +11251,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 193:
+		case 196:
 			{
 				canonical, ok := value.(tg.MessagesStickerSetClass)
 				if !ok {
@@ -11008,7 +11263,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 194:
+		case 197:
 			{
 				canonical, ok := value.(tg.MessagesStickersClass)
 				if !ok {
@@ -11020,7 +11275,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 195:
+		case 198:
 			{
 				canonical, ok := value.([]tg.DialogFilterSuggested)
 				if !ok {
@@ -11059,7 +11314,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 196:
+		case 199:
 			{
 				var canonical tg.MessagesWebPage
 				switch candidate := value.(type) {
@@ -11080,7 +11335,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 197:
+		case 200:
 			{
 				var canonical tg.MessagesWebPagePreview
 				switch candidate := value.(type) {
@@ -11101,7 +11356,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 198:
+		case 201:
 			{
 				var canonical tg.MessagesHistoryImport
 				switch candidate := value.(type) {
@@ -11122,7 +11377,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 199:
+		case 202:
 			{
 				canonical, ok := value.(tg.MessagesStickerSetInstallResultClass)
 				if !ok {
@@ -11134,7 +11389,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 200:
+		case 203:
 			{
 				canonical, ok := value.([]tg.ReceivedNotifyMessage)
 				if !ok {
@@ -11173,7 +11428,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 201:
+		case 204:
 			{
 				canonical, ok := value.([]int64)
 				if !ok {
@@ -11189,7 +11444,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 202:
+		case 205:
 			{
 				canonical, ok := value.(tg.ChannelsSponsoredMessageReportResultClass)
 				if !ok {
@@ -11201,7 +11456,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 203:
+		case 206:
 			{
 				var canonical tg.WebViewResultURL
 				switch candidate := value.(type) {
@@ -11222,7 +11477,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 204:
+		case 207:
 			{
 				var canonical tg.MessagesBotPreparedInlineMessage
 				switch candidate := value.(type) {
@@ -11243,7 +11498,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 205:
+		case 208:
 			{
 				canonical, ok := value.(tg.MessagesFoundStickerSetsClass)
 				if !ok {
@@ -11255,7 +11510,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 206:
+		case 209:
 			{
 				canonical, ok := value.(tg.MessagesFoundStickersClass)
 				if !ok {
@@ -11267,7 +11522,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 207:
+		case 210:
 			{
 				canonical, ok := value.(tg.MessagesSentEncryptedMessageClass)
 				if !ok {
@@ -11279,7 +11534,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 208:
+		case 211:
 			{
 				var canonical tg.WebViewMessageSent
 				switch candidate := value.(type) {
@@ -11300,7 +11555,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 209:
+		case 212:
 			{
 				canonical, ok := value.(tg.InputBotInlineMessageIDClass)
 				if !ok {
@@ -11314,7 +11569,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 210:
+		case 213:
 			{
 				canonical, ok := value.(tg.InputBotInlineMessageIDClass)
 				if !ok {
@@ -11326,7 +11581,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 211:
+		case 214:
 			{
 				var canonical tg.TextWithEntities
 				switch candidate := value.(type) {
@@ -11347,7 +11602,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 212:
+		case 215:
 			{
 				var canonical tg.MessagesTranscribedAudio
 				switch candidate := value.(type) {
@@ -11368,7 +11623,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 213:
+		case 216:
 			{
 				var canonical tg.MessagesTranslatedRichMessage
 				switch candidate := value.(type) {
@@ -11389,7 +11644,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 214:
+		case 217:
 			{
 				var canonical tg.MessagesTranslateResult
 				switch candidate := value.(type) {
@@ -11410,7 +11665,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 215:
+		case 218:
 			{
 				canonical, ok := value.(tg.EncryptedFileClass)
 				if !ok {
@@ -11422,7 +11677,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 216:
+		case 219:
 			{
 				canonical, ok := value.(tg.MessageMediaClass)
 				if !ok {
@@ -11434,7 +11689,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 217:
+		case 220:
 			{
 				canonical, ok := value.(tg.PaymentsCheckCanSendGiftResultClass)
 				if !ok {
@@ -11446,7 +11701,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 218:
+		case 221:
 			{
 				var canonical tg.PaymentsCheckedGiftCode
 				switch candidate := value.(type) {
@@ -11467,7 +11722,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 219:
+		case 222:
 			{
 				var canonical tg.PaymentsConnectedStarRefBots
 				switch candidate := value.(type) {
@@ -11488,7 +11743,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 220:
+		case 223:
 			{
 				var canonical tg.StarGiftCollection
 				switch candidate := value.(type) {
@@ -11509,7 +11764,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 221:
+		case 224:
 			{
 				var canonical tg.PaymentsExportedInvoice
 				switch candidate := value.(type) {
@@ -11530,7 +11785,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 222:
+		case 225:
 			{
 				var canonical tg.PaymentsBankCardData
 				switch candidate := value.(type) {
@@ -11551,7 +11806,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 223:
+		case 226:
 			{
 				var canonical tg.PaymentsSavedStarGifts
 				switch candidate := value.(type) {
@@ -11572,7 +11827,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 224:
+		case 227:
 			{
 				canonical, ok := value.(tg.PaymentsGiveawayInfoClass)
 				if !ok {
@@ -11584,7 +11839,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 225:
+		case 228:
 			{
 				canonical, ok := value.(tg.PaymentsPaymentFormClass)
 				if !ok {
@@ -11596,7 +11851,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 226:
+		case 229:
 			{
 				canonical, ok := value.(tg.PaymentsPaymentReceiptClass)
 				if !ok {
@@ -11608,7 +11863,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 227:
+		case 230:
 			{
 				canonical, ok := value.([]tg.PremiumGiftCodeOption)
 				if !ok {
@@ -11647,7 +11902,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 228:
+		case 231:
 			{
 				var canonical tg.PaymentsResaleStarGifts
 				switch candidate := value.(type) {
@@ -11668,7 +11923,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 229:
+		case 232:
 			{
 				var canonical tg.PaymentsSavedInfo
 				switch candidate := value.(type) {
@@ -11689,7 +11944,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 230:
+		case 233:
 			{
 				canonical, ok := value.(tg.PaymentsStarGiftActiveAuctionsClass)
 				if !ok {
@@ -11701,7 +11956,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 231:
+		case 234:
 			{
 				var canonical tg.PaymentsStarGiftAuctionAcquiredGifts
 				switch candidate := value.(type) {
@@ -11722,7 +11977,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 232:
+		case 235:
 			{
 				var canonical tg.PaymentsStarGiftAuctionState
 				switch candidate := value.(type) {
@@ -11743,7 +11998,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 233:
+		case 236:
 			{
 				canonical, ok := value.(tg.PaymentsStarGiftCollectionsClass)
 				if !ok {
@@ -11755,7 +12010,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 234:
+		case 237:
 			{
 				var canonical tg.PaymentsStarGiftUpgradeAttributes
 				switch candidate := value.(type) {
@@ -11776,7 +12031,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 235:
+		case 238:
 			{
 				var canonical tg.PaymentsStarGiftUpgradePreview
 				switch candidate := value.(type) {
@@ -11797,7 +12052,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 236:
+		case 239:
 			{
 				var canonical tg.PaymentsStarGiftWithdrawalURL
 				switch candidate := value.(type) {
@@ -11818,7 +12073,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 237:
+		case 240:
 			{
 				canonical, ok := value.(tg.PaymentsStarGiftsClass)
 				if !ok {
@@ -11830,7 +12085,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 238:
+		case 241:
 			{
 				canonical, ok := value.([]tg.StarsGiftOption)
 				if !ok {
@@ -11869,7 +12124,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 239:
+		case 242:
 			{
 				canonical, ok := value.([]tg.StarsGiveawayOption)
 				if !ok {
@@ -11908,7 +12163,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 240:
+		case 243:
 			{
 				var canonical tg.PaymentsStarsRevenueAdsAccountURL
 				switch candidate := value.(type) {
@@ -11929,7 +12184,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 241:
+		case 244:
 			{
 				var canonical tg.PaymentsStarsRevenueStats
 				switch candidate := value.(type) {
@@ -11950,7 +12205,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 242:
+		case 245:
 			{
 				var canonical tg.PaymentsStarsRevenueWithdrawalURL
 				switch candidate := value.(type) {
@@ -11971,7 +12226,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 243:
+		case 246:
 			{
 				var canonical tg.PaymentsStarsStatus
 				switch candidate := value.(type) {
@@ -11992,7 +12247,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 244:
+		case 247:
 			{
 				canonical, ok := value.([]tg.StarsTopupOption)
 				if !ok {
@@ -12031,7 +12286,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 245:
+		case 248:
 			{
 				var canonical tg.PaymentsSuggestedStarRefBots
 				switch candidate := value.(type) {
@@ -12052,7 +12307,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 246:
+		case 249:
 			{
 				var canonical tg.PaymentsUniqueStarGift
 				switch candidate := value.(type) {
@@ -12073,7 +12328,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 247:
+		case 250:
 			{
 				var canonical tg.PaymentsUniqueStarGiftValueInfo
 				switch candidate := value.(type) {
@@ -12094,7 +12349,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 248:
+		case 251:
 			{
 				canonical, ok := value.(tg.PaymentsPaymentResultClass)
 				if !ok {
@@ -12106,7 +12361,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 249:
+		case 252:
 			{
 				var canonical tg.PaymentsValidatedRequestedInfo
 				switch candidate := value.(type) {
@@ -12127,7 +12382,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 250:
+		case 253:
 			{
 				var canonical tg.PhonePhoneCall
 				switch candidate := value.(type) {
@@ -12148,7 +12403,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 251:
+		case 254:
 			{
 				var canonical tg.PhoneExportedGroupCallInvite
 				switch candidate := value.(type) {
@@ -12169,7 +12424,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 252:
+		case 255:
 			{
 				var canonical tg.PhoneGroupCall
 				switch candidate := value.(type) {
@@ -12190,7 +12445,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 253:
+		case 256:
 			{
 				var canonical tg.PhoneJoinAsPeers
 				switch candidate := value.(type) {
@@ -12211,7 +12466,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 254:
+		case 257:
 			{
 				var canonical tg.PhoneGroupCallStars
 				switch candidate := value.(type) {
@@ -12232,7 +12487,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 255:
+		case 258:
 			{
 				var canonical tg.PhoneGroupCallStreamChannels
 				switch candidate := value.(type) {
@@ -12253,7 +12508,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 256:
+		case 259:
 			{
 				var canonical tg.PhoneGroupCallStreamRtmpURL
 				switch candidate := value.(type) {
@@ -12274,7 +12529,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 257:
+		case 260:
 			{
 				var canonical tg.PhoneGroupParticipants
 				switch candidate := value.(type) {
@@ -12295,7 +12550,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 258:
+		case 261:
 			{
 				canonical, ok := value.(tg.PhotosPhotosClass)
 				if !ok {
@@ -12307,7 +12562,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 259:
+		case 262:
 			{
 				var canonical tg.PhotosPhoto
 				switch candidate := value.(type) {
@@ -12328,7 +12583,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 260:
+		case 263:
 			{
 				var canonical tg.PremiumMyBoosts
 				switch candidate := value.(type) {
@@ -12349,7 +12604,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 261:
+		case 264:
 			{
 				var canonical tg.PremiumBoostsList
 				switch candidate := value.(type) {
@@ -12370,7 +12625,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 262:
+		case 265:
 			{
 				var canonical tg.PremiumBoostsStatus
 				switch candidate := value.(type) {
@@ -12391,7 +12646,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 263:
+		case 266:
 			{
 				var canonical tg.SMSJob
 				switch candidate := value.(type) {
@@ -12412,7 +12667,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 264:
+		case 267:
 			{
 				var canonical tg.SMSJobsStatus
 				switch candidate := value.(type) {
@@ -12433,7 +12688,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 265:
+		case 268:
 			{
 				var canonical tg.SMSJobsEligibleToJoin
 				switch candidate := value.(type) {
@@ -12454,7 +12709,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 266:
+		case 269:
 			{
 				var canonical tg.StatsBroadcastStats
 				switch candidate := value.(type) {
@@ -12475,7 +12730,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 267:
+		case 270:
 			{
 				var canonical tg.StatsMegagroupStats
 				switch candidate := value.(type) {
@@ -12496,7 +12751,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 268:
+		case 271:
 			{
 				var canonical tg.StatsPublicForwards
 				switch candidate := value.(type) {
@@ -12517,7 +12772,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 269:
+		case 272:
 			{
 				var canonical tg.StatsMessageStats
 				switch candidate := value.(type) {
@@ -12538,7 +12793,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 270:
+		case 273:
 			{
 				var canonical tg.StatsPollStats
 				switch candidate := value.(type) {
@@ -12559,7 +12814,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 271:
+		case 274:
 			{
 				var canonical tg.StatsStoryStats
 				switch candidate := value.(type) {
@@ -12580,7 +12835,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 272:
+		case 275:
 			{
 				canonical, ok := value.(tg.StatsGraphClass)
 				if !ok {
@@ -12592,7 +12847,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 273:
+		case 276:
 			{
 				var canonical tg.StickersSuggestedShortName
 				switch candidate := value.(type) {
@@ -12613,7 +12868,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 274:
+		case 277:
 			{
 				var canonical tg.StoriesCanSendStoryCount
 				switch candidate := value.(type) {
@@ -12634,7 +12889,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 275:
+		case 278:
 			{
 				var canonical tg.StoryAlbum
 				switch candidate := value.(type) {
@@ -12655,7 +12910,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 276:
+		case 279:
 			{
 				var canonical tg.ExportedStoryLink
 				switch candidate := value.(type) {
@@ -12676,7 +12931,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 277:
+		case 280:
 			{
 				var canonical tg.StoriesStories
 				switch candidate := value.(type) {
@@ -12697,7 +12952,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 278:
+		case 281:
 			{
 				canonical, ok := value.(tg.StoriesAlbumsClass)
 				if !ok {
@@ -12709,7 +12964,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 279:
+		case 282:
 			{
 				canonical, ok := value.(tg.StoriesAllStoriesClass)
 				if !ok {
@@ -12721,7 +12976,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 280:
+		case 283:
 			{
 				canonical, ok := value.([]tg.RecentStory)
 				if !ok {
@@ -12760,7 +13015,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 281:
+		case 284:
 			{
 				var canonical tg.StoriesPeerStories
 				switch candidate := value.(type) {
@@ -12781,7 +13036,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 282:
+		case 285:
 			{
 				var canonical tg.StoriesStoryViews
 				switch candidate := value.(type) {
@@ -12802,7 +13057,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 283:
+		case 286:
 			{
 				var canonical tg.StoriesStoryReactionsList
 				switch candidate := value.(type) {
@@ -12823,7 +13078,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 284:
+		case 287:
 			{
 				var canonical tg.StoriesStoryViewsList
 				switch candidate := value.(type) {
@@ -12844,7 +13099,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 285:
+		case 288:
 			{
 				var canonical tg.StoriesFoundStories
 				switch candidate := value.(type) {
@@ -12865,7 +13120,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 286:
+		case 289:
 			{
 				var canonical tg.HelpConfigSimple
 				switch candidate := value.(type) {
@@ -12886,7 +13141,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 287:
+		case 290:
 			{
 				var canonical tg.Error
 				switch candidate := value.(type) {
@@ -12907,7 +13162,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 288:
+		case 291:
 			{
 				canonical, ok := value.(tg.UpdatesChannelDifferenceClass)
 				if !ok {
@@ -12919,7 +13174,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 289:
+		case 292:
 			{
 				canonical, ok := value.(tg.UpdatesDifferenceClass)
 				if !ok {
@@ -12931,7 +13186,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 290:
+		case 293:
 			{
 				var canonical tg.UpdatesState
 				switch candidate := value.(type) {
@@ -12952,7 +13207,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 291:
+		case 294:
 			{
 				canonical, ok := value.(tg.UploadCDNFileClass)
 				if !ok {
@@ -12964,7 +13219,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 292:
+		case 295:
 			{
 				canonical, ok := value.([]tg.FileHash)
 				if !ok {
@@ -13003,7 +13258,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 293:
+		case 296:
 			{
 				canonical, ok := value.(tg.UploadFileClass)
 				if !ok {
@@ -13015,7 +13270,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 294:
+		case 297:
 			{
 				var canonical tg.UploadWebFile
 				switch candidate := value.(type) {
@@ -13036,7 +13291,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 295:
+		case 298:
 			{
 				var canonical tg.UsersUserFull
 				switch candidate := value.(type) {
@@ -13057,7 +13312,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 296:
+		case 299:
 			{
 				canonical, ok := value.([]tg.RequirementToContactClass)
 				if !ok {
@@ -13095,7 +13350,7 @@ func tlEncodeResultPlan(plan int, profile Profile, value any, b *bin.Buffer) err
 				return nil
 
 			}
-		case 297:
+		case 300:
 			{
 				canonical, ok := value.(tg.UsersSavedMusicClass)
 				if !ok {

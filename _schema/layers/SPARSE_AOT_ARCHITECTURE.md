@@ -1,6 +1,7 @@
 # Sparse AOT multi-layer architecture
 
-Status: implemented in the v1.1 protocol line. The dense Layer 225--228
+Status: implemented in the v1.1 protocol line and advanced through Layer 229.
+The dense Layer 225--229
 backend and its public `tg.Layer*` surface have been deleted. This document is
 normative for generated code. The schema
 manifest and policy remain the normative wire inputs.
@@ -10,10 +11,10 @@ manifest and policy remain the normative wire inputs.
 The multi-layer backend preserves external Telegram wire compatibility, not
 the public Go API introduced by the first fork implementation. In particular:
 
-- `tg` remains the canonical Layer 228 Go model and stays byte-for-byte equal
+- `tg` remains the canonical Layer 229 Go model and stays byte-for-byte equal
   to a single-schema canonical generation;
 - `tlprofile` is the only public multi-layer package;
-- Layer 225--228 request, result and object bytes remain exact, including
+- Layer 225--229 request, result and object bytes remain exact, including
   flags, bare/boxed form, vectors, generic bindings and method result types;
 - generation may break every existing `tg.Layer*` API and telesrv migrates in
   the same protocol line;
@@ -28,7 +29,7 @@ implementation. The replacement generates code by distinct execution plan.
 
 ```text
 github.com/iamxvbaba/td/tg
-    canonical Layer 228 types and codecs only
+    canonical Layer 229 types and codecs only
 
 github.com/iamxvbaba/td/tlprofile
     public Profile, Admission, Call and object/result encoding API
@@ -175,6 +176,14 @@ handler keyed by generated semantic ID. The generator does not emit `OnX`,
 ## 7. Generated evidence and gates
 
 Production source contains only runtime plans and compact route metadata.
+The sparse typed closure is pruned at generated-function granularity: family
+and class helpers survive only when another emitted function calls them, and a
+dirty wire retains its typed bare body without the unused boxed/bare atomic
+wrappers because the reachable family or class entry point already owns that
+transactional boundary. The scanner likewise emits only class scanners named
+by a reachable field scan body. Admission field registrations are statically
+chunked and field-plan routes are grouped by wire/profile plan; neither
+optimization introduces a runtime registry.
 Review evidence is emitted as deterministic JSON under `_schema/layers/audit/`
 and consumed by tests. At minimum it records profile/family classification,
 closure reason, plan digest, route memberships, policy decisions and result
@@ -184,16 +193,17 @@ Required gates:
 
 1. canonical `tg` generation has byte-zero diff from canonical-only generation;
 2. a second generation has zero diff;
-3. all Layer 225--228 request/result/object goldens match the v1.0.0 oracle;
+3. all Layer 225--229 request/result/object goldens match their frozen exact
+   fixtures (with the v1.0.0 oracle retained for Layers 225--228);
 4. malformed, over-limit, truncated and trailing input fails transactionally;
 5. source-size and plan-count budgets fail on dense-regeneration regressions;
 6. repository scans reject runtime schema/walker/transcode/canonical-fallback
    paths;
 7. telesrv contains no import-time or identifier dependency on `tg.Layer*`.
 
-The Layer 225--228 implementation currently emits 74 generated `tlprofile`
-files, 12,047,226 bytes and 319,043 lines. The hard source budget is 16 MiB
-and 400k lines. The generation audit currently records 9,638 routes sharing
-763 body plans, 928 preflight plans and 599 result plans; 8,517 routes reuse
+The Layer 225--229 implementation currently emits 74 generated `tlprofile`
+files, 11,792,413 bytes and 312,628 lines. The hard source budget is 16 MiB
+and 400k lines. The generation audit currently records 12,120 routes sharing
+1,173 body plans, 980 preflight plans and 692 result plans; 10,595 routes reuse
 the canonical implementation directly. `tg/tl_layer*_gen.go` must remain
 empty. These numbers are evidence and regression bounds, not an API promise.

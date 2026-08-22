@@ -308,6 +308,13 @@ func (c *layerValueCompiler) compile(
 			if err != nil {
 				return nil, fmt.Errorf("gen: layer value profile %d boxed class %q constructor %s: %w", profile.Layer, ref.QName, key, err)
 			}
+			if plan.CanonicalClass != nil && constructor.Canonical != nil && constructor.Canonical.Definition != nil &&
+				constructor.Canonical.Definition.Result.String() != plan.CanonicalClass.QName {
+				// Contextual class splits are decoded by the reviewed incompatible
+				// field adapter that names the new target class. They are not values
+				// of the canonical form of this historical class.
+				continue
+			}
 			plan.Constructors = append(plan.Constructors, constructor)
 		}
 		// The value's Go shape is owned by the canonical schema, not by how
@@ -328,16 +335,19 @@ func (c *layerValueCompiler) compile(
 			for index := range plan.Constructors {
 				candidate := &plan.Constructors[index]
 				if candidate.Canonical != nil && candidate.Canonical.Key == canonicalKey {
-					if canonicalConstructor != nil {
-						return nil, fmt.Errorf("gen: layer value profile %d singular class %q repeats canonical constructor %s", profile.Layer, ref.QName, canonicalKey)
+					if canonicalConstructor == nil {
+						canonicalConstructor = candidate
 					}
-					canonicalConstructor = candidate
 				}
 			}
 			if canonicalConstructor == nil {
 				return nil, fmt.Errorf("gen: layer value profile %d singular canonical constructor %s is unavailable in class %q", profile.Layer, canonicalKey, ref.QName)
 			}
-			plan.Constructors = []layerValueConstructor{*canonicalConstructor}
+			for _, candidate := range plan.Constructors {
+				if candidate.Canonical == nil || candidate.Canonical.Key != canonicalKey {
+					return nil, fmt.Errorf("gen: layer value profile %d singular class %q maps to multiple canonical constructors", profile.Layer, ref.QName)
+				}
+			}
 			plan.Kind = layerValueBoxedConcrete
 		} else if len(plan.Constructors) == 1 {
 			plan.Kind = layerValueBoxedConcrete

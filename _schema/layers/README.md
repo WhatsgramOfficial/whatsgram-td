@@ -101,9 +101,40 @@ merge/rebase into the release line is not a shortcut for this review.
    git diff --check
    ```
 
-Adding an unchanged 228/229 profile therefore only extends generated profile
+Adding a schema-identical next profile therefore only extends generated profile
 metadata and switch cases. A genuinely changed schema stops at generation time
 until its semantic policy and typed hook are supplied.
+
+### Layer 229 review record
+
+Layer 229 was imported from Telegram Desktop commit
+`db41bb8c753bf43b452a7b01c47f079ceb3dce09`; `manifest.json` locks the exact
+Git blob and normalized SHA-256. The schema is not a layer-number-only update.
+Its keyboard model consolidates reply-button constructors into
+`keyboardButton` + `ButtonType`, splits inline buttons into
+`KeyboardInlineButton`, and changes inline row/result structure. It also adds
+new ephemeral-message fields/RPCs and privacy-sensitive fields on gift and
+forwarding paths.
+
+The reviewed compatibility scenarios are:
+
+| Scenario | Layer 229 canonical behavior | Layers 225--228 behavior |
+|---|---|---|
+| Reply keyboard button | Encode/decode the consolidated constructor directly | Select exactly one historical constructor through typed bidirectional adapters |
+| Inline keyboard rows | Use `KeyboardInlineButtonRow` and `KeyboardInlineButton` | Use the historical `KeyboardButtonRow` shape through a bounded static structural adapter |
+| New privacy/meaning flags | Preserve the field | Reject encoding when the older wire cannot represent it; never silently drop it |
+| New constructors/RPCs | Admit through the canonical profile | Remain unavailable, or use an explicit reviewed update projection where policy permits |
+| Historical constructor input | Not part of the canonical class | Decode only in the exact historical profile and materialize the canonical Layer 229 value |
+
+All historical keyboard selection is transactional and fail-closed: zero or
+multiple matching constructors is an error. No runtime schema, reflection
+walker, or bytes-to-bytes compatibility bridge is introduced.
+
+The `telegram/message/markup` helpers follow the Layer 229 split as well:
+reply-keyboard builders accept `tg.KeyboardButton` values, while inline
+builders accept `tg.KeyboardInlineButton` values. Their nested `ButtonType`
+and `InlineButtonType` constructors are populated by the helpers, so invalid
+reply/inline mixtures are rejected by the Go type system before encoding.
 
 ## Client-private RPC overlays
 
@@ -197,8 +228,13 @@ Layer selection in this path.
 The source emitter coalesces identical body, preflight and result execution
 plans. Dispatch still has an exact switch for every `(profile, wire ID)` route,
 but byte-identical routes share generated helpers; identical wrapper probes
-share one probe helper as well. The current source gate rejects any regenerated
-`tg/tl_layer*_gen.go` and caps the complete generated `tlprofile` sidecar at
+share one probe helper as well. Sparse family/class helpers and scanner class
+helpers are retained by exact generated-call reachability, while dirty wire
+encoding keeps the reachable typed bare body without duplicating atomic
+wrappers already owned by its family/class entry point. Admission field routes
+remain static switches grouped by wire/profile plan. The current source gate
+rejects any regenerated `tg/tl_layer*_gen.go` and caps the complete generated
+`tlprofile` sidecar at
 16 MiB / 400k lines. Adding an unchanged future Layer therefore grows route
 metadata instead of cloning the full TL catalog. None of these paths uses
 reflection, a runtime schema walker or a dynamic schema map.

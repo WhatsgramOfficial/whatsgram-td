@@ -17,33 +17,6 @@ var (
 	_ = tg.Layer
 )
 
-func layerEncodeWire00f49ca0(profile LayerProfile, value *tg.UpdatesDifference, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdatesDifference, WireID: 0x00f49ca0, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		switch profile {
-		case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
-
-		default:
-			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeUpdatesDifference, WireID: 0x00f49ca0, Reason: "wire ID is unavailable in exact profile"}
-		}
-
-		b.PutID(0x00f49ca0)
-		return layerEncodeWire00f49ca0BareBody(profile, value, b, state)
-
-	})
-}
-
-func layerEncodeWire00f49ca0Bare(profile LayerProfile, value *tg.UpdatesDifference, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeUpdatesDifference, WireID: 0x00f49ca0, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		return layerEncodeWire00f49ca0BareBody(profile, value, b, state)
-	})
-}
-
 func layerEncodeWire00f49ca0BareBody(profile LayerProfile, value *tg.UpdatesDifference, b *bin.Buffer, state *layerCodecState) error {
 	child, err := layerCodecDescend(profile, "encode", state)
 	if err != nil {
@@ -51,7 +24,7 @@ func layerEncodeWire00f49ca0BareBody(profile LayerProfile, value *tg.UpdatesDiff
 	}
 	state = &child
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			if len(value.NewMessages) > layerCodecMaxVectorElements {
 				return &LayerCodecError{Operation: "encode", Profile: profile, Reason: "vector length exceeds generated limit"}
@@ -212,7 +185,7 @@ func layerEncodeWire00f49ca0BareBody(profile LayerProfile, value *tg.UpdatesDiff
 
 func layerDecodeWire00f49ca0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.UpdatesDifference, error) {
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeUpdatesDifference, WireID: 0x00f49ca0, Reason: "wire ID is unavailable in exact profile"}
@@ -234,7 +207,7 @@ func layerDecodeWire00f49ca0Bare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(tg.UpdatesDifference)
 	_ = value
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var layerDecoded42 []tg.MessageClass
 			layerDecodeState43, err := layerCodecDescend(profile, "decode", state)
@@ -421,37 +394,6 @@ func layerDecodeWire07b68920(profile LayerProfile, b *bin.Buffer, state *layerCo
 	return value, nil
 }
 
-func layerEncodeWire1759c560(profile LayerProfile, value *tg.PageBlockPhoto, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockPhoto, WireID: 0x1759c560, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		switch profile {
-		case LayerProfile225:
-
-		case LayerProfile226:
-
-		case LayerProfile227, LayerProfile228:
-
-		default:
-			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockPhoto, WireID: 0x1759c560, Reason: "wire ID is unavailable in exact profile"}
-		}
-
-		b.PutID(0x1759c560)
-		return layerEncodeWire1759c560BareBody(profile, value, b, state)
-
-	})
-}
-
-func layerEncodeWire1759c560Bare(profile LayerProfile, value *tg.PageBlockPhoto, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypePageBlockPhoto, WireID: 0x1759c560, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		return layerEncodeWire1759c560BareBody(profile, value, b, state)
-	})
-}
-
 func layerEncodeWire1759c560BareBody(profile LayerProfile, value *tg.PageBlockPhoto, b *bin.Buffer, state *layerCodecState) error {
 	child, err := layerCodecDescend(profile, "encode", state)
 	if err != nil {
@@ -515,7 +457,7 @@ func layerEncodeWire1759c560BareBody(profile LayerProfile, value *tg.PageBlockPh
 			return nil
 
 		}
-	case LayerProfile227, LayerProfile228:
+	case LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var wireFlags0 bin.Fields
 			if (value.Flags.Has(0) || value.URL != "") || (value.Flags.Has(0) || value.WebpageID != 0) {
@@ -554,7 +496,7 @@ func layerDecodeWire1759c560(profile LayerProfile, b *bin.Buffer, state *layerCo
 
 	case LayerProfile226:
 
-	case LayerProfile227, LayerProfile228:
+	case LayerProfile227, LayerProfile228, LayerProfile229:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePageBlockPhoto, WireID: 0x1759c560, Reason: "wire ID is unavailable in exact profile"}
@@ -678,7 +620,7 @@ func layerDecodeWire1759c560Bare(profile LayerProfile, b *bin.Buffer, state *lay
 			return value, nil
 
 		}
-	case LayerProfile227, LayerProfile228:
+	case LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var wireFlags0 bin.Fields
 			if err := wireFlags0.Decode(b); err != nil {
@@ -767,13 +709,6 @@ func layerEncodeWire4367daa0Bare(profile LayerProfile, value *tg.PaymentsGiveawa
 func layerEncodeWire4367daa0BareBody(profile LayerProfile, value *tg.PaymentsGiveawayInfo, b *bin.Buffer, state *layerCodecState) error {
 	return layerEncodeWire4367daa0Bare(profile, value, b, state)
 }
-func layerDecodeWire4367daa0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.PaymentsGiveawayInfo, error) {
-	value := new(tg.PaymentsGiveawayInfo)
-	if err := value.Decode(b); err != nil {
-		return nil, err
-	}
-	return value, nil
-}
 
 // Canonical-direct exact wire; the scanner has validated its transitive graph.
 func layerEncodeWire43b46b20Bare(profile LayerProfile, value *tg.DefaultHistoryTTL, b *bin.Buffer, state *layerCodecState) error {
@@ -815,33 +750,6 @@ func layerDecodeWire59080c20(profile LayerProfile, b *bin.Buffer, state *layerCo
 	return value, nil
 }
 
-func layerEncodeWire5ff58f20(profile LayerProfile, value *tg.PaymentsLaunchPrepaidGiveawayRequest, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodPaymentsLaunchPrepaidGiveaway, WireID: 0x5ff58f20, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		switch profile {
-		case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
-
-		default:
-			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticMethodPaymentsLaunchPrepaidGiveaway, WireID: 0x5ff58f20, Reason: "wire ID is unavailable in exact profile"}
-		}
-
-		b.PutID(0x5ff58f20)
-		return layerEncodeWire5ff58f20BareBody(profile, value, b, state)
-
-	})
-}
-
-func layerEncodeWire5ff58f20Bare(profile LayerProfile, value *tg.PaymentsLaunchPrepaidGiveawayRequest, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticMethodPaymentsLaunchPrepaidGiveaway, WireID: 0x5ff58f20, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		return layerEncodeWire5ff58f20BareBody(profile, value, b, state)
-	})
-}
-
 func layerEncodeWire5ff58f20BareBody(profile LayerProfile, value *tg.PaymentsLaunchPrepaidGiveawayRequest, b *bin.Buffer, state *layerCodecState) error {
 	child, err := layerCodecDescend(profile, "encode", state)
 	if err != nil {
@@ -849,7 +757,7 @@ func layerEncodeWire5ff58f20BareBody(profile LayerProfile, value *tg.PaymentsLau
 	}
 	state = &child
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			if err := layerEncodeClassInputPeerBody(profile, value.Peer, b, state); err != nil {
 				return fmt.Errorf("encode field peer: %w", err)
@@ -868,7 +776,7 @@ func layerEncodeWire5ff58f20BareBody(profile LayerProfile, value *tg.PaymentsLau
 
 func layerDecodeWire5ff58f20(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.PaymentsLaunchPrepaidGiveawayRequest, error) {
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticMethodPaymentsLaunchPrepaidGiveaway, WireID: 0x5ff58f20, Reason: "wire ID is unavailable in exact profile"}
@@ -890,7 +798,7 @@ func layerDecodeWire5ff58f20Bare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(tg.PaymentsLaunchPrepaidGiveawayRequest)
 	_ = value
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var layerDecoded3 tg.InputPeerClass
 			layerClass4, err := layerDecodeClassInputPeer(profile, b, state)
@@ -936,13 +844,6 @@ func layerEncodeWire623a8fa0Bare(profile LayerProfile, value *tg.URLAuthResultAc
 }
 func layerEncodeWire623a8fa0BareBody(profile LayerProfile, value *tg.URLAuthResultAccepted, b *bin.Buffer, state *layerCodecState) error {
 	return layerEncodeWire623a8fa0Bare(profile, value, b, state)
-}
-func layerDecodeWire623a8fa0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.URLAuthResultAccepted, error) {
-	value := new(tg.URLAuthResultAccepted)
-	if err := value.Decode(b); err != nil {
-		return nil, err
-	}
-	return value, nil
 }
 
 // Canonical-direct exact wire; the scanner has validated its transitive graph.
@@ -1017,33 +918,6 @@ func layerDecodeWire826f8b60(profile LayerProfile, b *bin.Buffer, state *layerCo
 	return value, nil
 }
 
-func layerEncodeWire93037e20(profile LayerProfile, value *tg.StatsPublicForwards, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStatsPublicForwards, WireID: 0x93037e20, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		switch profile {
-		case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
-
-		default:
-			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeStatsPublicForwards, WireID: 0x93037e20, Reason: "wire ID is unavailable in exact profile"}
-		}
-
-		b.PutID(0x93037e20)
-		return layerEncodeWire93037e20BareBody(profile, value, b, state)
-
-	})
-}
-
-func layerEncodeWire93037e20Bare(profile LayerProfile, value *tg.StatsPublicForwards, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeStatsPublicForwards, WireID: 0x93037e20, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		return layerEncodeWire93037e20BareBody(profile, value, b, state)
-	})
-}
-
 func layerEncodeWire93037e20BareBody(profile LayerProfile, value *tg.StatsPublicForwards, b *bin.Buffer, state *layerCodecState) error {
 	child, err := layerCodecDescend(profile, "encode", state)
 	if err != nil {
@@ -1051,7 +925,7 @@ func layerEncodeWire93037e20BareBody(profile LayerProfile, value *tg.StatsPublic
 	}
 	state = &child
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var wireFlags0 bin.Fields
 			if value.Flags.Has(0) || value.NextOffset != "" {
@@ -1163,7 +1037,7 @@ func layerEncodeWire93037e20BareBody(profile LayerProfile, value *tg.StatsPublic
 
 func layerDecodeWire93037e20(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.StatsPublicForwards, error) {
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeStatsPublicForwards, WireID: 0x93037e20, Reason: "wire ID is unavailable in exact profile"}
@@ -1185,7 +1059,7 @@ func layerDecodeWire93037e20Bare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(tg.StatsPublicForwards)
 	_ = value
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var wireFlags0 bin.Fields
 			if err := wireFlags0.Decode(b); err != nil {
@@ -1356,40 +1230,6 @@ func layerEncodeWireab7ec0a0Bare(profile LayerProfile, value *tg.EncryptedChatEm
 func layerEncodeWireab7ec0a0BareBody(profile LayerProfile, value *tg.EncryptedChatEmpty, b *bin.Buffer, state *layerCodecState) error {
 	return layerEncodeWireab7ec0a0Bare(profile, value, b, state)
 }
-func layerDecodeWireab7ec0a0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.EncryptedChatEmpty, error) {
-	value := new(tg.EncryptedChatEmpty)
-	if err := value.Decode(b); err != nil {
-		return nil, err
-	}
-	return value, nil
-}
-
-func layerEncodeWirebaafe5e0(profile LayerProfile, value *tg.PageBlockAuthorDate, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockAuthorDate, WireID: 0xbaafe5e0, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		switch profile {
-		case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
-
-		default:
-			return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypePageBlockAuthorDate, WireID: 0xbaafe5e0, Reason: "wire ID is unavailable in exact profile"}
-		}
-
-		b.PutID(0xbaafe5e0)
-		return layerEncodeWirebaafe5e0BareBody(profile, value, b, state)
-
-	})
-}
-
-func layerEncodeWirebaafe5e0Bare(profile LayerProfile, value *tg.PageBlockAuthorDate, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypePageBlockAuthorDate, WireID: 0xbaafe5e0, Reason: "nil canonical value"}
-	}
-	return layerCodecEncodeAtomic(profile, b, func() error {
-		return layerEncodeWirebaafe5e0BareBody(profile, value, b, state)
-	})
-}
 
 func layerEncodeWirebaafe5e0BareBody(profile LayerProfile, value *tg.PageBlockAuthorDate, b *bin.Buffer, state *layerCodecState) error {
 	child, err := layerCodecDescend(profile, "encode", state)
@@ -1398,7 +1238,7 @@ func layerEncodeWirebaafe5e0BareBody(profile LayerProfile, value *tg.PageBlockAu
 	}
 	state = &child
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			if err := layerEncodeClassRichTextBody(profile, value.Author, b, state); err != nil {
 				return fmt.Errorf("encode field author: %w", err)
@@ -1414,7 +1254,7 @@ func layerEncodeWirebaafe5e0BareBody(profile LayerProfile, value *tg.PageBlockAu
 
 func layerDecodeWirebaafe5e0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.PageBlockAuthorDate, error) {
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 
 	default:
 		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypePageBlockAuthorDate, WireID: 0xbaafe5e0, Reason: "wire ID is unavailable in exact profile"}
@@ -1436,7 +1276,7 @@ func layerDecodeWirebaafe5e0Bare(profile LayerProfile, b *bin.Buffer, state *lay
 	value := new(tg.PageBlockAuthorDate)
 	_ = value
 	switch profile {
-	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228, LayerProfile229:
 		{
 			var layerDecoded2 tg.RichTextClass
 			layerClass3, err := layerDecodeClassRichText(profile, b, state)
@@ -1482,38 +1322,259 @@ func layerDecodeWirec0944820(profile LayerProfile, b *bin.Buffer, state *layerCo
 	return value, nil
 }
 
-// Canonical-direct exact wire; the scanner has validated its transitive graph.
-func layerEncodeWiree62bc960Bare(profile LayerProfile, value *tg.KeyboardButtonCallback, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "nil canonical value"}
+func layerEncodeWiree62bc960BareBody(profile LayerProfile, value *tg.KeyboardInlineButton, b *bin.Buffer, state *layerCodecState) error {
+	child, err := layerCodecDescend(profile, "encode", state)
+	if err != nil {
+		return err
 	}
-	return value.EncodeBare(b)
-}
-func layerEncodeWiree62bc960BareBody(profile LayerProfile, value *tg.KeyboardButtonCallback, b *bin.Buffer, state *layerCodecState) error {
-	return layerEncodeWiree62bc960Bare(profile, value, b, state)
-}
-func layerDecodeWiree62bc960(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.KeyboardButtonCallback, error) {
-	value := new(tg.KeyboardButtonCallback)
-	if err := value.Decode(b); err != nil {
-		return nil, err
+	state = &child
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		{
+			historicalPresent1, historicalPresent2, historicalValue2, historicalValue3, historicalValue4, historicalHookErr := layerAdaptLegacyKeyboardInlineButtonCallbackEncode(profile, value)
+			if historicalHookErr != nil {
+				return fmt.Errorf("adapt historical constructor for encoding: %w", historicalHookErr)
+			}
+			layerHistoricalPresent1 := historicalPresent2
+			layerHistoricalEncoded2 := &bin.Buffer{}
+			if layerHistoricalPresent1 {
+				layerHistoricalErr3 := func() error {
+					layerHistoricalEncoded2.PutID(0x4fdd3430)
+					if err := layerEncodeWire4fdd3430BareBody(profile, &(historicalValue2), layerHistoricalEncoded2, state); err != nil {
+						return fmt.Errorf("encode historical field style: %w", err)
+					}
+					return nil
+				}()
+				if layerHistoricalErr3 != nil {
+					if IsLayerProjectionDrop(layerHistoricalErr3) {
+						layerHistoricalPresent1 = false
+						layerHistoricalEncoded2.Reset()
+					} else {
+						return fmt.Errorf("encode historical optional field style: %w", layerHistoricalErr3)
+					}
+				}
+			}
+			if (historicalPresent1) && !historicalPresent1 {
+				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "historical adapter returned a partial shared flag group flags.0"}
+			}
+			if (layerHistoricalPresent1) && !layerHistoricalPresent1 {
+				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "historical adapter returned a partial shared flag group flags.10"}
+			}
+			var wireFlags0 bin.Fields
+			if historicalPresent1 {
+				wireFlags0.Set(0)
+			}
+			if layerHistoricalPresent1 {
+				wireFlags0.Set(10)
+			}
+			if err := wireFlags0.Encode(b); err != nil {
+				return fmt.Errorf("encode historical flags flags: %w", err)
+			}
+			if wireFlags0.Has(10) {
+				b.Buf = append(b.Buf, layerHistoricalEncoded2.Buf...)
+			}
+			if err := b.PutStringChecked(historicalValue3); err != nil {
+				return fmt.Errorf("encode historical field text: %w", err)
+			}
+			if err := b.PutBytesChecked(historicalValue4); err != nil {
+				return fmt.Errorf("encode historical field data: %w", err)
+			}
+			return nil
+
+		}
+	default:
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "wire ID is unavailable in exact profile"}
 	}
-	return value, nil
 }
 
-// Canonical-direct exact wire; the scanner has validated its transitive graph.
-func layerEncodeWiree846b1a0Bare(profile LayerProfile, value *tg.KeyboardButtonWebView, b *bin.Buffer, state *layerCodecState) error {
-	if value == nil {
-		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonWebView, WireID: 0xe846b1a0, Reason: "nil canonical value"}
+func layerDecodeWiree62bc960(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.KeyboardInlineButton, error) {
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+
+	default:
+		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "wire ID is unavailable in exact profile"}
 	}
-	return value.EncodeBare(b)
+
+	if err := b.ConsumeID(0xe62bc960); err != nil {
+		return nil, fmt.Errorf("consume layer wire 0xe62bc960: %w", err)
+	}
+	return layerDecodeWiree62bc960Bare(profile, b, state)
+
 }
-func layerEncodeWiree846b1a0BareBody(profile LayerProfile, value *tg.KeyboardButtonWebView, b *bin.Buffer, state *layerCodecState) error {
-	return layerEncodeWiree846b1a0Bare(profile, value, b, state)
-}
-func layerDecodeWiree846b1a0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.KeyboardButtonWebView, error) {
-	value := new(tg.KeyboardButtonWebView)
-	if err := value.Decode(b); err != nil {
+
+func layerDecodeWiree62bc960Bare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.KeyboardInlineButton, error) {
+	child, err := layerCodecDescend(profile, "decode", state)
+	if err != nil {
 		return nil, err
 	}
-	return value, nil
+	state = &child
+	value := new(tg.KeyboardInlineButton)
+	_ = value
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		{
+			var wireFlags0 bin.Fields
+			if err := wireFlags0.Decode(b); err != nil {
+				return nil, fmt.Errorf("decode historical flags flags: %w", err)
+			}
+			historicalPresent1 := wireFlags0.Has(0)
+			historicalPresent2 := wireFlags0.Has(10)
+			var historicalValue2 tg.KeyboardButtonStyle
+			if historicalPresent2 {
+				layerConcrete1, err := layerDecodeWire4fdd3430(profile, b, state)
+				if err != nil {
+					return nil, fmt.Errorf("decode historical field style: %w", err)
+				}
+				historicalValue2 = *layerConcrete1
+			}
+			var historicalValue3 string
+			layerPrimitive2, err := b.String()
+			if err != nil {
+				return nil, fmt.Errorf("decode historical field text: %w", err)
+			}
+			historicalValue3 = layerPrimitive2
+			var historicalValue4 []byte
+			layerPrimitive3, err := b.Bytes()
+			if err != nil {
+				return nil, fmt.Errorf("decode historical field data: %w", err)
+			}
+			historicalValue4 = layerPrimitive3
+			adapted, err := layerAdaptLegacyKeyboardInlineButtonCallbackDecode(profile, historicalPresent1, historicalPresent2, historicalValue2, historicalValue3, historicalValue4)
+			if err != nil {
+				return nil, fmt.Errorf("adapt historical constructor after decoding: %w", err)
+			}
+			if adapted == nil {
+				return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "historical adapter returned nil canonical value"}
+			}
+			return adapted, nil
+
+		}
+	default:
+		return nil, &LayerCodecError{Operation: "decode-bare", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonCallback, WireID: 0xe62bc960, Reason: "wire ID is unavailable in exact profile"}
+	}
+}
+
+func layerEncodeWiree846b1a0BareBody(profile LayerProfile, value *tg.KeyboardInlineButton, b *bin.Buffer, state *layerCodecState) error {
+	child, err := layerCodecDescend(profile, "encode", state)
+	if err != nil {
+		return err
+	}
+	state = &child
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		{
+			historicalPresent1, historicalValue1, historicalValue2, historicalValue3, historicalHookErr := layerAdaptLegacyKeyboardInlineButtonWebViewEncode(profile, value)
+			if historicalHookErr != nil {
+				return fmt.Errorf("adapt historical constructor for encoding: %w", historicalHookErr)
+			}
+			layerHistoricalPresent1 := historicalPresent1
+			layerHistoricalEncoded2 := &bin.Buffer{}
+			if layerHistoricalPresent1 {
+				layerHistoricalErr3 := func() error {
+					layerHistoricalEncoded2.PutID(0x4fdd3430)
+					if err := layerEncodeWire4fdd3430BareBody(profile, &(historicalValue1), layerHistoricalEncoded2, state); err != nil {
+						return fmt.Errorf("encode historical field style: %w", err)
+					}
+					return nil
+				}()
+				if layerHistoricalErr3 != nil {
+					if IsLayerProjectionDrop(layerHistoricalErr3) {
+						layerHistoricalPresent1 = false
+						layerHistoricalEncoded2.Reset()
+					} else {
+						return fmt.Errorf("encode historical optional field style: %w", layerHistoricalErr3)
+					}
+				}
+			}
+			if (layerHistoricalPresent1) && !layerHistoricalPresent1 {
+				return &LayerCodecError{Operation: "encode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonWebView, WireID: 0xe846b1a0, Reason: "historical adapter returned a partial shared flag group flags.10"}
+			}
+			var wireFlags0 bin.Fields
+			if layerHistoricalPresent1 {
+				wireFlags0.Set(10)
+			}
+			if err := wireFlags0.Encode(b); err != nil {
+				return fmt.Errorf("encode historical flags flags: %w", err)
+			}
+			if wireFlags0.Has(10) {
+				b.Buf = append(b.Buf, layerHistoricalEncoded2.Buf...)
+			}
+			if err := b.PutStringChecked(historicalValue2); err != nil {
+				return fmt.Errorf("encode historical field text: %w", err)
+			}
+			if err := b.PutStringChecked(historicalValue3); err != nil {
+				return fmt.Errorf("encode historical field url: %w", err)
+			}
+			return nil
+
+		}
+	default:
+		return &LayerCodecError{Operation: "encode-bare", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonWebView, WireID: 0xe846b1a0, Reason: "wire ID is unavailable in exact profile"}
+	}
+}
+
+func layerDecodeWiree846b1a0(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.KeyboardInlineButton, error) {
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+
+	default:
+		return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonWebView, WireID: 0xe846b1a0, Reason: "wire ID is unavailable in exact profile"}
+	}
+
+	if err := b.ConsumeID(0xe846b1a0); err != nil {
+		return nil, fmt.Errorf("consume layer wire 0xe846b1a0: %w", err)
+	}
+	return layerDecodeWiree846b1a0Bare(profile, b, state)
+
+}
+
+func layerDecodeWiree846b1a0Bare(profile LayerProfile, b *bin.Buffer, state *layerCodecState) (*tg.KeyboardInlineButton, error) {
+	child, err := layerCodecDescend(profile, "decode", state)
+	if err != nil {
+		return nil, err
+	}
+	state = &child
+	value := new(tg.KeyboardInlineButton)
+	_ = value
+	switch profile {
+	case LayerProfile225, LayerProfile226, LayerProfile227, LayerProfile228:
+		{
+			var wireFlags0 bin.Fields
+			if err := wireFlags0.Decode(b); err != nil {
+				return nil, fmt.Errorf("decode historical flags flags: %w", err)
+			}
+			historicalPresent1 := wireFlags0.Has(10)
+			var historicalValue1 tg.KeyboardButtonStyle
+			if historicalPresent1 {
+				layerConcrete1, err := layerDecodeWire4fdd3430(profile, b, state)
+				if err != nil {
+					return nil, fmt.Errorf("decode historical field style: %w", err)
+				}
+				historicalValue1 = *layerConcrete1
+			}
+			var historicalValue2 string
+			layerPrimitive2, err := b.String()
+			if err != nil {
+				return nil, fmt.Errorf("decode historical field text: %w", err)
+			}
+			historicalValue2 = layerPrimitive2
+			var historicalValue3 string
+			layerPrimitive3, err := b.String()
+			if err != nil {
+				return nil, fmt.Errorf("decode historical field url: %w", err)
+			}
+			historicalValue3 = layerPrimitive3
+			adapted, err := layerAdaptLegacyKeyboardInlineButtonWebViewDecode(profile, historicalPresent1, historicalValue1, historicalValue2, historicalValue3)
+			if err != nil {
+				return nil, fmt.Errorf("adapt historical constructor after decoding: %w", err)
+			}
+			if adapted == nil {
+				return nil, &LayerCodecError{Operation: "decode", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonWebView, WireID: 0xe846b1a0, Reason: "historical adapter returned nil canonical value"}
+			}
+			return adapted, nil
+
+		}
+	default:
+		return nil, &LayerCodecError{Operation: "decode-bare", Profile: profile, Semantic: LayerSemanticTypeKeyboardButtonWebView, WireID: 0xe846b1a0, Reason: "wire ID is unavailable in exact profile"}
+	}
 }
