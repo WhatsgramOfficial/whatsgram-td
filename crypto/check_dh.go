@@ -2,9 +2,81 @@ package crypto
 
 import (
 	"math/big"
+	"sync"
 
 	"github.com/go-faster/errors"
 )
+
+const validatedDHParameterCacheCapacity = 16
+
+// validatedDHParameterKey is an exact, allocation-free identity for one
+// 2048-bit server DH parameter pair. Keeping the complete prime rather than a
+// digest makes a cache hit equivalent to byte equality with a pair which has
+// already passed the full safe-prime validation below.
+type validatedDHParameterKey struct {
+	g int
+	p [RSAKeyBits / 8]byte
+}
+
+// validatedDHParameterCache retains only successful validations. The slow
+// path is serialized so a reconnect burst presenting one previously unseen
+// pair performs the expensive primality proof once; invalid pairs are never
+// admitted. Capacity is deliberately small and fixed because a client may
+// connect to an untrusted server which rotates parameters indefinitely.
+type validatedDHParameterCache struct {
+	mu      sync.RWMutex
+	entries [validatedDHParameterCacheCapacity]validatedDHParameterKey
+	used    int
+	next    int
+}
+
+var validatedDHParameters validatedDHParameterCache
+
+func validatedDHKey(g int, p *big.Int) (validatedDHParameterKey, bool) {
+	if p == nil || p.Sign() <= 0 || p.BitLen() != RSAKeyBits {
+		return validatedDHParameterKey{}, false
+	}
+	key := validatedDHParameterKey{g: g}
+	p.FillBytes(key.p[:])
+	return key, true
+}
+
+func (c *validatedDHParameterCache) containsLocked(key validatedDHParameterKey) bool {
+	for i := 0; i < c.used; i++ {
+		if c.entries[i] == key {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *validatedDHParameterCache) validate(key validatedDHParameterKey, validate func() error) error {
+	c.mu.RLock()
+	found := c.containsLocked(key)
+	c.mu.RUnlock()
+	if found {
+		return nil
+	}
+
+	// Recheck after taking the exclusive lock: concurrent PFS handshakes for
+	// the same DC should wait for the first proof, then reuse it.
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.containsLocked(key) {
+		return nil
+	}
+	if err := validate(); err != nil {
+		return err
+	}
+	if c.used < len(c.entries) {
+		c.entries[c.used] = key
+		c.used++
+		return nil
+	}
+	c.entries[c.next] = key
+	c.next = (c.next + 1) % len(c.entries)
+	return nil
+}
 
 // CheckDH performs DH parameters check described in Telegram docs.
 //
@@ -21,6 +93,10 @@ import (
 //
 // See https://core.telegram.org/api/end-to-end#sending-a-request.
 func CheckDH(g int, p *big.Int) error {
+	return checkDHWithCache(&validatedDHParameters, g, p)
+}
+
+func checkDHWithCache(cache *validatedDHParameterCache, g int, p *big.Int) error {
 	// The client is expected to check whether p is a safe 2048-bit prime
 	// (meaning that both p and (p-1)/2 are prime, and that 2^2047 < p < 2^2048).
 	// FIXME(tdakkota): we check that 2^2047 <= p < 2^2048
@@ -28,15 +104,16 @@ func CheckDH(g int, p *big.Int) error {
 	//
 	// TDLib check 2^2047 <= too:
 	// https://github.com/tdlib/td/blob/d161323858a782bc500d188b9ae916982526c262/td/mtproto/DhHandshake.cpp#L23
-	if p.BitLen() != RSAKeyBits {
+	key, ok := validatedDHKey(g, p)
+	if !ok {
 		return errors.New("p should be 2^2047 < p < 2^2048")
 	}
-
-	if err := CheckGP(g, p); err != nil {
-		return err
-	}
-
-	return checkPrime(p)
+	return cache.validate(key, func() error {
+		if err := CheckGP(g, p); err != nil {
+			return err
+		}
+		return checkPrime(p)
+	})
 }
 
 func checkPrime(p *big.Int) error {
